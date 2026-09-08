@@ -15,8 +15,31 @@ import type { OrderResult, TradeOpportunity } from "./types.js";
 
 export class Trader {
   private client: ClobClient | null = null;
+  private static readonly TRADING_TIMEOUT_MS = 8_000;
+  private static readonly BALANCE_TIMEOUT_MS = 10_000;
 
   constructor(private readonly config: BotConfig) {}
+
+  /**
+   * Wraps a trading operation with an applicative timeout. A CLOB POST that
+   * hangs would otherwise block the entire tick loop (the `ticking` guard
+   * suppresses subsequent ticks). This ensures the bot recovers after 8 s
+   * even if the exchange is unresponsive.
+   */
+  private async withTimeout<T>(label: string, op: Promise<T>, timeoutMs: number = Trader.TRADING_TIMEOUT_MS): Promise<T> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<never>((_, reject) => {
+      timer = setTimeout(
+        () => reject(new Error(`${label} timed out after ${timeoutMs}ms`)),
+        timeoutMs,
+      );
+    });
+    try {
+      return await Promise.race([op, timeout]);
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
 
   async init(): Promise<void> {
     if (this.config.dryRun) return;
@@ -29,7 +52,11 @@ export class Trader {
   async getAvailableCollateral(): Promise<number | null> {
     if (this.config.dryRun || !this.client) return null;
     const params: BalanceAllowanceParams = { asset_type: AssetType.COLLATERAL };
-    const response = await this.client.getBalanceAllowance(params);
+    const response = await this.withTimeout(
+      "getAvailableCollateral",
+      this.client.getBalanceAllowance(params),
+      Trader.BALANCE_TIMEOUT_MS,
+    );
     return Number(response.balance) / 1_000_000;
   }
 
@@ -38,18 +65,21 @@ export class Trader {
       throw new Error("Trading client not initialized");
     }
 
-    const response = await this.client.createAndPostOrder(
-      {
-        tokenID: opportunity.token.tokenId,
-        price: opportunity.price,
-        side: Side.BUY,
-        size: opportunity.size,
-      },
-      {
-        tickSize: opportunity.tickSize as "0.1" | "0.01" | "0.001" | "0.0001",
-        negRisk: opportunity.negRisk,
-      },
-      OrderType.GTC,
+    const response = await this.withTimeout(
+      "placeBuy",
+      this.client.createAndPostOrder(
+        {
+          tokenID: opportunity.token.tokenId,
+          price: opportunity.price,
+          side: Side.BUY,
+          size: opportunity.size,
+        },
+        {
+          tickSize: opportunity.tickSize as "0.1" | "0.01" | "0.001" | "0.0001",
+          negRisk: opportunity.negRisk,
+        },
+        OrderType.GTC,
+      ),
     );
 
     return {
@@ -107,19 +137,22 @@ export class Trader {
     const usdcAmount = fokPrice * opportunity.size;
     let response;
     try {
-      response = await this.client.createAndPostMarketOrder(
-        {
-          tokenID: opportunity.token.tokenId,
-          price: fokPrice,
-          amount: usdcAmount,
-          side: Side.BUY,
-          orderType: OrderType.FOK,
-        },
-        {
-          tickSize: opportunity.tickSize as "0.1" | "0.01" | "0.001" | "0.0001",
-          negRisk: opportunity.negRisk,
-        },
-        OrderType.FOK,
+      response = await this.withTimeout(
+        "placeBuyFOK",
+        this.client.createAndPostMarketOrder(
+          {
+            tokenID: opportunity.token.tokenId,
+            price: fokPrice,
+            amount: usdcAmount,
+            side: Side.BUY,
+            orderType: OrderType.FOK,
+          },
+          {
+            tickSize: opportunity.tickSize as "0.1" | "0.01" | "0.001" | "0.0001",
+            negRisk: opportunity.negRisk,
+          },
+          OrderType.FOK,
+        ),
       );
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -166,7 +199,10 @@ export class Trader {
 
   async cancelOrder(orderId: string): Promise<void> {
     if (this.config.dryRun || !this.client) return;
-    await this.client.cancelOrder({ orderID: orderId });
+    await this.withTimeout(
+      "cancelOrder",
+      this.client.cancelOrder({ orderID: orderId }),
+    );
   }
 
   async getOrderStatus(
@@ -175,7 +211,10 @@ export class Trader {
     if (this.config.dryRun || !this.client) {
       return { filled: false, cancelled: false, sizeMatched: 0 };
     }
-    const order = await this.client.getOrder(orderId);
+    const order = await this.withTimeout(
+      "getOrderStatus",
+      this.client.getOrder(orderId),
+    );
     const sizeMatched = Number(order.size_matched);
     const originalSize = Number(order.original_size);
     const filled = sizeMatched >= originalSize && originalSize > 0;

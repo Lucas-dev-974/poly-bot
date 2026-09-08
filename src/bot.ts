@@ -672,17 +672,16 @@ export class ReverseBot {
       return;
     }
 
-    // Hedge must match a committed cheap leg. FOK fills immediately, so it
-    // waits for a cheap fill — not a resting GTC that may never match.
-    // GTC hedge may rest beside a posted cheap (same-tick cheap runs first).
+    // Hedge must match a committed cheap leg. A hedge (GTC or FOK) must
+    // never be posted without a filled cheap — a hedge on a resting cheap
+    // is a naked favorite (C2). The hedge is posted only after the cheap
+    // fill is detected by pollOrderFills, at the next tick.
     const cheapCommitted =
-      opportunity.kind === "expensive" &&
-      this.config.expensiveOrderType === "FOK"
+      opportunity.kind === "expensive"
         ? this.tracker.getFilledCheapSizeForPair(opportunity.pairId)
         : this.tracker.getCheapSizeForPair(opportunity.pairId);
     if (opportunity.kind === "expensive" && cheapCommitted === 0) {
-      // Same-tick cheap was generated but skipped (balance/cap). Do not emit
-      // an order event: that would insert a row every 5s until cheap posts.
+      // No filled cheap leg: do not post a naked hedge.
       log("Hedge skipped - no committed cheap leg", {
         market: opportunity.event.title,
         outcome: opportunity.token.outcome,
@@ -712,9 +711,22 @@ export class ReverseBot {
     // Garde-fou balance : ne pas poster si le solde CLOB disponible est
     // insuffisant pour couvrir le coût estimé. Le solde est caché 30s pour
     // éviter un appel réseau par opportunity (getAvailableCollateral est async).
-    // En dry-run / client non initialisé → available reste null → on saute.
+    // Fail-closed : en mode live, si le solde est inconnu (null = fetch échoué
+    // ou jamais réussi), on rejette l'ordre au lieu de poster à l'aveugle.
+    // En dry-run, available est toujours null (pas de client CLOB) → on passe.
     const available = await this.getCachedAvailableCollateral();
-    if (available !== null && estimatedCost > available) {
+    if (available === null) {
+      if (!this.config.dryRun) {
+        log("Live order skipped - balance unknown (fail-closed)", {
+          kind: opportunity.kind,
+          market: opportunity.event.title,
+          outcome: opportunity.token.outcome,
+        });
+        this.rejectLiveWithRetry(opportunity, "balance-unknown", {});
+        return;
+      }
+      // Dry-run: pas de client CLOB, available est toujours null — autoriser.
+    } else if (estimatedCost > available) {
       this.rejectLiveWithRetry(opportunity, "insufficient-balance", {
         estimatedCost,
         available,

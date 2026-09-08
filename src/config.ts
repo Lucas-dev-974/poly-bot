@@ -205,12 +205,53 @@ export function loadConfig(): BotConfig {
     opportunitySnapshotRetentionMs: envNumber("OPPORTUNITY_SNAPSHOT_RETENTION_DAYS", 7) * 24 * 3600_000,
   };
 
+  // Build a pre-overlay snapshot for divergence detection.
+  const envSnapshot: Record<string, unknown> = {};
+  for (const key of Object.keys(config) as Array<keyof BotConfig>) {
+    envSnapshot[key as string] = config[key];
+  }
+
   try {
     const overlay = readRuntimeSettingsSync(RUNTIME_SETTINGS_PATH);
+    // Log divergences between .env and overlay (warn level).
+    const divergences: string[] = [];
+    for (const overlayKey of Object.keys(overlay) as string[]) {
+      const envValue = envSnapshot[overlayKey];
+      const overlayValue = (overlay as Record<string, unknown>)[overlayKey];
+      const changed =
+        Array.isArray(envValue) && Array.isArray(overlayValue)
+          ? (envValue as unknown[]).join(",") !== (overlayValue as unknown[]).join(",")
+          : envValue !== overlayValue;
+      if (changed) {
+        divergences.push(
+          `${overlayKey}: .env=${JSON.stringify(envValue)} → overlay=${JSON.stringify(overlayValue)}`,
+        );
+      }
+    }
+    if (divergences.length > 0) {
+      console.warn(
+        `[config] Runtime overlay diverges from .env on ${divergences.length} key(s):\n` +
+          divergences.map((d) => `  • ${d}`).join("\n"),
+      );
+    }
     Object.assign(config, overlay);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.warn(`[config] Ignoring runtime settings overlay (${RUNTIME_SETTINGS_PATH}): ${message}`);
+    if (!config.dryRun) {
+      // Fail-loud in live mode: an invalid overlay could silently swap
+      // hedge 6 USDC → 20 USDC or worse. Refuse to start.
+      throw new Error(
+        `[config] Runtime settings file is invalid and DRY_RUN=false.\n` +
+          `  File: ${RUNTIME_SETTINGS_PATH}\n` +
+          `  Error: ${message}\n` +
+          `Refusing to start with potentially wrong settings.\n` +
+          `Fix or remove data/bot-settings.json, or set DRY_RUN=true to bypass.`,
+      );
+    }
+    // Dry-run: warn + ignore (allows development with a broken overlay).
+    console.warn(
+      `[config] Ignoring runtime settings overlay (${RUNTIME_SETTINGS_PATH}): ${message}`,
+    );
   }
 
   return config;

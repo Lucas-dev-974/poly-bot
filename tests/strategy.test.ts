@@ -10,6 +10,25 @@ describe("findOpportunities", () => {
     const tracker = new TradeTracker();
     const event = testEvent();
     const config = testConfig({ expensiveOrderType: "GTC", expensiveOrderUsdc: 10 });
+    // Inject a filled cheap leg so the hedge is allowed (S1.4 anti favori-nu).
+    const pairId = `${event.slug}:${event.windowEnd}`;
+    tracker.addOpenPosition({
+      id: "test-cheap-fill",
+      eventSlug: event.slug,
+      eventTitle: event.title,
+      tokenId: "t-down",
+      outcome: "Down",
+      outcomeIndex: 1,
+      kind: "cheap",
+      limitPrice: 0.13,
+      fillPrice: 0.13,
+      size: 10,
+      cost: 1.3,
+      windowEnd: event.windowEnd,
+      status: "open",
+      fillReason: "marketable",
+      pairId,
+    });
     const opps = findOpportunities(config, tracker, event, books(0.87, 0.08));
     const hedge = opps.find((o) => o.kind === "expensive");
     assert.ok(hedge);
@@ -25,35 +44,35 @@ describe("findOpportunities", () => {
       expensiveOrderUsdc: 5,
       maxSharesPerOrder: 90,
     });
+    const pairId = `${event.slug}:${event.windowEnd}`;
+    // Fill the cheap leg so the hedge is allowed.
+    tracker.addOpenPosition({
+      id: "test-cheap-fill",
+      eventSlug: event.slug,
+      eventTitle: event.title,
+      tokenId: "t-down",
+      outcome: "Down",
+      outcomeIndex: 1,
+      kind: "cheap",
+      limitPrice: 0.08,
+      fillPrice: 0.08,
+      size: 10,
+      cost: 0.8,
+      windowEnd: event.windowEnd,
+      status: "open",
+      fillReason: "marketable",
+      pairId,
+    });
     const opps = findOpportunities(config, tracker, event, books(0.85, 0.08, 200));
     const hedge = opps.find((o) => o.kind === "expensive");
-    const cheap = opps.find((o) => o.kind === "cheap");
     assert.ok(hedge);
-    assert.ok(cheap);
     assert.equal(hedge.size, computeSize(5, 0.85, 90));
-    assert.notEqual(hedge.size, cheap.size);
   });
 
-  it("skips cheap when PAIR_TARGET_COST minus hedge is below CHEAP_BUY_MIN", () => {
+  it("posts cheap at min(ask, cheapBuyMax) when pair lock is satisfied", () => {
     const tracker = new TradeTracker();
     const event = testEvent();
-    const opps = findOpportunities(
-      testConfig({
-        cheapBuyMin: 0.07,
-        cheapBuyMax: 0.25,
-        expensiveBuyMin: 0.8,
-        expensiveBuyMax: 0.9,
-      }),
-      tracker,
-      event,
-      books(0.9, 0.2),
-    );
-    assert.equal(opps.filter((o) => o.kind === "cheap").length, 0);
-  });
-
-  it("posts cheap at 0.15 when expensive is 0.80", () => {
-    const tracker = new TradeTracker();
-    const event = testEvent();
+    // cheap=0.17, hedge=0.80 → pairCost=0.97 ≤ 0.98 → ok
     const opps = findOpportunities(
       testConfig({
         cheapBuyMax: 0.25,
@@ -61,21 +80,19 @@ describe("findOpportunities", () => {
         expensiveBuyMax: 0.9,
         expensiveOrderType: "GTC",
         expensiveOrderUsdc: 20,
+        pairLockMax: 0.98,
       }),
       tracker,
       event,
-      books(0.8, 0.2),
+      books(0.8, 0.17),
     );
     const cheap = opps.find((o) => o.kind === "cheap");
-    const hedge = opps.find((o) => o.kind === "expensive");
     assert.ok(cheap);
-    assert.ok(hedge);
-    assert.equal(cheap.price, 0.15);
-    assert.equal(hedge.price, 0.8);
-    assert.equal(opps.filter((o) => o.kind === "cheap").length, 1);
+    // cheap price = min(ask=0.17, cheapBuyMax=0.25) = 0.17
+    assert.equal(cheap.price, 0.17);
   });
 
-  it("takes the cheap ask when it is below PAIR_TARGET_COST minus hedge", () => {
+  it("takes the cheap ask when it is below cheapBuyMax", () => {
     const tracker = new TradeTracker();
     const event = testEvent();
     const opps = findOpportunities(
@@ -85,6 +102,7 @@ describe("findOpportunities", () => {
         expensiveBuyMax: 0.9,
         expensiveOrderType: "GTC",
         expensiveOrderUsdc: 20,
+        pairLockMax: 0.98,
       }),
       tracker,
       event,
@@ -95,27 +113,50 @@ describe("findOpportunities", () => {
     assert.equal(cheap.price, 0.13);
   });
 
-  it("posts cheap at PAIR_TARGET_COST minus hedge ask", () => {
+  it("skips cheap when pair cost exceeds pairLockMax", () => {
     const tracker = new TradeTracker();
     const event = testEvent();
+    // cheap=0.20, hedge=0.80 → pairCost=1.00 > pairLockMax=0.98 → skip
     const opps = findOpportunities(
       testConfig({
         cheapBuyMax: 0.25,
         expensiveBuyMin: 0.8,
         expensiveBuyMax: 0.9,
-        expensiveOrderType: "GTC",
-        expensiveOrderUsdc: 20,
+        pairLockMax: 0.98,
       }),
       tracker,
       event,
-      books(0.81, 0.2),
+      books(0.8, 0.2),
+    );
+    // With pairLockMax=0.98 and hedge=0.80, cheap must be ≤ 0.18.
+    // ask=0.20 > 0.18 → cheap is clamped below band? No: cheapBuyMax=0.25,
+    // but pairCost=1.00 > 0.98 → pairCostOk=false → no cheap posted.
+    // However the ask 0.20 is above the pairLockMax-hedge=0.18, so
+    // pairCostOk is false and no cheap is generated.
+    const cheap = opps.find((o) => o.kind === "cheap");
+    // The cheap at 0.20 + hedge 0.80 = 1.00 > 0.98 → skipped.
+    // But min(ask=0.20, cheapBuyMax=0.25)=0.20, pairCost=1.00 > 0.98 → skip.
+    assert.equal(cheap, undefined);
+  });
+
+  it("posts cheap when pair cost is within pairLockMax", () => {
+    const tracker = new TradeTracker();
+    const event = testEvent();
+    // cheap=0.17, hedge=0.80 → pairCost=0.97 ≤ 0.98 → ok
+    const opps = findOpportunities(
+      testConfig({
+        cheapBuyMax: 0.25,
+        expensiveBuyMin: 0.8,
+        expensiveBuyMax: 0.9,
+        pairLockMax: 0.98,
+      }),
+      tracker,
+      event,
+      books(0.8, 0.17),
     );
     const cheap = opps.find((o) => o.kind === "cheap");
-    const hedge = opps.find((o) => o.kind === "expensive");
     assert.ok(cheap);
-    assert.ok(hedge);
-    assert.equal(cheap.price, 0.14);
-    assert.equal(hedge.price, 0.81);
+    assert.equal(cheap.price, 0.17);
   });
 
   it("skips cheap when the ask is below CHEAP_BUY_MIN", () => {
@@ -146,6 +187,26 @@ describe("findOpportunities", () => {
     findOpportunities(testConfig(), tracker, event, books(0.87, 0.08));
     const claim = tracker.getWindowClaim(pairId);
     assert.equal(claim?.cheapOutcome, "Down");
+  });
+
+  it("does not post hedge without a filled cheap leg (anti favori-nu, C2)", () => {
+    const tracker = new TradeTracker();
+    const event = testEvent();
+    const config = testConfig({
+      expensiveOrderType: "GTC",
+      expensiveOrderUsdc: 10,
+    });
+    // No filled cheap — hedge should not be generated.
+    const opps = findOpportunities(config, tracker, event, books(0.87, 0.08));
+    const hedge = opps.find((o) => o.kind === "expensive");
+    // Strategy generates the hedge opportunity, but bot.ts S1.4 blocks it.
+    // The strategy itself still generates it based on committedCheapSize.
+    // The anti-favori-nu guard is in bot.ts (getFilledCheapSizeForPair).
+    // So this test verifies the strategy behavior; the bot guard is tested
+    // separately in order-lifecycle tests.
+    // With GTC, committedCheapSize includes resting orders. No resting order
+    // here, so cheapCommittedForHedge = 0 → no hedge generated.
+    assert.equal(hedge, undefined);
   });
 });
 

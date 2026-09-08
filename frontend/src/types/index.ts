@@ -1,7 +1,7 @@
 // Types miroir du backend (src/types.ts + src/dashboard/events.ts)
 // Garder synchronisÃ© avec le backend lors des changements.
 
-export type TradeSide = "BUY";
+export type TradeSide = "BUY" | "SELL";
 
 export interface GammaMarket {
   conditionId: string;
@@ -127,8 +127,8 @@ export interface BotConfig {
   expensiveBuyMax: number;
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: number;
-  pairCostMax: number;
-  pairTargetCost: number;
+  /** Verrou profit : prixCheap + prixHedge ≤ pairLockMax. */
+  pairLockMax: number;
   expensiveOrderUsdc: number;
   expensiveOrderType: "FOK" | "GTC";
   maxSharesPerOrder: number;
@@ -153,8 +153,6 @@ export interface BotConfig {
   simMaxRetryAttempts: number;
   simRandomSeed?: string;
   simRequireCoveredPair: boolean;
-  /** DÃ©sactive les portes de prix locales cÃ´tÃ© cheap (bande + coÃ»t de paire). */
-  disablePairTargetCost: boolean;
   relayerHost: string;
   autoRedeemWinners: boolean;
   dbPath: string;

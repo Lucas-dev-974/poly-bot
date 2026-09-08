@@ -206,35 +206,25 @@ export function findOpportunities(
     return opportunities;
   }
 
-  // Cheap limit is PAIR_TARGET_COST − hedge (0.80 → 0.15 when target is 0.95),
-  // then clamped to the live ask. A BUY at 0.15 while Up asks 0.13 must take
-  // 0.13 — posting above the ask leaves a ghost bid that never matches.
-  // PAIR_COST_MAX still rejects a pair that overshoots after clamps.
+  // Cheap limit is min(bestAsk, cheapBuyMax), clamped to the live ask.
+  // A BUY at 0.15 while Up asks 0.13 must take 0.13 — posting above the ask
+  // leaves a ghost bid that never matches. PAIR_LOCK_MAX (< 1.00) rejects
+  // a pair that overshoots the profit lock after clamps.
   const hedgePrice =
     expensiveToken?.bestAsk != null
       ? Math.min(expensiveToken.bestAsk, config.expensiveBuyMax)
       : config.expensiveBuyMax;
-  const pairCostMaxCents = Math.round(config.pairCostMax * 100);
-
-  // disablePairTargetCost : ignore le calcul pairTargetCost − hedgePrice et
-  // fixe le prix cheap directement à min(bestAsk, cheapBuyMax), comme dans le
-  // chemin sans hedge. La bande cheapBuyMin/cheapBuyMax et le coût de paire
-  // pairCostMax restent appliqués. La jambe hedge reste soumise à sa bande
-  // (favoriteInRange ci-dessus). Les minimums CLOB (5 shares / $1 notional)
-  // restent appliqués par computeSize car exigés par le serveur Polymarket.
-  const usePairTarget = config.enableExpensiveHedge && !config.disablePairTargetCost;
+  const pairLockMaxCents = Math.round(config.pairLockMax * 100);
 
   let thisTickCheapSize = 0;
   if (favoriteInRange) {
-    const targetPrice = usePairTarget
-      ? Math.round((config.pairTargetCost - hedgePrice) * 100) / 100
-      : Math.round(Math.min(cheapToken.bestAsk, config.cheapBuyMax) * 100) / 100;
+    const targetPrice = Math.round(Math.min(cheapToken.bestAsk, config.cheapBuyMax) * 100) / 100;
     const price = Math.round(Math.min(targetPrice, cheapToken.bestAsk) * 100) / 100;
     const pairCostCents = Math.round((price + hedgePrice) * 100);
     const pairCostOk =
       !config.enableExpensiveHedge ||
       !expensiveToken ||
-      pairCostCents <= pairCostMaxCents;
+      pairCostCents <= pairLockMaxCents;
     const askAlive =
       cheapToken.bestAsk !== null && cheapToken.bestAsk >= config.cheapBuyMin;
     const inCheapBand =
@@ -265,21 +255,24 @@ export function findOpportunities(
     }
   }
 
-  // FOK fills immediately: never post it against an unfilled cheap GTC
-  // (that would be a naked favorite). GTC hedge may rest beside a resting cheap.
-  // Size is the USDC budget at hedgePrice — same rule as cheap — not 1:1 shares.
-  const cheapCommittedForHedge =
-    config.expensiveOrderType === "FOK"
-      ? tracker.getFilledCheapSizeForPair(pairId)
-      : committedCheapSize + thisTickCheapSize;
-  const hedgeSize =
-    cheapCommittedForHedge > 0
-      ? computeSize(
-          config.expensiveOrderUsdc,
-          hedgePrice,
-          config.maxSharesPerOrder,
-        )
-      : null;
+  // Hedge sizing: 1:1 with the FILLED cheap leg (B1 arbitrage).
+  // The budget EXPENSIVE_ORDER_USDC is a secondary cap.
+  // Both FOK and GTC hedges require a filled cheap — no hedge on a resting
+  // cheap (anti favori-nu, C2). The bot.ts guard (S1.4) also enforces this,
+  // but we enforce it here too so the strategy doesn't generate opportunities
+  // that would be rejected.
+  const cheapCommittedForHedge = tracker.getFilledCheapSizeForPair(pairId);
+  let hedgeSize: number | null = null;
+  if (cheapCommittedForHedge > 0) {
+    const budgetMax = computeSize(
+      config.expensiveOrderUsdc,
+      hedgePrice,
+      config.maxSharesPerOrder,
+    );
+    hedgeSize = budgetMax !== null
+      ? Math.min(cheapCommittedForHedge, budgetMax)
+      : null; // Budget insufficient — no hedge, excess cheap cut via SELL by bot.
+  }
   // GTC rests below the touch; a thin best ask must not block the hedge.
   const hasDepth =
     hedgeSize !== null &&

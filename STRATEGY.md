@@ -107,19 +107,20 @@ Le cœur décisionnel :
 - **Nouveau cheap seulement si le favori est dans la bande** `[EXPENSIVE_BUY_MIN, EXPENSIVE_BUY_MAX]`. Au-dessus du max (ex. 0.97), on attend. En dessous du min, ce n'est pas un favori.
 - **Claim de fenêtre** : underdog/favori mémorisés (`window_claims`) pour éviter le flip-flop. Si **rien n'est commis** et que l'underdog a flipé, le claim est droppé et recalculé. Un claim cheap-only (`expensive=""`) peut encore recevoir le favori plus tard via `setWindowClaimExpensive`.
 - **Hedge revalidé chaque tick** : si le favori dérive sous `EXPENSIVE_BUY_MIN`, on cesse de poster le hedge.
-- **Coût de paire** : `limite cheap + min(ask favori, EXPENSIVE_BUY_MAX) ≤ PAIR_COST_MAX` (défaut **1.02**). Hedge **FOK** 1:1 après cheap *filled*, seulement si le favori est **encore dans la bande**. `EXPENSIVE_ORDER_USDC` doit couvrir le 1:1 au max (ex. 20 sh × 0.90).
-- **Cheap** : un seul bid à `PAIR_TARGET_COST − hedge` (défaut **0.95** → expensive 0.80 ⇒ cheap **0.15**), s'il est dans `[CHEAP_BUY_MIN, CHEAP_BUY_MAX]` et que l'ask cheap n'est pas déjà sous le floor. **Hedge** : un seul ordre au `min(ask favori, EXPENSIVE_BUY_MAX)`.
+- **Coût de paire** : `prix cheap + min(ask favori, EXPENSIVE_BUY_MAX) ≤ PAIR_LOCK_MAX` (défaut **0.98**, verrou profit < 1.00). Hedge **1:1** après cheap *filled*, seulement si le favori est **encore dans la bande**. `EXPENSIVE_ORDER_USDC` est un plafond secondaire (le dimensionnement principal est 1:1 avec le cheap rempli).
+- **Cheap** : un seul bid à `min(bestAsk, CHEAP_BUY_MAX)`, borné par `PAIR_LOCK_MAX − hedgePrice`, s'il est dans `[CHEAP_BUY_MIN, CHEAP_BUY_MAX]` et que l'ask cheap n'est pas déjà sous le floor. **Hedge** : un seul ordre au `min(ask favori, EXPENSIVE_BUY_MAX)`.
 
 ### 3.4 Calcul de la taille (`utils/prices.ts`)
 
 La taille cheap = budget USDC / prix, plafonnée à `MAX_SHARES_PER_ORDER`, arrondie à 2 décimales, minimum CLOB 5 parts et 1 $ de notionnel. Si l'arrondi tombe juste sous 1 $ (ex. 5.26 × 0.19), la taille est relevée d'un tick.
 
-Le hedge n'est plus un ladder : **un seul ordre 1:1** avec la taille cheap engagée (FOK : cheap *filled* seulement ; GTC : cheap posted + filled + cheap de ce tick), plafonné par `EXPENSIVE_ORDER_USDC / hedgePrice` et `MAX_SHARES_PER_ORDER`. Prix FOK et GTC : `min(bestAsk, EXPENSIVE_BUY_MAX)`. Un GTC n'est pas bloqué par un best ask trop mince (il repose sous le marché).
+Le hedge est dimensionné **1:1** avec la taille cheap **remplie** (pas le budget), plafonné par `EXPENSIVE_ORDER_USDC / hedgePrice` et `MAX_SHARES_PER_ORDER`. Prix FOK et GTC : `min(bestAsk, EXPENSIVE_BUY_MAX)`. Un GTC n'est posté qu'après un cheap rempli (anti favori-nu, C2). Si le budget est insuffisant pour couvrir le cheap rempli, le hedge est limité et l'excédent cheap est coupé via SELL (`defendPair`).
 
 Exemples :
 
-- Cheap @ 8¢, budget 1 USDC → 12.5 parts.
-- Hedge 1:1 @ 0.85, plafond 3 USDC → min(12.5, 3/0.85 ≈ 3.52) = 3.52 parts.
+- Cheap @ 13¢, budget 1 USDC → 7.69 parts.
+- Hedge 1:1 @ 0.85, plafond 20 USDC → min(7.69, 23.5) = 7.69 parts (1:1, budget non contraignant).
+- Hedge 1:1 @ 0.85, plafond 3 USDC → min(7.69, 3.52) = 3.52 parts (budget contraignant, 4.17 parts cheap excédentaires coupées via SELL).
 
 ### 3.5 Exécution des ordres (`trader.ts`)
 

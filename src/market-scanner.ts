@@ -113,6 +113,29 @@ export class MarketScanner {
 
     return books.filter((book): book is TokenBook => book !== null);
   }
+
+  /**
+   * Fetches a single token's order book. Used for targeted re-validation
+   * before posting a hedge (S2.3): the book may have moved since the
+   * opportunity was generated.
+   */
+  async getTokenBook(tokenId: string): Promise<TokenBook | null> {
+    try {
+      const book = await fetchOrderBook(this.config.clobHost, tokenId);
+      return {
+        tokenId,
+        outcome: "",
+        outcomeIndex: 0,
+        bestBid: bestPrice(book.bids, "bid"),
+        bestAsk: bestPrice(book.asks, "ask"),
+        bestAskSize: bestSize(book.asks),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      log("Single token book fetch failed", { tokenId, error: message });
+      return null;
+    }
+  }
 }
 
 async function fetchOrderBook(clobHost: string, tokenId: string): Promise<OrderBook> {

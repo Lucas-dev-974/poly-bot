@@ -247,9 +247,9 @@ export function SettingsModal(props: {
                 <div class="cfg-section">
                   <h4>Jambe cheap (underdog)</h4>
                   <p class="cfg-section__desc">
-                    Bande d'achat et budget USDC de la jambe reverse. Le prix cible
-                    est calculé depuis <code>pairTargetCost − hedgePrice</code> puis
-                    clamped à l'ask live.
+                    Bande d'achat et budget USDC de la jambe reverse. Le prix cheap
+                    est min(bestAsk, cheapBuyMax), borné par le verrou profit
+                    pairLockMax (cheap + hedge ≤ pairLockMax &lt; 1.00).
                   </p>
                   <div class="cfg-grid">
                     <Field label="Cheap min">
@@ -279,37 +279,18 @@ export function SettingsModal(props: {
                       />
                     </Field>
                     <Field
-                      label="Pair target cost"
-                      hint="Cible de coût total de la paire (0.85–1.00)"
+                      label="Pair lock max"
+                      hint="Verrou profit : cheap + hedge ≤ cette valeur (0.90–0.99)"
                     >
                       <NumberInput
-                        value={form().pairTargetCost}
-                        min={0.85}
-                        max={1}
+                        value={form().pairLockMax}
+                        min={0.90}
+                        max={0.99}
                         step={0.01}
-                        onInput={(v) => update("pairTargetCost", v)}
-                      />
-                    </Field>
-                    <Field
-                      label="Pair cost max"
-                      hint="Plafond de coût de paire (1.00–1.10)"
-                    >
-                      <NumberInput
-                        value={form().pairCostMax}
-                        min={1}
-                        max={1.1}
-                        step={0.01}
-                        onInput={(v) => update("pairCostMax", v)}
+                        onInput={(v) => update("pairLockMax", v)}
                       />
                     </Field>
                   </div>
-                  <div class="cfg-divider" />
-                  <Toggle
-                    label="Désactiver le prix cible (pairTargetCost)"
-                    hint="Ignore le calcul pairTargetCost − hedgePrice. Le prix cheap devient min(bestAsk, cheapBuyMax). La bande cheap et pairCostMax restent actives."
-                    checked={form().disablePairTargetCost}
-                    onChange={(v) => update("disablePairTargetCost", v)}
-                  />
                 </div>
               </Show>
 

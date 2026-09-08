@@ -256,6 +256,38 @@ export class TradeTracker {
   }
 
   /**
+   * Volume-weighted average fill price of the cheap legs for a pair.
+   * Used for pair cost re-validation at hedge posting time (S2.3).
+   * Returns null if no cheap leg has been filled.
+   */
+  getCheapFillPriceForPair(pairId: string): number | null {
+    let totalCost = 0;
+    let totalSize = 0;
+    for (const position of this.openPositions) {
+      if (position.pairId === pairId && position.kind === "cheap") {
+        totalCost += position.fillPrice * position.size;
+        totalSize += position.size;
+      }
+    }
+    if (totalSize === 0) return null;
+    return Math.round((totalCost / totalSize) * 100) / 100;
+  }
+
+  /**
+   * Returns the tokenId of the cheap leg for a pair (from the first
+   * filled cheap position). Used by defendPair to know which token to
+   * sell when the pair can no longer be covered.
+   */
+  getCheapTokenForPair(pairId: string): string | null {
+    for (const position of this.openPositions) {
+      if (position.pairId === pairId && position.kind === "cheap") {
+        return position.tokenId;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Shares already committed on the cheap leg of a pair (open fills + GTC
    * resting). Used to know a cheap leg exists before posting a hedge.
    * Resolved legs are ignored.

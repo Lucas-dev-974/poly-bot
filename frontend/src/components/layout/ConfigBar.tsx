@@ -12,7 +12,7 @@ export function ConfigBar(props: { onConfigure?: () => void }): JSX.Element {
           </span>
           <span>
             Hedge <b>{c().expensiveBuyMin}–{c().expensiveBuyMax}</b> · {c().expensiveOrderUsdc} USDC
-            · cible {c().pairTargetCost}
+            · lock {c().pairLockMax}
           </span>
           <span>
             Marchés <b>{c().marketSlugPrefixes.join(", ")}</b>

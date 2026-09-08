@@ -15,8 +15,7 @@ export const EDITABLE_CONFIG_KEYS = [
   "expensiveBuyMax",
   "enableExpensiveHedge",
   "cheapOrderUsdc",
-  "pairCostMax",
-  "pairTargetCost",
+  "pairLockMax",
   "expensiveOrderUsdc",
   "expensiveOrderType",
   "maxSharesPerOrder",
@@ -34,7 +33,6 @@ export const EDITABLE_CONFIG_KEYS = [
   "simMaxRetryAttempts",
   "simRandomSeed",
   "simRequireCoveredPair",
-  "disablePairTargetCost",
 ] as const;
 
 export type EditableConfigKey = (typeof EDITABLE_CONFIG_KEYS)[number];
@@ -132,8 +130,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "expensiveBuyMin":
     case "expensiveBuyMax":
     case "cheapOrderUsdc":
-    case "pairCostMax":
-    case "pairTargetCost":
+    case "pairLockMax":
     case "expensiveOrderUsdc":
     case "maxSharesPerOrder":
     case "maxOpenPositionsPerSide":
@@ -151,7 +148,6 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
       return parseNullableNumber(value, key);
     case "enableExpensiveHedge":
     case "simRequireCoveredPair":
-    case "disablePairTargetCost":
       return parseBoolean(value, key);
     case "marketSlugPrefixes":
       return parseStringArray(value, key);

@@ -8,8 +8,7 @@ export type ConfigFormState = {
   expensiveBuyMax: string;
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: string;
-  pairCostMax: string;
-  pairTargetCost: string;
+  pairLockMax: string;
   expensiveOrderUsdc: string;
   expensiveOrderType: "FOK" | "GTC";
   maxSharesPerOrder: string;
@@ -28,7 +27,6 @@ export type ConfigFormState = {
   simMaxRetryAttempts: string;
   simRandomSeed: string;
   simRequireCoveredPair: boolean;
-  disablePairTargetCost: boolean;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -40,8 +38,7 @@ export function configToForm(config: BotConfig): ConfigFormState {
     expensiveBuyMax: String(config.expensiveBuyMax),
     enableExpensiveHedge: config.enableExpensiveHedge,
     cheapOrderUsdc: String(config.cheapOrderUsdc),
-    pairCostMax: String(config.pairCostMax),
-    pairTargetCost: String(config.pairTargetCost),
+    pairLockMax: String(config.pairLockMax),
     expensiveOrderUsdc: String(config.expensiveOrderUsdc),
     expensiveOrderType: config.expensiveOrderType,
     maxSharesPerOrder: String(config.maxSharesPerOrder),
@@ -63,7 +60,6 @@ export function configToForm(config: BotConfig): ConfigFormState {
     simMaxRetryAttempts: String(config.simMaxRetryAttempts),
     simRandomSeed: config.simRandomSeed ?? "",
     simRequireCoveredPair: config.simRequireCoveredPair,
-    disablePairTargetCost: config.disablePairTargetCost,
   };
 }
 
@@ -90,8 +86,7 @@ export function formToPatch(
     expensiveBuyMax: parseNum(form.expensiveBuyMax, "Hedge max"),
     enableExpensiveHedge: form.enableExpensiveHedge,
     cheapOrderUsdc: parseNum(form.cheapOrderUsdc, "Cheap order USDC"),
-    pairCostMax: parseNum(form.pairCostMax, "Pair cost max"),
-    pairTargetCost: parseNum(form.pairTargetCost, "Pair target cost"),
+    pairLockMax: parseNum(form.pairLockMax, "Pair lock max"),
     expensiveOrderUsdc: parseNum(form.expensiveOrderUsdc, "Hedge order USDC"),
     expensiveOrderType: form.expensiveOrderType,
     maxSharesPerOrder: parseNum(form.maxSharesPerOrder, "Max shares"),
@@ -119,7 +114,6 @@ export function formToPatch(
     simMaxRetryAttempts: parseNum(form.simMaxRetryAttempts, "Max retry attempts"),
     simRandomSeed: form.simRandomSeed.trim() === "" ? undefined : form.simRandomSeed.trim(),
     simRequireCoveredPair: form.simRequireCoveredPair,
-    disablePairTargetCost: form.disablePairTargetCost,
   };
 
   if ((next.marketSlugPrefixes?.length ?? 0) === 0) {
@@ -154,8 +148,7 @@ export function validateConfigForm(
     const cheapBuyMax = parseNum(form.cheapBuyMax, "Cheap max");
     const expensiveBuyMin = parseNum(form.expensiveBuyMin, "Hedge min");
     const expensiveBuyMax = parseNum(form.expensiveBuyMax, "Hedge max");
-    const pairCostMax = parseNum(form.pairCostMax, "Pair cost max");
-    const pairTargetCost = parseNum(form.pairTargetCost, "Pair target cost");
+    const pairLockMax = parseNum(form.pairLockMax, "Pair lock max");
     const minutesBeforeCloseMin = parseNum(form.minutesBeforeCloseMin, "Minutes min");
     const minutesBeforeCloseMax = parseNum(form.minutesBeforeCloseMax, "Minutes max");
     const pollIntervalMs = parseNum(form.pollIntervalMs, "Poll interval");
@@ -181,14 +174,8 @@ export function validateConfigForm(
     if (cheapBuyMax >= expensiveBuyMin) {
       errors.push("Cheap max doit être < hedge min");
     }
-    if (pairCostMax < 1 || pairCostMax > 1.1) {
-      errors.push("Pair cost max doit être entre 1.00 et 1.10");
-    }
-    if (pairTargetCost < 0.85 || pairTargetCost > 1) {
-      errors.push("Pair target cost doit être entre 0.85 et 1.00");
-    }
-    if (pairTargetCost > pairCostMax) {
-      errors.push("Pair target cost doit être ≤ pair cost max");
+    if (pairLockMax < 0.90 || pairLockMax >= 1.00) {
+      errors.push("Pair lock max doit être entre 0.90 et 0.99");
     }
     if (minutesBeforeCloseMin > minutesBeforeCloseMax) {
       errors.push("Minutes min doit être ≤ minutes max");

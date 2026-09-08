@@ -71,8 +71,8 @@ export interface BotConfig {
   expensiveBuyMax: number;
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: number;
-  pairCostMax: number;
-  pairTargetCost: number;
+  /** Verrou profit : prixCheap + prixHedge ≤ pairLockMax. Remplace pairCostMax et pairTargetCost. */
+  pairLockMax: number;
   expensiveOrderUsdc: number;
   expensiveOrderType: "FOK" | "GTC";
   maxSharesPerOrder: number;
@@ -103,13 +103,6 @@ export interface BotConfig {
   simMaxRetryAttempts: number;
   simRandomSeed?: string;
   simRequireCoveredPair: boolean;
-  /**
-   * Désactive le calcul du prix cheap via PAIR_TARGET_COST − hedgePrice.
-   * Quand activé, le prix cheap est défini par min(bestAsk, cheapBuyMax),
-   * comme dans le chemin sans hedge. La garde cheapBuyMax < expensiveBuyMin
-   * et le coût de paire pairCostMax restent appliqués.
-   */
-  disablePairTargetCost: boolean;
   dbPath: string;
   persistenceEnabled: boolean;
   builderApiKey?: string;
@@ -148,8 +141,7 @@ export function loadConfig(): BotConfig {
     expensiveBuyMax: envNumber("EXPENSIVE_BUY_MAX", 0.95),
     enableExpensiveHedge: envBoolean("ENABLE_EXPENSIVE_HEDGE", true),
     cheapOrderUsdc: envNumber("CHEAP_ORDER_USDC", 1),
-    pairCostMax: envNumber("PAIR_COST_MAX", 1.02),
-    pairTargetCost: envNumber("PAIR_TARGET_COST", 0.95),
+    pairLockMax: envNumber("PAIR_LOCK_MAX", 0.98),
     expensiveOrderUsdc: envNumber("EXPENSIVE_ORDER_USDC", 3),
     expensiveOrderType: envEnum("EXPENSIVE_ORDER_TYPE", ["FOK", "GTC"] as const, "FOK"),
     maxSharesPerOrder: envNumber("MAX_SHARES_PER_ORDER", 20),
@@ -187,7 +179,6 @@ export function loadConfig(): BotConfig {
     simMaxRetryAttempts: envNumber("SIM_MAX_RETRY_ATTEMPTS", 20),
     simRandomSeed: process.env.SIM_RANDOM_SEED || undefined,
     simRequireCoveredPair: envBoolean("SIM_REQUIRE_COVERED_PAIR", true),
-    disablePairTargetCost: envBoolean("DISABLE_PAIR_TARGET_COST", false),
     dbPath: dryRun
       ? envString("DB_PATH", "data/bot.db")
       : envString("DB_PATH_LIVE", "data/bot-live.db"),
@@ -296,14 +287,8 @@ export function validateConfigCoherence(config: BotConfig): void {
   if (config.cheapBuyMax >= config.expensiveBuyMin) {
     throw new Error("CHEAP_BUY_MAX must be < EXPENSIVE_BUY_MIN");
   }
-  if (config.pairCostMax < 1 || config.pairCostMax > 1.1) {
-    throw new Error("PAIR_COST_MAX must be between 1.00 and 1.10");
-  }
-  if (config.pairTargetCost < 0.85 || config.pairTargetCost > 1) {
-    throw new Error("PAIR_TARGET_COST must be between 0.85 and 1.00");
-  }
-  if (config.pairTargetCost > config.pairCostMax) {
-    throw new Error("PAIR_TARGET_COST must be <= PAIR_COST_MAX");
+  if (config.pairLockMax < 0.90 || config.pairLockMax >= 1.00) {
+    throw new Error("PAIR_LOCK_MAX must be between 0.90 and 0.99 (profit lock < 1.00)");
   }
   if (config.minutesBeforeCloseMin > config.minutesBeforeCloseMax) {
     throw new Error("MINUTES_BEFORE_CLOSE_MIN must be <= MINUTES_BEFORE_CLOSE_MAX");

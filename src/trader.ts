@@ -205,6 +205,83 @@ export class Trader {
     );
   }
 
+  /**
+   * Place a FOK (Fill-or-Kill) SELL market order for the cheap leg — a
+   * cut-loss / pair-defense mechanism (S2.4). When the pair can no longer
+   * be covered (favorite ask left the band or pair cost exceeds lock), the
+   * filled cheap is sold at the current best bid to limit the loss instead
+   * of holding it to resolution (where it would likely expire worthless).
+   *
+   * The caller (defendPair) is responsible for refreshing the book before
+   * constructing the opportunity — placeSell does not fetch the book itself.
+   */
+  async placeSell(opportunity: TradeOpportunity): Promise<OrderResult> {
+    if (!this.client) {
+      throw new Error("Trading client not initialized");
+    }
+
+    const fokPrice = Math.max(opportunity.token.bestBid ?? 0, 0.01);
+    const usdcAmount = fokPrice * opportunity.size;
+    let response;
+    try {
+      response = await this.withTimeout(
+        "placeSell",
+        this.client.createAndPostMarketOrder(
+          {
+            tokenID: opportunity.token.tokenId,
+            price: fokPrice,
+            amount: usdcAmount,
+            side: Side.SELL,
+            orderType: OrderType.FOK,
+          },
+          {
+            tickSize: opportunity.tickSize as "0.1" | "0.01" | "0.001" | "0.0001",
+            negRisk: opportunity.negRisk,
+          },
+          OrderType.FOK,
+        ),
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (/couldn't be fully filled/i.test(msg)) {
+        return {
+          dryRun: false,
+          tokenId: opportunity.token.tokenId,
+          side: "SELL",
+          price: fokPrice,
+          size: opportunity.size,
+          filled: false,
+          filledSize: 0,
+          reason: "killed-fok-sell",
+          orderType: "FOK",
+          response: { errorMsg: msg, success: false } as never,
+        };
+      }
+      throw err;
+    }
+
+    const success = response.success ?? false;
+    // For SELL: makingAmount = shares sold, takingAmount = USDC received
+    const filledSize = success ? Number(response.makingAmount) || 0 : 0;
+    const fillPrice = success && filledSize > 0
+      ? (Number(response.takingAmount) || usdcAmount) / filledSize
+      : fokPrice;
+
+    return {
+      dryRun: false,
+      tokenId: opportunity.token.tokenId,
+      side: "SELL",
+      price: fokPrice,
+      fillPrice,
+      size: opportunity.size,
+      filledSize,
+      filled: success && filledSize > 0,
+      reason: success && filledSize > 0 ? "filled-fok-sell" : "killed-fok-sell",
+      orderType: "FOK",
+      response,
+    };
+  }
+
   async getOrderStatus(
     orderId: string,
   ): Promise<{ filled: boolean; cancelled: boolean; sizeMatched: number }> {

@@ -1,4 +1,4 @@
-export type TradeSide = "BUY";
+export type TradeSide = "BUY" | "SELL";
 
 export interface GammaMarket {
   conditionId: string;

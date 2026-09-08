@@ -697,7 +697,7 @@ export class ReverseBot {
 
     const useFOK =
       opportunity.kind === "expensive" && this.config.expensiveOrderType === "FOK";
-    const estimatedCost = Math.round(
+    let estimatedCost = Math.round(
       (useFOK
         ? Math.min(
             opportunity.token.bestAsk ?? opportunity.price,
@@ -769,6 +769,44 @@ export class ReverseBot {
         cap: this.config.maxExposureUsdc,
       });
       return;
+    }
+
+    // --- Re-validation of pair cost at fill time (S2.3, constat 7.1/C6) ---
+    // The opportunity was generated on a book snapshot that may be stale by
+    // several seconds (network calls, replaceMarketableCheap, previous opps).
+    // Before posting a hedge, re-fetch the favorite's book and verify:
+    //   1. The ask is still in the buy band.
+    //   2. pairCost (cheapFillPrice + freshHedgePrice) ≤ pairLockMax.
+    // If either fails, skip the hedge and attempt to defend the pair (§4.4).
+    if (opportunity.kind === "expensive" && !this.config.dryRun) {
+      const freshBook = await this.scanner.getTokenBook(opportunity.token.tokenId);
+      const freshAsk = freshBook?.bestAsk ?? null;
+      if (freshAsk === null || freshAsk > this.config.expensiveBuyMax) {
+        log("Hedge skipped - favorite ask left the band since generation", {
+          market: opportunity.event.title,
+          outcome: opportunity.token.outcome,
+          originalAsk: opportunity.token.bestAsk,
+          freshAsk,
+        });
+        await this.defendPair(opportunity.pairId);
+        return;
+      }
+      const freshHedgePrice = Math.min(freshAsk, this.config.expensiveBuyMax);
+      const cheapFillPrice = this.tracker.getCheapFillPriceForPair(opportunity.pairId);
+      if (cheapFillPrice !== null && cheapFillPrice + freshHedgePrice > this.config.pairLockMax) {
+        log("Hedge skipped - pair cost exceeds lock at fill time", {
+          cheapFillPrice,
+          freshHedgePrice,
+          pairLockMax: this.config.pairLockMax,
+          market: opportunity.event.title,
+        });
+        await this.defendPair(opportunity.pairId);
+        return;
+      }
+      // Update opportunity with fresh price and recompute estimatedCost
+      // so the exposure cap is checked against the real price, not the stale one.
+      opportunity = { ...opportunity, price: freshHedgePrice };
+      estimatedCost = Math.round(freshHedgePrice * opportunity.size * 100) / 100;
     }
 
     // --- Dispatch: FOK or GTC for expensive hedge, GTC for cheap legs ---
@@ -960,6 +998,94 @@ export class ReverseBot {
       size: result.size,
       response: result.response,
     });
+  }
+
+  /**
+   * Pair defense (S2.4): when a filled cheap leg can no longer be covered
+   * (favorite ask left the band or pair cost exceeds pairLockMax at fill
+   * time), sell the cheap at the current best bid (FOK market) to limit
+   * the loss instead of holding to resolution (likely 100% loss).
+   *
+   * If the FOK SELL doesn't fill (bid too thin), the cheap is held as an
+   * assumed directional position and logged.
+   */
+  private async defendPair(pairId: string): Promise<void> {
+    const cheapTokenId = this.tracker.getCheapTokenForPair(pairId);
+    if (!cheapTokenId) {
+      log("defendPair: no cheap token found for pair", { pairId });
+      return;
+    }
+    const filledCheapSize = this.tracker.getFilledCheapSizeForPair(pairId);
+    if (filledCheapSize <= 0) {
+      log("defendPair: no filled cheap to defend", { pairId });
+      return;
+    }
+
+    // Refresh the cheap book to get a current best bid.
+    const freshBook = await this.scanner.getTokenBook(cheapTokenId);
+    const bestBid = freshBook?.bestBid ?? null;
+    if (bestBid === null || bestBid <= 0) {
+      log("defendPair: no bid to sell into — holding cheap as directional", {
+        pairId,
+        cheapTokenId,
+        filledCheapSize,
+      });
+      return;
+    }
+
+    // Build a synthetic sell opportunity for the cheap token.
+    const pair = this.tracker.getPair(pairId);
+    const sellOpportunity: TradeOpportunity = {
+      kind: "cheap",
+      event: {
+        title: pair?.eventTitle ?? "unknown",
+        slug: pair?.eventSlug ?? "unknown",
+        market: {} as never,
+        windowStart: 0,
+        windowEnd: pair?.windowEnd ?? 0,
+      },
+      token: {
+        tokenId: cheapTokenId,
+        outcome: "",
+        outcomeIndex: 0,
+        bestBid,
+        bestAsk: freshBook?.bestAsk ?? null,
+        bestAskSize: freshBook?.bestAskSize ?? null,
+      },
+      price: bestBid,
+      size: filledCheapSize,
+      tickSize: "0.01",
+      negRisk: false,
+      tradeKey: `defend:${pairId}`,
+      pairId,
+    };
+
+    try {
+      const result = await this.trader.placeSell(sellOpportunity);
+      if (result.filled && (result.filledSize ?? 0) > 0) {
+        log("defendPair: cheap sold via FOK SELL", {
+          pairId,
+          cheapTokenId,
+          fillPrice: result.fillPrice,
+          filledSize: result.filledSize,
+        });
+        bus.emit({ type: "order", result, opportunity: sellOpportunity });
+      } else {
+        log("defendPair: FOK SELL killed — holding cheap as directional", {
+          pairId,
+          cheapTokenId,
+          bestBid,
+          filledCheapSize,
+        });
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      log("defendPair: SELL failed — holding cheap as directional", {
+        pairId,
+        cheapTokenId,
+        error: message,
+      });
+    }
   }
 
   private rejectLiveWithRetry(

@@ -97,13 +97,12 @@ BUILDER_PASSPHRASE=...
 CHEAP_BUY_MIN=0.07              # Do not buy cheap if ask is already below this
 CHEAP_BUY_MAX=0.25              # Cheap limit must stay in this band
 CHEAP_ORDER_USDC=1              # USDC per cheap order
-PAIR_TARGET_COST=0.95           # Cheap = this − hedge (0.80 → 0.15)
+PAIR_LOCK_MAX=0.98              # Verrou profit : cheap + hedge ≤ cette valeur (< 1.00)
 ENABLE_EXPENSIVE_HEDGE=true
 EXPENSIVE_BUY_MIN=0.85          # Min price for expensive leg (must be favorite)
 EXPENSIVE_BUY_MAX=0.95          # Max price for expensive leg
-EXPENSIVE_ORDER_USDC=3          # USDC budget per hedge order (not 1:1 cheap shares)
+EXPENSIVE_ORDER_USDC=3          # Plafond secondaire du hedge (le dimensionnement principal est 1:1 avec le cheap rempli)
 EXPENSIVE_ORDER_TYPE=FOK        # FOK or GTC — both price at min(bestAsk, max)
-PAIR_COST_MAX=1.02              # Hard cap if a pair overshoots the target
 MAX_SHARES_PER_ORDER=20
 MAX_OPEN_POSITIONS_PER_SIDE=1
 MAX_EXPOSURE_USDC=45

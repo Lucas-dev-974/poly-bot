@@ -1,0 +1,87 @@
+import type { BotConfig } from "../src/config.js";
+import type { TokenBook, UpDownEvent } from "../src/types.js";
+
+export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
+  return {
+    pollIntervalMs: 5000,
+    marketSlugPrefixes: ["btc-updown-15m"],
+    cheapBuyMin: 0.07,
+    cheapBuyMax: 0.1,
+    expensiveBuyMin: 0.85,
+    expensiveBuyMax: 0.95,
+    enableExpensiveHedge: true,
+    cheapOrderUsdc: 1,
+    pairCostMax: 1.02,
+    pairTargetCost: 0.95,
+    expensiveOrderUsdc: 3,
+    expensiveOrderType: "GTC",
+    maxSharesPerOrder: 20,
+    maxOpenPositionsPerSide: 1,
+    maxExposureUsdc: 45,
+    minutesBeforeCloseMin: 0,
+    minutesBeforeCloseMax: 15,
+    dryRun: true,
+    readonlyLive: false,
+    signatureType: 3,
+    clobHost: "https://clob.polymarket.com",
+    chainId: 137,
+    gammaApiHost: "https://gamma-api.polymarket.com",
+    dataApiHost: "https://data-api.polymarket.com",
+    enableDashboard: false,
+    dashboardPort: 3105,
+    simulatedCapital: 50,
+    simFillProbabilityNonMarketable: 0.3,
+    simResolveDelaySeconds: 5,
+    simResolveRetryIntervalMs: 5000,
+    simResolveMaxRetries: 5,
+    simResolveFallback: "none",
+    simMaxRetryAttempts: 20,
+    simRequireCoveredPair: true,
+    dbPath: "data/bot.db",
+    persistenceEnabled: false,
+    relayerHost: "https://relayer-v2.polymarket.com",
+    autoRedeemWinners: false,
+    minMinutesBeforeCloseToBuy: null,
+    ...overrides,
+  };
+}
+
+export function testEvent(windowEnd = 1_800_000_000): UpDownEvent {
+  return {
+    title: "BTC Up or Down",
+    slug: `btc-updown-15m-${windowEnd - 900}`,
+    market: {
+      conditionId: "0xcond",
+      slug: `btc-updown-15m-${windowEnd - 900}`,
+      clobTokenIds: '["t-up","t-down"]',
+      outcomes: '["Up","Down"]',
+      negRisk: false,
+      orderPriceMinTickSize: 0.01,
+      active: true,
+      closed: false,
+    },
+    windowStart: windowEnd - 900,
+    windowEnd,
+  };
+}
+
+export function books(upAsk: number, downAsk: number, size = 50): TokenBook[] {
+  return [
+    {
+      tokenId: "t-up",
+      outcome: "Up",
+      outcomeIndex: 0,
+      bestBid: upAsk - 0.01,
+      bestAsk: upAsk,
+      bestAskSize: size,
+    },
+    {
+      tokenId: "t-down",
+      outcome: "Down",
+      outcomeIndex: 1,
+      bestBid: downAsk - 0.01,
+      bestAsk: downAsk,
+      bestAskSize: size,
+    },
+  ];
+}

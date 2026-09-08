@@ -1,0 +1,678 @@
+import type {
+  ArbPairStatus,
+  SimulatedArbPair,
+  SimulatedPosition,
+} from "./types.js";
+import { log } from "./logger.js";
+import type {
+  KeyRepository,
+  PairRepository,
+  PositionRepository,
+  PostedOrderRepository,
+  PostedOrderRow,
+  RetryRepository,
+  WindowClaimRepository,
+} from "./db/repositories.js";
+
+interface WindowClaim {
+  cheapOutcome: string;
+  expensiveOutcome: string;
+}
+
+// Contexte complet d'un ordre placé, suffisant pour recréer une position live
+// au moment où l'ordre est détecté rempli (GTC). Réutilisé par le dashboard et
+// par le bot pour émettre un événement openedPosition.
+export interface PostedOrderContext {
+  eventSlug: string;
+  windowEnd: number;
+  tokenId: string;
+  outcome: string;
+  outcomeIndex: number;
+  kind: "cheap" | "expensive";
+  limitPrice: number;
+  size: number;
+  pairId: string;
+  eventTitle: string;
+  bestAskAtFill: number | null;
+}
+
+export type PostedOrderEntry = PostedOrderContext & {
+  cost: number;
+  orderId?: string;
+};
+
+const MAX_RESOLVED_IN_MEMORY = 500;
+
+export class TradeTracker {
+  private readonly keys = new Map<string, number>();
+  private readonly openPositions: SimulatedPosition[] = [];
+  private readonly resolvedPositions: SimulatedPosition[] = [];
+  private readonly pairs = new Map<string, SimulatedArbPair>();
+  private readonly retryCounts = new Map<string, { count: number; updatedAt: number }>();
+  private readonly windowClaims = new Map<string, WindowClaim>();
+  private readonly postedOrders = new Map<string, PostedOrderEntry>();
+  private cumulativeRealizedPnl = 0;
+  private cumulativeWins = 0;
+  private cumulativeLosses = 0;
+  private pairStats = {
+    arbPnl: 0,
+    directionalPnl: 0,
+    coveredCount: 0,
+    uncoveredCount: 0,
+  };
+
+  constructor(
+    private readonly positionsRepo?: PositionRepository,
+    private readonly pairsRepo?: PairRepository,
+    private readonly keysRepo?: KeyRepository,
+    private readonly retriesRepo?: RetryRepository,
+    private readonly windowClaimsRepo?: WindowClaimRepository,
+    private readonly postedOrdersRepo?: PostedOrderRepository,
+  ) {}
+
+  loadFromDb(): void {
+    if (!this.positionsRepo || !this.pairsRepo) return;
+
+    const openPositions = this.positionsRepo.open();
+    this.openPositions.push(...openPositions);
+    // Ne garder en mémoire que les MAX_RESOLVED_IN_MEMORY plus récentes résolues.
+    // Les compteurs globaux (PnL/wins/losses) sont calculés via SQL pour ne pas
+    // perdre l'historique complet.
+    const recentResolved = this.positionsRepo.recentResolved(MAX_RESOLVED_IN_MEMORY);
+    this.resolvedPositions.push(...recentResolved);
+
+    const stats = this.positionsRepo.getAggregateStats();
+    this.cumulativeRealizedPnl = stats.pnl;
+    this.cumulativeWins = stats.wins;
+    this.cumulativeLosses = stats.losses;
+
+    const unresolved = this.pairsRepo.unresolved();
+    const recentResolvedPairs = this.pairsRepo.recentResolved(MAX_RESOLVED_IN_MEMORY);
+    this.pairStats = this.pairsRepo.getAggregateStats();
+    // Les paires résolues ont realizedPnl/directional persistés — leurs legs ne
+    // servent plus après finalisation. On ne charge que les legs des paires
+    // ouvertes/partielles/couvertes pour reconstruire l'exposition.
+    const openPairIds = unresolved.map((pair) => pair.id);
+    const legs = openPairIds.length > 0 ? this.positionsRepo.byPairIds(openPairIds) : [];
+    const openById = new Map(this.openPositions.map((p) => [p.id, p]));
+    for (const pair of [...unresolved, ...recentResolvedPairs]) {
+      if (pair.status !== "resolved") {
+        pair.cheapLegs = legs
+          .filter((p) => p.pairId === pair.id && p.kind === "cheap")
+          .map((p) => openById.get(p.id) ?? p);
+        pair.expensiveLegs = legs
+          .filter((p) => p.pairId === pair.id && p.kind === "expensive")
+          .map((p) => openById.get(p.id) ?? p);
+      }
+      this.pairs.set(pair.id, pair);
+    }
+
+    // Catch-up finalisation : après un restart (crash, tsx watch), une paire
+    // dont toutes les jambes sont déjà résolues (won/lost) mais qui n'a pas
+    // été finalisée avant l'arrêt resterait sinon 'partial'/'covered' pour
+    // toujours — realizedPnl/directional jamais écrits, stats faussées.
+    // resolvePosition() ne re-traite pas ces jambes (déjà hors openPositions),
+    // donc finalizePair() ne serait jamais rappelé. Les paires 'open' sans
+    // aucune jambe sont ignorées : elles attendent leurs jambes.
+    for (const pair of this.pairs.values()) {
+      if (pair.status === "resolved") continue;
+      const hasLegs = pair.cheapLegs.length + pair.expensiveLegs.length > 0;
+      const allLegsResolved =
+        pair.cheapLegs.every((leg) => leg.status !== "open") &&
+        pair.expensiveLegs.every((leg) => leg.status !== "open");
+      if (hasLegs && allLegsResolved) {
+        this.finalizePair(pair);
+      }
+    }
+
+    if (this.keysRepo) {
+      for (const row of this.keysRepo.all()) this.keys.set(row.key, row.createdAt);
+    }
+    if (this.retriesRepo) {
+      for (const [key, entry] of this.retriesRepo.all()) {
+        this.retryCounts.set(key, entry);
+      }
+    }
+    if (this.windowClaimsRepo) {
+      for (const [pairId, claim] of this.windowClaimsRepo.all()) {
+        this.windowClaims.set(pairId, claim);
+      }
+    }
+    if (this.postedOrdersRepo) {
+      for (const order of this.postedOrdersRepo.all()) {
+        this.postedOrders.set(order.key, {
+          eventSlug: order.eventSlug,
+          windowEnd: order.windowEnd,
+          cost: order.cost,
+          orderId: order.orderId,
+          tokenId: order.tokenId ?? "",
+          outcome: order.outcome ?? "",
+          outcomeIndex: order.outcomeIndex ?? 0,
+          kind: (order.kind as "cheap" | "expensive") ?? "cheap",
+          limitPrice: order.limitPrice ?? 0,
+          size: order.size ?? 0,
+          pairId: order.pairId ?? "",
+          eventTitle: order.eventTitle ?? "",
+          bestAskAtFill: order.bestAskAtFill ?? null,
+        });
+      }
+    }
+  }
+
+  reset(): void {
+    this.keys.clear();
+    this.openPositions.length = 0;
+    this.resolvedPositions.length = 0;
+    this.pairs.clear();
+    this.retryCounts.clear();
+    this.windowClaims.clear();
+    this.postedOrders.clear();
+    this.cumulativeRealizedPnl = 0;
+    this.cumulativeWins = 0;
+    this.cumulativeLosses = 0;
+    this.pairStats = {
+      arbPnl: 0,
+      directionalPnl: 0,
+      coveredCount: 0,
+      uncoveredCount: 0,
+    };
+  }
+
+  makeKey(
+    eventSlug: string,
+    outcome: string,
+    kind: "cheap" | "expensive",
+    price: number,
+  ): string {
+    return `${eventSlug}:${outcome}:${kind}-${price}`;
+  }
+
+  has(key: string): boolean {
+    return this.keys.has(key);
+  }
+
+  mark(key: string): void {
+    this.keys.set(key, Date.now());
+    this.keysRepo?.mark(key);
+  }
+
+  unmark(key: string): void {
+    this.keys.delete(key);
+    this.keysRepo?.delete(key);
+  }
+
+  addOpenPosition(position: SimulatedPosition): void {
+    this.openPositions.push(position);
+    this.positionsRepo?.insert(position);
+  }
+
+  getOpenPositions(): SimulatedPosition[] {
+    return [...this.openPositions];
+  }
+
+  countOpenPositionsForSide(eventSlug: string, outcome: string): number {
+    return this.openPositions.filter(
+      (p) => p.eventSlug === eventSlug && p.outcome === outcome,
+    ).length;
+  }
+
+  /**
+   * Compte en DB le nombre de jambes d'un kind donné pour un pairId, tout
+   * statut confondu. Backstop DB-backed au guard mémoire : si le Map
+   * postedOrders est vide après un restart tsx watch, ce compteur empêche
+   * quand même l'empilement de plusieurs jambes cheap sur la même fenêtre.
+   */
+  countLegsByKind(pairId: string, kind: "cheap" | "expensive"): number {
+    return this.positionsRepo?.countLegsByKind(pairId, kind) ?? 0;
+  }
+
+  /**
+   * Nombre d'ordres live GTC en attente sur le carnet (resting) pour un
+   * (eventSlug, outcome) donné. En mode live, ces ordres ne sont pas encore
+   * des positions ouvertes mais ils représentent une exposition future
+   * potentielle : ils doivent être comptabilisés dans le garde-fou
+   * maxOpenPositionsPerSide pour éviter d'empiler plusieurs ordres sur le
+   * même outcome tant que le précédent n'est ni rempli ni annulé.
+   */
+  countPendingOrdersForSide(eventSlug: string, outcome: string): number {
+    let count = 0;
+    for (const order of this.postedOrders.values()) {
+      if (order.eventSlug === eventSlug && order.outcome === outcome) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  /** Filled cheap shares only. FOK hedges must wait for this — not a resting GTC. */
+  getFilledCheapSizeForPair(pairId: string): number {
+    let total = 0;
+    for (const position of this.openPositions) {
+      if (position.pairId === pairId && position.kind === "cheap") {
+        total += position.size;
+      }
+    }
+    return total;
+  }
+
+  /**
+   * Shares already committed on the cheap leg of a pair (open fills + GTC
+   * resting). Used to know a cheap leg exists before posting a hedge.
+   * Resolved legs are ignored.
+   */
+  getCheapSizeForPair(pairId: string): number {
+    let total = this.getFilledCheapSizeForPair(pairId);
+    for (const order of this.postedOrders.values()) {
+      if (
+        order.pairId === pairId &&
+        order.kind === "cheap" &&
+        !this.postedOverlapsOpen(order)
+      ) {
+        total += order.size;
+      }
+    }
+    return total;
+  }
+
+  getResolvedPositions(): SimulatedPosition[] {
+    return [...this.resolvedPositions].sort(
+      (a, b) => (b.resolvedAt ?? 0) - (a.resolvedAt ?? 0),
+    );
+  }
+
+  getRealizedPnl(): number {
+    return this.cumulativeRealizedPnl;
+  }
+
+  getCumulativeWins(): number {
+    return this.cumulativeWins;
+  }
+
+  getCumulativeLosses(): number {
+    return this.cumulativeLosses;
+  }
+
+  getCumulativeResolvedCount(): number {
+    return this.cumulativeWins + this.cumulativeLosses;
+  }
+
+  getOpenExposure(): number {
+    return this.openPositions.reduce(
+      (sum, position) => sum + position.cost,
+      0,
+    );
+  }
+
+  incrementRetry(key: string): void {
+    const next = (this.retryCounts.get(key)?.count ?? 0) + 1;
+    this.retryCounts.set(key, { count: next, updatedAt: Date.now() });
+    this.retriesRepo?.increment(key);
+  }
+
+  getRetryCount(key: string): number {
+    return this.retryCounts.get(key)?.count ?? 0;
+  }
+
+  recordPostedOrder(
+    key: string,
+    eventSlug: string,
+    windowEnd: number,
+    cost: number,
+    orderId: string | undefined,
+    context: PostedOrderContext,
+  ): void {
+    this.postedOrders.set(key, {
+      eventSlug,
+      windowEnd,
+      cost,
+      orderId,
+      tokenId: context.tokenId,
+      outcome: context.outcome,
+      outcomeIndex: context.outcomeIndex,
+      kind: context.kind,
+      limitPrice: context.limitPrice,
+      size: context.size,
+      pairId: context.pairId,
+      eventTitle: context.eventTitle,
+      bestAskAtFill: context.bestAskAtFill,
+    });
+    const row: PostedOrderRow = {
+      key,
+      eventSlug,
+      windowEnd,
+      cost,
+      createdAt: Date.now(),
+      orderId,
+      tokenId: context.tokenId,
+      outcome: context.outcome,
+      outcomeIndex: context.outcomeIndex,
+      kind: context.kind,
+      limitPrice: context.limitPrice,
+      size: context.size,
+      pairId: context.pairId,
+      eventTitle: context.eventTitle,
+      bestAskAtFill: context.bestAskAtFill,
+    };
+    this.postedOrdersRepo?.insert(row);
+  }
+
+  removePostedOrder(key: string): void {
+    this.postedOrders.delete(key);
+    this.postedOrdersRepo?.delete(key);
+  }
+
+  getStalePostedOrders(
+    nowSeconds: number,
+  ): Array<{ key: string; orderId?: string } & PostedOrderContext> {
+    const stale: Array<{ key: string; orderId?: string } & PostedOrderContext> = [];
+    for (const [key, order] of this.postedOrders) {
+      if (order.windowEnd + 300 < nowSeconds) {
+        stale.push({ key, orderId: order.orderId, ...this.toContext(order) });
+      }
+    }
+    return stale;
+  }
+
+  getPostedOrdersWithOrderId(): Array<{ key: string; orderId: string } & PostedOrderContext> {
+    const result: Array<{ key: string; orderId: string } & PostedOrderContext> = [];
+    for (const [key, order] of this.postedOrders) {
+      if (order.orderId) result.push({ key, orderId: order.orderId, ...this.toContext(order) });
+    }
+    return result;
+  }
+
+  private toContext(order: PostedOrderEntry): PostedOrderContext {
+    const { cost: _cost, orderId: _orderId, ...context } = order;
+    return context;
+  }
+
+  /**
+   * True when this posted row is the same fill already in openPositions
+   * (crash between addOpenPosition and removePostedOrder). Match by CLOB
+   * orderId when we have one — tokenId alone would drop a second resting
+   * cheap on the same outcome if maxOpenPositionsPerSide > 1.
+   */
+  private postedOverlapsOpen(order: PostedOrderEntry): boolean {
+    if (order.orderId) {
+      const liveId = `live:${order.orderId}`;
+      return this.openPositions.some((position) => position.id === liveId);
+    }
+    return this.openPositions.some(
+      (position) =>
+        position.pairId === order.pairId &&
+        position.kind === order.kind &&
+        position.tokenId === order.tokenId,
+    );
+  }
+
+  getRestingExposure(): number {
+    let total = 0;
+    for (const order of this.postedOrders.values()) {
+      if (!this.postedOverlapsOpen(order)) total += order.cost;
+    }
+    return total;
+  }
+
+  prunePostedOrders(nowSeconds: number): void {
+    for (const [key, order] of this.postedOrders) {
+      const age = nowSeconds - order.windowEnd;
+      const noAck = !order.orderId && age > 900;
+      const ancient = age > 86_400;
+      if (!noAck && !ancient) continue;
+      if (ancient && order.orderId) {
+        log("Posted order pruned after 24h without confirmed cancel", {
+          orderId: order.orderId,
+          eventSlug: order.eventSlug,
+        });
+      }
+      this.postedOrders.delete(key);
+    }
+    this.postedOrdersRepo?.pruneStale(nowSeconds);
+  }
+
+  pruneWindowClaims(nowSeconds: number): void {
+    for (const pairId of this.windowClaims.keys()) {
+      const match = pairId.match(/:(\d{10})$/);
+      if (!match) continue;
+      if (Number(match[1]) + 900 < nowSeconds) {
+        this.windowClaims.delete(pairId);
+        this.windowClaimsRepo?.delete(pairId);
+      }
+    }
+  }
+
+  claimWindowOutcomes(
+    pairId: string,
+    cheapOutcome: string,
+    expensiveOutcome: string,
+  ): void {
+    if (!this.windowClaims.has(pairId)) {
+      this.windowClaims.set(pairId, { cheapOutcome, expensiveOutcome });
+      this.windowClaimsRepo?.set(pairId, { cheapOutcome, expensiveOutcome });
+    }
+  }
+
+  setWindowClaimExpensive(pairId: string, expensiveOutcome: string): void {
+    const existing = this.windowClaims.get(pairId);
+    if (!existing || existing.expensiveOutcome) return;
+    const next = { ...existing, expensiveOutcome };
+    this.windowClaims.set(pairId, next);
+    this.windowClaimsRepo?.set(pairId, next);
+  }
+
+  getWindowClaim(pairId: string): WindowClaim | undefined {
+    return this.windowClaims.get(pairId);
+  }
+
+  clearWindowClaim(pairId: string): void {
+    this.windowClaims.delete(pairId);
+    this.windowClaimsRepo?.delete(pairId);
+  }
+
+  getOrCreatePair(eventSlug: string, eventTitle: string, windowEnd: number): SimulatedArbPair {
+    const id = `${eventSlug}:${windowEnd}`;
+    let pair = this.pairs.get(id);
+    if (!pair) {
+      pair = {
+        id,
+        eventSlug,
+        eventTitle,
+        windowEnd,
+        cheapLegs: [],
+        expensiveLegs: [],
+        status: "open",
+      };
+      this.pairs.set(id, pair);
+      this.pairsRepo?.upsert(pair);
+    }
+    return pair;
+  }
+
+  getPair(pairId: string): SimulatedArbPair | undefined {
+    return this.pairs.get(pairId);
+  }
+
+  attachLeg(position: SimulatedPosition): void {
+    const pair = this.getOrCreatePair(
+      position.eventSlug,
+      position.eventTitle,
+      position.windowEnd,
+    );
+    const legs =
+      position.kind === "cheap" ? pair.cheapLegs : pair.expensiveLegs;
+    if (!legs.some((leg) => leg.id === position.id)) {
+      legs.push(position);
+    }
+    pair.status = this.computePairStatus(pair);
+    this.pairsRepo?.upsert(pair);
+  }
+
+  private computePairStatus(pair: SimulatedArbPair): ArbPairStatus {
+    const hasCheap = pair.cheapLegs.length > 0;
+    const hasExpensive = pair.expensiveLegs.length > 0;
+    if (hasCheap && hasExpensive) return "covered";
+    if (hasCheap || hasExpensive) return "partial";
+    return "open";
+  }
+
+  getOpenPairs(): SimulatedArbPair[] {
+    return [...this.pairs.values()].filter((pair) => pair.status !== "resolved");
+  }
+
+  getResolvedPairs(): SimulatedArbPair[] {
+    return [...this.pairs.values()].filter((pair) => pair.status === "resolved");
+  }
+
+  getArbRealizedPnl(): number {
+    if (this.pairsRepo) return this.pairStats.arbPnl;
+    return this.getResolvedPairs().reduce(
+      (sum, pair) => sum + (pair.directional ? 0 : pair.realizedPnl ?? 0),
+      0,
+    );
+  }
+
+  getDirectionalRealizedPnl(): number {
+    if (this.pairsRepo) return this.pairStats.directionalPnl;
+    return this.getResolvedPairs().reduce(
+      (sum, pair) => sum + (pair.directional ? pair.realizedPnl ?? 0 : 0),
+      0,
+    );
+  }
+
+  getCoveredExposure(): number {
+    return this.getOpenPairs()
+      .filter((pair) => pair.status === "covered")
+      .reduce(
+        (sum, pair) =>
+          sum +
+          pair.cheapLegs.filter((l) => l.status === "open").reduce((s, l) => s + l.cost, 0) +
+          pair.expensiveLegs.filter((l) => l.status === "open").reduce((s, l) => s + l.cost, 0),
+        0,
+      );
+  }
+
+  getUncoveredExposure(): number {
+    return this.getOpenPairs()
+      .filter((pair) => pair.status === "partial")
+      .reduce(
+        (sum, pair) =>
+          sum +
+          pair.cheapLegs.filter((l) => l.status === "open").reduce((s, l) => s + l.cost, 0) +
+          pair.expensiveLegs.filter((l) => l.status === "open").reduce((s, l) => s + l.cost, 0),
+        0,
+      );
+  }
+
+  getCoveredCount(): number {
+    if (this.pairsRepo) return this.pairStats.coveredCount;
+    return this.getResolvedPairs().filter((pair) => !pair.directional).length;
+  }
+
+  getUncoveredCount(): number {
+    if (this.pairsRepo) return this.pairStats.uncoveredCount;
+    return this.getResolvedPairs().filter((pair) => pair.directional).length;
+  }
+
+  resolvePosition(position: SimulatedPosition): void {
+    const index = this.openPositions.findIndex((p) => p.id === position.id);
+    if (index !== -1) {
+      this.openPositions.splice(index, 1);
+    }
+    this.cumulativeRealizedPnl += position.pnl ?? 0;
+    if (position.status === "won") this.cumulativeWins++;
+    if (position.status === "lost") this.cumulativeLosses++;
+    this.resolvedPositions.push(position);
+    if (this.resolvedPositions.length > MAX_RESOLVED_IN_MEMORY) {
+      this.resolvedPositions.shift();
+    }
+    this.positionsRepo?.updateStatus(position);
+  }
+
+  /**
+   * Removes an already-resolved position from the open list WITHOUT
+   * re-counting its PnL/wins/losses. Used by the PositionResolver guard
+   * when a position is already resolved (status !== "open") but still
+   * appears in getOpenPositions() due to a race or restart.
+   */
+  pruneResolvedPosition(position: SimulatedPosition): void {
+    const index = this.openPositions.findIndex((p) => p.id === position.id);
+    if (index !== -1) {
+      this.openPositions.splice(index, 1);
+    }
+    // Do NOT add to cumulativeRealizedPnl/wins/losses — already counted.
+    // Only persist the status in case it wasn't saved.
+    this.positionsRepo?.updateStatus(position);
+  }
+
+  finalizePair(pair: SimulatedArbPair): void {
+    const cheapLegs = pair.cheapLegs;
+    const expensiveLegs = pair.expensiveLegs;
+
+    const totalCheapCredit = cheapLegs.reduce(
+      (sum, leg) => sum + (leg.status === "won" ? leg.size : 0),
+      0,
+    );
+    const totalExpensiveCredit = expensiveLegs.reduce(
+      (sum, leg) => sum + (leg.status === "won" ? leg.size : 0),
+      0,
+    );
+    const totalCheapCost = cheapLegs.reduce((sum, leg) => sum + leg.cost, 0);
+    const totalExpensiveCost = expensiveLegs.reduce(
+      (sum, leg) => sum + leg.cost,
+      0,
+    );
+
+    pair.realizedPnl =
+      totalCheapCredit +
+      totalExpensiveCredit -
+      totalCheapCost -
+      totalExpensiveCost;
+    pair.directional = cheapLegs.length === 0 || expensiveLegs.length === 0;
+    pair.status = "resolved";
+    pair.resolvedAt = Date.now();
+
+    this.pairsRepo?.upsert(pair);
+    if (this.pairsRepo) {
+      this.pairStats = this.pairsRepo.getAggregateStats();
+    } else if (pair.directional) {
+      this.pairStats.uncoveredCount++;
+      this.pairStats.directionalPnl += pair.realizedPnl ?? 0;
+    } else {
+      this.pairStats.coveredCount++;
+      this.pairStats.arbPnl += pair.realizedPnl ?? 0;
+    }
+    this.evictOldResolvedPairs();
+    this.clearWindowClaim(pair.id);
+  }
+
+  pruneMemory(beforeTs: number): void {
+    for (const [key, createdAt] of this.keys) {
+      if (createdAt < beforeTs) this.keys.delete(key);
+    }
+    for (const [key, entry] of this.retryCounts) {
+      if (entry.updatedAt < beforeTs) this.retryCounts.delete(key);
+    }
+  }
+
+  getPostedOrdersForPair(
+    pairId: string,
+    kind: "cheap" | "expensive",
+  ): Array<{ key: string; orderId?: string } & PostedOrderContext> {
+    const result: Array<{ key: string; orderId?: string } & PostedOrderContext> = [];
+    for (const [key, order] of this.postedOrders) {
+      if (order.pairId === pairId && order.kind === kind) {
+        result.push({ key, orderId: order.orderId, ...this.toContext(order) });
+      }
+    }
+    return result;
+  }
+
+  private evictOldResolvedPairs(): void {
+    const resolved = [...this.pairs.values()]
+      .filter((pair) => pair.status === "resolved")
+      .sort((a, b) => (b.resolvedAt ?? 0) - (a.resolvedAt ?? 0));
+    for (const pair of resolved.slice(MAX_RESOLVED_IN_MEMORY)) {
+      this.pairs.delete(pair.id);
+    }
+  }
+}

@@ -1,0 +1,635 @@
+import { createServer } from "node:http";
+import { existsSync } from "node:fs";
+import { readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { extname, join, resolve, sep } from "node:path";
+import { type BotConfig, toPublicConfig } from "../config.js";
+import type { Repositories } from "../db/index.js";
+import { bus, type BotEvent } from "./events.js";
+import { getRelayerQuota } from "../relayer-quota.js";
+import type { TradeTracker } from "../trade-tracker.js";
+import type { Trader } from "../trader.js";
+import {
+  applyRuntimeSettings,
+  EDITABLE_CONFIG_KEYS,
+  sanitizePatch,
+} from "../runtime-settings.js";
+import type { EditableConfigKey } from "../runtime-settings.js";
+import { getMarketHistory } from "./market-history.js";
+import { getMarketTrades } from "./market-trades.js";
+
+/**
+ * Always prefer the Vite build output (dist/dashboard/public).
+ * tsx runs this file from src/dashboard/ — ./public there is a stale copy.
+ */
+function resolvePublicDir(): { html: string; dir: string } {
+  const here = fileURLToPath(new URL(".", import.meta.url));
+  const candidates = [
+    join(here, "../../dist/dashboard/public"), // src/dashboard/server.ts
+    join(here, "public"), // dist/dashboard/server.js
+  ];
+  for (const dir of candidates) {
+    const html = join(dir, "index.html");
+    if (existsSync(html)) return { html, dir };
+  }
+  return { html: join(candidates[0], "index.html"), dir: candidates[0] };
+}
+
+const { html: HTML_PATH, dir: PUBLIC_DIR } = resolvePublicDir();
+
+// MIME types pour les assets statiques servis depuis public/ (build Vite).
+const MIME_TYPES: Record<string, string> = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript",
+  ".css": "text/css",
+  ".json": "application/json",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".ico": "image/x-icon",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+};
+
+export class DashboardServer {
+  private tracker: TradeTracker | null = null;
+  private trader: Trader | null = null;
+  private resetFn: (() => void) | null = null;
+  private configHandler: ((changed: Set<EditableConfigKey>) => void) | null = null;
+  private controlHandler: ((enabled: boolean) => void) | null = null;
+  private isPausedFn: (() => boolean) | null = null;
+
+  constructor(
+    private readonly port: number,
+    private readonly config: BotConfig,
+    private readonly repos?: Repositories,
+  ) {}
+
+  setTracker(tracker: TradeTracker): void {
+    this.tracker = tracker;
+  }
+
+  setTrader(trader: Trader): void {
+    this.trader = trader;
+  }
+
+  setResetHandler(fn: () => void): void {
+    this.resetFn = fn;
+  }
+
+  setConfigHandler(fn: (changed: Set<EditableConfigKey>) => void): void {
+    this.configHandler = fn;
+  }
+
+  setControlHandler(fn: (enabled: boolean) => void, isPausedFn: () => boolean): void {
+    this.controlHandler = fn;
+    this.isPausedFn = isPausedFn;
+  }
+
+  start(): void {
+    const server = createServer((req, res) => {
+      const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
+
+      if (url.pathname === "/" || url.pathname === "/index.html") {
+        void this.serveHtml(res);
+        return;
+      }
+
+      if (url.pathname === "/events") {
+        this.handleEvents(res, url.searchParams.get("replay") !== "0");
+        return;
+      }
+
+      if (url.pathname === "/api/state") {
+        this.handleState(res);
+        return;
+      }
+
+      if (url.pathname === "/api/relayer-quota") {
+        this.handleRelayerQuota(res);
+        return;
+      }
+
+      if (url.pathname === "/api/config" && req.method === "GET") {
+        this.handleGetConfig(res);
+        return;
+      }
+
+      if (url.pathname === "/api/config" && req.method === "PATCH") {
+        void this.handlePatchConfig(req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/open-positions") {
+        this.handleOpenPositions(res);
+        return;
+      }
+
+      if (url.pathname === "/api/resolved-positions") {
+        this.handleResolvedPositions(res);
+        return;
+      }
+
+      if (url.pathname === "/api/orders") {
+        this.handleOrders(res);
+        return;
+      }
+
+      if (url.pathname === "/api/market-history") {
+        void this.handleMarketHistory(url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/market-trades") {
+        void this.handleMarketTrades(url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/book-snapshots") {
+        void this.handleBookSnapshots(url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/bot-fills") {
+        this.handleBotFills(url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/reset" && req.method === "POST") {
+        this.handleReset(res, req);
+        return;
+      }
+
+      if (url.pathname === "/api/redeem" && req.method === "POST") {
+        void this.handleRedeem(req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/bot/control" && req.method === "POST") {
+        void this.handleBotControl(req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/bot/control" && req.method === "GET") {
+        this.handleBotControlState(res);
+        return;
+      }
+
+      // Assets statiques du build Vite (JS/CSS hashed sous /assets/).
+      // Le HTML de référence est servi par serveHtml() à la racine.
+      if (url.pathname.startsWith("/assets/")) {
+        void this.serveStatic(url.pathname, res);
+        return;
+      }
+
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      res.end("Not found");
+    });
+
+    server.listen(this.port, "127.0.0.1", () => {
+      console.log(`[dashboard] listening on http://127.0.0.1:${this.port}`);
+      console.log(`[dashboard] static assets: ${PUBLIC_DIR}`);
+    });
+
+    // The redeem endpoint can take 1-3 minutes (relayer polling). Node's
+    // default request timeout is 120s, which is too short. Allow 5 min.
+    server.requestTimeout = 300_000;
+    server.headersTimeout = 300_000;
+  }
+
+  private async serveHtml(res: import("node:http").ServerResponse): Promise<void> {
+    try {
+      const html = await readFile(HTML_PATH);
+      res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+      });
+      res.end(html);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      res.end(
+        `Failed to load dashboard: ${message}. Run npm run build:dashboard.`,
+      );
+    }
+  }
+
+  /**
+   * Sert un asset statique depuis public/ (build Vite : JS/CSS hashed).
+   * Sécurisé contre le path traversal : on résout le chemin et on vérifie
+   * qu'il reste bien dans PUBLIC_DIR.
+   */
+  private async serveStatic(
+    pathname: string,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    try {
+      // Strip the leading slash: path.join on Windows treats "/assets/x" as
+      // an absolute path and ignores PUBLIC_DIR.
+      const relative = pathname.replace(/^\/+/, "");
+      const resolved = resolve(PUBLIC_DIR, relative);
+      const root = resolve(PUBLIC_DIR) + sep;
+      if (resolved !== resolve(PUBLIC_DIR) && !resolved.startsWith(root)) {
+        res.writeHead(403, { "Content-Type": "text/plain" });
+        res.end("Forbidden");
+        return;
+      }
+      const content = await readFile(resolved);
+      const mime = MIME_TYPES[extname(resolved)] ?? "application/octet-stream";
+      res.writeHead(200, {
+        "Content-Type": mime,
+        "Cache-Control": "public, max-age=31536000, immutable",
+      });
+      res.end(content);
+    } catch {
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      res.end("Not found");
+    }
+  }
+
+  private handleEvents(
+    res: import("node:http").ServerResponse,
+    replay: boolean,
+  ): void {
+    res.writeHead(200, {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    });
+
+    const send = (event: BotEvent): void => {
+      res.write(`data: ${JSON.stringify(event)}\n\n`);
+    };
+
+    if (replay) {
+      for (const event of bus.replay()) {
+        send(event);
+      }
+    }
+
+    const unsubscribe = bus.subscribe(send);
+
+    const heartbeat = setInterval(() => {
+      res.write(": ping\n\n");
+    }, 15000);
+
+    res.on("close", () => {
+      clearInterval(heartbeat);
+      unsubscribe();
+    });
+  }
+
+  private handleState(res: import("node:http").ServerResponse): void {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        config: toPublicConfig(this.config),
+        events: bus.replay(),
+      }),
+    );
+  }
+
+  private handleRelayerQuota(res: import("node:http").ServerResponse): void {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ quota: getRelayerQuota() }));
+  }
+
+  private handleGetConfig(res: import("node:http").ServerResponse): void {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        config: toPublicConfig(this.config),
+        editableKeys: EDITABLE_CONFIG_KEYS,
+      }),
+    );
+  }
+
+  private async handlePatchConfig(
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return;
+    }
+
+    try {
+      const body = await this.readBody(req);
+      const parsed = JSON.parse(body) as unknown;
+      const patch = sanitizePatch(parsed);
+      const changed = await applyRuntimeSettings(this.config, patch);
+      this.configHandler?.(changed);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          ok: true,
+          config: toPublicConfig(this.config),
+        }),
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const status = message.startsWith("Request body") ||
+        message.startsWith("Unknown field") ||
+        message.startsWith("Field not editable") ||
+        message.startsWith("Invalid") ||
+        message.startsWith("At least one") ||
+        message.includes("must be")
+        ? 400
+        : 500;
+      res.writeHead(status, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: message }));
+    }
+  }
+
+  private handleOpenPositions(res: import("node:http").ServerResponse): void {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        positions: this.tracker ? this.tracker.getOpenPositions() : [],
+      }),
+    );
+  }
+
+  private handleResolvedPositions(res: import("node:http").ServerResponse): void {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        positions: this.tracker ? this.tracker.getResolvedPositions() : [],
+      }),
+    );
+  }
+
+  private handleOrders(res: import("node:http").ServerResponse): void {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    const rows = this.repos?.orders.recent(100) ?? [];
+    res.end(
+      JSON.stringify({
+        orders: rows.map((row) => ({
+          kind: row.kind,
+          market: row.eventTitle,
+          slug: row.eventSlug,
+          tokenId: row.tokenId,
+          outcome: row.outcome,
+          price: row.limitPrice,
+          fillPrice: row.fillPrice ?? undefined,
+          orderId: row.orderId ?? undefined,
+          size: row.size,
+          windowEnd: row.windowEnd,
+          filled: row.filled === 1,
+          reason: row.reason ?? undefined,
+          orderType: row.orderType,
+        })),
+      }),
+    );
+  }
+
+  private async handleMarketHistory(
+    url: URL,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    const tokenId = url.searchParams.get("tokenId") ?? "";
+    const oppositeTokenId = url.searchParams.get("oppositeTokenId") ?? "";
+    const startTs = Number(url.searchParams.get("startTs"));
+    const endTs = Number(url.searchParams.get("endTs"));
+
+    if (!tokenId || !Number.isFinite(startTs) || !Number.isFinite(endTs)) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "tokenId, startTs and endTs are required" }));
+      return;
+    }
+
+    try {
+      const result = await getMarketHistory(this.config, {
+        tokenId,
+        oppositeTokenId: oppositeTokenId || undefined,
+        startTs,
+        endTs,
+      });
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(result));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: message }));
+    }
+  }
+
+  private async handleMarketTrades(
+    url: URL,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    const conditionId = url.searchParams.get("conditionId") ?? "";
+    if (!conditionId) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "conditionId is required" }));
+      return;
+    }
+
+    try {
+      const trades = await getMarketTrades(this.config, conditionId);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ trades }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: message }));
+    }
+  }
+
+  private async handleBookSnapshots(
+    url: URL,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    const tokenId = url.searchParams.get("tokenId") ?? "";
+    const startTs = Number(url.searchParams.get("startTs"));
+    const endTs = Number(url.searchParams.get("endTs"));
+    if (!tokenId || !Number.isFinite(startTs) || !Number.isFinite(endTs)) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "tokenId, startTs and endTs are required" }));
+      return;
+    }
+    const snapshots =
+      this.repos?.bookSnapshots.byTokenAndRange(tokenId, startTs * 1000, endTs * 1000) ?? [];
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ snapshots }));
+  }
+
+  /**
+   * Fills du bot (table `orders`, filled=1) pour un ou plusieurs tokenIds.
+   * Source de vérité pour l'heure et le prix d'entrée : l'API Data Polymarket
+   * ne renvoie souvent qu'une jambe et la liste positions n'a pas d'heure de fill.
+   */
+  private handleBotFills(
+    url: URL,
+    res: import("node:http").ServerResponse,
+  ): void {
+    const tokenIds = (url.searchParams.get("tokenIds") ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+    if (tokenIds.length === 0) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "tokenIds is required" }));
+      return;
+    }
+    const rows = this.repos?.orders.filledByTokenIds(tokenIds) ?? [];
+    const fills = rows.map((r) => ({
+      timestamp: Math.floor((r.filledTs ?? r.ts) / 1000),
+      price: r.fillPrice ?? r.limitPrice,
+      size: r.size,
+      side: "BUY" as const,
+      outcome: r.outcome,
+      outcomeIndex: r.outcomeIndex,
+      tokenId: r.tokenId,
+      dryRun: r.dryRun === 1,
+    }));
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ fills }));
+  }
+
+  private isAllowedOrigin(req: import("node:http").IncomingMessage): boolean {
+    const origin = req.headers.origin;
+    if (!origin) return false;
+    const allowed = [
+      `http://127.0.0.1:${this.port}`,
+      `http://localhost:${this.port}`,
+      "http://localhost:5173", // dev Vite
+      "http://127.0.0.1:5173",
+    ];
+    return allowed.includes(origin);
+  }
+
+  private handleReset(
+    res: import("node:http").ServerResponse,
+    req: import("node:http").IncomingMessage,
+  ): void {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return;
+    }
+    if (!this.config.dryRun) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Reset désactivé en mode live" }));
+      return;
+    }
+    try {
+      this.resetFn?.();
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: true }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: message }));
+    }
+  }
+
+  private async handleRedeem(
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return;
+    }
+    let conditionId = "";
+    let outcomeIndex = 0;
+    let negRisk = false;
+    try {
+      const body = await this.readBody(req);
+      const parsed = JSON.parse(body) as {
+        conditionId?: string;
+        outcomeIndex?: number;
+        negRisk?: boolean;
+      };
+      conditionId = String(parsed.conditionId ?? "");
+      outcomeIndex = Number(parsed.outcomeIndex);
+      negRisk = Boolean(parsed.negRisk);
+      if (!conditionId || Number.isNaN(outcomeIndex)) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "conditionId and outcomeIndex are required" }));
+        return;
+      }
+      if (!this.trader) {
+        res.writeHead(503, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "Trader not initialized" }));
+        return;
+      }
+      const result = await this.trader.redeemPosition(
+        conditionId,
+        outcomeIndex,
+        negRisk,
+      );
+      this.repos?.redeems.insert({
+        conditionId,
+        outcomeIndex,
+        negRisk: negRisk ? 1 : 0,
+        txHash: result.txHash,
+        source: "manual",
+        success: 1,
+      });
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: true, txHash: result.txHash, transactionId: result.transactionId }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (conditionId) {
+        this.repos?.redeems.insert({
+          conditionId,
+          outcomeIndex,
+          negRisk: negRisk ? 1 : 0,
+          txHash: null,
+          source: "manual",
+          success: 0,
+          errorMessage: message,
+        });
+      }
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: message }));
+    }
+  }
+
+  private handleBotControlState(res: import("node:http").ServerResponse): void {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ enabled: !this.isPausedFn?.() }));
+  }
+
+  private async handleBotControl(
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return;
+    }
+    try {
+      const body = await this.readBody(req);
+      const parsed = JSON.parse(body) as { enabled?: boolean };
+      const enabled = Boolean(parsed.enabled);
+      this.controlHandler?.(enabled);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: true, enabled }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: message }));
+    }
+  }
+
+  private readBody(req: import("node:http").IncomingMessage): Promise<string> {
+    return new Promise((resolve, reject) => {
+      let data = "";
+      req.on("data", (chunk: Buffer) => {
+        data += chunk.toString();
+        if (data.length > 64 * 1024) {
+          reject(new Error("Request body too large"));
+          req.destroy();
+        }
+      });
+      req.on("end", () => resolve(data));
+      req.on("error", reject);
+    });
+  }
+}

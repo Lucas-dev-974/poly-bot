@@ -57,6 +57,7 @@ export function dispatchEvent(event: BotEvent): void {
           slug: o.event.slug,
           tokenId: o.token.tokenId,
           outcome: o.token.outcome,
+          side: event.result.side,
           price: o.price,
           fillPrice: event.result.fillPrice,
           size: o.size,

@@ -87,7 +87,7 @@ export function formToPatch(
     enableExpensiveHedge: form.enableExpensiveHedge,
     cheapOrderUsdc: parseNum(form.cheapOrderUsdc, "Cheap order USDC"),
     pairLockMax: parseNum(form.pairLockMax, "Pair lock max"),
-    expensiveOrderUsdc: parseNum(form.expensiveOrderUsdc, "Hedge order USDC"),
+    expensiveOrderUsdc: parseNum(form.expensiveOrderUsdc, "Plafond hedge USDC"),
     expensiveOrderType: form.expensiveOrderType,
     maxSharesPerOrder: parseNum(form.maxSharesPerOrder, "Max shares"),
     maxOpenPositionsPerSide: parseNum(form.maxOpenPositionsPerSide, "Max positions"),

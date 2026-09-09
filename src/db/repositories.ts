@@ -525,6 +525,7 @@ export class OrderRepository {
       filled?: boolean;
       reason?: string;
       orderType?: "GTC" | "FOK" | "FAK" | "SIM";
+      side?: "BUY" | "SELL";
       response?: unknown;
     },
     opportunity: {
@@ -578,7 +579,7 @@ export class OrderRepository {
         ts, tradeKey, eventSlug, eventTitle, tokenId, outcome, outcomeIndex,
         kind, orderType, side, limitPrice, fillPrice, size, cost, filled,
         reason, dryRun, orderId, pairId, windowEnd, filledTs
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'BUY', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         now,
         opportunity.tradeKey,
@@ -589,6 +590,7 @@ export class OrderRepository {
         opportunity.token.outcomeIndex,
         opportunity.kind,
         orderType,
+        result.side ?? "BUY",
         result.price,
         fillPrice,
         result.size,

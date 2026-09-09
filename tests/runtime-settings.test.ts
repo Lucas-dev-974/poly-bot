@@ -128,27 +128,19 @@ describe("readRuntimeSettings", () => {
   });
 });
 
-describe("loadConfig overlay merge", () => {
-  it("merges runtime overlay over env defaults", () => {
+describe("loadConfig JSON merge", () => {
+  it("merges runtime JSON over code defaults", () => {
     const path = tempSettingsPath();
     writeFileSync(path, JSON.stringify({ cheapBuyMin: 0.08 }), "utf8");
 
-    const originalPath = process.env.RUNTIME_SETTINGS_TEST_PATH;
-    process.env.CHEAP_BUY_MIN = "0.07";
-
-    // loadConfig uses fixed RUNTIME_SETTINGS_PATH — test via readRuntimeSettingsSync + manual merge
     const base = testConfig({ cheapBuyMin: 0.07 });
     const overlay = readRuntimeSettingsSync(path);
     Object.assign(base, overlay);
     assert.equal(base.cheapBuyMin, 0.08);
-
-    if (originalPath === undefined) delete process.env.RUNTIME_SETTINGS_TEST_PATH;
-    else process.env.RUNTIME_SETTINGS_TEST_PATH = originalPath;
-    delete process.env.CHEAP_BUY_MIN;
   });
 });
 
-describe("validateTradingConfig with overlay", () => {
+describe("validateTradingConfig with JSON settings", () => {
   it("accepts coherent merged config", () => {
     const config = testConfig({ cheapBuyMin: 0.08 });
     assert.doesNotThrow(() => validateTradingConfig(config));

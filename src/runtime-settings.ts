@@ -38,6 +38,36 @@ export const EDITABLE_CONFIG_KEYS = [
 export type EditableConfigKey = (typeof EDITABLE_CONFIG_KEYS)[number];
 export type RuntimeSettingsPatch = Partial<Pick<BotConfig, EditableConfigKey>>;
 
+/** Former .env names — still detected so leftover vars can be warned and ignored. */
+export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
+  pollIntervalMs: "POLL_INTERVAL_MS",
+  marketSlugPrefixes: "MARKET_SLUG_PREFIXES",
+  cheapBuyMin: "CHEAP_BUY_MIN",
+  cheapBuyMax: "CHEAP_BUY_MAX",
+  expensiveBuyMin: "EXPENSIVE_BUY_MIN",
+  expensiveBuyMax: "EXPENSIVE_BUY_MAX",
+  enableExpensiveHedge: "ENABLE_EXPENSIVE_HEDGE",
+  cheapOrderUsdc: "CHEAP_ORDER_USDC",
+  pairLockMax: "PAIR_LOCK_MAX",
+  expensiveOrderUsdc: "EXPENSIVE_ORDER_USDC",
+  expensiveOrderType: "EXPENSIVE_ORDER_TYPE",
+  maxSharesPerOrder: "MAX_SHARES_PER_ORDER",
+  maxOpenPositionsPerSide: "MAX_OPEN_POSITIONS_PER_SIDE",
+  maxExposureUsdc: "MAX_EXPOSURE_USDC",
+  minutesBeforeCloseMin: "MINUTES_BEFORE_CLOSE_MIN",
+  minutesBeforeCloseMax: "MINUTES_BEFORE_CLOSE_MAX",
+  minMinutesBeforeCloseToBuy: "MIN_MINUTES_BEFORE_CLOSE_TO_BUY",
+  simulatedCapital: "SIMULATED_CAPITAL",
+  simFillProbabilityNonMarketable: "SIM_FILL_PROBABILITY_NON_MARKETABLE",
+  simResolveDelaySeconds: "SIM_RESOLVE_DELAY_SECONDS",
+  simResolveRetryIntervalMs: "SIM_RESOLVE_RETRY_INTERVAL_MS",
+  simResolveMaxRetries: "SIM_RESOLVE_MAX_RETRIES",
+  simResolveFallback: "SIM_RESOLVE_FALLBACK",
+  simMaxRetryAttempts: "SIM_MAX_RETRY_ATTEMPTS",
+  simRandomSeed: "SIM_RANDOM_SEED",
+  simRequireCoveredPair: "SIM_REQUIRE_COVERED_PAIR",
+};
+
 const FORBIDDEN_KEYS = new Set([
   "dryRun",
   "readonlyLive",

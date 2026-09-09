@@ -12,6 +12,12 @@ import { polygon } from "viem/chains";
 import type { BotConfig } from "./config.js";
 import { redeemViaRelayer } from "./relayer.js";
 import type { OrderResult, TradeOpportunity } from "./types.js";
+import {
+  confirmedSoldSize,
+  parseOrderStatus,
+  sharesFromConditionalBalance,
+  type ParsedOrderStatus,
+} from "./utils/order-status.js";
 
 export class Trader {
   private client: ClobClient | null = null;
@@ -178,8 +184,9 @@ export class Trader {
     const success = response.success ?? false;
     // takingAmount = shares received (for BUY), makingAmount = USDC spent
     const filledSize = success ? Number(response.takingAmount) || 0 : 0;
+    // 4-decimal round: 8.700000000000001 / 10 must store as 0.87, not float noise.
     const fillPrice = success && filledSize > 0
-      ? (Number(response.makingAmount) || usdcAmount) / filledSize
+      ? round4((Number(response.makingAmount) || usdcAmount) / filledSize)
       : opportunity.price;
 
     return {
@@ -207,10 +214,13 @@ export class Trader {
 
   /**
    * Place a FOK (Fill-or-Kill) SELL market order for the cheap leg — a
-   * cut-loss / pair-defense mechanism (S2.4). When the pair can no longer
-   * be covered (favorite ask left the band or pair cost exceeds lock), the
-   * filled cheap is sold at the current best bid to limit the loss instead
-   * of holding it to resolution (where it would likely expire worthless).
+   * cut-loss / pair-defense mechanism (S2.4). When the favorite ask is
+   * above expensiveBuyMax, the filled cheap is sold at the current best
+   * bid instead of holding it naked to resolution.
+   *
+   * The CLOB FOK response is not trusted alone: a real match can come
+   * back as killed / empty makingAmount. We confirm against the
+   * conditional-token balance drop.
    *
    * The caller (defendPair) is responsible for refreshing the book before
    * constructing the opportunity — placeSell does not fetch the book itself.
@@ -221,8 +231,20 @@ export class Trader {
     }
 
     const fokPrice = Math.max(opportunity.token.bestBid ?? 0, 0.01);
-    const usdcAmount = fokPrice * opportunity.size;
-    let response;
+    // CLOB market SELL semantics: `amount` is the number of SHARES to sell
+    // (UserMarketOrderV2: "SELL orders: Shares to sell"), NOT USDC. Passing
+    // a USDC amount here would sell price × size shares — a 0.12 bid would
+    // sell only 12% of the position instead of all of it.
+    const sellShares = opportunity.size;
+    const heldBefore = await this.getConditionalTokenBalance(opportunity.token.tokenId);
+    let response: {
+      success?: boolean;
+      makingAmount?: string | number;
+      takingAmount?: string | number;
+      errorMsg?: string;
+    } | null = null;
+    let clobFilledSize = 0;
+    let clobFillPrice = fokPrice;
     try {
       response = await this.withTimeout(
         "placeSell",
@@ -230,7 +252,7 @@ export class Trader {
           {
             tokenID: opportunity.token.tokenId,
             price: fokPrice,
-            amount: usdcAmount,
+            amount: sellShares,
             side: Side.SELL,
             orderType: OrderType.FOK,
           },
@@ -241,63 +263,115 @@ export class Trader {
           OrderType.FOK,
         ),
       );
+      const success = response.success ?? false;
+      // For SELL: makingAmount = shares sold, takingAmount = USDC received
+      clobFilledSize = success ? Number(response.makingAmount) || 0 : 0;
+      clobFillPrice = success && clobFilledSize > 0
+        ? round4((Number(response.takingAmount) || fokPrice * clobFilledSize) / clobFilledSize)
+        : fokPrice;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      if (/couldn't be fully filled/i.test(msg)) {
-        return {
-          dryRun: false,
-          tokenId: opportunity.token.tokenId,
-          side: "SELL",
-          price: fokPrice,
-          size: opportunity.size,
-          filled: false,
-          filledSize: 0,
-          reason: "killed-fok-sell",
-          orderType: "FOK",
-          response: { errorMsg: msg, success: false } as never,
-        };
+      if (!/couldn't be fully filled/i.test(msg)) {
+        const heldAfterError = await this.getConditionalTokenBalance(
+          opportunity.token.tokenId,
+        );
+        const recovered = confirmedSoldSize(
+          sellShares,
+          0,
+          heldBefore,
+          heldAfterError,
+        );
+        if (recovered.soldSize > 0) {
+          return {
+            dryRun: false,
+            tokenId: opportunity.token.tokenId,
+            side: "SELL",
+            price: fokPrice,
+            fillPrice: fokPrice,
+            size: opportunity.size,
+            filledSize: recovered.soldSize,
+            filled: true,
+            reason: "filled-fok-sell-balance",
+            orderType: "FOK",
+            response: { errorMsg: msg, success: false } as never,
+          };
+        }
+        throw err;
       }
-      throw err;
+      response = { errorMsg: msg, success: false };
     }
 
-    const success = response.success ?? false;
-    // For SELL: makingAmount = shares sold, takingAmount = USDC received
-    const filledSize = success ? Number(response.makingAmount) || 0 : 0;
-    const fillPrice = success && filledSize > 0
-      ? (Number(response.takingAmount) || usdcAmount) / filledSize
-      : fokPrice;
-
+    const heldAfter = await this.getConditionalTokenBalance(opportunity.token.tokenId);
+    const confirmed = confirmedSoldSize(
+      sellShares,
+      clobFilledSize,
+      heldBefore,
+      heldAfter,
+    );
+    const soldSize = confirmed.soldSize;
+    const filled = soldSize > 0;
     return {
       dryRun: false,
       tokenId: opportunity.token.tokenId,
       side: "SELL",
       price: fokPrice,
-      fillPrice,
+      fillPrice: filled ? clobFillPrice : fokPrice,
       size: opportunity.size,
-      filledSize,
-      filled: success && filledSize > 0,
-      reason: success && filledSize > 0 ? "filled-fok-sell" : "killed-fok-sell",
+      filledSize: soldSize,
+      filled,
+      reason: filled
+        ? clobFilledSize > 0
+          ? "filled-fok-sell"
+          : "filled-fok-sell-balance"
+        : confirmed.balanceUnknown
+          ? "sell-unconfirmed"
+          : "killed-fok-sell",
       orderType: "FOK",
-      response,
+      response: response ?? undefined,
     };
   }
 
-  async getOrderStatus(
-    orderId: string,
-  ): Promise<{ filled: boolean; cancelled: boolean; sizeMatched: number }> {
+  async getOrderStatus(orderId: string): Promise<ParsedOrderStatus> {
     if (this.config.dryRun || !this.client) {
-      return { filled: false, cancelled: false, sizeMatched: 0 };
+      return { filled: false, cancelled: false, sizeMatched: 0, status: "unknown" };
     }
     const order = await this.withTimeout(
       "getOrderStatus",
       this.client.getOrder(orderId),
     );
-    const sizeMatched = Number(order.size_matched);
-    const originalSize = Number(order.original_size);
-    const filled = sizeMatched >= originalSize && originalSize > 0;
-    const cancelled =
-      order.status === "canceled" || order.status === "cancelled";
-    return { filled, cancelled, sizeMatched };
+    return parseOrderStatus(order);
+  }
+
+  /**
+   * Shares of a conditional (outcome) token actually held by the funder.
+   * Returns 0 if the wallet has none, null if the CLOB balance call failed
+   * (caller must fail-closed — do not invent a fill).
+   */
+  async getConditionalTokenBalance(tokenId: string): Promise<number | null> {
+    if (this.config.dryRun || !this.client) return null;
+    const params: BalanceAllowanceParams = {
+      asset_type: AssetType.CONDITIONAL,
+      token_id: tokenId,
+    };
+    try {
+      try {
+        await this.withTimeout(
+          "updateConditionalBalance",
+          this.client.updateBalanceAllowance(params),
+        );
+      } catch {
+        // Cache refresh is best-effort; still try the read.
+      }
+      const response = await this.withTimeout(
+        "getConditionalBalance",
+        this.client.getBalanceAllowance(params),
+      );
+      const raw = Number(response.balance);
+      if (!Number.isFinite(raw)) return null;
+      return sharesFromConditionalBalance(raw);
+    } catch {
+      return null;
+    }
   }
 
   /**
@@ -332,6 +406,10 @@ export class Trader {
 
     return { txHash: result.txHash, transactionId: result.transactionId };
   }
+}
+
+function round4(value: number): number {
+  return Math.round(value * 10_000) / 10_000;
 }
 
 async function createTradingClient(config: BotConfig): Promise<ClobClient> {

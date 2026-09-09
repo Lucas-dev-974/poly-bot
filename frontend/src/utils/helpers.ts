@@ -39,6 +39,10 @@ export function reasonLabel(reason?: string): string {
       return "trop proche de la clôture";
     case "killed-fok":
       return "FOK tué";
+    case "killed-fok-sell":
+      return "SELL FOK tué";
+    case "filled-fok-sell":
+      return "cheap vendu (défense)";
     case "cancelled":
       return "annulé";
     case "order-failed":

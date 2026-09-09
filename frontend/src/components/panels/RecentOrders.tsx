@@ -53,8 +53,12 @@ export function RecentOrders(props: { now: number }): JSX.Element {
                   return (
                     <tr>
                       <td>
-                        <Badge variant={o.kind}>
-                          {o.orderType ? `${o.orderType} - ${o.kind}` : o.kind}
+                        <Badge variant={o.side === "SELL" ? "partiel" : o.kind}>
+                          {o.side === "SELL"
+                            ? `${o.orderType ?? "FOK"} - SELL`
+                            : o.orderType
+                              ? `${o.orderType} - ${o.kind}`
+                              : o.kind}
                         </Badge>
                       </td>
                       <td>

@@ -45,6 +45,17 @@ export class PositionResolver {
       this.resolving.add(position.id);
       try {
         await this.resolvePosition(position);
+      } catch (error) {
+        // resolveDue runs from a fire-and-forget setInterval: an uncaught
+        // rejection here (DB write, unexpected payload) would crash the
+        // process and leave live GTC orders unattended on the exchange.
+        const message = error instanceof Error ? error.message : String(error);
+        log("Position resolution failed, will retry next cycle", {
+          market: position.eventTitle,
+          outcome: position.outcome,
+          error: message,
+        });
+        bus.emit({ type: "error", message: `Resolution failed: ${message}` });
       } finally {
         this.resolving.delete(position.id);
       }

@@ -246,9 +246,21 @@ export class TradeTracker {
 
   /** Filled cheap shares only. FOK hedges must wait for this — not a resting GTC. */
   getFilledCheapSizeForPair(pairId: string): number {
+    return this.getFilledSizeForPair(pairId, "cheap");
+  }
+
+  /** Filled expensive shares only. Used to skip defense on an already-covered pair. */
+  getFilledExpensiveSizeForPair(pairId: string): number {
+    return this.getFilledSizeForPair(pairId, "expensive");
+  }
+
+  private getFilledSizeForPair(
+    pairId: string,
+    kind: "cheap" | "expensive",
+  ): number {
     let total = 0;
     for (const position of this.openPositions) {
-      if (position.pairId === pairId && position.kind === "cheap") {
+      if (position.pairId === pairId && position.kind === kind) {
         total += position.size;
       }
     }
@@ -636,18 +648,89 @@ export class TradeTracker {
     this.positionsRepo?.updateStatus(position);
   }
 
+  /**
+   * Pair defense (S2.4): resolves the filled cheap legs of a pair as SOLD
+   * at `sellPrice × size` proceeds. Used after a successful FOK SELL by
+   * defendPair, when the pair can no longer be covered. Without this, the
+   * sold cheap stays in openPositions: exposure stays inflated,
+   * getFilledCheapSizeForPair stays > 0 (a hedge could be posted against a
+   * cheap already sold), and the resolver would later re-count the same
+   * leg (double PnL).
+   */
+  closePairCheapAsSold(pairId: string, sellPrice: number, soldSize: number): number {
+    let remaining = soldSize;
+    let closedCount = 0;
+    for (const position of [...this.openPositions]) {
+      if (remaining <= 0) break;
+      if (position.pairId !== pairId || position.kind !== "cheap") continue;
+      const closeSize = Math.min(position.size, remaining);
+      const proceeds = Math.round(closeSize * sellPrice * 100) / 100;
+      if (closeSize >= position.size) {
+        position.status = "sold";
+        position.resolvedAt = Date.now();
+        position.pnl = round2(proceeds - position.cost);
+        this.resolvePosition(position);
+        closedCount++;
+      } else {
+        // Partial sale of a larger leg: split into a sold remainder and keep
+        // the rest open (still an assumed directional position).
+        position.size = Math.round((position.size - closeSize) * 100) / 100;
+        position.cost = Math.round(position.fillPrice * position.size * 100) / 100;
+        // Persist the shrunk remainder (INSERT OR REPLACE). Without this a
+        // restart reloads the original size/cost → inflated exposure and an
+        // over-sized 1:1 hedge target.
+        this.positionsRepo?.insert(position);
+        const sold: SimulatedPosition = {
+          ...position,
+          id: `${position.id}:sold-${Date.now()}`,
+          size: closeSize,
+          cost: Math.round(position.fillPrice * closeSize * 100) / 100,
+          status: "sold",
+          resolvedAt: Date.now(),
+          pnl: round2(proceeds - Math.round(position.fillPrice * closeSize * 100) / 100),
+        };
+        this.openPositions.push(sold);
+        this.positionsRepo?.insert(sold);
+        this.resolvePosition(sold);
+        closedCount++;
+      }
+      remaining = Math.round((remaining - closeSize) * 100) / 100;
+    }
+
+    // Finalize the pair when every leg is resolved (sold/won/lost) so the
+    // pair-level realizedPnl is written once, like the resolver path does.
+    if (closedCount > 0) {
+      const pair = this.pairs.get(pairId);
+      if (pair && pair.status !== "resolved") {
+        const allLegsResolved =
+          pair.cheapLegs.every((leg) => leg.status !== "open") &&
+          pair.expensiveLegs.every((leg) => leg.status !== "open");
+        if (allLegsResolved) {
+          this.finalizePair(pair);
+        }
+      }
+    }
+    return closedCount;
+  }
+
   finalizePair(pair: SimulatedArbPair): void {
     const cheapLegs = pair.cheapLegs;
     const expensiveLegs = pair.expensiveLegs;
 
-    const totalCheapCredit = cheapLegs.reduce(
-      (sum, leg) => sum + (leg.status === "won" ? leg.size : 0),
-      0,
-    );
-    const totalExpensiveCredit = expensiveLegs.reduce(
-      (sum, leg) => sum + (leg.status === "won" ? leg.size : 0),
-      0,
-    );
+    // Legs sold via pair defense (defendPair) realize their "credit" at the
+    // sale proceeds (sellPrice × size) instead of a resolution payoff. Their
+    // pnl is already recorded at sale time, so proceeds = pnl + cost —
+    // including them with (pnl + cost) − cost nets to their realized pnl and
+    // keeps the pair-level accounting complete (no double counting: the sale
+    // proceeds enter once, as credit).
+    const legCredit = (leg: SimulatedPosition): number =>
+      leg.status === "won"
+        ? leg.size
+        : leg.status === "sold"
+          ? Math.round(((leg.pnl ?? 0) + leg.cost) * 100) / 100
+          : 0;
+    const totalCheapCredit = cheapLegs.reduce((sum, leg) => sum + legCredit(leg), 0);
+    const totalExpensiveCredit = expensiveLegs.reduce((sum, leg) => sum + legCredit(leg), 0);
     const totalCheapCost = cheapLegs.reduce((sum, leg) => sum + leg.cost, 0);
     const totalExpensiveCost = expensiveLegs.reduce(
       (sum, leg) => sum + leg.cost,
@@ -707,4 +790,8 @@ export class TradeTracker {
       this.pairs.delete(pair.id);
     }
   }
+}
+
+function round2(value: number): number {
+  return Math.round(value * 100) / 100;
 }

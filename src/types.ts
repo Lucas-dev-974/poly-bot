@@ -59,7 +59,8 @@ export interface OrderBook {
   asks?: Array<{ price: string; size: string }>;
 }
 
-export type PositionStatus = "open" | "won" | "lost";
+/** "sold" = cheap leg sold via pair defense (defendPair) before resolution. */
+export type PositionStatus = "open" | "won" | "lost" | "sold";
 export type FillReason = "marketable" | "probabilistic" | "resting";
 
 export interface SimulatedPosition {

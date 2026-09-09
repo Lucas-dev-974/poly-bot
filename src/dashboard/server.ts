@@ -371,6 +371,7 @@ export class DashboardServer {
           slug: row.eventSlug,
           tokenId: row.tokenId,
           outcome: row.outcome,
+          side: row.side,
           price: row.limitPrice,
           fillPrice: row.fillPrice ?? undefined,
           orderId: row.orderId ?? undefined,

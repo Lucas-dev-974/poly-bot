@@ -1,5 +1,13 @@
 import "dotenv/config";
-import { readRuntimeSettingsSync, RUNTIME_SETTINGS_PATH } from "./runtime-settings.js";
+import { existsSync } from "node:fs";
+import {
+  EDITABLE_CONFIG_KEYS,
+  EDITABLE_ENV_ALIASES,
+  readRuntimeSettingsSync,
+  RUNTIME_SETTINGS_PATH,
+  type EditableConfigKey,
+  type RuntimeSettingsPatch,
+} from "./runtime-settings.js";
 
 function envString(key: string, fallback?: string): string {
   const value = process.env[key] ?? fallback;
@@ -23,25 +31,6 @@ function envBoolean(key: string, fallback: boolean): boolean {
   const raw = process.env[key];
   if (raw === undefined || raw === "") return fallback;
   return raw.toLowerCase() === "true" || raw === "1";
-}
-
-function envNumberOrNull(key: string): number | null {
-  const raw = process.env[key];
-  if (raw === undefined || raw === "") return null;
-  const parsed = Number(raw);
-  if (Number.isNaN(parsed)) {
-    throw new Error(`Invalid number for env var ${key}: ${raw}`);
-  }
-  return parsed;
-}
-
-function envList(key: string, fallback: string[]): string[] {
-  const raw = process.env[key];
-  if (raw === undefined || raw === "") return fallback;
-  return raw
-    .split(",")
-    .map((part) => part.trim())
-    .filter(Boolean);
 }
 
 export function envEnum<T extends string>(
@@ -71,7 +60,7 @@ export interface BotConfig {
   expensiveBuyMax: number;
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: number;
-  /** Verrou profit : prixCheap + prixHedge ≤ pairLockMax. Remplace pairCostMax et pairTargetCost. */
+  /** Verrou profit : bid+hedge à l'entrée et fillPrice+hedge après fill, tous deux ≤ pairLockMax. */
   pairLockMax: number;
   expensiveOrderUsdc: number;
   expensiveOrderType: "FOK" | "GTC";
@@ -125,30 +114,65 @@ export interface BotConfig {
   opportunitySnapshotRetentionMs: number;
 }
 
+/**
+ * Code defaults for strategy keys. Used when `data/bot-settings.json` is
+ * missing (dry-run / tests). Live trading requires that file.
+ */
+export function strategyDefaults(): RuntimeSettingsPatch &
+  Pick<BotConfig, EditableConfigKey> {
+  return {
+    pollIntervalMs: 5000,
+    marketSlugPrefixes: ["btc-updown-15m", "eth-updown-15m"],
+    cheapBuyMin: 0.07,
+    cheapBuyMax: 0.1,
+    expensiveBuyMin: 0.85,
+    expensiveBuyMax: 0.95,
+    enableExpensiveHedge: true,
+    cheapOrderUsdc: 1,
+    pairLockMax: 0.98,
+    // 15 USDC covers a $1 cheap at 0.07 (~14 shares) 1:1 at 0.95.
+    // A cap that buys < 5 shares at the hedge price yields no hedge.
+    expensiveOrderUsdc: 15,
+    expensiveOrderType: "FOK",
+    maxSharesPerOrder: 20,
+    maxOpenPositionsPerSide: 1,
+    maxExposureUsdc: 45,
+    minutesBeforeCloseMin: 0,
+    minutesBeforeCloseMax: 15,
+    minMinutesBeforeCloseToBuy: null,
+    simulatedCapital: 50,
+    simFillProbabilityNonMarketable: 0.3,
+    simResolveDelaySeconds: 5,
+    simResolveRetryIntervalMs: 5000,
+    simResolveMaxRetries: 5,
+    simResolveFallback: "none",
+    simMaxRetryAttempts: 20,
+    simRandomSeed: undefined,
+    simRequireCoveredPair: true,
+  };
+}
+
+function warnIgnoredStrategyEnv(): void {
+  const leftover: string[] = [];
+  for (const key of EDITABLE_CONFIG_KEYS) {
+    const envKey = EDITABLE_ENV_ALIASES[key];
+    const raw = process.env[envKey];
+    if (raw !== undefined && raw !== "") leftover.push(envKey);
+  }
+  if (leftover.length === 0) return;
+  console.warn(
+    `[config] Ignoring ${leftover.length} strategy env var(s); source of truth is ${RUNTIME_SETTINGS_PATH}:\n` +
+      leftover.map((name) => `  • ${name}`).join("\n"),
+  );
+}
+
 export function loadConfig(): BotConfig {
   const dryRun = envBoolean("DRY_RUN", true);
   const readonlyLive = envBoolean("READONLY_LIVE", false);
+  const defaults = strategyDefaults();
 
   const config: BotConfig = {
-    pollIntervalMs: envNumber("POLL_INTERVAL_MS", 5000),
-    marketSlugPrefixes: envList("MARKET_SLUG_PREFIXES", [
-      "btc-updown-15m",
-      "eth-updown-15m",
-    ]),
-    cheapBuyMin: envNumber("CHEAP_BUY_MIN", 0.07),
-    cheapBuyMax: envNumber("CHEAP_BUY_MAX", 0.1),
-    expensiveBuyMin: envNumber("EXPENSIVE_BUY_MIN", 0.85),
-    expensiveBuyMax: envNumber("EXPENSIVE_BUY_MAX", 0.95),
-    enableExpensiveHedge: envBoolean("ENABLE_EXPENSIVE_HEDGE", true),
-    cheapOrderUsdc: envNumber("CHEAP_ORDER_USDC", 1),
-    pairLockMax: envNumber("PAIR_LOCK_MAX", 0.98),
-    expensiveOrderUsdc: envNumber("EXPENSIVE_ORDER_USDC", 3),
-    expensiveOrderType: envEnum("EXPENSIVE_ORDER_TYPE", ["FOK", "GTC"] as const, "FOK"),
-    maxSharesPerOrder: envNumber("MAX_SHARES_PER_ORDER", 20),
-    maxOpenPositionsPerSide: envNumber("MAX_OPEN_POSITIONS_PER_SIDE", 1),
-    maxExposureUsdc: envNumber("MAX_EXPOSURE_USDC", 45),
-    minutesBeforeCloseMin: envNumber("MINUTES_BEFORE_CLOSE_MIN", 0),
-    minutesBeforeCloseMax: envNumber("MINUTES_BEFORE_CLOSE_MAX", 15),
+    ...defaults,
     dryRun,
     readonlyLive,
     privateKey: process.env.PRIVATE_KEY as `0x${string}` | undefined,
@@ -163,22 +187,6 @@ export function loadConfig(): BotConfig {
     dataApiHost: envString("DATA_API_HOST", "https://data-api.polymarket.com"),
     enableDashboard: envBoolean("ENABLE_DASHBOARD", true),
     dashboardPort: envNumber("DASHBOARD_PORT", 3105),
-    simulatedCapital: envNumber("SIMULATED_CAPITAL", 50),
-    simFillProbabilityNonMarketable: envNumber(
-      "SIM_FILL_PROBABILITY_NON_MARKETABLE",
-      0.3,
-    ),
-    simResolveDelaySeconds: envNumber("SIM_RESOLVE_DELAY_SECONDS", 5),
-    simResolveRetryIntervalMs: envNumber("SIM_RESOLVE_RETRY_INTERVAL_MS", 5000),
-    simResolveMaxRetries: envNumber("SIM_RESOLVE_MAX_RETRIES", 5),
-    simResolveFallback: envEnum(
-      "SIM_RESOLVE_FALLBACK",
-      ["none", "probabilistic"] as const,
-      "none",
-    ),
-    simMaxRetryAttempts: envNumber("SIM_MAX_RETRY_ATTEMPTS", 20),
-    simRandomSeed: process.env.SIM_RANDOM_SEED || undefined,
-    simRequireCoveredPair: envBoolean("SIM_REQUIRE_COVERED_PAIR", true),
     dbPath: dryRun
       ? envString("DB_PATH", "data/bot.db")
       : envString("DB_PATH_LIVE", "data/bot-live.db"),
@@ -190,58 +198,44 @@ export function loadConfig(): BotConfig {
     relayerApiKeyAddress: process.env.RELAYER_API_KEY_ADDRESS as `0x${string}` | undefined,
     relayerHost: envString("RELAYER_HOST", "https://relayer-v2.polymarket.com"),
     autoRedeemWinners: envBoolean("AUTO_REDEEM_WINNERS", false),
-    minMinutesBeforeCloseToBuy: envNumberOrNull("MIN_MINUTES_BEFORE_CLOSE_TO_BUY"),
     marketSnapshotRetentionMs: envNumber("MARKET_SNAPSHOT_RETENTION_DAYS", 7) * 24 * 3600_000,
     bookSnapshotRetentionMs: envNumber("BOOK_SNAPSHOT_RETENTION_DAYS", 3) * 24 * 3600_000,
     opportunitySnapshotRetentionMs: envNumber("OPPORTUNITY_SNAPSHOT_RETENTION_DAYS", 7) * 24 * 3600_000,
   };
 
-  // Build a pre-overlay snapshot for divergence detection.
-  const envSnapshot: Record<string, unknown> = {};
-  for (const key of Object.keys(config) as Array<keyof BotConfig>) {
-    envSnapshot[key as string] = config[key];
+  warnIgnoredStrategyEnv();
+
+  const settingsPath = RUNTIME_SETTINGS_PATH;
+  if (!dryRun && !existsSync(settingsPath)) {
+    throw new Error(
+      `[config] ${settingsPath} is required when DRY_RUN=false.\n` +
+        `  Copy bot-settings.example.json to data/bot-settings.json, or save once from the dashboard.\n` +
+        `  Secrets stay in .env; strategy parameters live only in that JSON.`,
+    );
   }
 
   try {
-    const overlay = readRuntimeSettingsSync(RUNTIME_SETTINGS_PATH);
-    // Log divergences between .env and overlay (warn level).
-    const divergences: string[] = [];
-    for (const overlayKey of Object.keys(overlay) as string[]) {
-      const envValue = envSnapshot[overlayKey];
-      const overlayValue = (overlay as Record<string, unknown>)[overlayKey];
-      const changed =
-        Array.isArray(envValue) && Array.isArray(overlayValue)
-          ? (envValue as unknown[]).join(",") !== (overlayValue as unknown[]).join(",")
-          : envValue !== overlayValue;
-      if (changed) {
-        divergences.push(
-          `${overlayKey}: .env=${JSON.stringify(envValue)} → overlay=${JSON.stringify(overlayValue)}`,
-        );
-      }
-    }
-    if (divergences.length > 0) {
-      console.warn(
-        `[config] Runtime overlay diverges from .env on ${divergences.length} key(s):\n` +
-          divergences.map((d) => `  • ${d}`).join("\n"),
+    const overlay = readRuntimeSettingsSync(settingsPath);
+    const applied = Object.keys(overlay);
+    if (applied.length > 0) {
+      console.info(
+        `[config] Strategy from ${settingsPath} (${applied.length} key(s))`,
       );
     }
     Object.assign(config, overlay);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (!config.dryRun) {
-      // Fail-loud in live mode: an invalid overlay could silently swap
-      // hedge 6 USDC → 20 USDC or worse. Refuse to start.
       throw new Error(
         `[config] Runtime settings file is invalid and DRY_RUN=false.\n` +
-          `  File: ${RUNTIME_SETTINGS_PATH}\n` +
+          `  File: ${settingsPath}\n` +
           `  Error: ${message}\n` +
           `Refusing to start with potentially wrong settings.\n` +
-          `Fix or remove data/bot-settings.json, or set DRY_RUN=true to bypass.`,
+          `Fix data/bot-settings.json, or set DRY_RUN=true to bypass.`,
       );
     }
-    // Dry-run: warn + ignore (allows development with a broken overlay).
     console.warn(
-      `[config] Ignoring runtime settings overlay (${RUNTIME_SETTINGS_PATH}): ${message}`,
+      `[config] Ignoring runtime settings (${settingsPath}): ${message}`,
     );
   }
 

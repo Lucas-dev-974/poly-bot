@@ -3,7 +3,9 @@ import { log } from "./logger.js";
 import type { TradeTracker } from "./trade-tracker.js";
 import type { TradeOpportunity, TokenBook, UpDownEvent } from "./types.js";
 import { tickSizeFromMarket } from "./utils/market.js";
-import { MIN_CLOB_SHARES, computeSize } from "./utils/prices.js";
+import { MIN_CLOB_SHARES } from "./utils/prices.js";
+import { ArbSizing } from "./strategy/arb-sizing.js";
+import type { SizingStrategy } from "./strategy/sizing.js";
 
 function pickReverseToken(books: TokenBook[]): TokenBook | null {
   const withAsk = books.filter((book) => book.bestAsk !== null);
@@ -44,14 +46,52 @@ function pickTokenByOutcome(books: TokenBook[], outcome: string): TokenBook | nu
 }
 
 /** Favorite is hedgeable only when its ask is already inside the buy band. */
+export function isAskInExpensiveBand(
+  ask: number | null,
+  min: number,
+  max: number,
+): boolean {
+  if (ask === null) return false;
+  return ask >= min && ask <= max;
+}
+
+/**
+ * FOK-sell the cheap only when the favorite is too expensive to hedge.
+ * A missing book must not fire defense. An ask below expensiveBuyMin is
+ * "don't buy the favorite", not "dump the cheap" (that dumps winners).
+ */
+export function shouldDefendUncoveredPair(
+  favoriteAsk: number | null,
+  expensiveBuyMax: number,
+): boolean {
+  if (favoriteAsk === null) return false;
+  return favoriteAsk > expensiveBuyMax;
+}
+
+/**
+ * A pair is covered when the filled expensive size is at least the filled
+ * cheap size. Defense must never sell the cheap in that case: the favorite
+ * going to $1 is the expected path, not an uncovered book.
+ */
+export function isPairCovered(
+  filledCheap: number,
+  filledExpensive: number,
+): boolean {
+  if (!(filledCheap > 0) || !(filledExpensive > 0)) return false;
+  const cheap = Math.round(filledCheap * 100) / 100;
+  const expensive = Math.round(filledExpensive * 100) / 100;
+  return expensive >= cheap;
+}
+
 function favoriteAskInBuyRange(
   token: TokenBook | null,
   config: BotConfig,
 ): boolean {
-  if (!token || token.bestAsk === null) return false;
-  return (
-    token.bestAsk >= config.expensiveBuyMin &&
-    token.bestAsk <= config.expensiveBuyMax
+  if (!token) return false;
+  return isAskInExpensiveBand(
+    token.bestAsk,
+    config.expensiveBuyMin,
+    config.expensiveBuyMax,
   );
 }
 
@@ -110,6 +150,7 @@ export function findOpportunities(
   tracker: TradeTracker,
   event: UpDownEvent,
   books: TokenBook[],
+  sizing: SizingStrategy = new ArbSizing(),
 ): TradeOpportunity[] {
   const opportunities: TradeOpportunity[] = [];
   const pairId = `${event.slug}:${event.windowEnd}`;
@@ -194,7 +235,8 @@ export function findOpportunities(
 
   // New cheap only when the favorite is already in [expensiveBuyMin,
   // expensiveBuyMax]. A hedge far below a 0.97 ask is not a cover.
-  // If cheap is already committed, still allow the FOK hedge to fire.
+  // If cheap is already filled, keep evaluating this tick (hedge still
+  // requires fill+lock, and FOK still requires the favorite in band).
   const favoriteInRange =
     !config.enableExpensiveHedge || favoriteAskInBuyRange(expensiveToken, config);
 
@@ -206,90 +248,80 @@ export function findOpportunities(
     return opportunities;
   }
 
-  // Cheap limit is min(bestAsk, cheapBuyMax), clamped to the live ask.
-  // A BUY at 0.15 while Up asks 0.13 must take 0.13 — posting above the ask
-  // leaves a ghost bid that never matches. PAIR_LOCK_MAX (< 1.00) rejects
-  // a pair that overshoots the profit lock after clamps.
+  // Cheap limit is a maker bid: min(ask, cheapBuyMax, pairLockMax − hedge).
+  // If Up asks 0.16 and the favorite asks 0.85 with lock 0.98, we sit at
+  // 0.13 — we do not wait for ask+ask ≤ lock (rare on 15m books). Taking
+  // a live ask below that cap is still required (never post above the ask).
   const hedgePrice =
     expensiveToken?.bestAsk != null
       ? Math.min(expensiveToken.bestAsk, config.expensiveBuyMax)
       : config.expensiveBuyMax;
-  const pairLockMaxCents = Math.round(config.pairLockMax * 100);
 
-  let thisTickCheapSize = 0;
-  if (favoriteInRange) {
-    const targetPrice = Math.round(Math.min(cheapToken.bestAsk, config.cheapBuyMax) * 100) / 100;
-    const price = Math.round(Math.min(targetPrice, cheapToken.bestAsk) * 100) / 100;
-    const pairCostCents = Math.round((price + hedgePrice) * 100);
-    const pairCostOk =
-      !config.enableExpensiveHedge ||
-      !expensiveToken ||
-      pairCostCents <= pairLockMaxCents;
-    const askAlive =
-      cheapToken.bestAsk !== null && cheapToken.bestAsk >= config.cheapBuyMin;
-    const inCheapBand =
-      price >= config.cheapBuyMin && price <= config.cheapBuyMax;
-    if (inCheapBand && askAlive && pairCostOk) {
-      const size = computeSize(
-        config.cheapOrderUsdc,
-        price,
-        config.maxSharesPerOrder,
-      );
-      if (size !== null) {
-        const before = opportunities.length;
-        appendLimitOrderForSide(
-          tracker,
-          opportunities,
-          event,
-          cheapToken,
-          "cheap",
-          price,
-          size,
-          config.maxOpenPositionsPerSide,
-          0,
-        );
-        if (opportunities.length > before) {
-          thisTickCheapSize += size;
-        }
-      }
-    }
-  }
+  // --- Sizing via the injected strategy (B1: ArbSizing 1:1) ---
+  // The hedge sizing logic (1:1 with the filled cheap, budget as secondary
+  // cap, pair lock) lives in ArbSizing — the single source of truth for B1.
+  // strategy.ts only handles orchestration: claims, bands, guards, posting.
+  const sizingResult = sizing.compute({
+    config,
+    pairId,
+    tracker,
+    cheapToken,
+    expensiveToken,
+    hedgePrice,
+    thisTickCheapSize: 0,
+  });
 
-  // Hedge sizing: 1:1 with the FILLED cheap leg (B1 arbitrage).
-  // The budget EXPENSIVE_ORDER_USDC is a secondary cap.
-  // Both FOK and GTC hedges require a filled cheap — no hedge on a resting
-  // cheap (anti favori-nu, C2). The bot.ts guard (S1.4) also enforces this,
-  // but we enforce it here too so the strategy doesn't generate opportunities
-  // that would be rejected.
-  const cheapCommittedForHedge = tracker.getFilledCheapSizeForPair(pairId);
-  let hedgeSize: number | null = null;
-  if (cheapCommittedForHedge > 0) {
-    const budgetMax = computeSize(
-      config.expensiveOrderUsdc,
-      hedgePrice,
-      config.maxSharesPerOrder,
+  // Cheap leg posting (price/band checks stay here — orchestration).
+  const cheapPrice = sizingResult.cheapPrice;
+  const askAlive =
+    cheapToken.bestAsk !== null && cheapToken.bestAsk >= config.cheapBuyMin;
+  const inCheapBand =
+    cheapPrice >= config.cheapBuyMin && cheapPrice <= config.cheapBuyMax;
+  if (
+    favoriteInRange &&
+    inCheapBand &&
+    askAlive &&
+    sizingResult.pairLockOk &&
+    sizingResult.cheapSize !== null
+  ) {
+    appendLimitOrderForSide(
+      tracker,
+      opportunities,
+      event,
+      cheapToken,
+      "cheap",
+      cheapPrice,
+      sizingResult.cheapSize,
+      config.maxOpenPositionsPerSide,
+      0,
     );
-    hedgeSize = budgetMax !== null
-      ? Math.min(cheapCommittedForHedge, budgetMax)
-      : null; // Budget insufficient — no hedge, excess cheap cut via SELL by bot.
   }
+
+  // Hedge posting: 1:1 with the FILLED cheap leg (B1 arbitrage), via the
+  // sizing strategy result. Both FOK and GTC hedges require a filled cheap —
+  // no hedge on a resting cheap (anti favori-nu, C2). ArbSizing returns
+  // hedgeSize null when fill + hedge > pairLockMax — hold the cheap
+  // directional rather than lock a loss.
+  const hedgeSize = sizingResult.hedgeSize;
   // GTC rests below the touch; a thin best ask must not block the hedge.
   const hasDepth =
     hedgeSize !== null &&
+    hedgeSize > 0 &&
     (config.expensiveOrderType === "GTC" ||
       expensiveToken?.bestAskSize == null ||
       expensiveToken.bestAskSize >= hedgeSize * 0.8);
-  // FOK at clamp is killed if the favorite has already left the band
-  // (ask > max). Do not generate that opportunity — it spams killed-fok.
-  const fokMarketable =
-    config.expensiveOrderType !== "FOK" || favoriteInRange;
+  // The favorite must be inside the band for BOTH order types. A FOK at the
+  // clamp is killed when ask > max (spams killed-fok); a GTC at the clamp
+  // would rest below the ask and fill later against a cheap that defense
+  // may already have sold. bot.ts re-checks the fresh book at hedge time.
   if (
     config.enableExpensiveHedge &&
     expensiveToken &&
     expensiveToken.bestAsk !== null &&
     hedgeSize !== null &&
+    hedgeSize > 0 &&
     hasDepth &&
-    fokMarketable
+    favoriteInRange
   ) {
     appendLimitOrderForSide(
       tracker,
@@ -305,8 +337,20 @@ export function findOpportunities(
   } else if (
     config.enableExpensiveHedge &&
     expensiveToken &&
-    cheapCommittedForHedge > 0 &&
-    hedgeSize === null
+    sizingResult.reason === "pair-lock-unreachable" &&
+    tracker.getFilledCheapSizeForPair(pairId) > 0
+  ) {
+    log("Hedge skipped - pair lock unreachable, holding cheap directional", {
+      market: event.title,
+      cheapFill: tracker.getCheapFillPriceForPair(pairId),
+      hedgePrice,
+      pairCost: sizingResult.pairCost,
+      pairLockMax: config.pairLockMax,
+    });
+  } else if (
+    config.enableExpensiveHedge &&
+    expensiveToken &&
+    sizingResult.reason === "arb-pair-budget-insufficient"
   ) {
     log("Hedge skipped - below CLOB minimums", {
       market: event.title,
@@ -334,4 +378,35 @@ export function shouldReplaceRestingCheap(
   }
   if (bestAsk < limitPrice) return true;
   return bestBid !== null && bestBid < limitPrice;
+}
+
+/**
+ * A resting cheap maker bid must come off the book when the pair can no
+ * longer be locked: the favorite left the hedge band, or our limit is now
+ * above pairLockMax − hedge. Leaving it up would fill into an uncovered
+ * cheap. Missing favorite data (one-sided book) does not cancel.
+ */
+export function shouldCancelRestingCheapForLock(
+  limitPrice: number,
+  favoriteAsk: number | null,
+  config: Pick<
+    BotConfig,
+    | "enableExpensiveHedge"
+    | "expensiveBuyMin"
+    | "expensiveBuyMax"
+    | "pairLockMax"
+  >,
+): boolean {
+  if (!config.enableExpensiveHedge) return false;
+  if (favoriteAsk === null) return false;
+  if (
+    favoriteAsk < config.expensiveBuyMin ||
+    favoriteAsk > config.expensiveBuyMax
+  ) {
+    return true;
+  }
+  const hedgePrice = Math.min(favoriteAsk, config.expensiveBuyMax);
+  const maxCheapForLock =
+    Math.round((config.pairLockMax - hedgePrice) * 100) / 100;
+  return limitPrice > maxCheapForLock;
 }

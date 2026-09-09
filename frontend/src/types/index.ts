@@ -57,7 +57,8 @@ export interface OrderResult {
   response?: unknown;
 }
 
-export type PositionStatus = "open" | "won" | "lost";
+/** "sold" = cheap leg sold via pair defense (defendPair) before resolution. */
+export type PositionStatus = "open" | "won" | "lost" | "sold";
 export type FillReason = "marketable" | "probabilistic" | "resting";
 
 export interface SimulatedPosition {
@@ -127,7 +128,7 @@ export interface BotConfig {
   expensiveBuyMax: number;
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: number;
-  /** Verrou profit : prixCheap + prixHedge ≤ pairLockMax. */
+  /** Verrou profit : bid+hedge à l'entrée et fillPrice+hedge après fill, tous deux ≤ pairLockMax. */
   pairLockMax: number;
   expensiveOrderUsdc: number;
   expensiveOrderType: "FOK" | "GTC";
@@ -263,6 +264,7 @@ export interface OrderView {
   slug: string;
   tokenId: string;
   outcome: string;
+  side?: "BUY" | "SELL";
   price: number;
   fillPrice?: number;
   size: number;

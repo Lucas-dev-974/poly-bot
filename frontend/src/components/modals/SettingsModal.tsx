@@ -90,8 +90,8 @@ interface SectionDef {
 
 const SECTIONS: SectionDef[] = [
   { id: "markets", label: "Marchés", icon: "◉", desc: "Marchés surveillés et cadence de scan" },
-  { id: "cheap", label: "Jambe cheap", icon: "▾", desc: "Bande d'achat et budget de l'underdog" },
-  { id: "hedge", label: "Jambe hedge", icon: "▴", desc: "Couverture favorite et type d'ordre" },
+  { id: "cheap", label: "Jambe cheap", icon: "▾", desc: "Bid maker underdog et verrou de paire" },
+  { id: "hedge", label: "Jambe hedge", icon: "▴", desc: "Hedge 1:1 après fill cheap" },
   { id: "risk", label: "Risque", icon: "◆", desc: "Limites de taille, positions et exposition" },
   { id: "window", label: "Fenêtre", icon: "◷", desc: "Plage de trading avant clôture" },
   { id: "sim", label: "Simulation", icon: "▦", desc: "Paramètres du dry-run" },
@@ -180,7 +180,7 @@ export function SettingsModal(props: {
             <div class="cfg-header__title">
               <h3>Configuration</h3>
               <span class="cfg-header__sub">
-                {dirty() ? "Modifications non enregistrées" : "À jour"}
+                {dirty() ? "Modifications non enregistrées" : "Enregistré dans data/bot-settings.json"}
               </span>
             </div>
             <button class="cfg-close" type="button" onClick={handleClose} aria-label="Fermer">
@@ -247,12 +247,16 @@ export function SettingsModal(props: {
                 <div class="cfg-section">
                   <h4>Jambe cheap (underdog)</h4>
                   <p class="cfg-section__desc">
-                    Bande d'achat et budget USDC de la jambe reverse. Le prix cheap
-                    est min(bestAsk, cheapBuyMax), borné par le verrou profit
-                    pairLockMax (cheap + hedge ≤ pairLockMax &lt; 1.00).
+                    Un seul bid GTC maker à min(bestAsk, cheapBuyMax, pairLockMax − hedge).
+                    Après fill, le hedge utilise le prix fillé (pas ce bid) : si
+                    fillPrice + hedge &gt; pairLockMax, pas de hedge — le cheap reste
+                    directionnel.
                   </p>
                   <div class="cfg-grid">
-                    <Field label="Cheap min">
+                    <Field
+                      label="Cheap min"
+                      hint="Ne pas lifter un ask déjà sous ce plancher"
+                    >
                       <NumberInput
                         value={form().cheapBuyMin}
                         min={0.01}
@@ -261,7 +265,10 @@ export function SettingsModal(props: {
                         onInput={(v) => update("cheapBuyMin", v)}
                       />
                     </Field>
-                    <Field label="Cheap max">
+                    <Field
+                      label="Cheap max"
+                      hint="Plafond du bid ; le lock peut le caler plus bas"
+                    >
                       <NumberInput
                         value={form().cheapBuyMax}
                         min={0.01}
@@ -280,7 +287,7 @@ export function SettingsModal(props: {
                     </Field>
                     <Field
                       label="Pair lock max"
-                      hint="Verrou profit : cheap + hedge ≤ cette valeur (0.90–0.99)"
+                      hint="Entrée : bid + hedge ≤ lock. Après fill : fillPrice + hedge ≤ lock, sinon pas de hedge (0.90–0.99)"
                     >
                       <NumberInput
                         value={form().pairLockMax}
@@ -299,12 +306,15 @@ export function SettingsModal(props: {
                 <div class="cfg-section">
                   <h4>Jambe hedge (favorite)</h4>
                   <p class="cfg-section__desc">
-                    Couverture directionnelle sur l'outcome favori. La bande
-                    <code> [hedgeMin, hedgeMax] </code> doit être franchie pour
-                    déclencher le hedge.
+                    Hedge 1:1 uniquement après un cheap rempli, si l'ask favori est
+                    dans <code>[hedgeMin, hedgeMax]</code> et si fillPrice + min(ask,
+                    hedgeMax) ≤ pairLockMax. La bande est nécessaire, pas suffisante.
                   </p>
                   <div class="cfg-grid">
-                    <Field label="Hedge min">
+                    <Field
+                      label="Hedge min"
+                      hint="Ask favori minimum. En dessous : pas un hedge ; cheap resting annulé ; cheap fillé non dumpé"
+                    >
                       <NumberInput
                         value={form().expensiveBuyMin}
                         min={0.01}
@@ -313,7 +323,10 @@ export function SettingsModal(props: {
                         onInput={(v) => update("expensiveBuyMin", v)}
                       />
                     </Field>
-                    <Field label="Hedge max">
+                    <Field
+                      label="Hedge max"
+                      hint="Ask favori maximum. Au-dessus : pas de nouveau cheap ; cheap nu vendu (FOK SELL)"
+                    >
                       <NumberInput
                         value={form().expensiveBuyMax}
                         min={0.01}
@@ -322,7 +335,10 @@ export function SettingsModal(props: {
                         onInput={(v) => update("expensiveBuyMax", v)}
                       />
                     </Field>
-                    <Field label="Hedge order (USDC)" hint="Budget par ordre hedge">
+                    <Field
+                      label="Plafond hedge (USDC)"
+                      hint="Cap secondaire. Taille = 1:1 du cheap rempli non couvert. Sous 5 parts au prix hedge (≈ 4.75 USDC à 0.95) : aucun hedge. Trop petit = paire partielle"
+                    >
                       <NumberInput
                         value={form().expensiveOrderUsdc}
                         min={0.1}
@@ -330,7 +346,10 @@ export function SettingsModal(props: {
                         onInput={(v) => update("expensiveOrderUsdc", v)}
                       />
                     </Field>
-                    <Field label="Type d'ordre hedge" hint="FOK = fill-or-kill, GTC = restant">
+                    <Field
+                      label="Type d'ordre hedge"
+                      hint="FOK et GTC : seulement après fill cheap. FOK = taker immédiat ; GTC = restant au min(ask, hedgeMax)"
+                    >
                       <select
                         class="cfg-input"
                         value={form().expensiveOrderType}
@@ -346,7 +365,7 @@ export function SettingsModal(props: {
                   <div class="cfg-divider" />
                   <Toggle
                     label="Activer le hedge expensive"
-                    hint="Sans hedge, la jambe cheap devient un pari directionnel non couvert."
+                    hint="Désactivé : cheap = directionnel. Activé : cheap aussi directionnel si le lock n'est plus atteignable après fill."
                     checked={form().enableExpensiveHedge}
                     onChange={(v) => update("enableExpensiveHedge", v)}
                   />
@@ -378,7 +397,7 @@ export function SettingsModal(props: {
                         onInput={(v) => update("maxOpenPositionsPerSide", v)}
                       />
                     </Field>
-                    <Field label="Max exposition (USDC)" hint="Cap global toutes positions">
+                    <Field label="Max exposition (USDC)" hint="Cap global fills + GTC resting">
                       <NumberInput
                         value={form().maxExposureUsdc}
                         min={1}
@@ -520,7 +539,7 @@ export function SettingsModal(props: {
                   <div class="cfg-divider" />
                   <Toggle
                     label="Exiger une paire couverte"
-                    hint="Exige un hedge disponible au claim (ne garantit pas le remplissage)."
+                    hint="Avec le hedge activé, déjà le cas : pas de nouveau cheap sans favori dans la bande. Ne garantit pas que le hedge fill."
                     checked={form().simRequireCoveredPair}
                     onChange={(v) => update("simRequireCoveredPair", v)}
                   />

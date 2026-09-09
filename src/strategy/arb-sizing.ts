@@ -1,43 +1,88 @@
-import type { BotConfig } from "../config.js";
-import type { TradeTracker } from "../trade-tracker.js";
-import type { TokenBook } from "../types.js";
-import { computeSize } from "../utils/prices.js";
+import { computeSize, MIN_CLOB_SHARES } from "../utils/prices.js";
 import type { SizingContext, SizingResult, SizingStrategy } from "./sizing.js";
 
+function round2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
 /**
- * B1 Sizing Strategy — true arbitrage.
+ * B1 Sizing Strategy — true arbitrage (maker cheap).
  *
- * The hedge is sized 1:1 with the filled cheap leg (not by budget). This
- * guarantees that every covered pair locks a profit of (1 − pairCost) × size,
- * regardless of which side wins. The budget EXPENSIVE_ORDER_USDC becomes a
- * secondary cap: if it's insufficient to cover the filled cheap at the hedge
- * price, the hedge is limited and the excess cheap is cut via SELL (§4.4).
+ * The cheap limit is the highest bid that still locks a profit:
+ *   min(ask, cheapBuyMax, pairLockMax − hedgePrice)
+ * If the live cheap ask is 0.16 and the favorite asks 0.85 with
+ * pairLockMax=0.98, we sit at 0.13 — we do not wait for an already-locked
+ * ask+ask (almost never present on 15m books, typically 1.01).
  *
- * No pair is posted if pairCost > pairLockMax (< 1.00) — a pair costing more
- * than $1 per share-pair is a guaranteed loss, not an arbitrage.
+ * The hedge is sized 1:1 with the still-uncovered filled cheap (filled
+ * cheap − filled hedge), not by budget. This guarantees that every covered
+ * pair locks (1 − pairCost) × size, regardless of which side wins.
+ * EXPENSIVE_ORDER_USDC is a secondary cap; a budget that buys fewer than
+ * MIN_CLOB_SHARES (5) at the hedge price yields NO hedge at all.
+ * After a cheap fill, the hedge is refused when fillPrice + hedge > pairLockMax
+ * (hold the cheap directional — never lock a pair above $1).
+ *
+ * When the hedge is disabled (or no favorite is in the books), the cheap
+ * is directional and the pair lock does not apply.
  */
 export class ArbSizing implements SizingStrategy {
   readonly name = "arb";
 
   compute(ctx: SizingContext): SizingResult {
-    const { config, tracker, pairId, cheapToken, hedgePrice } = ctx;
+    const { config, tracker, pairId, cheapToken, expensiveToken, hedgePrice } = ctx;
 
-    // 1. Cheap price: min(ask, cheapBuyMax), capped to 2 decimals.
-    const cheapPrice = Math.round(
-      Math.min(cheapToken.bestAsk ?? config.cheapBuyMax, config.cheapBuyMax) * 100,
-    ) / 100;
+    const hasPair = config.enableExpensiveHedge && expensiveToken !== null;
+    const askCap = cheapToken.bestAsk ?? config.cheapBuyMax;
+    const rawCheap = Math.min(askCap, config.cheapBuyMax);
 
-    // 2. Pair cost per share-pair and profit lock check.
-    const pairCost = Math.round((cheapPrice + hedgePrice) * 100) / 100;
-    const pairLockOk = pairCost <= config.pairLockMax;
+    let cheapPrice = round2(rawCheap);
+    let pairLockOk = true;
 
-    // 3. Cheap size: budget / price, capped by maxShares, CLOB minimums.
-    const cheapSize = pairLockOk
+    if (hasPair) {
+      const maxCheapForLock = round2(config.pairLockMax - hedgePrice);
+      // Cannot lock a profit inside the cheap band: the hedge is already
+      // so expensive that even cheapBuyMin + hedge > pairLockMax.
+      if (maxCheapForLock < config.cheapBuyMin) {
+        pairLockOk = false;
+      } else {
+        cheapPrice = round2(Math.min(rawCheap, maxCheapForLock));
+        if (cheapPrice < config.cheapBuyMin) {
+          pairLockOk = false;
+        }
+      }
+    }
+
+    let pairCost = round2(cheapPrice + hedgePrice);
+    if (hasPair && pairCost > config.pairLockMax) {
+      pairLockOk = false;
+    }
+
+    // Cheap size at the maker lock price. A $1 budget cannot buy the CLOB
+    // minimum of 5 shares above ~$0.20 — step down toward cheapBuyMin
+    // (still under the lock) rather than silently skip the window.
+    let cheapSize = pairLockOk
       ? computeSize(config.cheapOrderUsdc, cheapPrice, config.maxSharesPerOrder)
       : null;
+    if (pairLockOk && cheapSize === null) {
+      for (
+        let p = round2(cheapPrice - 0.01);
+        p >= config.cheapBuyMin;
+        p = round2(p - 0.01)
+      ) {
+        const sized = computeSize(
+          config.cheapOrderUsdc,
+          p,
+          config.maxSharesPerOrder,
+        );
+        if (sized !== null) {
+          cheapPrice = p;
+          cheapSize = sized;
+          pairCost = round2(cheapPrice + hedgePrice);
+          break;
+        }
+      }
+    }
 
-    // 4. Hedge size: 1:1 with the FILLED cheap (not the budget).
-    //    The budget expensiveOrderUsdc becomes a secondary cap.
     const filledCheap = tracker.getFilledCheapSizeForPair(pairId);
     if (filledCheap <= 0) {
       return {
@@ -47,26 +92,72 @@ export class ArbSizing implements SizingStrategy {
         hedgeSize: null,
         pairCost,
         pairLockOk,
-        reason: "no-filled-cheap",
+        reason: pairLockOk ? "no-filled-cheap" : "pair-lock-unreachable",
       };
     }
-    // Budget cap: if computeSize returns null (budget insufficient for CLOB
-    // minimums), the hedge is blocked — NOT silently set to filledCheap
-    // (which would bypass the cap, the bug fixed from the plan).
+
+    // Hedge lock uses the FILLED cheap price, not the theoretical new bid.
+    // A 0.20 fill + 0.83 ask is a locked loss even if a fresh bid at 0.16
+    // would still satisfy pairLockMax.
+    const fillPrice = tracker.getCheapFillPriceForPair(pairId);
+    const filledPairCost =
+      fillPrice !== null ? round2(fillPrice + hedgePrice) : pairCost;
+    if (hasPair && filledPairCost > config.pairLockMax) {
+      return {
+        cheapPrice,
+        cheapSize,
+        hedgePrice,
+        hedgeSize: null,
+        pairCost: filledPairCost,
+        pairLockOk,
+        reason: "pair-lock-unreachable",
+      };
+    }
+
+    // 1:1 target is the UNCOVERED cheap (filled cheap minus filled hedge).
+    // Without this, a budget-capped hedge that already filled would be
+    // re-sized against the full cheap every tick and over-hedge the pair.
+    const filledExpensive = tracker.getFilledExpensiveSizeForPair(pairId);
+    const uncovered = round2(Math.max(0, filledCheap - filledExpensive));
+    if (uncovered <= 0) {
+      return {
+        cheapPrice,
+        cheapSize,
+        hedgePrice,
+        hedgeSize: 0,
+        pairCost,
+        pairLockOk,
+        reason: "arb-pair-covered",
+      };
+    }
+    // A remainder under the CLOB minimum cannot be posted (rejected by the
+    // exchange). Hold the partial pair rather than spamming a 2-share hedge.
+    if (uncovered < MIN_CLOB_SHARES) {
+      return {
+        cheapPrice,
+        cheapSize,
+        hedgePrice,
+        hedgeSize: 0,
+        pairCost,
+        pairLockOk,
+        reason: "arb-pair-remainder-below-clob-min",
+      };
+    }
+
     const budgetMax = computeSize(
       config.expensiveOrderUsdc,
       hedgePrice,
       config.maxSharesPerOrder,
     );
     const hedgeSize = budgetMax !== null
-      ? Math.min(filledCheap, budgetMax)
-      : 0; // Budget insufficient → hedge blocked, excess cheap to cut via SELL.
+      ? Math.min(uncovered, budgetMax)
+      : 0;
 
-    let reason = pairLockOk ? "arb-pair" : "pair-cost-exceeds-lock";
-    if (pairLockOk && hedgeSize < filledCheap) {
-      reason = "arb-pair-budget-capped";
-    } else if (pairLockOk && hedgeSize === 0) {
+    let reason = "arb-pair";
+    if (hedgeSize === 0) {
       reason = "arb-pair-budget-insufficient";
+    } else if (hedgeSize < uncovered) {
+      reason = "arb-pair-budget-capped";
     }
 
     return {

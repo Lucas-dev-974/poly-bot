@@ -31,7 +31,7 @@ export function ResolvedPositions(): JSX.Element {
           <tbody>
             <For each={resolvedPositions}>
               {(p) => {
-                const credit = p.status === "won" ? p.size : 0;
+                const credit = p.status === "won" ? p.size : p.status === "sold" ? (p.pnl ?? 0) + p.cost : 0;
                 return (
                   <tr>
                     <td>{dateTimeStr(p.resolvedAt)}</td>
@@ -48,7 +48,7 @@ export function ResolvedPositions(): JSX.Element {
                       {fmtUsd(p.pnl)}
                     </td>
                     <td>
-                      <Badge variant={p.status === "won" ? "live" : "dry"}>
+                      <Badge variant={p.status === "won" ? "live" : p.status === "sold" ? "partiel" : "dry"}>
                         {p.status}
                       </Badge>
                     </td>

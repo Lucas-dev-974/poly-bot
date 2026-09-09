@@ -1,28 +1,31 @@
 # Polymarket Reverse Arbitrage Bot
 
-A TypeScript/Node.js bot that executes **reverse arbitrage** on Polymarket's 15-minute Up/Down markets (BTC, ETH, SOL, etc.). The strategy identifies mispriced outcome pairs where buying both sides (YES + NO) costs less than $1, locking in risk-free profit when the market resolves.
+A TypeScript/Node.js bot that executes **B1 true arbitrage** on Polymarket's 15-minute Up/Down markets (BTC, ETH, SOL, etc.). It posts a maker bid on the cheap (underdog) leg and, only after that bid fills, hedges 1:1 on the favorite — and only when `cheapFill + hedgeAsk ≤ PAIR_LOCK_MAX < 1.00`, locking a small profit at resolution.
 
 ## Strategy Overview
 
-**Reverse Arbitrage** on binary (Up/Down) markets:
+**Covered pair (binary market):** one side pays $1, the other $0. Holding 1 Up + 1 Down always redeems **$1.00**. Buying both for **≤ `PAIR_LOCK_MAX`** (default 0.98) locks `(1 − pairCost)` per share.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    MARKET MECHANICS                             │
+│                    B1 — TRUE ARB                                │
 ├─────────────────────────────────────────────────────────────────┤
-│  • Each 15-min window: one outcome pays $1, the other $0       │
-│  • Normal arb: buy both at prices summing to < $1              │
-│  • This bot: targets the CHEAP leg (reversal) + hedges the     │
-│    EXPENSIVE leg (favorite) to create a covered pair           │
+│  Cheap GTC maker: min(ask, CHEAP_BUY_MAX, PAIR_LOCK_MAX − hedge)│
+│  Hedge 1:1 only after cheap FILLS, and only if                  │
+│    fillPrice + min(favoriteAsk, EXPENSIVE_BUY_MAX)              │
+│      ≤ PAIR_LOCK_MAX                                            │
+│  Otherwise: hold cheap directional — never lock a pair ≥ $1     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**Example:**
-- BTC Up/Down market, 5 min left
-- Down token (cheap): best ask = $0.08 → buy for $0.08 (if wins: +$0.92)
-- Up token (favorite): best ask = $0.87 (must already sit in `EXPENSIVE_BUY_MIN`–`MAX`) → hedge at $0.87 (`min(ask, EXPENSIVE_BUY_MAX)`), size 1:1 with cheap
-- **Pair cost = $0.95 < $1.00** → **5¢ locked profit per $1 notional**
-- If the favorite asks **above** `EXPENSIVE_BUY_MAX` (e.g. 0.97), **no new cheap** is posted — a limit hedge far below the ask is not a cover.
+**Example (lock 0.98):**
+- Favorite ask **0.85** (inside `EXPENSIVE_BUY_MIN`–`MAX`) → max cheap bid = `0.98 − 0.85 = 0.13`
+- Cheap ask 0.16 → sit at **0.13** (do not wait for ask+ask ≤ lock; 15m books usually sum to ~1.01)
+- After a **0.13 fill**, hedge 1:1 at 0.85 → pair cost **0.98** → **2¢ locked** per share
+- If the cheap fills at **0.20** and the favorite has moved to **0.83** (`0.20+0.83=1.03 > 0.98`) → **no hedge**. Cheap stays directional (badge *partiel*).
+- If the favorite asks **above** `EXPENSIVE_BUY_MAX` (e.g. 0.97) with an **uncovered** cheap → FOK **SELL** the uncovered excess (`cheap − hedge`) at the bid (`defendPair`), then cancel any resting GTC hedge. A pair already covered 1:1 is **never** sold, even if the favorite goes to $1.
+
+A GTC hedge is never posted against a *resting* cheap (anti naked-favorite). If a resting cheap is cancelled without a fill, any hedge GTC on that pair is cancelled too.
 
 ## Architecture
 
@@ -31,7 +34,8 @@ src/
 ├── index.ts                 # Entry point, wiring + main loop
 ├── config.ts                # All settings via env vars (validated)
 ├── bot.ts                   # Orchestrator: scan → books → opportunities → fills → resolve
-├── strategy.ts              # Core arb logic: pick cheap/favorite, price levels, pair validation
+├── strategy.ts              # Orchestration: pick cheap/favorite, bands, defense predicates
+├── strategy/arb-sizing.ts   # B1 source of truth: maker bid, 1:1 hedge, fill-price pair lock
 ├── trader.ts                # Live trading via @polymarket/clob-client-v2 (Polygon, CLOB)
 ├── trade-tracker.ts         # Position/pair state, window claims, posted orders, retry logic
 ├── position-resolver.ts     # Settlement detection via Gamma API (outcomePrices >= 0.99)
@@ -66,15 +70,25 @@ src/
 | **Safety guards** | Exposure caps, max open per side, covered-pair requirement, depth checks |
 | **Deterministic sim** | Seeded RNG for reproducible backtests |
 
-## Configuration (Environment Variables)
+## Configuration
 
-Copy `.env.example` to `.env` and configure:
+Two files, no overlap:
+
+| File | What it holds |
+|------|----------------|
+| `.env` | Secrets and infra: `DRY_RUN`, keys, hosts, dashboard port, DB paths |
+| `data/bot-settings.json` | **All strategy parameters** (bands, lock, budgets, poll, sim). Edited from the dashboard. |
+
+Copy `.env.example` to `.env`. Copy `bot-settings.example.json` to `data/bot-settings.json` (or save once from the dashboard). Live (`DRY_RUN=false`) **refuses to start** without that JSON. Leftover `CHEAP_*` / `EXPENSIVE_*` / `POLL_*` in `.env` are ignored.
 
 ```bash
-# Core
+# .env — secrets + infra
 DRY_RUN=true                    # true = simulation, false = live trading
 PRIVATE_KEY=0x...               # EOA private key (required for live)
 FUNDER_ADDRESS=0x...            # Deposit wallet address (for redemption)
+READONLY_LIVE=false
+SIGNATURE_TYPE=3                # POLY_1271 deposit wallet
+AUTO_REDEEM_WINNERS=false
 
 # Polymarket API
 GAMMA_API_HOST=https://gamma-api.polymarket.com
@@ -93,40 +107,6 @@ BUILDER_API_KEY=...
 BUILDER_SECRET=...
 BUILDER_PASSPHRASE=...
 
-# Strategy parameters
-CHEAP_BUY_MIN=0.07              # Do not buy cheap if ask is already below this
-CHEAP_BUY_MAX=0.25              # Cheap limit must stay in this band
-CHEAP_ORDER_USDC=1              # USDC per cheap order
-PAIR_LOCK_MAX=0.98              # Verrou profit : cheap + hedge ≤ cette valeur (< 1.00)
-ENABLE_EXPENSIVE_HEDGE=true
-EXPENSIVE_BUY_MIN=0.85          # Min price for expensive leg (must be favorite)
-EXPENSIVE_BUY_MAX=0.95          # Max price for expensive leg
-EXPENSIVE_ORDER_USDC=3          # Plafond secondaire du hedge (le dimensionnement principal est 1:1 avec le cheap rempli)
-EXPENSIVE_ORDER_TYPE=FOK        # FOK or GTC — both price at min(bestAsk, max)
-MAX_SHARES_PER_ORDER=20
-MAX_OPEN_POSITIONS_PER_SIDE=1
-MAX_EXPOSURE_USDC=45
-POLL_INTERVAL_MS=2000
-READONLY_LIVE=false
-SIGNATURE_TYPE=3                # POLY_1271 deposit wallet
-AUTO_REDEEM_WINNERS=false
-MIN_MINUTES_BEFORE_CLOSE_TO_BUY=
-SIM_MAX_RETRY_ATTEMPTS=20
-SIM_REQUIRE_COVERED_PAIR=true   # skip new cheap unless favorite ask is in the hedge band
-
-# Simulation
-SIM_FILL_PROBABILITY_NON_MARKETABLE=0.3
-SIM_RESOLVE_DELAY_SECONDS=5
-SIM_RESOLVE_MAX_RETRIES=5
-SIM_RESOLVE_RETRY_INTERVAL_MS=5000
-SIM_RESOLVE_FALLBACK=none           # "none" required in live ; "probabilistic" dry-run only
-SIM_RANDOM_SEED=                # empty = random
-
-# Market filtering
-MARKET_SLUG_PREFIXES=btc-updown-15m,eth-updown-15m
-MINUTES_BEFORE_CLOSE_MIN=0
-MINUTES_BEFORE_CLOSE_MAX=15
-
 # Database
 PERSISTENCE_ENABLED=true
 DB_PATH=data/bot.db              # dry-run history
@@ -136,6 +116,31 @@ DB_PATH_LIVE=data/bot-live.db    # live trading history (separate)
 ENABLE_DASHBOARD=true
 DASHBOARD_PORT=3105
 ```
+
+Strategy keys (dashboard → `data/bot-settings.json`). See `bot-settings.example.json`.
+
+```json
+{
+  "pollIntervalMs": 5000,
+  "marketSlugPrefixes": ["btc-updown-15m", "eth-updown-15m"],
+  "cheapBuyMin": 0.07,
+  "cheapBuyMax": 0.10,
+  "cheapOrderUsdc": 1,
+  "pairLockMax": 0.98,
+  "enableExpensiveHedge": true,
+  "expensiveBuyMin": 0.85,
+  "expensiveBuyMax": 0.95,
+  "expensiveOrderUsdc": 15,
+  "expensiveOrderType": "FOK",
+  "maxSharesPerOrder": 20,
+  "maxOpenPositionsPerSide": 1,
+  "maxExposureUsdc": 45,
+  "simRequireCoveredPair": true,
+  "simResolveFallback": "none"
+}
+```
+
+`expensiveOrderUsdc` is a secondary cap on the 1:1 hedge. Below 5 shares at the hedge price there is no hedge. A $1 cheap at 0.07 needs ~14 USDC to cover 1:1 at 0.95.
 
 ## Installation & Run
 
@@ -185,7 +190,7 @@ A GTC order posted without a CLOB `orderID` cannot be cancelled on the exchange 
 ## Database Schema (SQLite)
 
 ```
-positions          → SimulatedPosition rows (open/won/lost)
+positions          → SimulatedPosition rows (open/won/lost/sold)
 arb_pairs          → Pair state (open/partial/covered/resolved)
 ledger             → Single-row simulated cash balance
 balance_snapshots  → Periodic portfolio snapshots
@@ -207,11 +212,13 @@ bot_state          → Key-value runtime state
 3. **Favorite already in band** — no new cheap unless the favorite ask is in `[EXPENSIVE_BUY_MIN, EXPENSIVE_BUY_MAX]` (a hedge limit far below a 0.97 ask is not a cover)
 4. **Covered-pair** (`SIM_REQUIRE_COVERED_PAIR`) — skip new cheap if no hedgeable favorite
 5. **Favorite pick depth** — identifying the favorite only needs CLOB-min size (5 shares) at the touch; GTC hedges are not blocked by a thin top of book
-6. **Pair cost (B)** — each cheap GTC level must satisfy `limit + min(favoriteAsk, expensiveBuyMax) < $1`; FOK hedge fires only after that cheap fills
-7. **CLOB minimums** — order size floored at 5 shares / $1 notional; tick size never below 0.01
-8. **Balance guard** — live orders skipped when cached CLOB collateral < estimated cost; 60s pause after 3 consecutive balance rejections
-9. **Stale order cleanup** — cancel GTC orders after windowEnd + 5 min; unacked rows (no `orderId`) pruned at +15 min, tracked orders at +24 h
-10. **Window claim** — outcomes stay locked for the window, but an uncommitted claim is dropped if the underdog flips; no claim on a one-sided book
+6. **Pair lock (B1)** — new cheap GTC: `limit + min(favoriteAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. Hedge after fill: `fillPrice + min(freshAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. If the lock fails after fill, the cheap is held directional (no Down at a locked loss).
+7. **Pair defense** — FOK SELL the **uncovered** cheap (`filled cheap − filled hedge`, ≥ 5 shares) at the bid only if the favorite ask is **above** `EXPENSIVE_BUY_MAX` **and** the pair is not already covered 1:1. A covered pair is held to redeem even if the favorite prints $1. Ask below `EXPENSIVE_BUY_MIN` does not dump the cheap. After a sale, resting GTC hedges of that pair are cancelled.
+8. **CLOB fill confirmation** — a CLOB `matched` is not enough: cheap positions open only when the funder holds the tokens (re-checked up to 8 ticks, since the CLOB balance can lag a maker fill); FOK sells are confirmed by token-balance drop (ghost MATCHED / empty `makingAmount` are ignored). A partially filled cheap that must be repriced/cancelled is cancelled **first**, then the filled part is booked — no remainder is left orphaned on the book.
+9. **CLOB minimums** — order size floored at 5 shares / $1 notional; tick size never below 0.01
+10. **Balance guard** — live orders skipped when cached CLOB collateral < estimated cost; 60s pause after 3 consecutive balance rejections
+11. **Stale order cleanup** — cancel GTC orders after windowEnd + 5 min; unacked rows (no `orderId`) pruned at +15 min, tracked orders at +24 h
+12. **Window claim** — outcomes stay locked for the window, but an uncommitted claim is dropped if the underdog flips; no claim on a one-sided book
 
 ## Redemption (V2 Deposit Wallet)
 

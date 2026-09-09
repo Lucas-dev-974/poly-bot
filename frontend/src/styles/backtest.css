@@ -379,6 +379,36 @@ body:has(.bt-page) {
   background: #ff5b5b;
 }
 
+.bt-swatch.vol {
+  background: #5b9cff;
+}
+
+.bt-swatch.liq {
+  width: 12px;
+  height: 0;
+  background: transparent;
+  border-top: 2px dashed #c084fc;
+}
+
+.bt-legend-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: inherit;
+  cursor: pointer;
+  padding: 1px 5px;
+  opacity: 0.4;
+}
+
+.bt-legend-toggle.is-on {
+  opacity: 1;
+  border-color: var(--border);
+}
+
 .bt-swatch-mark {
   width: 7px;
   height: 7px;
@@ -566,6 +596,22 @@ body:has(.bt-page) {
 
 .bt-tip-row.no {
   color: #ff5b5b;
+}
+
+.bt-tip-row.vol {
+  color: #5b9cff;
+}
+
+.bt-tip-row.liq {
+  color: #c084fc;
+}
+
+.bt-tip-row.spr {
+  color: #eab308;
+}
+
+.bt-tip-row.sz {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .bt-tip-pnl {

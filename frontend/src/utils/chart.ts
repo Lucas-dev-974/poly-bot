@@ -1,5 +1,23 @@
 import type { PricePoint, TradePoint } from "../types";
 
+export interface MetricPoint {
+  t: number;
+  volume: number | null;
+  volume24hr: number | null;
+  liquidity: number | null;
+}
+
+export interface DepthPoint {
+  t: number;
+  upSpread: number | null;
+  downSpread: number | null;
+  gammaSpread: number | null;
+  upBidSize: number | null;
+  upAskSize: number | null;
+  downBidSize: number | null;
+  downAskSize: number | null;
+}
+
 /**
  * Données du graphique. Convention stricte : `upHistory` est TOUJOURS la courbe
  * de l'outcome Up (index 0, vert) et `downHistory` celle de Down (index 1, rouge),
@@ -21,6 +39,12 @@ export interface ChartData {
   outcomeLabels: [string, string];
   /** Range temps affiché après zoom/pan. Défaut = windowStart/windowEnd. */
   viewport?: { start: number; end: number };
+  /** Volume / liquidité / vol 24h Gamma persistés (secondes Unix). */
+  metrics?: MetricPoint[];
+  showMetrics?: boolean;
+  /** Spread L1 et tailles au best (secondes Unix). */
+  depth?: DepthPoint[];
+  showSpread?: boolean;
 }
 
 export const CHART_COLORS = {
@@ -28,6 +52,11 @@ export const CHART_COLORS = {
   down: "#ff5b5b",
   upFill: "rgba(62,224,122,0.08)",
   downFill: "rgba(255,91,91,0.08)",
+  volume: "#5b9cff",
+  volume24hr: "#f97316",
+  liquidity: "#c084fc",
+  spread: "#eab308",
+  spreadWarn: "#fb7185",
   grid: "rgba(255,255,255,0.05)",
   text: "rgba(255,255,255,0.55)",
   resolve: "#f59e0b",
@@ -35,7 +64,7 @@ export const CHART_COLORS = {
   crosshair: "rgba(255,255,255,0.3)",
 };
 
-export const PADDING = { top: 14, right: 56, bottom: 32, left: 12 };
+export const PADDING = { top: 14, right: 56, bottom: 32, left: 56 };
 const FONT_MONO = "11px ui-monospace, 'SF Mono', Menlo, monospace";
 const MARKER_R = 7;
 
@@ -89,6 +118,15 @@ export function drawMarketChart(
 
   const x = (t: number): number => PADDING.left + ((t - vp.start) / span) * plotW;
   const y = (p: number): number => PADDING.top + (1 - Math.min(Math.max(p, 0), 1)) * plotH;
+  const metrics = data.showMetrics === false ? [] : (data.metrics ?? []);
+  const metricMax = maxMetric(metrics);
+  const vol24Max = maxVolume24hr(metrics);
+  const yMetric = (v: number): number =>
+    PADDING.top + (1 - Math.min(Math.max(v, 0), metricMax) / Math.max(metricMax, 1)) * plotH;
+  const yVol24 = (v: number): number =>
+    PADDING.top + (1 - Math.min(Math.max(v, 0), vol24Max) / Math.max(vol24Max, 1)) * plotH;
+  const leftMax = vol24Max > 0 ? vol24Max : metricMax;
+  const leftColor = vol24Max > 0 ? CHART_COLORS.volume24hr : "rgba(255,255,255,0.4)";
 
   // Grille horizontale (prix) — labels à droite
   ctx.strokeStyle = CHART_COLORS.grid;
@@ -106,6 +144,13 @@ export function drawMarketChart(
     ctx.lineTo(plotRight, py);
     ctx.stroke();
     ctx.fillText(price.toFixed(2), plotRight + 6, py);
+    if (leftMax > 0) {
+      ctx.textAlign = "right";
+      ctx.fillStyle = leftColor;
+      ctx.fillText(fmtMetricTick((leftMax * i) / 4), PADDING.left - 6, py);
+      ctx.fillStyle = CHART_COLORS.text;
+      ctx.textAlign = "left";
+    }
   }
 
   // Grille verticale (temps). Premier label aligné à gauche, dernier à droite
@@ -147,6 +192,28 @@ export function drawMarketChart(
   // Aires dégradées (toujours sous les courbes)
   drawArea(ctx, data.downHistory, x, y, plotBottom, CHART_COLORS.downFill);
   drawArea(ctx, data.upHistory, x, y, plotBottom, CHART_COLORS.upFill);
+
+  if (metricMax > 0) {
+    drawMetricLine(ctx, metrics, "volume", x, yMetric, CHART_COLORS.volume, false);
+    drawMetricLine(ctx, metrics, "liquidity", x, yMetric, CHART_COLORS.liquidity, true);
+  }
+  if (vol24Max > 0) {
+    drawMetricLine(ctx, metrics, "volume24hr", x, yVol24, CHART_COLORS.volume24hr, "dotted");
+  }
+
+  const depth = data.depth ?? [];
+  if (data.showSpread !== false && depth.length > 0) {
+    drawSpreadLine(ctx, depth, (pt) => pt.upSpread, x, y, CHART_COLORS.up);
+    drawSpreadLine(ctx, depth, (pt) => pt.downSpread, x, y, CHART_COLORS.down);
+    drawSpreadLine(
+      ctx,
+      depth,
+      (pt) => (pt.upSpread == null && pt.downSpread == null ? pt.gammaSpread : null),
+      x,
+      y,
+      CHART_COLORS.spread,
+    );
+  }
 
   // Courbes : la jambe mise en avant est plus épaisse et dessinée au-dessus.
   const hl = data.highlightOutcomeIndex;
@@ -195,7 +262,189 @@ export function drawMarketChart(
 
     if (crosshair.upPrice != null) drawDot(ctx, crosshair.x, y(crosshair.upPrice), CHART_COLORS.up);
     if (crosshair.downPrice != null) drawDot(ctx, crosshair.x, y(crosshair.downPrice), CHART_COLORS.down);
+    if (metricMax > 0 && crosshair.volume != null) {
+      drawDot(ctx, crosshair.x, yMetric(crosshair.volume), CHART_COLORS.volume);
+    }
+    if (metricMax > 0 && crosshair.liquidity != null) {
+      drawDot(ctx, crosshair.x, yMetric(crosshair.liquidity), CHART_COLORS.liquidity);
+    }
+    if (vol24Max > 0 && crosshair.volume24hr != null) {
+      drawDot(ctx, crosshair.x, yVol24(crosshair.volume24hr), CHART_COLORS.volume24hr);
+    }
+    if (data.showSpread !== false) {
+      if (crosshair.upSpread != null) {
+        drawDot(
+          ctx,
+          crosshair.x,
+          y(Math.max(crosshair.upSpread, 0)),
+          crosshair.upSpread < 0 ? CHART_COLORS.spreadWarn : CHART_COLORS.up,
+        );
+      } else if (crosshair.gammaSpread != null) {
+        drawDot(
+          ctx,
+          crosshair.x,
+          y(Math.max(crosshair.gammaSpread, 0)),
+          crosshair.gammaSpread < 0 ? CHART_COLORS.spreadWarn : CHART_COLORS.spread,
+        );
+      }
+      if (crosshair.downSpread != null) {
+        drawDot(
+          ctx,
+          crosshair.x,
+          y(Math.max(crosshair.downSpread, 0)),
+          crosshair.downSpread < 0 ? CHART_COLORS.spreadWarn : CHART_COLORS.down,
+        );
+      }
+    }
   }
+}
+
+function drawMetricLine(
+  ctx: CanvasRenderingContext2D,
+  points: MetricPoint[],
+  key: "volume" | "liquidity" | "volume24hr",
+  x: (t: number) => number,
+  y: (v: number) => number,
+  color: string,
+  dash: boolean | "dotted",
+): void {
+  drawBreakLine(
+    ctx,
+    points,
+    (pt) => pt[key],
+    x,
+    y,
+    color,
+    1.4,
+    dash === "dotted" ? [2, 3] : dash ? [5, 4] : [],
+    0.9,
+  );
+}
+
+function drawSpreadLine(
+  ctx: CanvasRenderingContext2D,
+  points: DepthPoint[],
+  valueOf: (pt: DepthPoint) => number | null,
+  x: (t: number) => number,
+  y: (v: number) => number,
+  color: string,
+): void {
+  drawBreakLine(
+    ctx,
+    points,
+    (pt) => {
+      const value = valueOf(pt);
+      return value == null || value < 0 ? null : value;
+    },
+    x,
+    y,
+    color,
+    1.15,
+    [4, 3],
+    0.75,
+  );
+  drawBreakLine(
+    ctx,
+    points,
+    (pt) => {
+      const value = valueOf(pt);
+      return value == null || value >= 0 ? null : 0;
+    },
+    x,
+    y,
+    CHART_COLORS.spreadWarn,
+    1.15,
+    [4, 3],
+    0.9,
+  );
+  for (const pt of points) {
+    const value = valueOf(pt);
+    if (value == null || value >= 0) continue;
+    drawDot(ctx, x(pt.t), y(0), CHART_COLORS.spreadWarn);
+  }
+}
+
+function drawBreakLine<T extends { t: number }>(
+  ctx: CanvasRenderingContext2D,
+  points: T[],
+  valueOf: (pt: T) => number | null,
+  x: (t: number) => number,
+  y: (v: number) => number,
+  color: string,
+  width: number,
+  dash: number[],
+  alpha: number,
+): void {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.globalAlpha = alpha;
+  ctx.lineJoin = "round";
+  ctx.setLineDash(dash);
+  ctx.beginPath();
+  let drawing = false;
+  for (const pt of points) {
+    const value = valueOf(pt);
+    if (value == null) {
+      drawing = false;
+      continue;
+    }
+    const px = x(pt.t);
+    const py = y(value);
+    if (!drawing) {
+      ctx.moveTo(px, py);
+      drawing = true;
+    } else {
+      ctx.lineTo(px, py);
+    }
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+}
+
+export function maxMetric(points: MetricPoint[]): number {
+  let max = 0;
+  for (const pt of points) {
+    if (pt.volume != null && pt.volume > max) max = pt.volume;
+    if (pt.liquidity != null && pt.liquidity > max) max = pt.liquidity;
+  }
+  return max;
+}
+
+export function maxVolume24hr(points: MetricPoint[]): number {
+  let max = 0;
+  for (const pt of points) {
+    if (pt.volume24hr != null && pt.volume24hr > max) max = pt.volume24hr;
+  }
+  return max;
+}
+
+function fmtMetricTick(v: number): string {
+  if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(1)}M`;
+  if (v >= 1_000) return `$${(v / 1_000).toFixed(1)}k`;
+  return `$${v.toFixed(0)}`;
+}
+
+function nearestMetric(series: MetricPoint[], t: number): MetricPoint | null {
+  return nearestByTime(series, t);
+}
+
+function nearestDepth(series: DepthPoint[], t: number): DepthPoint | null {
+  return nearestByTime(series, t);
+}
+
+function nearestByTime<T extends { t: number }>(series: T[], t: number): T | null {
+  if (series.length === 0) return null;
+  let best = series[0];
+  let bestDist = Math.abs(series[0].t - t);
+  for (const pt of series) {
+    const dist = Math.abs(pt.t - t);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = pt;
+    }
+  }
+  return best;
 }
 
 function drawDot(ctx: CanvasRenderingContext2D, cx: number, cy: number, color: string): void {
@@ -305,6 +554,16 @@ export interface CrosshairInfo {
   t: number;
   upPrice: number | null;
   downPrice: number | null;
+  volume: number | null;
+  volume24hr: number | null;
+  liquidity: number | null;
+  upSpread: number | null;
+  downSpread: number | null;
+  gammaSpread: number | null;
+  upBidSize: number | null;
+  upAskSize: number | null;
+  downBidSize: number | null;
+  downAskSize: number | null;
 }
 
 /**
@@ -335,25 +594,28 @@ export function crosshairPoint(
     ? PADDING.top + (1 - Math.min(Math.max(anchor.p, 0), 1)) * plotH
     : PADDING.top + plotH / 2;
 
+  const metric = data.showMetrics === false ? null : nearestMetric(data.metrics ?? [], t);
+  const depth = nearestDepth(data.depth ?? [], t);
+
   return {
     x: mouseX,
     y: cy,
     t,
     upPrice: upPoint ? upPoint.p : null,
     downPrice: downPoint ? downPoint.p : null,
+    volume: metric?.volume ?? null,
+    volume24hr: metric?.volume24hr ?? null,
+    liquidity: metric?.liquidity ?? null,
+    upSpread: depth?.upSpread ?? null,
+    downSpread: depth?.downSpread ?? null,
+    gammaSpread: depth?.gammaSpread ?? null,
+    upBidSize: depth?.upBidSize ?? null,
+    upAskSize: depth?.upAskSize ?? null,
+    downBidSize: depth?.downBidSize ?? null,
+    downAskSize: depth?.downAskSize ?? null,
   };
 }
 
 function nearestInSeries(series: PricePoint[], t: number): PricePoint | null {
-  if (series.length === 0) return null;
-  let best = series[0];
-  let bestDist = Math.abs(series[0].t - t);
-  for (const pt of series) {
-    const dist = Math.abs(pt.t - t);
-    if (dist < bestDist) {
-      bestDist = dist;
-      best = pt;
-    }
-  }
-  return best;
+  return nearestByTime(series, t);
 }

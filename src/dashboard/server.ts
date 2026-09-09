@@ -171,6 +171,11 @@ export class DashboardServer {
         return;
       }
 
+      if (url.pathname === "/api/market-snapshots") {
+        this.handleMarketSnapshots(url, res);
+        return;
+      }
+
       if (url.pathname === "/api/bot-fills") {
         this.handleBotFills(url, res);
         return;
@@ -522,6 +527,31 @@ export class DashboardServer {
     }
     const snapshots =
       this.repos?.bookSnapshots.byTokenAndRange(tokenId, startTs * 1000, endTs * 1000) ?? [];
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ snapshots }));
+  }
+
+  private handleMarketSnapshots(
+    url: URL,
+    res: import("node:http").ServerResponse,
+  ): void {
+    const eventSlug = url.searchParams.get("eventSlug") ?? "";
+    const startTs = Number(url.searchParams.get("startTs"));
+    const endTs = Number(url.searchParams.get("endTs"));
+    if (!eventSlug || !Number.isFinite(startTs) || !Number.isFinite(endTs)) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "eventSlug, startTs and endTs are required" }));
+      return;
+    }
+    const rows =
+      this.repos?.marketSnapshots.bySlugAndRange(eventSlug, startTs * 1000, endTs * 1000) ?? [];
+    const snapshots = rows.map((row) => ({
+      ts: row.ts,
+      volume: row.volume ?? null,
+      volume24hr: row.volume24hr ?? null,
+      liquidity: row.liquidity ?? null,
+      spread: row.spread ?? null,
+    }));
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ snapshots }));
   }

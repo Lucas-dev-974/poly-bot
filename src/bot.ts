@@ -13,6 +13,7 @@ import type { TradingStrategy } from "./strategy/trading-strategy.js";
 import { TradeTracker, type PostedOrderContext } from "./trade-tracker.js";
 import { Trader } from "./trader.js";
 import type { OrderResult, TokenBook, TradeOpportunity, UpDownEvent, SimulatedPosition } from "./types.js";
+import { gammaMarketStats } from "./utils/market.js";
 import { confirmedFillSize } from "./utils/order-status.js";
 import { formatReturnPct, MIN_CLOB_SHARES } from "./utils/prices.js";
 
@@ -159,8 +160,12 @@ export class ReverseBot {
     this.repos?.retries.prune(now - 24 * 3600_000);
     this.repos?.orders.prune(now - 7 * 24 * 3600_000);
     this.repos?.redeems.prune(now - 30 * 24 * 3600_000);
-    this.repos?.marketSnapshots.prune(now - this.config.marketSnapshotRetentionMs);
-    this.repos?.bookSnapshots.prune(now - this.config.bookSnapshotRetentionMs);
+    if (this.config.marketSnapshotRetentionMs > 0) {
+      this.repos?.marketSnapshots.prune(now - this.config.marketSnapshotRetentionMs);
+    }
+    if (this.config.bookSnapshotRetentionMs > 0) {
+      this.repos?.bookSnapshots.prune(now - this.config.bookSnapshotRetentionMs);
+    }
     this.repos?.opportunitySnapshots.prune(now - this.config.opportunitySnapshotRetentionMs);
     this.tracker.pruneMemory(now - 24 * 3600_000);
   }
@@ -237,6 +242,7 @@ export class ReverseBot {
       const events = await this.scanner.scan();
       const tickTs = Date.now();
       for (const event of events) {
+        const stats = gammaMarketStats(event.market);
         this.repos?.marketSnapshots.insert({
           ts: tickTs,
           eventSlug: event.slug,
@@ -244,6 +250,11 @@ export class ReverseBot {
           conditionId: event.market.conditionId,
           windowStart: event.windowStart,
           windowEnd: event.windowEnd,
+          volume: stats.volume,
+          volume24hr: stats.volume24hr,
+          liquidity: stats.liquidity,
+          lastTradePrice: stats.lastTradePrice,
+          spread: stats.spread,
         });
       }
       bus.emit({
@@ -605,6 +616,14 @@ export class ReverseBot {
         bestAsk: book.bestAsk,
         bestAskSize: book.bestAskSize,
         bestBidSize: book.bestBidSize ?? null,
+        ask2: book.ask2 ?? null,
+        ask2Size: book.ask2Size ?? null,
+        ask3: book.ask3 ?? null,
+        ask3Size: book.ask3Size ?? null,
+        bid2: book.bid2 ?? null,
+        bid2Size: book.bid2Size ?? null,
+        bid3: book.bid3 ?? null,
+        bid3Size: book.bid3Size ?? null,
       });
     }
     if (!this.config.dryRun) {

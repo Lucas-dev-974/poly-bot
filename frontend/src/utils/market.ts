@@ -79,3 +79,12 @@ export function marketRecencyMs(position: {
   if (Number.isFinite(fromEnd) && fromEnd > 0) return fromEnd;
   return 0;
 }
+
+export function l1Spread(
+  bid: number | null | undefined,
+  ask: number | null | undefined,
+): number | null {
+  if (bid == null || ask == null) return null;
+  const spread = ask - bid;
+  return Number.isFinite(spread) ? spread : null;
+}

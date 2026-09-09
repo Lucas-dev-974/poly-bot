@@ -5,7 +5,9 @@ import {
   isOverlayPosition,
   marketRealizedPnl,
   matchWalletTradesToWindows,
+  metricScaleMax,
   overlayMarksForWindow,
+  seriesPath,
   toChartTimeSec,
   markerRadiiWorld,
 } from "../frontend/src/utils/stacked-chart.ts";
@@ -106,5 +108,30 @@ describe("stacked chart position overlay", () => {
       marketRealizedPnl([{ pnl: 1.25 }, { pnl: -0.4 }, { pnl: null }]),
       0.85,
     );
+  });
+
+  it("uses the shared max of volume and liquidity for the overlay scale", () => {
+    assert.equal(
+      metricScaleMax([
+        { t: 1, upMid: 0.5, downMid: 0.5, volume: 100, liquidity: 40 },
+        { t: 2, upMid: 0.5, downMid: 0.5, volume: 80, liquidity: 250 },
+      ]),
+      250,
+    );
+  });
+
+  it("draws a volume series path", () => {
+    const d = seriesPath(
+      [
+        { t: 10, upMid: 0.5, downMid: 0.5, volume: 10 },
+        { t: 11, upMid: 0.5, downMid: 0.5, volume: 20 },
+      ],
+      "volume",
+      (t) => t,
+      (v) => v,
+      false,
+    );
+    assert.equal(d.startsWith("M"), true);
+    assert.equal(d.includes("L"), true);
   });
 });

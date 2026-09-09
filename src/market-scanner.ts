@@ -6,6 +6,8 @@ import {
   bestSize,
   matchesSlugPrefixes,
   parseWindowStart,
+  rankedLevels,
+  withSeriesVolume24hr,
   WINDOW_SECONDS,
 } from "./utils/market.js";
 
@@ -44,6 +46,7 @@ export class MarketScanner {
         title: string;
         slug: string;
         markets: GammaMarket[];
+        series?: Array<{ volume24hr?: number | string | null }>;
       }>
     >(url);
 
@@ -73,7 +76,7 @@ export class MarketScanner {
       results.push({
         title: event.title,
         slug: event.slug,
-        market,
+        market: withSeriesVolume24hr(market, event.series),
         windowStart,
         windowEnd,
       });
@@ -91,15 +94,12 @@ export class MarketScanner {
         if (!tokenId) return null;
         try {
           const book = await fetchOrderBook(this.config.clobHost, tokenId);
-          return {
+          return tokenBookFromClob(
+            book,
             tokenId,
-            outcome: outcomes[index] ?? `Outcome ${index}`,
-            outcomeIndex: index,
-            bestBid: bestPrice(book.bids, "bid"),
-            bestAsk: bestPrice(book.asks, "ask"),
-            bestAskSize: bestSize(book.asks, "ask"),
-            bestBidSize: bestSize(book.bids, "bid"),
-          } satisfies TokenBook;
+            outcomes[index] ?? `Outcome ${index}`,
+            index,
+          );
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
           log("Order book fetch failed, skipping token", {
@@ -123,21 +123,40 @@ export class MarketScanner {
   async getTokenBook(tokenId: string): Promise<TokenBook | null> {
     try {
       const book = await fetchOrderBook(this.config.clobHost, tokenId);
-      return {
-        tokenId,
-        outcome: "",
-        outcomeIndex: 0,
-        bestBid: bestPrice(book.bids, "bid"),
-        bestAsk: bestPrice(book.asks, "ask"),
-        bestAskSize: bestSize(book.asks, "ask"),
-        bestBidSize: bestSize(book.bids, "bid"),
-      };
+      return tokenBookFromClob(book, tokenId, "", 0);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       log("Single token book fetch failed", { tokenId, error: message });
       return null;
     }
   }
+}
+
+function tokenBookFromClob(
+  book: OrderBook,
+  tokenId: string,
+  outcome: string,
+  outcomeIndex: number,
+): TokenBook {
+  const asks = rankedLevels(book.asks, "ask", 3);
+  const bids = rankedLevels(book.bids, "bid", 3);
+  return {
+    tokenId,
+    outcome,
+    outcomeIndex,
+    bestBid: bestPrice(book.bids, "bid"),
+    bestAsk: bestPrice(book.asks, "ask"),
+    bestAskSize: bestSize(book.asks, "ask"),
+    bestBidSize: bestSize(book.bids, "bid"),
+    ask2: asks[1]?.price ?? null,
+    ask2Size: asks[1]?.size ?? null,
+    ask3: asks[2]?.price ?? null,
+    ask3Size: asks[2]?.size ?? null,
+    bid2: bids[1]?.price ?? null,
+    bid2Size: bids[1]?.size ?? null,
+    bid3: bids[2]?.price ?? null,
+    bid3Size: bids[2]?.size ?? null,
+  };
 }
 
 async function fetchOrderBook(clobHost: string, tokenId: string): Promise<OrderBook> {

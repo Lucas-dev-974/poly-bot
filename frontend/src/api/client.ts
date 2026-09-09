@@ -1,4 +1,4 @@
-import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, LocalBookSnapshotResponse, MarketHistoryResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, WalletTradesResponse } from "../types";
+import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, MarketHistoryResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, WalletTradesResponse } from "../types";
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
@@ -94,6 +94,14 @@ export const api = {
       endTs: String(p.endTs),
     });
     return request<LocalBookSnapshotResponse>(`/api/book-snapshots?${params.toString()}`);
+  },
+  localMarketSnapshots: (p: { eventSlug: string; startTs: number; endTs: number }) => {
+    const params = new URLSearchParams({
+      eventSlug: p.eventSlug,
+      startTs: String(p.startTs),
+      endTs: String(p.endTs),
+    });
+    return request<LocalMarketSnapshotResponse>(`/api/market-snapshots?${params.toString()}`);
   },
   botFills: (tokenIds: string[]) =>
     request<BotFillsResponse>(

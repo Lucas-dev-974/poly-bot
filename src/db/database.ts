@@ -158,7 +158,12 @@ export class Database {
         eventTitle TEXT NOT NULL,
         conditionId TEXT NOT NULL,
         windowStart INTEGER NOT NULL,
-        windowEnd INTEGER NOT NULL
+        windowEnd INTEGER NOT NULL,
+        volume REAL,
+        volume24hr REAL,
+        liquidity REAL,
+        lastTradePrice REAL,
+        spread REAL
       );
 
       CREATE TABLE IF NOT EXISTS book_snapshots (
@@ -171,7 +176,15 @@ export class Database {
         bestBid REAL,
         bestAsk REAL,
         bestAskSize REAL,
-        bestBidSize REAL
+        bestBidSize REAL,
+        ask2 REAL,
+        ask2Size REAL,
+        ask3 REAL,
+        ask3Size REAL,
+        bid2 REAL,
+        bid2Size REAL,
+        bid3 REAL,
+        bid3Size REAL
       );
 
       CREATE TABLE IF NOT EXISTS opportunity_snapshots (
@@ -287,7 +300,30 @@ export class Database {
     this.addColumnIfMissing("positions", "strategyId", "TEXT");
     // Heure réelle du fill (ms). Pour un GTC resting, diffère de ts (heure de placement).
     this.addColumnIfMissing("orders", "filledTs", "INTEGER");
-    this.addColumnIfMissing("book_snapshots", "bestBidSize", "REAL");
+    const marketSnapshotCols: Array<[string, string]> = [
+      ["volume", "REAL"],
+      ["volume24hr", "REAL"],
+      ["liquidity", "REAL"],
+      ["lastTradePrice", "REAL"],
+      ["spread", "REAL"],
+    ];
+    for (const [col, type] of marketSnapshotCols) {
+      this.addColumnIfMissing("market_snapshots", col, type);
+    }
+    const bookSnapshotCols: Array<[string, string]> = [
+      ["bestBidSize", "REAL"],
+      ["ask2", "REAL"],
+      ["ask2Size", "REAL"],
+      ["ask3", "REAL"],
+      ["ask3Size", "REAL"],
+      ["bid2", "REAL"],
+      ["bid2Size", "REAL"],
+      ["bid3", "REAL"],
+      ["bid3Size", "REAL"],
+    ];
+    for (const [col, type] of bookSnapshotCols) {
+      this.addColumnIfMissing("book_snapshots", col, type);
+    }
   }
 
   private addColumnIfMissing(table: string, column: string, type: string): void {

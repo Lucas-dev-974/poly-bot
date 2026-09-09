@@ -1115,6 +1115,37 @@ select.cfg-input {
   font-size: 10px;
 }
 
+.mh-dash {
+  width: 12px;
+  height: 0;
+  border-top: 2px dashed;
+  display: inline-block;
+}
+
+.mh-legend-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: inherit;
+  cursor: pointer;
+  padding: 2px 6px;
+  opacity: 0.45;
+}
+
+.mh-legend-toggle.is-on {
+  opacity: 1;
+  border-color: var(--border);
+}
+
+.mh-scale-hint {
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
 .mh-canvas-wrap {
   position: relative;
   border: 1px solid var(--border);

@@ -1,13 +1,15 @@
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import type { JSX } from "solid-js";
 import type { BacktestPositionRow, BacktestSeriesPoint, BacktestWindowMeta } from "../../types";
-import { fmtUsd } from "../../utils/format";
+import { fmtSizePair, fmtSpread, fmtUsd, fmtUsdCompact } from "../../utils/format";
 import {
   CHART_LABEL_W,
   CHART_PLOT_PAD,
   CHART_ROW_H,
   CHART_WORLD_W,
+  LIQUIDITY_COLOR,
   NO_COLOR,
+  VOLUME_COLOR,
   YES_COLOR,
   chartContentHeight,
   clampViewBox,
@@ -22,12 +24,14 @@ import {
   isLabelOrPriceGutter,
   lastMid,
   marketRealizedPnl,
+  metricScaleMax,
   overlayMarksForWindow,
   markerRadiiWorld,
   nearestOverlayHit,
   nearestPoint,
   rowAsset,
   rowIndexAtY,
+  rowMetricY,
   rowPriceY,
   rowTimeX,
   seriesPath,
@@ -46,6 +50,14 @@ interface HoverInfo {
   t: number;
   yes: number | null;
   no: number | null;
+  volume: number | null;
+  liquidity: number | null;
+  upSpread: number | null;
+  downSpread: number | null;
+  upBidSize: number | null;
+  upAskSize: number | null;
+  downBidSize: number | null;
+  downAskSize: number | null;
   title: string;
   left: number;
   top: number;
@@ -109,6 +121,7 @@ export function StackedMarketChart(props: {
   const [dragging, setDragging] = createSignal(false);
   const [edgeScroll, setEdgeScroll] = createSignal(false);
   const [hover, setHover] = createSignal<HoverInfo | null>(null);
+  const [showMetrics, setShowMetrics] = createSignal(true);
   const contentH = createMemo(() => chartContentHeight(props.windows.length));
   const range = createMemo(() => visibleRowRange(vb(), props.windows.length));
   const visibleWindows = createMemo(() => {
@@ -246,6 +259,14 @@ export function StackedMarketChart(props: {
       t: overlayT ?? pt?.t ?? t,
       yes,
       no,
+      volume: pt?.volume ?? null,
+      liquidity: pt?.liquidity ?? null,
+      upSpread: pt?.upSpread ?? null,
+      downSpread: pt?.downSpread ?? null,
+      upBidSize: pt?.upBidSize ?? null,
+      upAskSize: pt?.upAskSize ?? null,
+      downBidSize: pt?.downBidSize ?? null,
+      downAskSize: pt?.downAskSize ?? null,
       title: window.eventTitle || `${rowAsset(window.eventSlug)} · ${fmtClock(window.windowStart)}`,
       left,
       top,
@@ -332,6 +353,17 @@ export function StackedMarketChart(props: {
           Yes
           <span class="bt-swatch no" />
           No
+          <button
+            class={`bt-legend-toggle${showMetrics() ? " is-on" : ""}`}
+            type="button"
+            title="Volume et liquidité enregistrés"
+            onClick={() => setShowMetrics((v) => !v)}
+          >
+            <span class="bt-swatch vol" />
+            Vol
+            <span class="bt-swatch liq" />
+            Liq
+          </button>
           <Show when={(props.positions ?? []).length > 0}>
             <span class="bt-swatch-mark buy" />
             Run
@@ -387,6 +419,7 @@ export function StackedMarketChart(props: {
                   index={range().start + i()}
                   points={props.series[w.eventSlug] ?? []}
                   cutGaps={props.cutGaps}
+                  showMetrics={showMetrics()}
                   positions={positionsBySlug().get(w.eventSlug) ?? []}
                   walletMarks={walletBySlug().get(w.eventSlug) ?? []}
                   markerRx={marker().rx}
@@ -440,6 +473,37 @@ export function StackedMarketChart(props: {
                 <div class="bt-tip-row no">
                   No <span>{fmtMid(h().no)}</span>
                 </div>
+                <Show
+                  when={
+                    h().upSpread != null ||
+                    h().downSpread != null ||
+                    h().upBidSize != null ||
+                    h().upAskSize != null ||
+                    h().downBidSize != null ||
+                    h().downAskSize != null
+                  }
+                >
+                  <div class="bt-tip-row spr">
+                    Spr Yes <span>{fmtSpread(h().upSpread)}</span>
+                  </div>
+                  <div class="bt-tip-row spr">
+                    Spr No <span>{fmtSpread(h().downSpread)}</span>
+                  </div>
+                  <div class="bt-tip-row sz">
+                    Sz Yes <span>{fmtSizePair(h().upBidSize, h().upAskSize)}</span>
+                  </div>
+                  <div class="bt-tip-row sz">
+                    Sz No <span>{fmtSizePair(h().downBidSize, h().downAskSize)}</span>
+                  </div>
+                </Show>
+                <Show when={showMetrics()}>
+                  <div class="bt-tip-row vol">
+                    Vol <span>{fmtUsdCompact(h().volume)}</span>
+                  </div>
+                  <div class="bt-tip-row liq">
+                    Liq <span>{fmtUsdCompact(h().liquidity)}</span>
+                  </div>
+                </Show>
                 <Show when={h().hasMarketLegs}>
                   <div class={`bt-tip-row bt-tip-pnl${pnlTone(h().marketPnl)}`}>
                     PnL <span>{h().marketPnl == null ? "—" : fmtUsd(h().marketPnl)}</span>
@@ -492,6 +556,7 @@ function MarketRow(props: {
   index: number;
   points: BacktestSeriesPoint[];
   cutGaps: boolean;
+  showMetrics: boolean;
   positions: BacktestPositionRow[];
   walletMarks: WalletOverlayMark[];
   markerRx: number;
@@ -500,11 +565,21 @@ function MarketRow(props: {
   const top = () => props.index * CHART_ROW_H;
   const x = () => rowTimeX(props.window.windowStart, props.window.windowEnd);
   const y = () => rowPriceY(top());
+  const metricMax = () => metricScaleMax(props.points);
+  const yMetric = () => rowMetricY(top(), metricMax());
   const plotLeft = CHART_LABEL_W + CHART_PLOT_PAD.left;
   const plotRight = CHART_WORLD_W - CHART_PLOT_PAD.right;
   const midY = () => top() + CHART_ROW_H / 2;
   const yesD = () => seriesPath(props.points, "upMid", x(), y(), props.cutGaps);
   const noD = () => seriesPath(props.points, "downMid", x(), y(), props.cutGaps);
+  const volD = () =>
+    props.showMetrics && metricMax() > 0
+      ? seriesPath(props.points, "volume", x(), yMetric(), props.cutGaps)
+      : "";
+  const liqD = () =>
+    props.showMetrics && metricMax() > 0
+      ? seriesPath(props.points, "liquidity", x(), yMetric(), props.cutGaps)
+      : "";
   const yesLast = () => lastMid(props.points, "upMid");
   const noLast = () => lastMid(props.points, "downMid");
   const labelY = () => top() + CHART_ROW_H / 2 + 3;
@@ -557,6 +632,31 @@ function MarketRow(props: {
       <text x={15} y={labelY()} class="bt-svg-title">
         {rowAsset(props.window.eventSlug)}
       </text>
+      <Show when={volD()}>
+        <path
+          d={volD()}
+          fill="none"
+          stroke={VOLUME_COLOR}
+          stroke-width="1"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+          opacity="0.85"
+          vector-effect="non-scaling-stroke"
+        />
+      </Show>
+      <Show when={liqD()}>
+        <path
+          d={liqD()}
+          fill="none"
+          stroke={LIQUIDITY_COLOR}
+          stroke-width="1"
+          stroke-dasharray="4 3"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+          opacity="0.9"
+          vector-effect="non-scaling-stroke"
+        />
+      </Show>
       <Show when={yesD()}>
         <path
           d={yesD()}

@@ -23,6 +23,14 @@ export interface BacktestSeriesPoint {
   t: number;
   upMid: number | null;
   downMid: number | null;
+  volume?: number | null;
+  liquidity?: number | null;
+  upSpread?: number | null;
+  downSpread?: number | null;
+  upBidSize?: number | null;
+  upAskSize?: number | null;
+  downBidSize?: number | null;
+  downAskSize?: number | null;
 }
 
 export interface BacktestTradeRecord {

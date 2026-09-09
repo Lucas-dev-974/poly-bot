@@ -114,7 +114,9 @@ export interface BotConfig {
   relayerHost: string;
   autoRedeemWinners: boolean;
   minMinutesBeforeCloseToBuy: number | null;
+  /** 0 = keep forever (analytics / future ML). */
   marketSnapshotRetentionMs: number;
+  /** 0 = keep forever (analytics / future ML). */
   bookSnapshotRetentionMs: number;
   opportunitySnapshotRetentionMs: number;
   /** Edge-lead : bande de confirmation de l'ask du favori (edge). */
@@ -240,8 +242,8 @@ export function loadConfig(): BotConfig {
     relayerApiKeyAddress: process.env.RELAYER_API_KEY_ADDRESS as `0x${string}` | undefined,
     relayerHost: envString("RELAYER_HOST", "https://relayer-v2.polymarket.com"),
     autoRedeemWinners: envBoolean("AUTO_REDEEM_WINNERS", false),
-    marketSnapshotRetentionMs: envNumber("MARKET_SNAPSHOT_RETENTION_DAYS", 7) * 24 * 3600_000,
-    bookSnapshotRetentionMs: envNumber("BOOK_SNAPSHOT_RETENTION_DAYS", 3) * 24 * 3600_000,
+    marketSnapshotRetentionMs: envNumber("MARKET_SNAPSHOT_RETENTION_DAYS", 0) * 24 * 3600_000,
+    bookSnapshotRetentionMs: envNumber("BOOK_SNAPSHOT_RETENTION_DAYS", 0) * 24 * 3600_000,
     opportunitySnapshotRetentionMs: envNumber("OPPORTUNITY_SNAPSHOT_RETENTION_DAYS", 7) * 24 * 3600_000,
   };
 

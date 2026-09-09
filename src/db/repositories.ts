@@ -751,15 +751,23 @@ export interface MarketSnapshotRow {
   conditionId: string;
   windowStart: number;
   windowEnd: number;
+  volume?: number | null;
+  volume24hr?: number | null;
+  liquidity?: number | null;
+  lastTradePrice?: number | null;
+  spread?: number | null;
 }
+
+const MARKET_SNAPSHOT_COLUMNS =
+  "ts, eventSlug, eventTitle, conditionId, windowStart, windowEnd, volume, volume24hr, liquidity, lastTradePrice, spread";
 
 export class MarketSnapshotRepository {
   constructor(private readonly db: Database) {}
 
   insert(snapshot: MarketSnapshotRow): void {
     this.db.run(
-      `INSERT INTO market_snapshots (ts, eventSlug, eventTitle, conditionId, windowStart, windowEnd)
-       VALUES (?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO market_snapshots (${MARKET_SNAPSHOT_COLUMNS})
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         snapshot.ts,
         snapshot.eventSlug,
@@ -767,6 +775,11 @@ export class MarketSnapshotRepository {
         snapshot.conditionId,
         snapshot.windowStart,
         snapshot.windowEnd,
+        snapshot.volume ?? null,
+        snapshot.volume24hr ?? null,
+        snapshot.liquidity ?? null,
+        snapshot.lastTradePrice ?? null,
+        snapshot.spread ?? null,
       ],
     );
   }
@@ -777,9 +790,19 @@ export class MarketSnapshotRepository {
 
   latestBySlug(eventSlug: string): MarketSnapshotRow | undefined {
     return this.db.get<MarketSnapshotRow>(
-      `SELECT ts, eventSlug, eventTitle, conditionId, windowStart, windowEnd
+      `SELECT ${MARKET_SNAPSHOT_COLUMNS}
        FROM market_snapshots WHERE eventSlug = ? ORDER BY ts DESC LIMIT 1`,
       [eventSlug],
+    );
+  }
+
+  bySlugAndRange(eventSlug: string, startTs: number, endTs: number): MarketSnapshotRow[] {
+    return this.db.all<MarketSnapshotRow>(
+      `SELECT ${MARKET_SNAPSHOT_COLUMNS}
+       FROM market_snapshots
+       WHERE eventSlug = ? AND ts >= ? AND ts <= ?
+       ORDER BY ts ASC`,
+      [eventSlug, startTs, endTs],
     );
   }
 
@@ -808,15 +831,26 @@ export interface BookSnapshotRow {
   bestAsk: number | null;
   bestAskSize: number | null;
   bestBidSize?: number | null;
+  ask2?: number | null;
+  ask2Size?: number | null;
+  ask3?: number | null;
+  ask3Size?: number | null;
+  bid2?: number | null;
+  bid2Size?: number | null;
+  bid3?: number | null;
+  bid3Size?: number | null;
 }
+
+const BOOK_SNAPSHOT_COLUMNS =
+  "ts, eventSlug, tokenId, outcome, outcomeIndex, bestBid, bestAsk, bestAskSize, bestBidSize, ask2, ask2Size, ask3, ask3Size, bid2, bid2Size, bid3, bid3Size";
 
 export class BookSnapshotRepository {
   constructor(private readonly db: Database) {}
 
   insert(snapshot: BookSnapshotRow): void {
     this.db.run(
-      `INSERT INTO book_snapshots (ts, eventSlug, tokenId, outcome, outcomeIndex, bestBid, bestAsk, bestAskSize, bestBidSize)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO book_snapshots (${BOOK_SNAPSHOT_COLUMNS})
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         snapshot.ts,
         snapshot.eventSlug,
@@ -827,6 +861,14 @@ export class BookSnapshotRepository {
         snapshot.bestAsk,
         snapshot.bestAskSize,
         snapshot.bestBidSize ?? null,
+        snapshot.ask2 ?? null,
+        snapshot.ask2Size ?? null,
+        snapshot.ask3 ?? null,
+        snapshot.ask3Size ?? null,
+        snapshot.bid2 ?? null,
+        snapshot.bid2Size ?? null,
+        snapshot.bid3 ?? null,
+        snapshot.bid3Size ?? null,
       ],
     );
   }
@@ -837,7 +879,7 @@ export class BookSnapshotRepository {
 
   byTokenAndRange(tokenId: string, startTs: number, endTs: number): BookSnapshotRow[] {
     return this.db.all<BookSnapshotRow>(
-      `SELECT ts, eventSlug, tokenId, outcome, outcomeIndex, bestBid, bestAsk, bestAskSize, bestBidSize
+      `SELECT ${BOOK_SNAPSHOT_COLUMNS}
        FROM book_snapshots
        WHERE tokenId = ? AND ts >= ? AND ts <= ?
        ORDER BY ts ASC`,
@@ -856,7 +898,7 @@ export class BookSnapshotRepository {
 
   bySlugAndRange(eventSlug: string, startTs: number, endTs: number): BookSnapshotRow[] {
     return this.db.all<BookSnapshotRow>(
-      `SELECT ts, eventSlug, tokenId, outcome, outcomeIndex, bestBid, bestAsk, bestAskSize, bestBidSize
+      `SELECT ${BOOK_SNAPSHOT_COLUMNS}
        FROM book_snapshots
        WHERE eventSlug = ? AND ts >= ? AND ts <= ?
        ORDER BY ts ASC`,

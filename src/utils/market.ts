@@ -43,3 +43,84 @@ export function bestSize(
   const size = Number(level.size);
   return Number.isNaN(size) ? null : size;
 }
+
+export function l1Spread(
+  bid: number | null | undefined,
+  ask: number | null | undefined,
+): number | null {
+  if (bid == null || ask == null) return null;
+  const spread = ask - bid;
+  return Number.isFinite(spread) ? spread : null;
+}
+
+export function parseOptionalNumber(value: unknown): number | null {
+  if (value === null || value === undefined || value === "") return null;
+  const n = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+export function gammaMarketStats(market: GammaMarket): {
+  volume: number | null;
+  volume24hr: number | null;
+  liquidity: number | null;
+  lastTradePrice: number | null;
+  spread: number | null;
+} {
+  return {
+    volume: parseOptionalNumber(market.volumeNum) ?? parseOptionalNumber(market.volume),
+    volume24hr: parseOptionalNumber(market.volume24hr),
+    liquidity:
+      parseOptionalNumber(market.liquidityNum) ?? parseOptionalNumber(market.liquidity),
+    lastTradePrice: parseOptionalNumber(market.lastTradePrice),
+    spread: parseOptionalNumber(market.spread),
+  };
+}
+
+export function withSeriesVolume24hr(
+  market: GammaMarket,
+  series: Array<{ volume24hr?: number | string | null }> | undefined,
+): GammaMarket {
+  if (parseOptionalNumber(market.volume24hr) != null) return market;
+  const fallback = parseOptionalNumber(series?.[0]?.volume24hr);
+  return fallback == null ? market : { ...market, volume24hr: fallback };
+}
+
+export interface RankedBookLevel {
+  price: number;
+  size: number | null;
+}
+
+/** Best `depth` distinct prices, bid high→low / ask low→high. */
+export function rankedLevels(
+  levels: Array<{ price: string; size: string }> | undefined,
+  mode: "bid" | "ask",
+  depth: number,
+): Array<RankedBookLevel | null> {
+  const padded: Array<RankedBookLevel | null> = Array.from({ length: depth }, () => null);
+  if (!levels || levels.length === 0 || depth <= 0) return padded;
+
+  const parsed: RankedBookLevel[] = [];
+  for (const level of levels) {
+    const price = Number(level.price);
+    if (!Number.isFinite(price)) continue;
+    const size = Number(level.size);
+    parsed.push({
+      price,
+      size: Number.isFinite(size) ? size : null,
+    });
+  }
+  parsed.sort((a, b) => (mode === "bid" ? b.price - a.price : a.price - b.price));
+
+  const unique: RankedBookLevel[] = [];
+  for (const level of parsed) {
+    const last = unique[unique.length - 1];
+    if (last && last.price === level.price) {
+      if (level.size != null) last.size = (last.size ?? 0) + level.size;
+      continue;
+    }
+    if (unique.length >= depth) break;
+    unique.push({ price: level.price, size: level.size });
+  }
+  for (let i = 0; i < unique.length; i++) padded[i] = unique[i] ?? null;
+  return padded;
+}

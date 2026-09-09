@@ -10,10 +10,10 @@ import type {
   TokenBook,
   TradePoint,
 } from "../../types";
-import type { ChartData, CrosshairInfo } from "../../utils/chart";
-import { CHART_COLORS, PADDING, crosshairPoint, drawMarketChart, outcomeColor } from "../../utils/chart";
-import { parseSlugWindow } from "../../utils/market";
-import { dateTimeStr, fmtPrice, fmtUsd } from "../../utils/format";
+import type { ChartData, CrosshairInfo, DepthPoint } from "../../utils/chart";
+import { CHART_COLORS, PADDING, crosshairPoint, drawMarketChart, maxMetric, maxVolume24hr, outcomeColor } from "../../utils/chart";
+import { l1Spread, parseSlugWindow } from "../../utils/market";
+import { dateTimeStr, fmtPrice, fmtSizePair, fmtSpread, fmtUsd, fmtUsdCompact } from "../../utils/format";
 import { markets } from "../../stores/marketStore";
 import { polyPositions } from "../../stores/polyStore";
 import { openPositionList, resolvedPositions } from "../../stores/positionStore";
@@ -121,15 +121,99 @@ function snapshotsToPricePoints(snapshots: BookSnapshotPoint[], curve: PriceCurv
 }
 
 /** Point live capturé depuis le marketStore (valeurs copiées, pas de proxy). */
-interface LivePoint {
-  t: number;
-  up: { bid: number | null; ask: number | null } | null;
-  down: { bid: number | null; ask: number | null } | null;
+interface LiveBook {
+  bid: number | null;
+  ask: number | null;
+  bidSize: number | null;
+  askSize: number | null;
 }
 
-function bookValues(book: TokenBook | null | undefined): LivePoint["up"] {
+interface LivePoint {
+  t: number;
+  up: LiveBook | null;
+  down: LiveBook | null;
+  volume: number | null;
+  volume24hr: number | null;
+  liquidity: number | null;
+  gammaSpread: number | null;
+}
+
+function parseMetric(value: unknown): number | null {
+  if (value == null || value === "") return null;
+  const n = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function bookValues(book: TokenBook | null | undefined): LiveBook | null {
   if (!book) return null;
-  return { bid: book.bestBid ?? null, ask: book.bestAsk ?? null };
+  return {
+    bid: book.bestBid ?? null,
+    ask: book.bestAsk ?? null,
+    bidSize: book.bestBidSize ?? null,
+    askSize: book.bestAskSize ?? null,
+  };
+}
+
+function emptyDepth(t: number): DepthPoint {
+  return {
+    t,
+    upSpread: null,
+    downSpread: null,
+    gammaSpread: null,
+    upBidSize: null,
+    upAskSize: null,
+    downBidSize: null,
+    downAskSize: null,
+  };
+}
+
+function mergeDepth(
+  up: BookSnapshotPoint[],
+  down: BookSnapshotPoint[],
+  gamma: Array<{ t: number; spread: number | null }>,
+  live: LivePoint[],
+): DepthPoint[] {
+  const byT = new Map<number, DepthPoint>();
+  const ensure = (t: number): DepthPoint => {
+    const existing = byT.get(t);
+    if (existing) return existing;
+    const created = emptyDepth(t);
+    byT.set(t, created);
+    return created;
+  };
+  for (const s of up) {
+    const entry = ensure(Math.round(s.ts / 1000));
+    entry.upSpread = l1Spread(s.bestBid, s.bestAsk);
+    entry.upBidSize = s.bestBidSize ?? null;
+    entry.upAskSize = s.bestAskSize ?? null;
+  }
+  for (const s of down) {
+    const entry = ensure(Math.round(s.ts / 1000));
+    entry.downSpread = l1Spread(s.bestBid, s.bestAsk);
+    entry.downBidSize = s.bestBidSize ?? null;
+    entry.downAskSize = s.bestAskSize ?? null;
+  }
+  for (const row of gamma) {
+    ensure(row.t).gammaSpread = row.spread;
+  }
+  let lastT = 0;
+  for (const t of byT.keys()) if (t > lastT) lastT = t;
+  for (const lp of live) {
+    if (lp.t <= lastT) continue;
+    const entry = ensure(lp.t);
+    if (lp.up) {
+      entry.upSpread = l1Spread(lp.up.bid, lp.up.ask);
+      entry.upBidSize = lp.up.bidSize;
+      entry.upAskSize = lp.up.askSize;
+    }
+    if (lp.down) {
+      entry.downSpread = l1Spread(lp.down.bid, lp.down.ask);
+      entry.downBidSize = lp.down.bidSize;
+      entry.downAskSize = lp.down.askSize;
+    }
+    if (lp.gammaSpread != null) entry.gammaSpread = lp.gammaSpread;
+  }
+  return [...byT.values()].sort((a, b) => a.t - b.t);
 }
 
 function fmtClock(tsSec: number): string {
@@ -212,6 +296,8 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
   const [canvasEl, setCanvasEl] = createSignal<HTMLCanvasElement | undefined>(undefined);
   const [dataSource, setDataSource] = createSignal<DataSource>("local");
   const [curve, setCurve] = createSignal<PriceCurve>("mid");
+  const [showMetrics, setShowMetrics] = createSignal(true);
+  const [showSpread, setShowSpread] = createSignal(true);
 
   let dragging = false;
   let dragStartX = 0;
@@ -253,13 +339,19 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
   );
 
   const [localSnapshotsResource] = createResource(
-    () => (dataSource() === "local" ? { w: window() } : null),
+    () => ({ w: window() }),
     async ({ w }) => {
       const fetchSnaps = async (tokenId: string | undefined): Promise<BookSnapshotPoint[]> =>
         tokenId ? (await api.localBookSnapshots({ tokenId, startTs: w.start, endTs: w.end })).snapshots : [];
       const [up, down] = await Promise.all([fetchSnaps(target.upTokenId), fetchSnaps(target.downTokenId)]);
       return { up, down };
     },
+  );
+
+  const [metricsResource] = createResource(
+    () => (target.slug ? { slug: target.slug, w: window() } : null),
+    async ({ slug, w }) =>
+      (await api.localMarketSnapshots({ eventSlug: slug, startTs: w.start, endTs: w.end })).snapshots,
   );
 
   // --- Trades ---------------------------------------------------------------
@@ -307,6 +399,10 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
       down: target.downTokenId
         ? bookValues(market.books.find((b) => b.tokenId === target.downTokenId))
         : null,
+      volume: parseMetric(market.market.volumeNum) ?? parseMetric(market.market.volume),
+      volume24hr: parseMetric(market.market.volume24hr),
+      liquidity: parseMetric(market.market.liquidityNum) ?? parseMetric(market.market.liquidity),
+      gammaSpread: parseMetric(market.market.spread),
     };
   });
 
@@ -338,10 +434,49 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
       viewport: viewport() ?? undefined,
     };
 
+    const metrics = (): NonNullable<ChartData["metrics"]> => {
+      const snaps = metricsResource() ?? [];
+      const out = snaps.map((s) => ({
+        t: Math.round(s.ts / 1000),
+        volume: s.volume ?? null,
+        volume24hr: s.volume24hr ?? null,
+        liquidity: s.liquidity ?? null,
+      }));
+      const lastT = out[out.length - 1]?.t ?? 0;
+      for (const lp of livePoints()) {
+        if (lp.t > lastT && (lp.volume != null || lp.liquidity != null || lp.volume24hr != null)) {
+          out.push({
+            t: lp.t,
+            volume: lp.volume,
+            volume24hr: lp.volume24hr,
+            liquidity: lp.liquidity,
+          });
+        }
+      }
+      return out;
+    };
+
+    const depth = (): DepthPoint[] => {
+      const local = localSnapshotsResource();
+      const gamma = (metricsResource() ?? []).map((s) => ({
+        t: Math.round(s.ts / 1000),
+        spread: s.spread ?? null,
+      }));
+      return mergeDepth(local?.up ?? [], local?.down ?? [], gamma, livePoints());
+    };
+
+    const withMetrics = (data: ChartData): ChartData => ({
+      ...data,
+      metrics: metrics(),
+      showMetrics: showMetrics(),
+      depth: depth(),
+      showSpread: showSpread(),
+    });
+
     if (dataSource() === "api") {
       const hist = historyResource();
       if (!hist) return null;
-      return { ...base, upHistory: hist.up, downHistory: hist.down };
+      return withMetrics({ ...base, upHistory: hist.up, downHistory: hist.down });
     }
 
     const local = localSnapshotsResource();
@@ -365,7 +500,14 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
       if (lp.t > lastDownT && down != null) downHistory.push({ t: lp.t, p: down });
     }
 
-    return { ...base, upHistory, downHistory };
+    return withMetrics({ ...base, upHistory, downHistory });
+  });
+
+  const unlabeledVolLiqMax = createMemo(() => {
+    if (!showMetrics()) return 0;
+    const metrics = chartData()?.metrics ?? [];
+    if (maxVolume24hr(metrics) <= 0) return 0;
+    return maxMetric(metrics);
   });
 
   // Dessin : redraw quand data, hover ou canvas changent.
@@ -467,6 +609,7 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
   );
   const error = createMemo(() =>
     (dataSource() === "api" ? historyResource.error : localSnapshotsResource.error) ||
+    metricsResource.error ||
     botFillsResource.error ||
     tradesResource.error,
   );
@@ -580,6 +723,39 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
               <span class="mh-triangle" style={{ color: CHART_COLORS.resolve }}>◆</span>
               résolution
             </span>
+            <button
+              class={`mh-legend-toggle${showMetrics() ? " is-on" : ""}`}
+              type="button"
+              title="Volume 15m, liquidité et volume 24h"
+              onClick={() => setShowMetrics((v) => !v)}
+            >
+              <span class="mh-legend-item">
+                <span class="mh-dot" style={{ background: CHART_COLORS.volume }} />
+                volume
+              </span>
+              <span class="mh-legend-item">
+                <span class="mh-dash" style={{ "border-color": CHART_COLORS.liquidity }} />
+                liquidité
+              </span>
+              <span class="mh-legend-item">
+                <span class="mh-dot" style={{ background: CHART_COLORS.volume24hr }} />
+                vol 24h
+              </span>
+              <Show when={unlabeledVolLiqMax() > 0}>
+                <span class="mh-scale-hint">vol/liq ≤ {fmtUsdCompact(unlabeledVolLiqMax())}</span>
+              </Show>
+            </button>
+            <button
+              class={`mh-legend-toggle${showSpread() ? " is-on" : ""}`}
+              type="button"
+              title="Spread L1 (ask − bid)"
+              onClick={() => setShowSpread((v) => !v)}
+            >
+              <span class="mh-legend-item">
+                <span class="mh-dash" style={{ "border-color": CHART_COLORS.up }} />
+                spread
+              </span>
+            </button>
           </div>
           <div class="mh-chart-toolbar">
             <button class="mh-tool-btn" type="button" title="Zoom +" onClick={() => zoomBy(1 / 1.3)}>+</button>
@@ -628,6 +804,39 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
                 <div>{new Date(h().t * 1000).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
                 <div style={{ color: CHART_COLORS.up }}>{target.upOutcome} : {h().upPrice != null ? (h().upPrice as number).toFixed(3) : "—"}</div>
                 <div style={{ color: CHART_COLORS.down }}>{target.downOutcome} : {h().downPrice != null ? (h().downPrice as number).toFixed(3) : "—"}</div>
+                <Show when={showMetrics()}>
+                  <div style={{ color: CHART_COLORS.volume }}>Vol : {fmtUsdCompact(h().volume)}</div>
+                  <div style={{ color: CHART_COLORS.liquidity }}>Liq : {fmtUsdCompact(h().liquidity)}</div>
+                  <div style={{ color: CHART_COLORS.volume24hr }}>Vol 24h : {fmtUsdCompact(h().volume24hr)}</div>
+                </Show>
+                <Show when={showSpread()}>
+                  <Show
+                    when={h().upSpread != null || h().downSpread != null}
+                    fallback={
+                      <div style={{ color: (h().gammaSpread ?? 0) < 0 ? CHART_COLORS.spreadWarn : CHART_COLORS.spread }}>
+                        Spread : {fmtSpread(h().gammaSpread)}
+                      </div>
+                    }
+                  >
+                    <div style={{ color: (h().upSpread ?? 0) < 0 ? CHART_COLORS.spreadWarn : CHART_COLORS.up }}>
+                      Spread {target.upOutcome} : {fmtSpread(h().upSpread)}
+                    </div>
+                    <div style={{ color: (h().downSpread ?? 0) < 0 ? CHART_COLORS.spreadWarn : CHART_COLORS.down }}>
+                      Spread {target.downOutcome} : {fmtSpread(h().downSpread)}
+                    </div>
+                  </Show>
+                </Show>
+                <Show
+                  when={
+                    h().upBidSize != null ||
+                    h().upAskSize != null ||
+                    h().downBidSize != null ||
+                    h().downAskSize != null
+                  }
+                >
+                  <div style={{ color: CHART_COLORS.up }}>Sz {target.upOutcome} : {fmtSizePair(h().upBidSize, h().upAskSize)}</div>
+                  <div style={{ color: CHART_COLORS.down }}>Sz {target.downOutcome} : {fmtSizePair(h().downBidSize, h().downAskSize)}</div>
+                </Show>
               </div>
             )}
           </Show>

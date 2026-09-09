@@ -1,5 +1,7 @@
 export const YES_COLOR = "#3ee07a";
 export const NO_COLOR = "#ff5b5b";
+export const VOLUME_COLOR = "#5b9cff";
+export const LIQUIDITY_COLOR = "#c084fc";
 export const CHART_WORLD_W = 1200;
 export const CHART_LABEL_W = 108;
 export const CHART_ROW_H = 34;
@@ -15,7 +17,17 @@ export interface SparkPoint {
   t: number;
   upMid: number | null;
   downMid: number | null;
+  volume?: number | null;
+  liquidity?: number | null;
+  upSpread?: number | null;
+  downSpread?: number | null;
+  upBidSize?: number | null;
+  upAskSize?: number | null;
+  downBidSize?: number | null;
+  downAskSize?: number | null;
 }
+
+export type SeriesKey = "upMid" | "downMid" | "volume" | "liquidity";
 
 export interface ChartViewBox {
   x: number;
@@ -30,7 +42,7 @@ export function chartContentHeight(rowCount: number): number {
 
 export function seriesPath(
   points: SparkPoint[],
-  key: "upMid" | "downMid",
+  key: SeriesKey,
   x: (t: number) => number,
   y: (p: number) => number,
   cutGaps: boolean,
@@ -70,6 +82,22 @@ export function rowPriceY(rowTop: number): (p: number) => number {
   const top = rowTop + CHART_PLOT_PAD.top;
   const h = CHART_ROW_H - CHART_PLOT_PAD.top - CHART_PLOT_PAD.bottom;
   return (p: number) => top + (1 - Math.min(Math.max(p, 0), 1)) * h;
+}
+
+export function metricScaleMax(points: SparkPoint[]): number {
+  let max = 0;
+  for (const pt of points) {
+    if (pt.volume != null && pt.volume > max) max = pt.volume;
+    if (pt.liquidity != null && pt.liquidity > max) max = pt.liquidity;
+  }
+  return max;
+}
+
+export function rowMetricY(rowTop: number, max: number): (v: number) => number {
+  const top = rowTop + CHART_PLOT_PAD.top;
+  const h = CHART_ROW_H - CHART_PLOT_PAD.top - CHART_PLOT_PAD.bottom;
+  const span = Math.max(max, 1);
+  return (v: number) => top + (1 - Math.min(Math.max(v, 0), span) / span) * h;
 }
 
 export function clampViewBox(

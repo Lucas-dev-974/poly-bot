@@ -9,6 +9,7 @@ import {
   windowBoundsFromSlug,
   type CompletenessCriteria,
 } from "./completeness.js";
+import { l1Spread } from "../utils/market.js";
 import type { BacktestSeriesPoint, BacktestWindowMeta } from "./types.js";
 
 const WINDOWS_CACHE_MS = 10_000;
@@ -139,12 +140,11 @@ export function seriesForSlugs(
       out[slug] = [];
       continue;
     }
-    const rows = repos.bookSnapshots.bySlugAndRange(
-      slug,
-      bounds.windowStart * 1000,
-      bounds.windowEnd * 1000,
-    );
-    out[slug] = rowsToSeries(rows);
+    const startMs = bounds.windowStart * 1000;
+    const endMs = bounds.windowEnd * 1000;
+    const rows = repos.bookSnapshots.bySlugAndRange(slug, startMs, endMs);
+    const metrics = repos.marketSnapshots.bySlugAndRange(slug, startMs, endMs);
+    out[slug] = rowsToSeries(rows, metrics);
   }
   return out;
 }
@@ -153,12 +153,29 @@ function mid(bid: number | null, ask: number | null): number | null {
   return bid != null && ask != null ? (bid + ask) / 2 : null;
 }
 
-function rowsToSeries(rows: BookSnapshotRow[]): BacktestSeriesPoint[] {
-  const byTs = new Map<number, { up?: BookSnapshotRow; down?: BookSnapshotRow }>();
+export function rowsToSeries(
+  rows: BookSnapshotRow[],
+  metrics: Array<{ ts: number; volume?: number | null; liquidity?: number | null }> = [],
+): BacktestSeriesPoint[] {
+  const byTs = new Map<
+    number,
+    {
+      up?: BookSnapshotRow;
+      down?: BookSnapshotRow;
+      volume: number | null;
+      liquidity: number | null;
+    }
+  >();
   for (const row of rows) {
-    const entry = byTs.get(row.ts) ?? {};
+    const entry = byTs.get(row.ts) ?? { volume: null, liquidity: null };
     if (row.outcomeIndex === 0) entry.up = row;
     else entry.down = row;
+    byTs.set(row.ts, entry);
+  }
+  for (const row of metrics) {
+    const entry = byTs.get(row.ts) ?? { volume: null, liquidity: null };
+    entry.volume = row.volume ?? null;
+    entry.liquidity = row.liquidity ?? null;
     byTs.set(row.ts, entry);
   }
   return [...byTs.entries()]
@@ -167,6 +184,14 @@ function rowsToSeries(rows: BookSnapshotRow[]): BacktestSeriesPoint[] {
       t: Math.round(ts / 1000),
       upMid: mid(pair.up?.bestBid ?? null, pair.up?.bestAsk ?? null),
       downMid: mid(pair.down?.bestBid ?? null, pair.down?.bestAsk ?? null),
+      volume: pair.volume,
+      liquidity: pair.liquidity,
+      upSpread: l1Spread(pair.up?.bestBid, pair.up?.bestAsk),
+      downSpread: l1Spread(pair.down?.bestBid, pair.down?.bestAsk),
+      upBidSize: pair.up?.bestBidSize ?? null,
+      upAskSize: pair.up?.bestAskSize ?? null,
+      downBidSize: pair.down?.bestBidSize ?? null,
+      downAskSize: pair.down?.bestAskSize ?? null,
     }));
 }
 
@@ -182,6 +207,14 @@ export function booksFromRows(rows: BookSnapshotRow[]): Map<number, TokenBook[]>
       bestAsk: row.bestAsk,
       bestAskSize: row.bestAskSize,
       bestBidSize: row.bestBidSize ?? null,
+      ask2: row.ask2 ?? null,
+      ask2Size: row.ask2Size ?? null,
+      ask3: row.ask3 ?? null,
+      ask3Size: row.ask3Size ?? null,
+      bid2: row.bid2 ?? null,
+      bid2Size: row.bid2Size ?? null,
+      bid3: row.bid3 ?? null,
+      bid3Size: row.bid3Size ?? null,
     });
     byTs.set(row.ts, books);
   }

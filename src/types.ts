@@ -11,6 +11,13 @@ export interface GammaMarket {
   orderPriceMinTickSize: number;
   active: boolean;
   closed: boolean;
+  volume?: number | string | null;
+  volumeNum?: number | string | null;
+  volume24hr?: number | string | null;
+  liquidity?: number | string | null;
+  liquidityNum?: number | string | null;
+  lastTradePrice?: number | string | null;
+  spread?: number | string | null;
 }
 
 export interface UpDownEvent {
@@ -30,6 +37,15 @@ export interface TokenBook {
   bestAskSize: number | null;
   /** Size at the best bid. Null when unknown (legacy snapshots). */
   bestBidSize: number | null;
+  /** L2/L3 for analytics persistence. Absent on legacy / test books. */
+  ask2?: number | null;
+  ask2Size?: number | null;
+  ask3?: number | null;
+  ask3Size?: number | null;
+  bid2?: number | null;
+  bid2Size?: number | null;
+  bid3?: number | null;
+  bid3Size?: number | null;
 }
 
 export interface TradeOpportunity {

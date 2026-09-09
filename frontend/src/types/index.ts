@@ -12,6 +12,13 @@ export interface GammaMarket {
   orderPriceMinTickSize: number;
   active: boolean;
   closed: boolean;
+  volume?: number | string | null;
+  volumeNum?: number | string | null;
+  volume24hr?: number | string | null;
+  liquidity?: number | string | null;
+  liquidityNum?: number | string | null;
+  lastTradePrice?: number | string | null;
+  spread?: number | string | null;
 }
 
 export interface UpDownEvent {
@@ -30,6 +37,14 @@ export interface TokenBook {
   bestAsk: number | null;
   bestAskSize: number | null;
   bestBidSize: number | null;
+  ask2?: number | null;
+  ask2Size?: number | null;
+  ask3?: number | null;
+  ask3Size?: number | null;
+  bid2?: number | null;
+  bid2Size?: number | null;
+  bid3?: number | null;
+  bid3Size?: number | null;
 }
 
 export interface TradeOpportunity {
@@ -366,10 +381,25 @@ export interface BookSnapshotPoint {
   ts: number;
   bestBid: number | null;
   bestAsk: number | null;
+  bestBidSize?: number | null;
+  bestAskSize?: number | null;
 }
 
 export interface LocalBookSnapshotResponse {
   snapshots: BookSnapshotPoint[];
+}
+
+export interface MarketMetricPoint {
+  /** Timestamp Unix en millisecondes. */
+  ts: number;
+  volume: number | null;
+  volume24hr: number | null;
+  liquidity: number | null;
+  spread: number | null;
+}
+
+export interface LocalMarketSnapshotResponse {
+  snapshots: MarketMetricPoint[];
 }
 
 export type StrategyId = "arb" | "barbell" | "edge-lead";
@@ -396,6 +426,14 @@ export interface BacktestSeriesPoint {
   t: number;
   upMid: number | null;
   downMid: number | null;
+  volume?: number | null;
+  liquidity?: number | null;
+  upSpread?: number | null;
+  downSpread?: number | null;
+  upBidSize?: number | null;
+  upAskSize?: number | null;
+  downBidSize?: number | null;
+  downAskSize?: number | null;
 }
 
 export interface BacktestProgress {

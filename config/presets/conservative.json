@@ -1,0 +1,32 @@
+{
+  "id": "conservative",
+  "name": "Conservateur",
+  "description": "GTC hedge, bande favori étroite 0.76–0.85, lock 0.99. Moins de capital par fenêtre ; plus de cheap directionnels si le GTC ne fill pas.",
+  "settings": {
+    "pollIntervalMs": 3000,
+    "marketSlugPrefixes": ["btc-updown-15m"],
+    "cheapBuyMin": 0.07,
+    "cheapBuyMax": 0.18,
+    "expensiveBuyMin": 0.76,
+    "expensiveBuyMax": 0.85,
+    "enableExpensiveHedge": true,
+    "cheapOrderUsdc": 1,
+    "pairLockMax": 0.99,
+    "expensiveOrderUsdc": 12,
+    "expensiveOrderType": "GTC",
+    "maxSharesPerOrder": 25,
+    "maxOpenPositionsPerSide": 1,
+    "maxExposureUsdc": 25,
+    "minutesBeforeCloseMin": 0,
+    "minutesBeforeCloseMax": 15,
+    "minMinutesBeforeCloseToBuy": null,
+    "simulatedCapital": 50,
+    "simFillProbabilityNonMarketable": 0.3,
+    "simResolveDelaySeconds": 5,
+    "simResolveRetryIntervalMs": 5000,
+    "simResolveMaxRetries": 5,
+    "simResolveFallback": "none",
+    "simMaxRetryAttempts": 20,
+    "simRequireCoveredPair": true
+  }
+}

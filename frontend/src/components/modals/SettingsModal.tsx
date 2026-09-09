@@ -1,6 +1,7 @@
 import { For, Show, createEffect, createMemo, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { api } from "../../api/client";
+import { STRATEGY_PRESETS, type StrategyPreset } from "../../config/strategyPresets";
 import { setConfig } from "../../stores/botStore";
 import type { BotConfig } from "../../types";
 import {
@@ -79,7 +80,7 @@ function NumberInput(props: {
 
 /* ---------- définition des sections ---------- */
 
-type SectionId = "markets" | "cheap" | "hedge" | "risk" | "window" | "sim";
+type SectionId = "presets" | "markets" | "cheap" | "hedge" | "risk" | "window" | "sim";
 
 interface SectionDef {
   id: SectionId;
@@ -89,6 +90,7 @@ interface SectionDef {
 }
 
 const SECTIONS: SectionDef[] = [
+  { id: "presets", label: "Profils", icon: "▣", desc: "Couverture max ou conservateur" },
   { id: "markets", label: "Marchés", icon: "◉", desc: "Marchés surveillés et cadence de scan" },
   { id: "cheap", label: "Jambe cheap", icon: "▾", desc: "Bid maker underdog et verrou de paire" },
   { id: "hedge", label: "Jambe hedge", icon: "▴", desc: "Hedge 1:1 après fill cheap" },
@@ -110,7 +112,7 @@ export function SettingsModal(props: {
   const [baseline, setBaseline] = createSignal<ConfigFormState>(configToForm(props.config));
   const [saving, setSaving] = createSignal(false);
   const [saveError, setSaveError] = createSignal<string | null>(null);
-  const [activeSection, setActiveSection] = createSignal<SectionId>("markets");
+  const [activeSection, setActiveSection] = createSignal<SectionId>("presets");
 
   createEffect(() => {
     if (props.open) {
@@ -118,15 +120,31 @@ export function SettingsModal(props: {
       setForm(next);
       setBaseline(next);
       setSaveError(null);
-      setActiveSection("markets");
+      setActiveSection("presets");
     }
   });
 
   const errors = createMemo(() => validateConfigForm(form(), props.config.dryRun));
   const dirty = createMemo(() => !formsEqual(form(), baseline()));
+  const matchingPresetId = createMemo(() => {
+    const current = form();
+    for (const preset of STRATEGY_PRESETS) {
+      const filled = configToForm({ ...props.config, ...preset.settings });
+      if (formsEqual(filled, current)) return preset.id;
+    }
+    return null;
+  });
+  const matchingPreset = createMemo(() =>
+    STRATEGY_PRESETS.find((preset) => preset.id === matchingPresetId()) ?? null,
+  );
 
   function update<K extends keyof ConfigFormState>(key: K, value: ConfigFormState[K]): void {
     setForm((current) => ({ ...current, [key]: value }));
+    setSaveError(null);
+  }
+
+  function applyPreset(preset: StrategyPreset): void {
+    setForm(configToForm({ ...props.config, ...preset.settings }));
     setSaveError(null);
   }
 
@@ -188,6 +206,35 @@ export function SettingsModal(props: {
             </button>
           </header>
 
+          <div class="cfg-presets">
+            <span class="cfg-presets__label">Profil stratégie</span>
+            <div class="cfg-presets__list">
+              <For each={STRATEGY_PRESETS}>
+                {(preset) => (
+                  <button
+                    type="button"
+                    class={`cfg-preset${matchingPresetId() === preset.id ? " cfg-preset--active" : ""}`}
+                    onClick={() => applyPreset(preset)}
+                  >
+                    <span class="cfg-preset__name">{preset.name}</span>
+                    <span class="cfg-preset__desc">{preset.description}</span>
+                  </button>
+                )}
+              </For>
+            </div>
+            <Show when={matchingPreset() && dirty()}>
+              <p class="cfg-presets__hint">
+                Profil « {matchingPreset()?.name} » chargé dans le formulaire.
+                Enregistrer pour l’écrire dans data/bot-settings.json.
+              </p>
+            </Show>
+            <Show when={matchingPreset() && !dirty()}>
+              <p class="cfg-presets__hint">
+                Profil actif : {matchingPreset()?.name}
+              </p>
+            </Show>
+          </div>
+
           {/* Corps : sidebar + contenu */}
           <div class="cfg-body">
             <nav class="cfg-sidebar">
@@ -211,6 +258,38 @@ export function SettingsModal(props: {
             </nav>
 
             <div class="cfg-content">
+              <Show when={activeSection() === "presets"}>
+                <div class="cfg-section">
+                  <h4>Profils B1</h4>
+                  <p class="cfg-section__desc">
+                    Choisis un profil, puis Enregistrer. Ça écrit data/bot-settings.json
+                    (la config active). Tu peux encore ajuster les champs dans les autres onglets.
+                  </p>
+                  <div class="cfg-presets__list">
+                    <For each={STRATEGY_PRESETS}>
+                      {(preset) => (
+                        <button
+                          type="button"
+                          class={`cfg-preset${matchingPresetId() === preset.id ? " cfg-preset--active" : ""}`}
+                          onClick={() => applyPreset(preset)}
+                        >
+                          <span class="cfg-preset__name">{preset.name}</span>
+                          <span class="cfg-preset__desc">{preset.description}</span>
+                        </button>
+                      )}
+                    </For>
+                  </div>
+                  <Show when={matchingPreset() && dirty()}>
+                    <p class="cfg-presets__hint">
+                      Profil « {matchingPreset()?.name} » chargé — Enregistrer pour l’activer.
+                    </p>
+                  </Show>
+                  <Show when={matchingPreset() && !dirty()}>
+                    <p class="cfg-presets__hint">Profil actif : {matchingPreset()?.name}</p>
+                  </Show>
+                </div>
+              </Show>
+
               {/* ---- Marchés ---- */}
               <Show when={activeSection() === "markets"}>
                 <div class="cfg-section">

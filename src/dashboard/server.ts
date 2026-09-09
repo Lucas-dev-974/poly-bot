@@ -15,6 +15,7 @@ import {
   sanitizePatch,
 } from "../runtime-settings.js";
 import type { EditableConfigKey } from "../runtime-settings.js";
+import { listStrategyPresets } from "../strategy-presets.js";
 import { getMarketHistory } from "./market-history.js";
 import { getMarketTrades } from "./market-trades.js";
 
@@ -117,6 +118,11 @@ export class DashboardServer {
 
       if (url.pathname === "/api/config" && req.method === "PATCH") {
         void this.handlePatchConfig(req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/config/presets" && req.method === "GET") {
+        this.handleGetConfigPresets(res);
         return;
       }
 
@@ -302,6 +308,18 @@ export class DashboardServer {
         editableKeys: EDITABLE_CONFIG_KEYS,
       }),
     );
+  }
+
+  private handleGetConfigPresets(res: import("node:http").ServerResponse): void {
+    try {
+      const presets = listStrategyPresets();
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ presets }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: message }));
+    }
   }
 
   private async handlePatchConfig(

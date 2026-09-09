@@ -1,0 +1,32 @@
+{
+  "id": "coverage-max",
+  "name": "Couverture max",
+  "description": "FOK immédiat après fill cheap, budget 1:1, lock 0.98 (~2 ¢ / share). Plus de paires couvertes, plus de capital par fenêtre.",
+  "settings": {
+    "pollIntervalMs": 5000,
+    "marketSlugPrefixes": ["btc-updown-15m"],
+    "cheapBuyMin": 0.07,
+    "cheapBuyMax": 0.2,
+    "expensiveBuyMin": 0.78,
+    "expensiveBuyMax": 0.9,
+    "enableExpensiveHedge": true,
+    "cheapOrderUsdc": 1,
+    "pairLockMax": 0.98,
+    "expensiveOrderUsdc": 15,
+    "expensiveOrderType": "FOK",
+    "maxSharesPerOrder": 20,
+    "maxOpenPositionsPerSide": 1,
+    "maxExposureUsdc": 40,
+    "minutesBeforeCloseMin": 0,
+    "minutesBeforeCloseMax": 15,
+    "minMinutesBeforeCloseToBuy": null,
+    "simulatedCapital": 50,
+    "simFillProbabilityNonMarketable": 0.3,
+    "simResolveDelaySeconds": 5,
+    "simResolveRetryIntervalMs": 5000,
+    "simResolveMaxRetries": 5,
+    "simResolveFallback": "none",
+    "simMaxRetryAttempts": 20,
+    "simRequireCoveredPair": true
+  }
+}

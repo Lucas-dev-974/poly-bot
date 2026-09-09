@@ -79,7 +79,7 @@ Two files, no overlap:
 | `.env` | Secrets and infra: `DRY_RUN`, keys, hosts, dashboard port, DB paths |
 | `data/bot-settings.json` | **All strategy parameters** (bands, lock, budgets, poll, sim). Edited from the dashboard. |
 
-Copy `.env.example` to `.env`. Copy `bot-settings.example.json` to `data/bot-settings.json` (or save once from the dashboard). Live (`DRY_RUN=false`) **refuses to start** without that JSON. Leftover `CHEAP_*` / `EXPENSIVE_*` / `POLL_*` in `.env` are ignored.
+Copy `.env.example` to `.env`. Copy `bot-settings.example.json` to `data/bot-settings.json` (or save once from the dashboard). Two named B1 profiles live in `config/presets/` (**Couverture max**, **Conservateur**); pick one in the dashboard Configuration dialog then **Enregistrer**. Live (`DRY_RUN=false`) **refuses to start** without `data/bot-settings.json`. Leftover `CHEAP_*` / `EXPENSIVE_*` / `POLL_*` in `.env` are ignored.
 
 ```bash
 # .env — secrets + infra

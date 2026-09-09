@@ -174,7 +174,7 @@ Si Up cote **97¢** (hors `EXPENSIVE_BUY_MAX`), le bot **n'émet aucun cheap** s
 
 ## 5. Paramétrage
 
-**Source de vérité stratégie** : `data/bot-settings.json` (éditée depuis le dashboard). `.env` = secrets (`PRIVATE_KEY`, `FUNDER_ADDRESS`, Builder/Relayer) et infra (`DRY_RUN`, hôtes, ports, DB). En live, le JSON est **obligatoire**.
+**Source de vérité stratégie** : `data/bot-settings.json` (éditée depuis le dashboard). Deux profils prêts à l'emploi : `config/presets/coverage-max.json` (FOK, 1:1) et `config/presets/conservative.json` (GTC, bande étroite) — choisis dans le dialog Configuration puis enregistrés. `.env` = secrets (`PRIVATE_KEY`, `FUNDER_ADDRESS`, Builder/Relayer) et infra (`DRY_RUN`, hôtes, ports, DB). En live, le JSON actif est **obligatoire**.
 
 | Clé JSON                     | Défaut (code / example)         | Rôle                              |
 |------------------------------|---------------------------------|-----------------------------------|

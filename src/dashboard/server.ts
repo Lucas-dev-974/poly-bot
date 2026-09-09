@@ -91,7 +91,11 @@ export class DashboardServer {
     const server = createServer((req, res) => {
       const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
 
-      if (url.pathname === "/" || url.pathname === "/index.html") {
+      if (
+        url.pathname === "/" ||
+        url.pathname === "/index.html" ||
+        url.pathname === "/guide"
+      ) {
         void this.serveHtml(res);
         return;
       }

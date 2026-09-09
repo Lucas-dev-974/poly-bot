@@ -54,6 +54,9 @@ export function Header(props: {
   return (
     <header class="header">
       <h1>Polymarket Reverse Bot</h1>
+      <a href="/guide" class="btn guide-nav-link">
+        Guide stratégie
+      </a>
       {badge()}
       <BotToggle />
       <Show when={config() !== null && mode() === "dry"}>

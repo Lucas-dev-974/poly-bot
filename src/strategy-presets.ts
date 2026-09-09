@@ -4,11 +4,13 @@ import {
   sanitizePatch,
   type RuntimeSettingsPatch,
 } from "./runtime-settings.js";
+import { parseStrategyId, type StrategyId } from "./strategy/ids.js";
 
 export const STRATEGY_PRESETS_DIR = join(process.cwd(), "config/presets");
 
 export interface StrategyPreset {
   id: string;
+  strategyId: StrategyId;
   name: string;
   description: string;
   settings: RuntimeSettingsPatch;
@@ -23,8 +25,9 @@ function parsePresetFile(raw: string, fallbackId: string): StrategyPreset {
   if (!isRecord(parsed)) {
     throw new Error(`Preset ${fallbackId} must be a JSON object`);
   }
+  const strategyId = parseStrategyId(parsed.strategyId);
   const settingsRaw = isRecord(parsed.settings) ? parsed.settings : parsed;
-  const settings = sanitizePatch(settingsRaw);
+  const settings = sanitizePatch({ ...settingsRaw, strategyId });
   const id =
     typeof parsed.id === "string" && parsed.id.trim() !== ""
       ? parsed.id.trim()
@@ -35,7 +38,7 @@ function parsePresetFile(raw: string, fallbackId: string): StrategyPreset {
       : id;
   const description =
     typeof parsed.description === "string" ? parsed.description.trim() : "";
-  return { id, name, description, settings };
+  return { id, strategyId, name, description, settings };
 }
 
 export function listStrategyPresets(
@@ -66,4 +69,11 @@ export function listStrategyPresets(
     seen.add(preset.id);
   }
   return presets;
+}
+
+export function presetsForStrategy(
+  id: StrategyId,
+  dir = STRATEGY_PRESETS_DIR,
+): StrategyPreset[] {
+  return listStrategyPresets(dir).filter((preset) => preset.strategyId === id);
 }

@@ -57,6 +57,15 @@ describe("sanitizePatch", () => {
   it("parses empty simRandomSeed as undefined", () => {
     assert.equal(sanitizePatch({ simRandomSeed: "" }).simRandomSeed, undefined);
   });
+
+  it("parses strategyId case-insensitively", () => {
+    assert.equal(sanitizePatch({ strategyId: "barbell" }).strategyId, "barbell");
+    assert.equal(sanitizePatch({ strategyId: "ARB" }).strategyId, "arb");
+  });
+
+  it("rejects unknown strategyId", () => {
+    assert.throws(() => sanitizePatch({ strategyId: "nope" }), /Invalid strategyId/);
+  });
 });
 
 describe("applyRuntimeSettings", () => {

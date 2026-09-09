@@ -1,20 +1,25 @@
 # Polymarket Reverse Arbitrage Bot
 
-A TypeScript/Node.js bot that executes **B1 true arbitrage** on Polymarket's 15-minute Up/Down markets (BTC, ETH, SOL, etc.). It posts a maker bid on the cheap (underdog) leg and, only after that bid fills, hedges 1:1 on the favorite — and only when `cheapFill + hedgeAsk ≤ PAIR_LOCK_MAX < 1.00`, locking a small profit at resolution.
+A TypeScript/Node.js bot for Polymarket's 15-minute Up/Down markets (BTC, ETH, SOL, etc.). Two interchangeable **engines** (`strategyId` in `data/bot-settings.json`):
+
+- **`arb` (B1, default)** — maker bid on the cheap (underdog), then a **1:1 hedge** after that fill only if `cheapFill + hedgeAsk ≤ PAIR_LOCK_MAX < 1.00`.
+- **`barbell`** — same cheap-then-hedge flow, but the hedge size is `filledCheap × barbellHedgeRatio` (default 0.5). **No profit lock.** Leftover cheap is an intentional directional bet. Higher variance than B1.
 
 ## Strategy Overview
 
-**Covered pair (binary market):** one side pays $1, the other $0. Holding 1 Up + 1 Down always redeems **$1.00**. Buying both for **≤ `PAIR_LOCK_MAX`** (default 0.98) locks `(1 − pairCost)` per share.
+**Covered pair (binary market, arb engine):** one side pays $1, the other $0. Holding 1 Up + 1 Down always redeems **$1.00**. Buying both for **≤ `PAIR_LOCK_MAX`** (default 0.98) locks `(1 − pairCost)` per share.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    B1 — TRUE ARB                                │
+│  arb — TRUE ARB                          barbell — RATIO        │
 ├─────────────────────────────────────────────────────────────────┤
-│  Cheap GTC maker: min(ask, CHEAP_BUY_MAX, PAIR_LOCK_MAX − hedge)│
-│  Hedge 1:1 only after cheap FILLS, and only if                  │
-│    fillPrice + min(favoriteAsk, EXPENSIVE_BUY_MAX)              │
-│      ≤ PAIR_LOCK_MAX                                            │
-│  Otherwise: hold cheap directional — never lock a pair ≥ $1     │
+│  Cheap GTC maker:                    Cheap GTC: min(ask, max)   │
+│    min(ask, CHEAP_BUY_MAX,           Hedge after fill:          │
+│    PAIR_LOCK_MAX − hedge)              filledCheap × ratio      │
+│  Hedge 1:1 after fill iff            No pair lock. Ask < min →  │
+│    fill + hedge ≤ PAIR_LOCK_MAX        hold leftover cheap.     │
+│  Else: hold cheap directional        Defense sells only the     │
+│  Defense sells cheap − hedge           missing hedge slice.     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -34,8 +39,8 @@ src/
 ├── index.ts                 # Entry point, wiring + main loop
 ├── config.ts                # All settings via env vars (validated)
 ├── bot.ts                   # Orchestrator: scan → books → opportunities → fills → resolve
-├── strategy.ts              # Orchestration: pick cheap/favorite, bands, defense predicates
-├── strategy/arb-sizing.ts   # B1 source of truth: maker bid, 1:1 hedge, fill-price pair lock
+├── strategy.ts              # Barrel: arb findOpportunities + predicate re-exports
+├── strategy/                # TradingStrategy plugins (arb, barbell), sizing, registry
 ├── trader.ts                # Live trading via @polymarket/clob-client-v2 (Polygon, CLOB)
 ├── trade-tracker.ts         # Position/pair state, window claims, posted orders, retry logic
 ├── position-resolver.ts     # Settlement detection via Gamma API (outcomePrices >= 0.99)
@@ -79,7 +84,7 @@ Two files, no overlap:
 | `.env` | Secrets and infra: `DRY_RUN`, keys, hosts, dashboard port, DB paths |
 | `data/bot-settings.json` | **All strategy parameters** (bands, lock, budgets, poll, sim). Edited from the dashboard. |
 
-Copy `.env.example` to `.env`. Copy `bot-settings.example.json` to `data/bot-settings.json` (or save once from the dashboard). Two named B1 profiles live in `config/presets/` (**Couverture max**, **Conservateur**); pick one in the dashboard Configuration dialog then **Enregistrer**. Live (`DRY_RUN=false`) **refuses to start** without `data/bot-settings.json`. Leftover `CHEAP_*` / `EXPENSIVE_*` / `POLL_*` in `.env` are ignored.
+Copy `.env.example` to `.env`. Copy `bot-settings.example.json` to `data/bot-settings.json` (or save once from the dashboard). Named **parameter packs** live in `config/presets/` and each file **must** declare `strategyId`. The two shipped packs (**Couverture max**, **Conservateur**) are `arb`. Pick the **Moteur** then a profil in the dashboard Configuration dialog, then **Enregistrer**. Live (`DRY_RUN=false`) **refuses to start** without `data/bot-settings.json`. Leftover `CHEAP_*` / `EXPENSIVE_*` / `POLL_*` / `STRATEGY_ID` in `.env` are ignored.
 
 ```bash
 # .env — secrets + infra
@@ -126,6 +131,8 @@ Strategy keys (dashboard → `data/bot-settings.json`). See `bot-settings.exampl
   "cheapBuyMin": 0.07,
   "cheapBuyMax": 0.10,
   "cheapOrderUsdc": 1,
+  "strategyId": "arb",
+  "barbellHedgeRatio": 0.5,
   "pairLockMax": 0.98,
   "enableExpensiveHedge": true,
   "expensiveBuyMin": 0.85,
@@ -140,7 +147,7 @@ Strategy keys (dashboard → `data/bot-settings.json`). See `bot-settings.exampl
 }
 ```
 
-`expensiveOrderUsdc` is a secondary cap on the 1:1 hedge. Below 5 shares at the hedge price there is no hedge. A $1 cheap at 0.07 needs ~14 USDC to cover 1:1 at 0.95.
+`expensiveOrderUsdc` is a secondary cap on the hedge. Below 5 shares at the hedge price there is no hedge. On **arb**, a $1 cheap at 0.07 needs ~14 USDC to cover 1:1 at 0.95. On **barbell**, the hedge target is `filledCheap × barbellHedgeRatio` (not a profit lock).
 
 ## Installation & Run
 
@@ -212,8 +219,8 @@ bot_state          → Key-value runtime state
 3. **Favorite already in band** — no new cheap unless the favorite ask is in `[EXPENSIVE_BUY_MIN, EXPENSIVE_BUY_MAX]` (a hedge limit far below a 0.97 ask is not a cover)
 4. **Covered-pair** (`SIM_REQUIRE_COVERED_PAIR`) — skip new cheap if no hedgeable favorite
 5. **Favorite pick depth** — identifying the favorite only needs CLOB-min size (5 shares) at the touch; GTC hedges are not blocked by a thin top of book
-6. **Pair lock (B1)** — new cheap GTC: `limit + min(favoriteAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. Hedge after fill: `fillPrice + min(freshAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. If the lock fails after fill, the cheap is held directional (no Down at a locked loss).
-7. **Pair defense** — FOK SELL the **uncovered** cheap (`filled cheap − filled hedge`, ≥ 5 shares) at the bid only if the favorite ask is **above** `EXPENSIVE_BUY_MAX` **and** the pair is not already covered 1:1. A covered pair is held to redeem even if the favorite prints $1. Ask below `EXPENSIVE_BUY_MIN` does not dump the cheap. After a sale, resting GTC hedges of that pair are cancelled.
+6. **Pair lock (`arb` only)** — new cheap GTC: `limit + min(favoriteAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. Hedge after fill: `fillPrice + min(freshAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. If the lock fails after fill, the cheap is held directional (no Down at a locked loss). **Barbell ignores the lock.**
+7. **Pair defense** — FOK SELL at the bid only if the favorite ask is **above** `EXPENSIVE_BUY_MAX` **and** the pair is not covered (`arb`: 1:1; `barbell`: filled hedge ≥ cheap × ratio). Shares sold = `defendShares` (arb: cheap − hedge; barbell: missing hedge slice only). Ask below `EXPENSIVE_BUY_MIN` does not dump the cheap. After a sale, resting GTC hedges of that pair are cancelled.
 8. **CLOB fill confirmation** — a CLOB `matched` is not enough: cheap positions open only when the funder holds the tokens (re-checked up to 8 ticks, since the CLOB balance can lag a maker fill); FOK sells are confirmed by token-balance drop (ghost MATCHED / empty `makingAmount` are ignored). A partially filled cheap that must be repriced/cancelled is cancelled **first**, then the filled part is booked — no remainder is left orphaned on the book.
 9. **CLOB minimums** — order size floored at 5 shares / $1 notional; tick size never below 0.01
 10. **Balance guard** — live orders skipped when cached CLOB collateral < estimated cost; 60s pause after 3 consecutive balance rejections

@@ -1,0 +1,40 @@
+---
+description: Synchroniser la page guide stratégie avec tout changement de code stratégie
+globs: src/strategy/**,src/strategy.ts,src/bot.ts,STRATEGY.md,frontend/src/guide/**,frontend/src/pages/StrategyGuidePage.tsx,frontend/src/**/configForm.ts,frontend/src/**/SettingsModal.tsx,frontend/src/**/ConfigBar.tsx,config/presets/**
+alwaysApply: false
+---
+
+# Stratégie ↔ page guide
+
+Tout changement de **comportement**, **API**, **config** ou **UI** lié aux moteurs (`arb`, `barbell`) doit être reflété dans la page guide (`/guide`).
+
+## Fichiers guide à maintenir
+
+| Zone | Fichiers |
+|------|----------|
+| Données / tableaux | `frontend/src/guide/data.ts` |
+| Onglets & texte | `frontend/src/guide/GuideTabs.tsx` |
+| Diagrammes SVG | `frontend/src/guide/Diagrams.tsx` |
+| Shell page | `frontend/src/pages/StrategyGuidePage.tsx` |
+| Doc technique | `STRATEGY.md` (si le contrat ou les règles changent) |
+
+## Déclencheurs (exemples)
+
+Mettre à jour le guide si tu modifies :
+
+- `TradingStrategy` (méthodes, sémantique skip/defend/post, sizing)
+- `hedgeAtPostTime`, `defendShares`, `cheapOrderAction`, prédicats / bandes
+- `strategyId`, `barbellHedgeRatio`, presets, champs dashboard « Moteur »
+- Cycles de vie paire, comparaison arb vs barbell, arbre hedge au POST
+
+## Checklist avant de terminer
+
+1. Le guide décrit encore fidèlement la **politique** implémentée (pas seulement le code).
+2. Tableaux comparatifs, arbre hedge et cycles de vie SVG sont **cohérents** avec le backend.
+3. L’onglet **Livrables** reste à jour si de nouveaux fichiers / todos apparaissent.
+4. `npm run build` dans `frontend/` passe après les edits guide.
+
+## Ne pas dupliquer inutilement
+
+- Ne pas éditer `data/bot-settings.json` live (gitignored).
+- Garder le guide **pédagogique** : expliquer l’effet métier, pas copier-coller le diff.

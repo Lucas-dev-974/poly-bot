@@ -58,6 +58,23 @@ describe("validateTradingConfig", () => {
       /PAIR_LOCK_MAX/,
     );
   });
+
+  it("rejects barbellHedgeRatio of 0 or above 1", () => {
+    assert.throws(
+      () => validateConfigCoherence(testConfig({ barbellHedgeRatio: 0 })),
+      /BARBELL_HEDGE_RATIO/,
+    );
+    assert.throws(
+      () => validateConfigCoherence(testConfig({ barbellHedgeRatio: 1.1 })),
+      /BARBELL_HEDGE_RATIO/,
+    );
+  });
+
+  it("accepts barbellHedgeRatio of 1", () => {
+    assert.doesNotThrow(() =>
+      validateConfigCoherence(testConfig({ barbellHedgeRatio: 1 })),
+    );
+  });
 });
 
 /**

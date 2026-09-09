@@ -8,14 +8,8 @@ import { PositionResolver } from "./position-resolver.js";
 import type { EditableConfigKey } from "./runtime-settings.js";
 import { SimulatedBroker } from "./simulated-broker.js";
 import { SimulatedLedger } from "./simulated-ledger.js";
-import {
-  findOpportunities,
-  isAskInExpensiveBand,
-  isPairCovered,
-  shouldCancelRestingCheapForLock,
-  shouldDefendUncoveredPair,
-  shouldReplaceRestingCheap,
-} from "./strategy.js";
+import { createStrategy } from "./strategy/registry.js";
+import type { TradingStrategy } from "./strategy/trading-strategy.js";
 import { TradeTracker, type PostedOrderContext } from "./trade-tracker.js";
 import { Trader } from "./trader.js";
 import type { OrderResult, TokenBook, TradeOpportunity, UpDownEvent, SimulatedPosition } from "./types.js";
@@ -43,6 +37,7 @@ export class ReverseBot {
   private readonly fillConfirmFailures = new Map<string, number>();
   private readonly cheapMissingFailures = new Map<string, number>();
   private tickTimer: ReturnType<typeof setInterval> | null = null;
+  private strategy: TradingStrategy;
   private static readonly BALANCE_CACHE_MS = 30_000;
   private static readonly ORDER_STATUS_MAX_FAILURES = 10;
   private static readonly FILL_CONFIRM_MAX_ATTEMPTS = 8;
@@ -68,6 +63,7 @@ export class ReverseBot {
       : null;
     this.broker = this.ledger ? new SimulatedBroker(config, this.ledger) : null;
     this.resolver = new PositionResolver(config, this.tracker, this.ledger);
+    this.strategy = createStrategy(config.strategyId);
   }
 
   async init(): Promise<void> {
@@ -102,8 +98,10 @@ export class ReverseBot {
 
   async run(): Promise<void> {
     log("Reverse bot starting", {
-      strategy: "B1 arb: maker cheap GTC, 1:1 hedge after fill if fill+hedge <= pairLockMax",
+      strategy: this.strategy.label,
       pairLockMax: this.config.pairLockMax,
+      barbellHedgeRatio:
+        this.strategy.id === "barbell" ? this.config.barbellHedgeRatio : undefined,
       cheapRange: `${this.config.cheapBuyMin}-${this.config.cheapBuyMax}`,
       expensiveHedge: this.config.enableExpensiveHedge
         ? `${this.config.expensiveBuyMin}-${this.config.expensiveBuyMax}`
@@ -140,6 +138,13 @@ export class ReverseBot {
     if (changed.has("simRandomSeed")) {
       this.broker?.reseed(this.config.simRandomSeed);
       this.resolver?.reseed(this.config.simRandomSeed);
+    }
+    if (changed.has("strategyId")) {
+      this.strategy = createStrategy(this.config.strategyId);
+      log("Trading engine swapped", {
+        strategyId: this.strategy.id,
+        label: this.strategy.label,
+      });
     }
     bus.emit({ type: "config", config: toPublicConfig(this.config) });
     log("Runtime settings updated", { changed: [...changed] });
@@ -596,12 +601,14 @@ export class ReverseBot {
     }
     if (!this.config.dryRun) {
       await this.replaceMarketableCheap(event, books);
-      // Pair defense: sell the cheap only when the favorite ask is above
-      // expensiveBuyMax and the pair is not already covered 1:1. A lock
-      // that cannot be met after fill means hold the cheap directional.
       await this.defendUncoveredPairs(event, books);
     }
-    const opportunities = findOpportunities(this.config, this.tracker, event, books);
+    const opportunities = this.strategy.findOpportunities({
+      config: this.config,
+      tracker: this.tracker,
+      event,
+      books,
+    });
     for (const opp of opportunities) {
       this.repos?.opportunitySnapshots.insert({
         ts: tickTs,
@@ -640,10 +647,10 @@ export class ReverseBot {
   }
 
   /**
-   * Manage resting cheap GTC:
-   *  - reprice when the ask is already at/below our limit (take the better price)
-   *  - cancel when the pair can no longer be locked (favorite left the band,
-   *    or our bid is now above pairLockMax − hedge)
+   * Manage resting cheap GTC via TradingStrategy.cheapOrderAction:
+   *  - take-ask: reprice when the ask is at/below our limit
+   *  - cancel-lock: arb = favorite off-band or bid above lock − hedge;
+   *    barbell = favorite off-band only
    * After cancel+unmark, this tick's findOpportunities can post a new bid.
    */
   private async replaceMarketableCheap(
@@ -658,20 +665,13 @@ export class ReverseBot {
         books.find((candidate) => candidate.outcome === order.outcome);
       const favoriteBook =
         books.find((candidate) => candidate.outcome !== order.outcome) ?? null;
-      const takeAsk =
-        !!book &&
-        shouldReplaceRestingCheap(
-          order.limitPrice,
-          book.bestAsk,
-          book.bestBid,
-          this.config.cheapBuyMin,
-        );
-      const lockBroken = shouldCancelRestingCheapForLock(
-        order.limitPrice,
-        favoriteBook?.bestAsk ?? null,
-        this.config,
-      );
-      if (!takeAsk && !lockBroken) {
+      const action = this.strategy.cheapOrderAction({
+        config: this.config,
+        limitPrice: order.limitPrice,
+        cheapBook: book,
+        favoriteAsk: favoriteBook?.bestAsk ?? null,
+      });
+      if (action === "keep") {
         continue;
       }
       if (order.orderId) {
@@ -721,14 +721,20 @@ export class ReverseBot {
       this.emitOrderCancelled(order);
       this.tracker.removePostedOrder(order.key);
       this.tracker.unmark(order.key);
-      if (lockBroken) {
-        log("Cheap cancelled - pair lock no longer achievable", {
-          market: event.title,
-          outcome: order.outcome,
-          limitPrice: order.limitPrice,
-          favoriteAsk: favoriteBook?.bestAsk ?? null,
-          pairLockMax: this.config.pairLockMax,
-        });
+      if (action === "cancel-lock") {
+        log(
+          this.strategy.id === "arb"
+            ? "Cheap cancelled - pair lock no longer achievable"
+            : "Cheap cancelled - favorite left the hedge band",
+          {
+            market: event.title,
+            outcome: order.outcome,
+            limitPrice: order.limitPrice,
+            favoriteAsk: favoriteBook?.bestAsk ?? null,
+            pairLockMax: this.config.pairLockMax,
+            strategyId: this.strategy.id,
+          },
+        );
       } else {
         log("Cheap repriced - taking ask at or below limit", {
           market: event.title,
@@ -742,21 +748,15 @@ export class ReverseBot {
   }
 
   /**
-   * Pair defense trigger (S2.4): sell the filled cheap only when the
-   * favorite ask is above expensiveBuyMax (hedge impossible) AND the
-   * pair is not already covered 1:1. A covered pair is held to redeem
-   * even if the favorite prints $1.
+   * Pair defense trigger: sell cheap shares the strategy names when the
+   * favorite ask is above expensiveBuyMax and the pair is not covered
+   * (1:1 for arb, ratio for barbell). Ask below min does not dump the cheap.
    */
   private async defendUncoveredPairs(event: UpDownEvent, books: TokenBook[]): Promise<void> {
     if (!this.config.enableExpensiveHedge) return;
     const pairId = `${event.slug}:${event.windowEnd}`;
     const filledCheap = this.tracker.getFilledCheapSizeForPair(pairId);
     if (filledCheap <= 0) return;
-    if (
-      isPairCovered(filledCheap, this.tracker.getFilledExpensiveSizeForPair(pairId))
-    ) {
-      return;
-    }
 
     const cheapTokenId = this.tracker.getCheapTokenForPair(pairId);
     if (!cheapTokenId) return;
@@ -767,7 +767,19 @@ export class ReverseBot {
     }
 
     const favoriteAsk = favoriteBook.bestAsk;
-    if (!shouldDefendUncoveredPair(favoriteAsk, this.config.expensiveBuyMax)) {
+    const filledExpensive = this.tracker.getFilledExpensiveSizeForPair(pairId);
+    const defendCtx = {
+      config: this.config,
+      favoriteAsk,
+      filledCheap,
+      filledExpensive,
+    };
+    if (!this.strategy.shouldDefend(defendCtx)) {
+      return;
+    }
+    // Remainder under the CLOB minimum cannot be sold. Silent hold — logging
+    // here would repeat every tick while the favorite stays above max.
+    if (this.strategy.defendShares(defendCtx) < MIN_CLOB_SHARES) {
       return;
     }
 
@@ -776,6 +788,7 @@ export class ReverseBot {
       pairId,
       favoriteAsk,
       expensiveBuyMax: this.config.expensiveBuyMax,
+      strategyId: this.strategy.id,
     });
     await this.defendPair(pairId);
   }
@@ -925,23 +938,6 @@ export class ReverseBot {
     }
 
     if (
-      this.config.enableExpensiveHedge &&
-      opportunity.kind === "expensive" &&
-      (opportunity.token.bestAsk === null ||
-        opportunity.token.bestAsk < this.config.expensiveBuyMin ||
-        opportunity.token.bestAsk > this.config.expensiveBuyMax)
-    ) {
-      // Out of band: log only. Emitting every tick flooded orders with killed-fok.
-      log("Hedge skipped - favorite ask outside buy band", {
-        market: opportunity.event.title,
-        outcome: opportunity.token.outcome,
-        bestAsk: opportunity.token.bestAsk,
-        band: `${this.config.expensiveBuyMin}-${this.config.expensiveBuyMax}`,
-      });
-      return;
-    }
-
-    if (
       this.tracker.getOpenExposure() +
         this.tracker.getRestingExposure() +
         estimatedCost >
@@ -961,77 +957,69 @@ export class ReverseBot {
       return;
     }
 
-    // --- Re-validation of the favorite book at hedge time (S2.3) ---
-    // Stale snapshot: re-fetch before posting. Defend only if the ask is
-    // now above expensiveBuyMax and the pair is not already covered.
-    // Lock exceeded → skip the hedge and hold the cheap directional.
-    // Never complete a pair above pairLockMax.
     if (opportunity.kind === "expensive" && !this.config.dryRun) {
       const freshBook = await this.scanner.getTokenBook(opportunity.token.tokenId);
       const freshAsk = freshBook?.bestAsk ?? null;
-      if (freshAsk === null) {
-        log("Hedge skipped - favorite book missing (no defend on missing data)", {
+      const decision = this.strategy.hedgeAtPostTime({
+        config: this.config,
+        tracker: this.tracker,
+        pairId: opportunity.pairId,
+        freshAsk,
+      });
+      if (decision.action === "defend") {
+        log("Hedge skipped - defending uncovered pair at post time", {
           market: opportunity.event.title,
           outcome: opportunity.token.outcome,
+          reason: decision.reason,
+          freshAsk,
         });
+        await this.defendPair(opportunity.pairId);
         return;
       }
-      if (
-        !isAskInExpensiveBand(
-          freshAsk,
-          this.config.expensiveBuyMin,
-          this.config.expensiveBuyMax,
-        )
-      ) {
-        log("Hedge skipped - favorite ask left the band since generation", {
+      if (decision.action === "skip") {
+        log("Hedge skipped at post time", {
           market: opportunity.event.title,
           outcome: opportunity.token.outcome,
+          reason: decision.reason,
+          freshAsk,
           originalAsk: opportunity.token.bestAsk,
-          freshAsk,
-          band: `${this.config.expensiveBuyMin}-${this.config.expensiveBuyMax}`,
-        });
-        if (shouldDefendUncoveredPair(freshAsk, this.config.expensiveBuyMax)) {
-          const cheap = this.tracker.getFilledCheapSizeForPair(opportunity.pairId);
-          const expensive = this.tracker.getFilledExpensiveSizeForPair(
-            opportunity.pairId,
-          );
-          if (isPairCovered(cheap, expensive)) {
-            log("Hedge skipped - pair already covered, not defending", {
-              market: opportunity.event.title,
-              pairId: opportunity.pairId,
-              cheap,
-              expensive,
-            });
-          } else {
-            await this.defendPair(opportunity.pairId);
-          }
-        }
-        return;
-      }
-      const freshHedgePrice = Math.min(freshAsk, this.config.expensiveBuyMax);
-      const cheapFillPrice = this.tracker.getCheapFillPriceForPair(opportunity.pairId);
-      // round2: 0.07 + 0.91 = 0.9800000000000001 in IEEE-754 — an exact
-      // lock must not be rejected by float noise.
-      const freshPairCost =
-        cheapFillPrice !== null
-          ? Math.round((cheapFillPrice + freshHedgePrice) * 100) / 100
-          : null;
-      if (freshPairCost !== null && freshPairCost > this.config.pairLockMax) {
-        log("Hedge skipped - pair cost exceeds lock, holding cheap directional", {
-          cheapFillPrice,
-          freshHedgePrice,
-          pairCost: freshPairCost,
-          pairLockMax: this.config.pairLockMax,
-          market: opportunity.event.title,
         });
         return;
       }
       opportunity = {
         ...opportunity,
-        price: freshHedgePrice,
+        price: decision.price,
         token: { ...opportunity.token, bestAsk: freshAsk },
       };
-      estimatedCost = Math.round(freshHedgePrice * opportunity.size * 100) / 100;
+      estimatedCost = Math.round(decision.price * opportunity.size * 100) / 100;
+      // Fresh ask can be higher than the snapshot used for the first
+      // collateral / exposure checks. Re-evaluate with the POST price.
+      if (available !== null && estimatedCost > available) {
+        this.rejectLiveWithRetry(opportunity, "insufficient-balance", {
+          estimatedCost,
+          available,
+        });
+        return;
+      }
+      if (
+        this.tracker.getOpenExposure() +
+          this.tracker.getRestingExposure() +
+          estimatedCost >
+        this.config.maxExposureUsdc
+      ) {
+        log("Live order skipped - exposure cap", {
+          kind: opportunity.kind,
+          market: opportunity.event.title,
+          outcome: opportunity.token.outcome,
+          limitPrice: opportunity.price,
+          size: opportunity.size,
+          estimatedCost,
+          openExposure: this.tracker.getOpenExposure(),
+          restingExposure: this.tracker.getRestingExposure(),
+          cap: this.config.maxExposureUsdc,
+        });
+        return;
+      }
     }
 
     // --- Dispatch: FOK or GTC for expensive hedge, GTC for cheap legs ---
@@ -1278,26 +1266,28 @@ export class ReverseBot {
       return;
     }
     const filledExpensiveSize = this.tracker.getFilledExpensiveSizeForPair(pairId);
-    if (isPairCovered(filledCheapSize, filledExpensiveSize)) {
-      log("defendPair: pair already covered — holding both legs to redeem", {
+    const uncoveredSize = this.strategy.defendShares({
+      config: this.config,
+      favoriteAsk: null,
+      filledCheap: filledCheapSize,
+      filledExpensive: filledExpensiveSize,
+    });
+    if (uncoveredSize <= 0) {
+      log("defendPair: pair already covered for this engine — holding both legs", {
         pairId,
         filledCheapSize,
         filledExpensiveSize,
+        strategyId: this.strategy.id,
       });
       return;
     }
-
-    // Only the UNCOVERED excess is sold. Selling the whole cheap when a
-    // (budget-capped) hedge already filled would leave that hedge as a
-    // naked favorite.
-    const uncoveredSize =
-      Math.round(Math.max(0, filledCheapSize - filledExpensiveSize) * 100) / 100;
     if (uncoveredSize < MIN_CLOB_SHARES) {
       log("defendPair: uncovered excess below CLOB minimum — holding", {
         pairId,
         filledCheapSize,
         filledExpensiveSize,
         uncoveredSize,
+        strategyId: this.strategy.id,
       });
       return;
     }
@@ -1358,11 +1348,10 @@ export class ReverseBot {
           uncoveredSize,
         });
         bus.emit({ type: "order", result, opportunity: sellOpportunity });
-        // A GTC hedge still resting for this pair would now fill as a
-        // naked favorite (the cheap it was covering is gone).
-        if (this.tracker.getFilledCheapSizeForPair(pairId) <= filledExpensiveSize) {
-          await this.cancelRestingHedgesForPair(pairId, "cheap sold by pair defense");
-        }
+        // After defense, no further hedge is wanted (arb: cheap covered;
+        // barbell: leftover is an intentional bet). A resting GTC would
+        // buy a favorite already outside the band.
+        await this.cancelRestingHedgesForPair(pairId, "cheap sold by pair defense");
       } else if (result.reason === "sell-unconfirmed") {
         log("defendPair: SELL unconfirmed — not treating cheap as held for hedge", {
           pairId,

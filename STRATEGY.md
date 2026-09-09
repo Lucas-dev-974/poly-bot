@@ -1,7 +1,9 @@
-# Stratégie B1 — arbitrage binaire (maker cheap + hedge 1:1)
+# Stratégie — moteurs arb (B1) et barbell
 
-> Aligné sur le code de `polymarket-reverse-arbitrage-bot` (`ArbSizing`, `strategy.ts`, `bot.ts`).
+> Aligné sur le code (`TradingStrategy`, `ArbStrategy`, `BarbellStrategy`, `bot.ts`).
 > Live : deposit wallet V2 (`SIGNATURE_TYPE=3` par défaut). La stratégie se lit dans `data/bot-settings.json` (dashboard). `.env` ne contient que les secrets et l'infra.
+
+Le JSON actif choisit le **moteur** (`strategyId` : `arb` | `barbell`). Les **profils** (`config/presets/*.json`) sont des packs de paramètres **liés à un moteur** (champ top-level `strategyId` obligatoire). Les deux profils livrés sont `arb`. Barbell **n'est pas** un lock de profit : le leftover cheap est un pari volontaire, variance plus élevée.
 
 ---
 
@@ -13,7 +15,7 @@ Le bot opère sur les marchés **Up or Down** de Polymarket à fenêtre **15 min
 - Deux tokens : **Up** (paie 1 $ si prix final ≥ prix initial) et **Down** (paie 1 $ si prix final < prix initial).
 - Le token gagnant paie **1,00 $**, le perdant paie **0,00 $**. Tenir 1 Up + 1 Down redeem **toujours 1,00 $**.
 
-Ce n'est **pas** un ladder de limites ni une copie d'un carnet manuel. C'est un **arbitrage binaire** : un seul bid maker cheap, puis un hedge 1:1 seulement si le cheap est **fillé** et que `fillPrice + hedge ≤ PAIR_LOCK_MAX < 1.00`.
+Ce n'est **pas** un ladder de limites ni une copie d'un carnet manuel. Sur **`arb`**, c'est un **arbitrage binaire** : un seul bid maker cheap, puis un hedge 1:1 seulement si le cheap est **fillé** et que `fillPrice + hedge ≤ PAIR_LOCK_MAX < 1.00`. Sur **`barbell`**, même ordre cheap-then-hedge, mais la taille hedge est `filledCheap × barbellHedgeRatio` (défaut 0.5) **sans** verrou.
 
 ---
 
@@ -69,8 +71,8 @@ src/
 ├── config.ts          — chargement/validation des paramètres (.env)
 ├── bot.ts             — boucle principale (ReverseBot)
 ├── market-scanner.ts  — découverte des marchés + order books (API Gamma + CLOB)
-├── strategy.ts        — détection underdog/favori + construction des opportunités
-├── strategy/arb-sizing.ts — B1 : bid maker, hedge 1:1, verrou fillPrice + hedge
+├── strategy.ts        — barrel arb (tests) + réexport des prédicats
+├── strategy/          — TradingStrategy (arb, barbell), sizing, registry
 ├── trader.ts          — soumission des ordres via ClobClient (Polymarket)
 ├── trade-tracker.ts   — déduplication des prix déjà postés par session
 ├── utils/market.ts    — parsing de slug, tick size, best bid/ask
@@ -85,8 +87,8 @@ Toutes les `pollIntervalMs` (défaut code **5000** ms, JSON dashboard) :
 1. Prune tracker (posted orders, window claims). **En live** : cancel GTC périmés, poll des fills CLOB (un `matched` n'ouvre une position que si le wallet **détient** les tokens).
 2. Scan des marchés actifs (scanner).
 3. Pour chaque événement : order books. **En live** : reprice/cancel du cheap resting (`replaceMarketableCheap`), défense des paires nues (`defendUncoveredPairs`).
-4. `findOpportunities` + `ArbSizing` : bid cheap maker, hedge 1:1 **seulement** après fill et si le verrou tient.
-5. Exécution cheap d'abord, puis hedge (`Trader.placeBuy`). Un hedge n'est jamais posté contre un cheap seulement resting.
+4. `this.strategy.findOpportunities` : bid cheap maker, hedge selon le moteur **seulement** après fill.
+5. Exécution cheap d'abord, puis hedge (`Trader.placeBuy`). Un hedge n'est jamais posté contre un cheap seulement resting. Live : `hedgeAtPostTime` revalide le livre avant le POST.
 
 ### 3.2 Découverte des marchés (`market-scanner.ts`)
 
@@ -99,22 +101,22 @@ La méthode `scan()` interroge l'API Gamma :
 
 `getTokenBooks()` récupère l'order book CLOB (`/book?token_id=...`) pour chaque token et en extrait le `bestBid` et le `bestAsk`.
 
-### 3.3 Logique de stratégie (`strategy.ts`)
+### 3.3 Logique de stratégie (`src/strategy/*`)
 
-Le cœur décisionnel :
+La **politique** vit dans `TradingStrategy` (`ArbStrategy` / `BarbellStrategy`). Le bot exécute (CLOB, soldes, exposition, tracker). `src/strategy.ts` est un barrel de tests : `findOpportunities` y appelle **toujours** `ArbStrategy` (ignore `config.strategyId`). Production : `createStrategy(config.strategyId)`.
+
+Commun aux deux moteurs :
 
 - **`pickReverseToken`** : parmi les tokens avec un ask, sélectionne celui au **best ask le plus bas** = l'underdog. Les deux asks doivent être présents (un carnet unilatéral ne crée pas de claim).
-- **`pickFavoriteToken`** : l'autre token, ask **≥ `EXPENSIVE_BUY_MIN`**, avec au moins **5 shares** au best ask (minimum CLOB). La profondeur n'est **pas** calée sur `CHEAP_BUY_MIN` (ça gonflait le seuil, ex. 16 shares à 5¢, et bloquait un favori dans la bande).
-- **Nouveau cheap seulement si le favori est dans la bande** `[EXPENSIVE_BUY_MIN, EXPENSIVE_BUY_MAX]` (garde aussi active quand `ENABLE_EXPENSIVE_HEDGE` est true). Au-dessus du max (ex. 0.97), on n'ouvre pas de cheap. En dessous du min, ce n'est pas un favori.
-- **Claim de fenêtre** : underdog/favori mémorisés (`window_claims`) pour éviter le flip-flop. Si **rien n'est commis** et que l'underdog a flipé, le claim est droppé et recalculé. Un claim cheap-only (`expensive=""`) peut encore recevoir le favori plus tard via `setWindowClaimExpensive`.
-- **Hedge revalidé chaque tick** : si le favori dérive sous `EXPENSIVE_BUY_MIN`, on cesse de poster le hedge. Un cheap **déjà fillé** n'est pas dumpé pour autant (voir défense). Le hedge (FOK **ou** GTC) n'est généré que si le favori est **encore dans la bande** — un GTC au clamp sous un ask > max resterait sur le carnet et se remplirait plus tard en favori nu.
-- **Coût de paire (B1, source de vérité `ArbSizing`)** :
-  - **Nouveau cheap** : `limit + min(askFavori, EXPENSIVE_BUY_MAX) ≤ PAIR_LOCK_MAX` (défaut **0.98**). Bid = `min(bestAsk, CHEAP_BUY_MAX, PAIR_LOCK_MAX − hedgePrice)`. Si l'ask cheap est à 0.16 et le favori à 0.85, on **s'assoit à 0.13**. Si `PAIR_LOCK_MAX − hedge < CHEAP_BUY_MIN`, pas de cheap.
-  - **Hedge après fill** : `fillPrice + min(askFavori, EXPENSIVE_BUY_MAX) ≤ PAIR_LOCK_MAX`. Sinon **pas de hedge** (cheap directionnel). Le lock du hedge utilise le **prix fillé**, pas le bid théorique.
-  - **Hedge 1:1** avec le cheap rempli **encore non couvert** (`cheap fillé − hedge fillé`). `EXPENSIVE_ORDER_USDC` est un **plafond secondaire**. Un GTC n'est posté qu'après un cheap rempli. Un reste non couvert < 5 parts n'est pas hedgé (minimum CLOB).
-- **Cheap resting** : **annulé** si le favori sort de `[EXPENSIVE_BUY_MIN, EXPENSIVE_BUY_MAX]` ou si le bid dépasse le nouveau cap `PAIR_LOCK_MAX − hedge`. Si l'ordre était **partiellement** rempli, le bot annule d'abord le reste puis enregistre la part remplie (jamais de reste orphelin sur le carnet).
-- **Défense (`defendPair`)** : FOK SELL au bid de **l'excédent non couvert** du cheap (`cheap fillé − hedge fillé`) **seulement si** l'ask favori **> EXPENSIVE_BUY_MAX** **et** la paire n'est **pas** déjà couverte 1:1. Un ask sous `EXPENSIVE_BUY_MIN` ne dump **pas** le cheap. Une paire déjà couverte n'est **jamais** vendue, même si le favori va à 1,00 $. Un excédent < 5 parts est tenu. Après une vente, tout hedge GTC encore resting sur la paire est annulé.
-- Un fill CLOB `matched` n'ouvre une position cheap que si le wallet **détient** les tokens. Un FOK SELL n'est compté que si le solde de tokens a baissé.
+- **`pickFavoriteToken`** : l'autre token, ask **≥ `EXPENSIVE_BUY_MIN`**, avec au moins **5 shares** au best ask (minimum CLOB).
+- **Nouveau cheap seulement si le favori est dans la bande** `[EXPENSIVE_BUY_MIN, EXPENSIVE_BUY_MAX]`.
+- **Claim de fenêtre** : underdog/favori mémorisés (`window_claims`).
+- **Anti favori-nu** : hedge seulement après cheap fillé.
+- **`hedgeAtPostTime` (live)** : 1) ask null → skip ; 2) ask > max → défendre si `shouldDefend`, sinon skip ; 3) ask < min → skip (pas de défense) ; 4) **arb seulement** : fill + hedge > lock → skip ; 5) POST à `min(ask, expensiveBuyMax)`.
+
+**`arb`** — 1:1 + lock (`ArbSizing`) : bid `min(ask, cheapBuyMax, pairLockMax − hedge)`. Hedge = cheap fillé − hedge fillé. Cancel cheap si hors bande **ou** bid > lock − hedge. Défense : vendre `cheap − expensive`. `pairLockMax` ignoré par barbell mais toujours validé 0.90–0.99.
+
+**`barbell`** — ratio (`BarbellSizing`) : bid `min(ask, cheapBuyMax)`, `pairLockOk` toujours true. Hedge = `min(uncovered, budget)` avec `uncovered = cheap × barbellHedgeRatio − hedge fillé`. Cancel cheap seulement si le favori **sort de la bande**. Défense : vendre uniquement la tranche filet manquante (ex. 10 cheap / 3 hedge / ratio 0.5 → vendre **2**, pas 7). Un remainder &lt; 5 parts n'est pas hedgé.
 
 ### 3.4 Calcul de la taille (`strategy/arb-sizing.ts` + `utils/prices.ts`)
 
@@ -174,7 +176,7 @@ Si Up cote **97¢** (hors `EXPENSIVE_BUY_MAX`), le bot **n'émet aucun cheap** s
 
 ## 5. Paramétrage
 
-**Source de vérité stratégie** : `data/bot-settings.json` (éditée depuis le dashboard). Deux profils prêts à l'emploi : `config/presets/coverage-max.json` (FOK, 1:1) et `config/presets/conservative.json` (GTC, bande étroite) — choisis dans le dialog Configuration puis enregistrés. `.env` = secrets (`PRIVATE_KEY`, `FUNDER_ADDRESS`, Builder/Relayer) et infra (`DRY_RUN`, hôtes, ports, DB). En live, le JSON actif est **obligatoire**.
+**Source de vérité stratégie** : `data/bot-settings.json` (éditée depuis le dashboard). `strategyId` choisit le moteur (`arb` défaut, `barbell`). Chaque fichier `config/presets/*.json` **déclare** `strategyId` ; les deux livrés (`coverage-max`, `conservative`) sont `arb`. `.env` = secrets et infra. En live, le JSON actif est **obligatoire**.
 
 | Clé JSON                     | Défaut (code / example)         | Rôle                              |
 |------------------------------|---------------------------------|-----------------------------------|
@@ -182,7 +184,9 @@ Si Up cote **97¢** (hors `EXPENSIVE_BUY_MAX`), le bot **n'émet aucun cheap** s
 | `marketSlugPrefixes`          | btc-updown-15m, eth-updown-15m  | Marchés ciblés                    |
 | `cheapBuyMin` / `cheapBuyMax` | 0.07 / 0.10                     | Fourchette du bid reverse         |
 | `cheapOrderUsdc`              | 1                               | Budget par ordre cheap            |
-| `pairLockMax`                 | 0.98                            | Verrou : bid et fill+hedge ≤ cette valeur |
+| `strategyId`                  | arb                             | Moteur : `arb` (1:1 + lock) ou `barbell` (ratio, pas de lock) |
+| `barbellHedgeRatio`           | 0.5                             | Cible hedge / cheap fillé pour barbell, ∈ (0, 1]. Ignoré par arb |
+| `pairLockMax`                 | 0.98                            | Verrou arb : bid et fill+hedge ≤ cette valeur (toujours validé, ignoré par barbell) |
 | `enableExpensiveHedge`        | true                            | Active la jambe favori            |
 | `expensiveBuyMin` / `Max`     | 0.85 / 0.95                     | Fourchette du hedge (favori)      |
 | `expensiveOrderUsdc`          | 15                              | Plafond de coût du hedge 1:1 (≥ 5 parts au prix hedge, sinon aucun hedge) |

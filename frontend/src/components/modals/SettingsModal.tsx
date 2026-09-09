@@ -1,7 +1,7 @@
 import { For, Show, createEffect, createMemo, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { api } from "../../api/client";
-import { STRATEGY_PRESETS, type StrategyPreset } from "../../config/strategyPresets";
+import { STRATEGY_ENGINE_OPTIONS, STRATEGY_PRESETS, presetsForStrategy, type StrategyPreset } from "../../config/strategyPresets";
 import { setConfig } from "../../stores/botStore";
 import type { BotConfig } from "../../types";
 import {
@@ -90,10 +90,10 @@ interface SectionDef {
 }
 
 const SECTIONS: SectionDef[] = [
-  { id: "presets", label: "Profils", icon: "▣", desc: "Couverture max ou conservateur" },
+  { id: "presets", label: "Profils", icon: "▣", desc: "Moteur et packs de paramètres" },
   { id: "markets", label: "Marchés", icon: "◉", desc: "Marchés surveillés et cadence de scan" },
   { id: "cheap", label: "Jambe cheap", icon: "▾", desc: "Bid maker underdog et verrou de paire" },
-  { id: "hedge", label: "Jambe hedge", icon: "▴", desc: "Hedge 1:1 après fill cheap" },
+  { id: "hedge", label: "Jambe hedge", icon: "▴", desc: "Hedge après fill cheap" },
   { id: "risk", label: "Risque", icon: "◆", desc: "Limites de taille, positions et exposition" },
   { id: "window", label: "Fenêtre", icon: "◷", desc: "Plage de trading avant clôture" },
   { id: "sim", label: "Simulation", icon: "▦", desc: "Paramètres du dry-run" },
@@ -128,8 +128,12 @@ export function SettingsModal(props: {
   const dirty = createMemo(() => !formsEqual(form(), baseline()));
   const matchingPresetId = createMemo(() => {
     const current = form();
-    for (const preset of STRATEGY_PRESETS) {
-      const filled = configToForm({ ...props.config, ...preset.settings });
+    for (const preset of presetsForStrategy(current.strategyId)) {
+      const filled = configToForm({
+        ...props.config,
+        ...preset.settings,
+        strategyId: preset.strategyId,
+      });
       if (formsEqual(filled, current)) return preset.id;
     }
     return null;
@@ -137,6 +141,7 @@ export function SettingsModal(props: {
   const matchingPreset = createMemo(() =>
     STRATEGY_PRESETS.find((preset) => preset.id === matchingPresetId()) ?? null,
   );
+  const enginePresets = createMemo(() => presetsForStrategy(form().strategyId));
 
   function update<K extends keyof ConfigFormState>(key: K, value: ConfigFormState[K]): void {
     setForm((current) => ({ ...current, [key]: value }));
@@ -144,7 +149,13 @@ export function SettingsModal(props: {
   }
 
   function applyPreset(preset: StrategyPreset): void {
-    setForm(configToForm({ ...props.config, ...preset.settings }));
+    setForm(
+      configToForm({
+        ...props.config,
+        ...preset.settings,
+        strategyId: preset.strategyId,
+      }),
+    );
     setSaveError(null);
   }
 
@@ -207,9 +218,21 @@ export function SettingsModal(props: {
           </header>
 
           <div class="cfg-presets">
+            <span class="cfg-presets__label">Moteur</span>
+            <select
+              class="cfg-input"
+              value={form().strategyId}
+              onChange={(e) =>
+                update("strategyId", e.currentTarget.value as ConfigFormState["strategyId"])
+              }
+            >
+              <For each={STRATEGY_ENGINE_OPTIONS}>
+                {(option) => <option value={option.id}>{option.label}</option>}
+              </For>
+            </select>
             <span class="cfg-presets__label">Profil stratégie</span>
             <div class="cfg-presets__list">
-              <For each={STRATEGY_PRESETS}>
+              <For each={enginePresets()}>
                 {(preset) => (
                   <button
                     type="button"
@@ -222,6 +245,9 @@ export function SettingsModal(props: {
                 )}
               </For>
             </div>
+            <Show when={enginePresets().length === 0}>
+              <p class="cfg-presets__hint">Aucun profil pour ce moteur</p>
+            </Show>
             <Show when={matchingPreset() && dirty()}>
               <p class="cfg-presets__hint">
                 Profil « {matchingPreset()?.name} » chargé dans le formulaire.
@@ -260,13 +286,30 @@ export function SettingsModal(props: {
             <div class="cfg-content">
               <Show when={activeSection() === "presets"}>
                 <div class="cfg-section">
-                  <h4>Profils B1</h4>
+                  <h4>Profils</h4>
                   <p class="cfg-section__desc">
-                    Choisis un profil, puis Enregistrer. Ça écrit data/bot-settings.json
-                    (la config active). Tu peux encore ajuster les champs dans les autres onglets.
+                    Choisis le moteur, éventuellement un profil, puis Enregistrer.
+                    Ça écrit data/bot-settings.json (la config active). Tu peux encore
+                    ajuster les champs dans les autres onglets.
                   </p>
+                  <Field label="Moteur">
+                    <select
+                      class="cfg-input"
+                      value={form().strategyId}
+                      onChange={(e) =>
+                        update(
+                          "strategyId",
+                          e.currentTarget.value as ConfigFormState["strategyId"],
+                        )
+                      }
+                    >
+                      <For each={STRATEGY_ENGINE_OPTIONS}>
+                        {(option) => <option value={option.id}>{option.label}</option>}
+                      </For>
+                    </select>
+                  </Field>
                   <div class="cfg-presets__list">
-                    <For each={STRATEGY_PRESETS}>
+                    <For each={enginePresets()}>
                       {(preset) => (
                         <button
                           type="button"
@@ -279,6 +322,9 @@ export function SettingsModal(props: {
                       )}
                     </For>
                   </div>
+                  <Show when={enginePresets().length === 0}>
+                    <p class="cfg-presets__hint">Aucun profil pour ce moteur</p>
+                  </Show>
                   <Show when={matchingPreset() && dirty()}>
                     <p class="cfg-presets__hint">
                       Profil « {matchingPreset()?.name} » chargé — Enregistrer pour l’activer.
@@ -366,7 +412,11 @@ export function SettingsModal(props: {
                     </Field>
                     <Field
                       label="Pair lock max"
-                      hint="Entrée : bid + hedge ≤ lock. Après fill : fillPrice + hedge ≤ lock, sinon pas de hedge (0.90–0.99)"
+                      hint={
+                        form().strategyId === "barbell"
+                          ? "Ignoré par barbell. Conservé 0.90–0.99 pour un retour à B1."
+                          : "Entrée : bid + hedge ≤ lock. Après fill : fillPrice + hedge ≤ lock, sinon pas de hedge (0.90–0.99)"
+                      }
                     >
                       <NumberInput
                         value={form().pairLockMax}
@@ -385,9 +435,9 @@ export function SettingsModal(props: {
                 <div class="cfg-section">
                   <h4>Jambe hedge (favorite)</h4>
                   <p class="cfg-section__desc">
-                    Hedge 1:1 uniquement après un cheap rempli, si l'ask favori est
-                    dans <code>[hedgeMin, hedgeMax]</code> et si fillPrice + min(ask,
-                    hedgeMax) ≤ pairLockMax. La bande est nécessaire, pas suffisante.
+                    {form().strategyId === "barbell"
+                      ? "Hedge au ratio cheap/hedge uniquement après un cheap rempli, si l'ask favori est dans [hedgeMin, hedgeMax]. Pas de verrou de profit — variance plus élevée."
+                      : "Hedge 1:1 uniquement après un cheap rempli, si l'ask favori est dans [hedgeMin, hedgeMax] et si fillPrice + min(ask, hedgeMax) ≤ pairLockMax. La bande est nécessaire, pas suffisante."}
                   </p>
                   <div class="cfg-grid">
                     <Field
@@ -439,6 +489,22 @@ export function SettingsModal(props: {
                         <option value="FOK">FOK — Fill or Kill</option>
                         <option value="GTC">GTC — Good Till Cancelled</option>
                       </select>
+                    </Field>
+                    <Field
+                      label="Ratio hedge"
+                      hint={
+                        form().strategyId === "arb"
+                          ? "Ignoré par B1. Parts hedge = cheap rempli × ratio (barbell)."
+                          : "Parts hedge ciblées = cheap rempli × ratio. (0, 1]. Défaut 0.5."
+                      }
+                    >
+                      <NumberInput
+                        value={form().barbellHedgeRatio}
+                        min={0.01}
+                        max={1}
+                        step={0.05}
+                        onInput={(v) => update("barbellHedgeRatio", v)}
+                      />
                     </Field>
                   </div>
                   <div class="cfg-divider" />

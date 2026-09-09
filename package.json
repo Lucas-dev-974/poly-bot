@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
-    "test": "node --import tsx --test tests/prices.test.ts tests/config.test.ts tests/resolver.test.ts tests/strategy.test.ts tests/tracker.test.ts tests/runtime-settings.test.ts tests/order-lifecycle.test.ts tests/order-status.test.ts tests/trader.test.ts tests/presets.test.ts",
+    "test": "node --import tsx --test tests/prices.test.ts tests/config.test.ts tests/resolver.test.ts tests/strategy.test.ts tests/tracker.test.ts tests/runtime-settings.test.ts tests/order-lifecycle.test.ts tests/order-status.test.ts tests/trader.test.ts tests/presets.test.ts tests/trading-strategy.test.ts",
     "live:all": "concurrently -n backend,frontend -c blue,green \"npm start\" \"npm --prefix frontend run dev\"",
     "dev:all": "concurrently -n backend,frontend -c blue,green \"npm run dev\" \"npm --prefix frontend run dev\"",
     "build": "tsc",

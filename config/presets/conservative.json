@@ -1,5 +1,6 @@
 {
   "id": "conservative",
+  "strategyId": "arb",
   "name": "Conservateur",
   "description": "GTC hedge, bande favori étroite 0.76–0.85, lock 0.99. Moins de capital par fenêtre ; plus de cheap directionnels si le GTC ne fill pas.",
   "settings": {

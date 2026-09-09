@@ -11,8 +11,14 @@ export function ConfigBar(props: { onConfigure?: () => void }): JSX.Element {
             Cheap <b>{c().cheapBuyMin}–{c().cheapBuyMax}</b> · {c().cheapOrderUsdc} USDC
           </span>
           <span>
+            Moteur <b>{c().strategyId === "barbell" ? "barbell" : "arb"}</b>
+            {c().strategyId === "barbell"
+              ? ` · ratio ${c().barbellHedgeRatio ?? 0.5}`
+              : ` · lock ${c().pairLockMax}`}
+          </span>
+          <span>
             Hedge <b>{c().expensiveBuyMin}–{c().expensiveBuyMax}</b>
-            · plafond {c().expensiveOrderUsdc} USDC · lock {c().pairLockMax}
+            · plafond {c().expensiveOrderUsdc} USDC
           </span>
           <span>
             Marchés <b>{c().marketSlugPrefixes.join(", ")}</b>

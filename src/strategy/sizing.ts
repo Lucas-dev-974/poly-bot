@@ -1,6 +1,7 @@
 import type { BotConfig } from "../config.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { TokenBook } from "../types.js";
+import type { StrategyId } from "./ids.js";
 
 /**
  * Context passed to a SizingStrategy to compute the sizes and prices
@@ -34,14 +35,13 @@ export interface SizingResult {
 }
 
 /**
- * Strategy interface for computing leg sizes. B1 implements ArbSizing
- * (1:1 with filled cheap, profit lock). B2 (future) will implement
- * BarbellSizing (explicit ratio, Kelly fractionated). The rest of the
- * pipeline (guards, execution, tracker, DB) is agnostic to the strategy.
+ * Strategy interface for computing leg sizes. ArbSizing is 1:1 + lock.
+ * BarbellSizing uses an explicit cheap/hedge ratio and always reports
+ * pairLockOk. Policy (cancel, defend, hedge-at-post) lives on TradingStrategy.
  */
 export interface SizingStrategy {
   /** Strategy name for logging and dashboard. */
-  readonly name: "arb" | "barbell";
+  readonly name: StrategyId;
   /** Compute sizes and prices for a given opportunity context. */
   compute(ctx: SizingContext): SizingResult;
 }

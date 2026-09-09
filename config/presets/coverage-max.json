@@ -1,5 +1,6 @@
 {
   "id": "coverage-max",
+  "strategyId": "arb",
   "name": "Couverture max",
   "description": "FOK immédiat après fill cheap, budget 1:1, lock 0.98 (~2 ¢ / share). Plus de paires couvertes, plus de capital par fenêtre.",
   "settings": {

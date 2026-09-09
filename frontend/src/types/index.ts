@@ -128,6 +128,10 @@ export interface BotConfig {
   expensiveBuyMax: number;
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: number;
+  /** Trading engine: arb = 1:1 + lock; barbell = cheap/hedge ratio, no lock. */
+  strategyId: "arb" | "barbell";
+  /** Target hedge / cheap fill ratio for barbell. Ignored by arb. (0, 1]. */
+  barbellHedgeRatio: number;
   /** Verrou profit : bid+hedge à l'entrée et fillPrice+hedge après fill, tous deux ≤ pairLockMax. */
   pairLockMax: number;
   expensiveOrderUsdc: number;

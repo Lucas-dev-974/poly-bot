@@ -8,6 +8,8 @@ export type ConfigFormState = {
   expensiveBuyMax: string;
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: string;
+  strategyId: "arb" | "barbell";
+  barbellHedgeRatio: string;
   pairLockMax: string;
   expensiveOrderUsdc: string;
   expensiveOrderType: "FOK" | "GTC";
@@ -38,6 +40,8 @@ export function configToForm(config: BotConfig): ConfigFormState {
     expensiveBuyMax: String(config.expensiveBuyMax),
     enableExpensiveHedge: config.enableExpensiveHedge,
     cheapOrderUsdc: String(config.cheapOrderUsdc),
+    strategyId: config.strategyId ?? "arb",
+    barbellHedgeRatio: String(config.barbellHedgeRatio ?? 0.5),
     pairLockMax: String(config.pairLockMax),
     expensiveOrderUsdc: String(config.expensiveOrderUsdc),
     expensiveOrderType: config.expensiveOrderType,
@@ -86,6 +90,8 @@ export function formToPatch(
     expensiveBuyMax: parseNum(form.expensiveBuyMax, "Hedge max"),
     enableExpensiveHedge: form.enableExpensiveHedge,
     cheapOrderUsdc: parseNum(form.cheapOrderUsdc, "Cheap order USDC"),
+    strategyId: form.strategyId,
+    barbellHedgeRatio: parseNum(form.barbellHedgeRatio, "Ratio hedge"),
     pairLockMax: parseNum(form.pairLockMax, "Pair lock max"),
     expensiveOrderUsdc: parseNum(form.expensiveOrderUsdc, "Plafond hedge USDC"),
     expensiveOrderType: form.expensiveOrderType,
@@ -149,6 +155,7 @@ export function validateConfigForm(
     const expensiveBuyMin = parseNum(form.expensiveBuyMin, "Hedge min");
     const expensiveBuyMax = parseNum(form.expensiveBuyMax, "Hedge max");
     const pairLockMax = parseNum(form.pairLockMax, "Pair lock max");
+    const barbellHedgeRatio = parseNum(form.barbellHedgeRatio, "Ratio hedge");
     const minutesBeforeCloseMin = parseNum(form.minutesBeforeCloseMin, "Minutes min");
     const minutesBeforeCloseMax = parseNum(form.minutesBeforeCloseMax, "Minutes max");
     const pollIntervalMs = parseNum(form.pollIntervalMs, "Poll interval");
@@ -176,6 +183,9 @@ export function validateConfigForm(
     }
     if (pairLockMax < 0.90 || pairLockMax >= 1.00) {
       errors.push("Pair lock max doit être entre 0.90 et 0.99");
+    }
+    if (!(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
+      errors.push("Ratio hedge doit être dans (0, 1]");
     }
     if (minutesBeforeCloseMin > minutesBeforeCloseMax) {
       errors.push("Minutes min doit être ≤ minutes max");

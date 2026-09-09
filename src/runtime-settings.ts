@@ -3,6 +3,7 @@ import { readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import type { BotConfig } from "./config.js";
 import { validateConfigCoherence, validateTradingConfig } from "./config.js";
+import { parseStrategyId } from "./strategy/ids.js";
 
 export const RUNTIME_SETTINGS_PATH = join(process.cwd(), "data/bot-settings.json");
 
@@ -15,6 +16,8 @@ export const EDITABLE_CONFIG_KEYS = [
   "expensiveBuyMax",
   "enableExpensiveHedge",
   "cheapOrderUsdc",
+  "strategyId",
+  "barbellHedgeRatio",
   "pairLockMax",
   "expensiveOrderUsdc",
   "expensiveOrderType",
@@ -48,6 +51,8 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   expensiveBuyMax: "EXPENSIVE_BUY_MAX",
   enableExpensiveHedge: "ENABLE_EXPENSIVE_HEDGE",
   cheapOrderUsdc: "CHEAP_ORDER_USDC",
+  strategyId: "STRATEGY_ID",
+  barbellHedgeRatio: "BARBELL_HEDGE_RATIO",
   pairLockMax: "PAIR_LOCK_MAX",
   expensiveOrderUsdc: "EXPENSIVE_ORDER_USDC",
   expensiveOrderType: "EXPENSIVE_ORDER_TYPE",
@@ -160,6 +165,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "expensiveBuyMin":
     case "expensiveBuyMax":
     case "cheapOrderUsdc":
+    case "barbellHedgeRatio":
     case "pairLockMax":
     case "expensiveOrderUsdc":
     case "maxSharesPerOrder":
@@ -183,6 +189,8 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
       return parseStringArray(value, key);
     case "expensiveOrderType":
       return parseEnum(value, ["FOK", "GTC"] as const, key);
+    case "strategyId":
+      return parseStrategyId(value);
     case "simResolveFallback":
       return parseEnum(value, ["none", "probabilistic"] as const, key);
     case "simRandomSeed":

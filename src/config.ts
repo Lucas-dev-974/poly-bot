@@ -8,6 +8,7 @@ import {
   type EditableConfigKey,
   type RuntimeSettingsPatch,
 } from "./runtime-settings.js";
+import type { StrategyId } from "./strategy/ids.js";
 
 function envString(key: string, fallback?: string): string {
   const value = process.env[key] ?? fallback;
@@ -60,6 +61,10 @@ export interface BotConfig {
   expensiveBuyMax: number;
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: number;
+  /** Trading engine: arb = 1:1 + lock; barbell = cheap/hedge ratio, no lock. */
+  strategyId: StrategyId;
+  /** Target hedge / cheap fill ratio for barbell. Ignored by arb. (0, 1]. */
+  barbellHedgeRatio: number;
   /** Verrou profit : bid+hedge à l'entrée et fillPrice+hedge après fill, tous deux ≤ pairLockMax. */
   pairLockMax: number;
   expensiveOrderUsdc: number;
@@ -129,6 +134,8 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     expensiveBuyMax: 0.95,
     enableExpensiveHedge: true,
     cheapOrderUsdc: 1,
+    strategyId: "arb",
+    barbellHedgeRatio: 0.5,
     pairLockMax: 0.98,
     // 15 USDC covers a $1 cheap at 0.07 (~14 shares) 1:1 at 0.95.
     // A cap that buys < 5 shares at the hedge price yields no hedge.
@@ -283,6 +290,9 @@ export function validateConfigCoherence(config: BotConfig): void {
   }
   if (config.pairLockMax < 0.90 || config.pairLockMax >= 1.00) {
     throw new Error("PAIR_LOCK_MAX must be between 0.90 and 0.99 (profit lock < 1.00)");
+  }
+  if (!(config.barbellHedgeRatio > 0 && config.barbellHedgeRatio <= 1)) {
+    throw new Error("BARBELL_HEDGE_RATIO must be in (0, 1]");
   }
   if (config.minutesBeforeCloseMin > config.minutesBeforeCloseMax) {
     throw new Error("MINUTES_BEFORE_CLOSE_MIN must be <= MINUTES_BEFORE_CLOSE_MAX");

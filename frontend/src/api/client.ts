@@ -45,17 +45,6 @@ export interface ConfigResponse {
   editableKeys: string[];
 }
 
-export interface StrategyPreset {
-  id: string;
-  name: string;
-  description: string;
-  settings: Partial<BotConfig>;
-}
-
-export interface ConfigPresetsResponse {
-  presets: StrategyPreset[];
-}
-
 export interface RelayerQuotaResponse {
   quota: RelayerQuotaState;
 }
@@ -75,7 +64,6 @@ export interface BotControlResponse {
 export const api = {
   state: () => request<StateResponse>("/api/state"),
   config: () => request<ConfigResponse>("/api/config"),
-  configPresets: () => request<ConfigPresetsResponse>("/api/config/presets"),
   relayerQuota: () =>
     request<{ quota: RelayerQuotaState }>("/api/relayer-quota"),
   openPositions: () => request<PositionsResponse>("/api/open-positions"),

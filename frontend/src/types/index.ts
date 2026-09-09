@@ -167,8 +167,6 @@ export interface BotConfig {
   edgeConfirmSamples: number;
   /** Edge-lead : drop tick-à-tick max toléré dans la série de confirmation. */
   edgeMaxDownTick: number;
-  /** Edge-lead : conservé pour JSON/dashboard ; le prix cheap est l'ask live dans la bande. */
-  edgeCheapMargin: number;
   /** Edge-lead : budget USDC de l'ordre edge (size = budget / prix edge). */
   edgeOrderUsdc: number;
   /** Edge-lead : plafond de shares de l'ordre edge (le cheap reste sur maxSharesPerOrder). */

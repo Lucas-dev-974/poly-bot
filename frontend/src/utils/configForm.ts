@@ -33,7 +33,6 @@ export type ConfigFormState = {
   edgeBandMax: string;
   edgeConfirmSamples: string;
   edgeMaxDownTick: string;
-  edgeCheapMargin: string;
   edgeOrderUsdc: string;
   maxShareEdge: string;
   edgeCheapOrderUsdc: string;
@@ -78,7 +77,6 @@ export function configToForm(config: BotConfig): ConfigFormState {
     edgeBandMax: String(config.edgeBandMax),
     edgeConfirmSamples: String(config.edgeConfirmSamples),
     edgeMaxDownTick: String(config.edgeMaxDownTick),
-    edgeCheapMargin: String(config.edgeCheapMargin),
     edgeOrderUsdc: String(config.edgeOrderUsdc),
     maxShareEdge: String(config.maxShareEdge ?? config.maxSharesPerOrder ?? 20),
     edgeCheapOrderUsdc: String(config.edgeCheapOrderUsdc),
@@ -141,7 +139,6 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     edgeBandMax: parseNum(form.edgeBandMax, "Edge band max"),
     edgeConfirmSamples: parseNum(form.edgeConfirmSamples, "Edge confirm samples"),
     edgeMaxDownTick: parseNum(form.edgeMaxDownTick, "Edge max down tick"),
-    edgeCheapMargin: parseNum(form.edgeCheapMargin, "Edge cheap margin"),
     edgeOrderUsdc: parseNum(form.edgeOrderUsdc, "Edge order USDC"),
     maxShareEdge: parseNum(form.maxShareEdge, "Max shares edge"),
     edgeCheapOrderUsdc: parseNum(form.edgeCheapOrderUsdc, "Budget cheap"),
@@ -258,7 +255,6 @@ export function validateConfigForm(
       const edgeBandMax = parseNum(form.edgeBandMax, "Edge band max");
       const edgeConfirmSamples = parseNum(form.edgeConfirmSamples, "Edge confirm samples");
       const edgeMaxDownTick = parseNum(form.edgeMaxDownTick, "Edge max down tick");
-      const edgeCheapMargin = parseNum(form.edgeCheapMargin, "Edge cheap margin");
       const edgeOrderUsdc = parseNum(form.edgeOrderUsdc, "Edge order USDC");
       const maxShareEdge = parseNum(form.maxShareEdge, "Max shares edge");
       const edgeCheapOrderUsdc = parseNum(form.edgeCheapOrderUsdc, "Budget cheap");
@@ -275,9 +271,6 @@ export function validateConfigForm(
       }
       if (edgeMaxDownTick <= 0) {
         errors.push("Edge max down tick doit être > 0");
-      }
-      if (edgeCheapMargin < 0) {
-        errors.push("Edge cheap margin doit être ≥ 0");
       }
       if (edgeOrderUsdc <= 0) {
         errors.push("Edge order USDC doit être > 0");

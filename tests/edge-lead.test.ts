@@ -19,7 +19,6 @@ function edgeConfig(overrides: Record<string, unknown> = {}) {
     edgeBandMax: 0.9,
     edgeConfirmSamples: 5,
     edgeMaxDownTick: 0.01,
-    edgeCheapMargin: 0.01,
     edgeOrderUsdc: 25,
     maxShareEdge: 40,
     edgeCheapOrderUsdc: 5,

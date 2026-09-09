@@ -40,7 +40,6 @@ export const EDITABLE_CONFIG_KEYS = [
   "edgeBandMax",
   "edgeConfirmSamples",
   "edgeMaxDownTick",
-  "edgeCheapMargin",
   "edgeOrderUsdc",
   "maxShareEdge",
   "edgeCheapOrderUsdc",
@@ -85,7 +84,6 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   edgeBandMax: "EDGE_BAND_MAX",
   edgeConfirmSamples: "EDGE_CONFIRM_SAMPLES",
   edgeMaxDownTick: "EDGE_MAX_DOWN_TICK",
-  edgeCheapMargin: "EDGE_CHEAP_MARGIN",
   edgeOrderUsdc: "EDGE_ORDER_USDC",
   maxShareEdge: "MAX_SHARE_EDGE",
   edgeCheapOrderUsdc: "EDGE_CHEAP_ORDER_USDC",
@@ -203,7 +201,6 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "edgeBandMax":
     case "edgeConfirmSamples":
     case "edgeMaxDownTick":
-    case "edgeCheapMargin":
     case "edgeOrderUsdc":
     case "maxShareEdge":
     case "edgeCheapOrderUsdc":

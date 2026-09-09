@@ -51,7 +51,6 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     edgeBandMax: 0.9,
     edgeConfirmSamples: 5,
     edgeMaxDownTick: 0.01,
-    edgeCheapMargin: 0.01,
     edgeOrderUsdc: 15,
     maxShareEdge: 20,
     edgeCheapOrderUsdc: 5,

@@ -264,12 +264,12 @@ On confirme que l'ask du **favori** (edge) reste dans une bande et **monte** pen
 
 ### 7.4 Sizing CLOB
 
-Deux budgets **découplés**, via `computeSize` (`utils/prices.ts`) : 5 shares min et 1 $ de notionnel, plafond `maxSharesPerOrder`.
+Deux budgets **découplés**, via `computeSize` (`utils/prices.ts`) : 5 shares min et 1 $ de notionnel. Chaque jambe a son propre plafond de shares :
 
-- Edge : `computeEdgeLeadEdgeSize` = `computeSize(edgeOrderUsdc, edgeAsk, maxShares)`.
-- Cheap : `computeEdgeLeadCheapSize` = `computeSize(edgeCheapOrderUsdc, cheapAsk, maxShares)`.
+- **Edge** : `computeEdgeLeadEdgeSize` = `computeSize(edgeOrderUsdc, edgeAsk, maxShareEdge)`. Plafonné par `maxShareEdge` (indépendant de `maxSharesPerOrder` qui plafonne le cheap). Défaut `maxShareEdge = 20` (`config.ts`) ; le preset `edge-lead.json` le monte à `40`.
+- **Cheap** : `computeEdgeLeadCheapSize` = `computeSize(edgeCheapOrderUsdc, cheapAsk, maxSharesPerOrder)`.
 
-Ex. `edgeOrderUsdc=15` @ 0.85 → ~17.64 shares ; `edgeCheapOrderUsdc=5` @ 0.05 et `maxShares=40` → **40** shares (pas 17.64). Pas de corrélation 1:1. Un budget trop bas pour les minimums CLOB → skip de **cette** jambe seulement.
+Ex. (preset `edge-lead.json`, `maxShareEdge = maxSharesPerOrder = 40`) : `edgeOrderUsdc=25` @ 0.85 → ~29.41 shares ; `edgeCheapOrderUsdc=5` @ 0.05 → **40** shares (plafonné). Pas de corrélation 1:1 entre les deux jambes. Un budget trop bas pour les minimums CLOB → skip de **cette** jambe seulement.
 
 ### 7.5 Paramètres edge-lead
 

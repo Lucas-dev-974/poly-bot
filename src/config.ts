@@ -126,8 +126,6 @@ export interface BotConfig {
   edgeConfirmSamples: number;
   /** Edge-lead : drop tick-à-tick max toléré dans la série de confirmation. */
   edgeMaxDownTick: number;
-  /** Edge-lead : conservé pour JSON/dashboard ; le prix cheap est l'ask live dans la bande. */
-  edgeCheapMargin: number;
   /** Edge-lead : budget USDC de l'ordre edge (size = budget / prix edge). */
   edgeOrderUsdc: number;
   /**
@@ -187,7 +185,6 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     edgeBandMax: 0.9,
     edgeConfirmSamples: 5,
     edgeMaxDownTick: 0.01,
-    edgeCheapMargin: 0.01,
     edgeOrderUsdc: 15,
     maxShareEdge: 20,
     edgeCheapOrderUsdc: 5,
@@ -357,9 +354,6 @@ export function validateConfigCoherence(config: BotConfig): void {
     }
     if (config.edgeMaxDownTick <= 0) {
       throw new Error("EDGE_MAX_DOWN_TICK must be > 0");
-    }
-    if (config.edgeCheapMargin < 0) {
-      throw new Error("EDGE_CHEAP_MARGIN must be >= 0");
     }
     if (config.edgeOrderUsdc <= 0) {
       throw new Error("EDGE_ORDER_USDC must be > 0");

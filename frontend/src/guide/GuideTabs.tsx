@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { For, Show, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { FlowDag, LifecycleDiagram, TicketStrip } from "./Diagrams";
 import {
@@ -19,183 +19,174 @@ import {
   ARB_LIFE_NODES,
   BARBELL_LIFE_EDGES,
   BARBELL_LIFE_NODES,
+  BOT_STEPS,
   CHEAP,
   COMPARE_ROWS,
   EDGE_LEAD_LIFE_EDGES,
   EDGE_LEAD_LIFE_NODES,
+  EDGE_LEAD_PARAM_ROWS,
+  ENGINE_META,
   HEDGE_MID,
   HEDGE_TREE,
   NEW_FILES,
+  RESOLUTION_ROWS,
+  STRATEGY_COMPARE_ROWS,
   TODOS,
   type EngineId,
   type PhaseId,
   hedgeTarget,
 } from "./data";
 
-export function StoryTab(): JSX.Element {
-  const [engine, setEngine] = createSignal<EngineId>("arb");
-  const [phase, setPhase] = createSignal<PhaseId>("mid");
+function EngineSelector(props: {
+  engine: () => EngineId;
+  setEngine: (id: EngineId) => void;
+}): JSX.Element {
+  return (
+    <GuideRow>
+      <GuidePill active={props.engine() === "arb"} onClick={() => props.setEngine("arb")}>
+        Arb — le filet
+      </GuidePill>
+      <GuidePill active={props.engine() === "barbell"} onClick={() => props.setEngine("barbell")}>
+        Barbell — filet + pari
+      </GuidePill>
+      <GuidePill active={props.engine() === "edge-lead"} onClick={() => props.setEngine("edge-lead")}>
+        Edge-lead — favori d'abord
+      </GuidePill>
+    </GuideRow>
+  );
+}
 
-  const hedgeFilled = () => (phase() === "done" ? hedgeTarget(engine()) : HEDGE_MID);
-  const need = () => Math.max(0, hedgeTarget(engine()) - hedgeFilled());
+function LifecycleCard(props: { engine: EngineId }): JSX.Element {
+  const title = () =>
+    props.engine === "arb" ? "Arb" : props.engine === "barbell" ? "Barbell" : "Edge-lead";
+
+  return (
+    <GuideCard title={`Cycle de vie — ${title()}`}>
+      <GuideStack gap={10}>
+        <p class="guide-muted guide-small">
+          Les états colorés engagent du capital ; les flèches sont la condition de passage.
+          pairId = slug:windowEnd.
+        </p>
+        <Show when={props.engine === "arb"}>
+          <LifecycleDiagram
+            nodes={ARB_LIFE_NODES}
+            edges={ARB_LIFE_EDGES}
+            markerId="life-arrow-arb"
+            ariaLabel="Cycle de vie d'une paire arb"
+          />
+          <p class="guide-muted guide-small">
+            Trois sorties après un cheap fillé : filet 1:1 si le lock tient ; directionnel si
+            lock cassé ou ask &lt; min ; vente de tout le trou si le favori dépasse le max.
+          </p>
+        </Show>
+        <Show when={props.engine === "barbell"}>
+          <LifecycleDiagram
+            nodes={BARBELL_LIFE_NODES}
+            edges={BARBELL_LIFE_EDGES}
+            markerId="life-arrow-barbell"
+            ariaLabel="Cycle de vie d'une paire barbell"
+          />
+          <p class="guide-muted guide-small">
+            Pas de branche « lock raté ». Le hedge part même au-dessus de 1 $. La défense ne vend
+            que la tranche filet manquante ; le leftover « pari » reste jusqu'à la résolution.
+          </p>
+        </Show>
+        <Show when={props.engine === "edge-lead"}>
+          <LifecycleDiagram
+            nodes={EDGE_LEAD_LIFE_NODES}
+            edges={EDGE_LEAD_LIFE_EDGES}
+            markerId="life-arrow-edge-lead"
+            ariaLabel="Cycle de vie d'une paire edge-lead"
+          />
+          <p class="guide-muted guide-small">
+            L'edge est acheté après confirmation de N ticks dans la bande. Le cheap n'est posté
+            qu'après fill de l'edge, si l'ask cheap est dans sa bande, avec un budget USDC
+            indépendant. Un GTC cheap hors bande cheap est annulé et re-posté si l'ask rentre.
+            Si l'edge sort de la bande avant fill, son GTC est annulé.
+          </p>
+        </Show>
+      </GuideStack>
+    </GuideCard>
+  );
+}
+
+function ArbBarbellStory(props: {
+  engine: "arb" | "barbell";
+  phase: () => PhaseId;
+  setPhase: (p: PhaseId) => void;
+}): JSX.Element {
+  const hedgeFilled = () =>
+    props.phase() === "done" ? hedgeTarget(props.engine) : HEDGE_MID;
+  const need = () => Math.max(0, hedgeTarget(props.engine) - hedgeFilled());
   const keep = CHEAP - hedgeTarget("barbell");
   const arbDefend = () => CHEAP - hedgeFilled();
   const barbellDefend = () => Math.max(0, hedgeTarget("barbell") - hedgeFilled());
 
   return (
     <GuideStack>
-      <p>
-        Toutes les 15 minutes, Polymarket pose une question bête : le Bitcoin va-t-il monter ou
-        descendre ? Il y a deux billets. Un seul paie 1 $ à la fin. L'autre ne vaut plus rien.
-      </p>
+      <GuideCallout
+        tone={ENGINE_META[props.engine].tone}
+        title={ENGINE_META[props.engine].label}
+      >
+        <p>{ENGINE_META[props.engine].subtitle}</p>
+        <p class="guide-muted guide-small" style={{ "margin-top": "8px" }}>
+          <strong>Ordre :</strong> {ENGINE_META[props.engine].order} ·{" "}
+          <strong>Risque :</strong> {ENGINE_META[props.engine].risk}
+        </p>
+      </GuideCallout>
 
-      <GuideGrid columns={2}>
-        <GuideCard title="Le favori">
-          <p>
-            Le billet que tout le monde croit gagnant. Cher (souvent 80–90 centimes). Si tu n'as
-            que ça, tu gagnes peu si tu as raison, tu perds tout si tu as tort.
-          </p>
-        </GuideCard>
-        <GuideCard title="L'outsider">
-          <p>
-            Le billet inverse, soldé (souvent 7–20 centimes). Personne n'y croit. S'il gagne, tu
-            touches 1 $ sur un truc acheté presque rien.
-          </p>
-        </GuideCard>
-      </GuideGrid>
-
-      <h3 class="guide-h3">Le bot achète d'abord l'outsider, puis le favori</h3>
+      <h3 class="guide-h3">Outsider d'abord, favori ensuite</h3>
       <p>
-        Jamais l'inverse : acheter le favori tout seul, c'est juste parier. On n'achète le favori
-        que quand l'outsider est déjà dans la poche.
+        On ne parie pas sur le favori tout seul. Le bot pose un bid sur l'outsider, attend le
+        fill, puis achète le favori —{" "}
+        {props.engine === "arb" ? "autant (1:1)" : "au ratio défini (défaut moitié)"}.
       </p>
 
       <GuideRow>
-        <GuidePill active={engine() === "arb"} onClick={() => setEngine("arb")}>
-          Arb — le filet
-        </GuidePill>
-        <GuidePill active={engine() === "barbell"} onClick={() => setEngine("barbell")}>
-          Barbell — filet + pari
-        </GuidePill>
-        <GuidePill active={engine() === "edge-lead"} onClick={() => setEngine("edge-lead")}>
-          Edge-lead — favori d'abord
-        </GuidePill>
-      </GuideRow>
-      <GuideRow>
-        <GuidePill active={phase() === "mid"} onClick={() => setPhase("mid")}>
+        <GuidePill active={props.phase() === "mid"} onClick={() => props.setPhase("mid")}>
           En cours : 10 outsider, 3 favori
         </GuidePill>
-        <GuidePill active={phase() === "done"} onClick={() => setPhase("done")}>
+        <GuidePill active={props.phase() === "done"} onClick={() => props.setPhase("done")}>
           Objectif atteint
         </GuidePill>
       </GuideRow>
 
-      {engine() === "arb" ? (
-        <GuideCallout tone="info" title="Arb = un outsider pour un favori">
-          <p>
-            Tu achètes le même nombre des deux. Les deux prix additionnés restent sous 1 $ (le
-            verrou). Un des deux billets paiera 1 $ : tu récupères toujours un peu plus que ce
-            que tu as mis. Ennuyeux, et c'est le but.
-          </p>
-        </GuideCallout>
-      ) : engine() === "barbell" ? (
-        <GuideCallout tone="warning" title="Barbell = la moitié en filet, la moitié en pari">
-          <p>
-            Sur 10 outsiders, tu n'achètes que 5 favoris. Les 5 autres restent un pari : si
-            l'outsider gagne, tu gagnes gros. Si le favori gagne, tu perds un peu. Ce n'est plus
-            un coup sûr.
-          </p>
-        </GuideCallout>
-      ) : (
-        <GuideCallout tone="info" title="Edge-lead = le favori d'abord">
-          <p>
-            On confirme que l'ask du favori monte dans une bande pendant N ticks, on achète
-            l'edge en GTC, puis on poste le cheap limit 1:1 à 1 − prix_edge − marge. Si le
-            cheap ne remplit jamais, on garde un favori nu (pari directionnel assumé).
-          </p>
-        </GuideCallout>
-      )}
-
       <GuideCard
         title={
-          engine() === "arb"
+          props.engine === "arb"
             ? "Chaque outsider doit avoir son favori"
-            : engine() === "barbell"
-              ? "Moitié duo, moitié pari (ratio 0,5)"
-              : "Edge d'abord, cheap en complément 1:1"
+            : "Moitié duo, moitié pari (ratio 0,5)"
         }
       >
-        <TicketStrip engine={engine()} hedgeFilled={hedgeFilled()} />
+        <TicketStrip engine={props.engine} hedgeFilled={hedgeFilled()} />
       </GuideCard>
 
-      <GuideCard title={`Cycle de vie d'une paire — ${engine() === "arb" ? "Arb" : engine() === "barbell" ? "Barbell" : "Edge-lead"}`}>
-        <GuideStack gap={10}>
-          <p class="guide-muted guide-small">
-            Les états colorés engagent du capital ; les flèches sont la condition de passage.
-            pairId = slug:windowEnd.
-          </p>
-          {engine() === "arb" ? (
-            <LifecycleDiagram
-              nodes={ARB_LIFE_NODES}
-              edges={ARB_LIFE_EDGES}
-              markerId="life-arrow-arb"
-              ariaLabel="Cycle de vie d'une paire arb"
-            />
-          ) : engine() === "barbell" ? (
-            <LifecycleDiagram
-              nodes={BARBELL_LIFE_NODES}
-              edges={BARBELL_LIFE_EDGES}
-              markerId="life-arrow-barbell"
-              ariaLabel="Cycle de vie d'une paire barbell"
-            />
-          ) : (
-            <LifecycleDiagram
-              nodes={EDGE_LEAD_LIFE_NODES}
-              edges={EDGE_LEAD_LIFE_EDGES}
-              markerId="life-arrow-edge-lead"
-              ariaLabel="Cycle de vie d'une paire edge-lead"
-            />
-          )}
-          {engine() === "arb" ? (
-            <p class="guide-muted guide-small">
-              Trois sorties après un cheap fillé : filet 1:1 si le lock tient ; directionnel si
-              lock cassé ou ask &lt; min ; vente de tout le trou si le favori dépasse le max.
-            </p>
-          ) : engine() === "barbell" ? (
-            <p class="guide-muted guide-small">
-              Pas de branche « lock raté ». Le hedge part même au-dessus de 1 $. La défense ne
-              vend que la tranche filet manquante ; le leftover « pari » reste jusqu'à la
-              résolution.
-            </p>
-          ) : (
-            <p class="guide-muted guide-small">
-              L'edge (favori) est acheté d'abord après confirmation de N ticks dans la bande.
-              Le cheap est posté juste après le POST edge. Si l'edge sort de la bande, les GTC
-              non fillés des deux jambes sont annulés ; un favori nu est accepté si le cheap ne
-              remplit jamais.
-            </p>
-          )}
-        </GuideStack>
-      </GuideCard>
+      <LifecycleCard engine={props.engine} />
 
       <GuideGrid columns={3}>
         <GuideStat value={String(CHEAP)} label="Billets outsider" />
         <GuideStat value={String(hedgeFilled())} label="Billets favori déjà achetés" />
         <GuideStat
           value={String(need())}
-          label={engine() === "arb" ? "Encore à jumeler" : "Encore à jumeler (cible 5)"}
+          label={props.engine === "arb" ? "Encore à jumeler" : "Encore à jumeler (cible 5)"}
         />
       </GuideGrid>
 
       <h3 class="guide-h3">Si le favori devient trop cher</h3>
-      <p>Tu ne peux plus acheter le filet. Il faut décider quoi faire des outsiders tout seuls.</p>
-      <GuideGrid columns={2}>
+      <Show when={props.engine === "arb"}>
+        <p>Tu ne peux plus compléter le filet. Le bot revend tout le trou cheap restant.</p>
         <GuideCard title="Arb revend tout le trou">
           <p>
             {CHEAP} outsider − {hedgeFilled()} favori = <strong>{arbDefend()}</strong> à vendre.
             Plus de pari : soit le duo est complet, soit tu sors.
           </p>
         </GuideCard>
+      </Show>
+      <Show when={props.engine === "barbell"}>
+        <p>
+          Tu ne peux plus acheter le filet manquant. Seule la tranche « duo » est vendue ; le
+          pari leftover reste.
+        </p>
         <GuideCard title="Barbell ne vend que le filet manquant">
           <p>
             Cible 5 favoris, tu en as {Math.min(hedgeFilled(), 5)} → vend{" "}
@@ -203,50 +194,179 @@ export function StoryTab(): JSX.Element {
             {arbDefend()} restants, tu casserais le pari exprès.
           </p>
         </GuideCard>
-      </GuideGrid>
+      </Show>
 
       <h3 class="guide-h3">À la fin des 15 minutes</h3>
       <GuideTable
-        headers={["Qui gagne ?", "Arb (10 + 10, lock ~0,98 $)", "Barbell (10 + 5)"]}
-        rows={[
-          [
-            "Le favori (ce que tout le monde pensait)",
-            "Les 10 favoris paient 1 $. Petit gain verrouillé.",
-            "5 favoris paient 1 $. Les 5 outsiders = 0. Petit moins.",
-          ],
-          [
-            "L'outsider (la surprise)",
-            "Les 10 outsiders paient 1 $. Même petit gain verrouillé.",
-            "Les 10 outsiders paient 1 $. Gros plus — c'est le pari.",
-          ],
-        ]}
-        rowTone={["neutral", "success"]}
+        headers={["Scénario", "Résultat"]}
+        rows={RESOLUTION_ROWS[props.engine]}
+        rowTone={RESOLUTION_ROWS[props.engine].map((_, i) => (i === 1 ? "success" : "neutral"))}
       />
       <p class="guide-muted guide-small">
         Chiffres ronds pour l'idée, pas un P&L live. Min CLOB = 5 parts : 5 outsiders × 0,5 = 2,5
         favoris → trop petit, pas de hedge.
       </p>
 
-      <GuideDetails title="Les 4 étapes du bot (les deux moteurs)" defaultOpen>
+      <GuideDetails title={`Les 4 étapes — ${props.engine === "arb" ? "Arb" : "Barbell"}`} defaultOpen>
         <GuideStack gap={8}>
-          <p>1. Attendre un outsider pas cher et un favori dans la bonne zone de prix.</p>
-          <p>2. Poser un bid sur l'outsider (ordre qui attend).</p>
-          <p>
-            3. Quand l'outsider est acheté : acheter le favori — autant (arb) ou la moitié
-            (barbell).
-          </p>
-          <p>
-            4. Si le favori sort de la zone : arb revend le trou ; barbell revend seulement le
-            filet manquant.
-          </p>
+          <For each={BOT_STEPS[props.engine]}>
+            {(step, i) => <p>{i() + 1}. {step}</p>}
+          </For>
         </GuideStack>
       </GuideDetails>
 
-      <GuideDetails title="Détail technique du plan">
+      <Show when={props.engine === "arb"}>
+        <GuideDetails title="Détail technique — Arb vs Barbell">
+          <GuideTable
+            headers={["Règle", "Arb", "Barbell"]}
+            rows={COMPARE_ROWS}
+            rowTone={COMPARE_ROWS.map((_, i) => (i === 1 || i === 4 ? "info" : "neutral"))}
+          />
+        </GuideDetails>
+      </Show>
+    </GuideStack>
+  );
+}
+
+function EdgeLeadStory(): JSX.Element {
+  return (
+    <GuideStack>
+      <GuideCallout tone={ENGINE_META["edge-lead"].tone} title={ENGINE_META["edge-lead"].label}>
+        <p>{ENGINE_META["edge-lead"].subtitle}</p>
+        <p class="guide-muted guide-small" style={{ "margin-top": "8px" }}>
+          <strong>Ordre :</strong> {ENGINE_META["edge-lead"].order} ·{" "}
+          <strong>Risque :</strong> {ENGINE_META["edge-lead"].risk}
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">Favori d'abord — cheap seulement après fill</h3>
+      <p>
+        Contrairement à arb et barbell, edge-lead <strong>commence par le favori</strong>. On
+        confirme que son ask monte dans une bande pendant N ticks, on achète l'edge en GTC, on
+        attend le fill, puis on poste l'outsider si son ask est dans la bande cheap. Jamais de
+        cheap tant que l'edge est seulement resting.
+      </p>
+
+      <GuideGrid columns={2}>
+        <GuideCard title="Jambe edge (favori)">
+          <p>
+            Budget <code>edgeOrderUsdc</code> → taille = budget / ask edge. Confirmation{" "}
+            <code>edgeConfirmSamples</code> ticks dans <code>[edgeBandMin, edgeBandMax]</code>,
+            série croissante. GTC au best ask.
+          </p>
+        </GuideCard>
+        <GuideCard title="Jambe cheap (outsider)">
+          <p>
+            Budget <code>edgeCheapOrderUsdc</code> → taille = budget / ask cheap. Posté{" "}
+            <strong>uniquement après fill edge</strong>, si ask ∈{" "}
+            <code>[edgeCheapBandMin, edgeCheapBandMax]</code>. Pas de jumelage 1:1 en shares.
+          </p>
+        </GuideCard>
+      </GuideGrid>
+
+      <LifecycleCard engine="edge-lead" />
+
+      <GuideGrid columns={3}>
+        <GuideStat value="GTC" label="Type d'ordre edge" />
+        <GuideStat value="Après fill" label="Déclencheur cheap" />
+        <GuideStat value="USDC" label="Sizing (pas 1:1)" />
+      </GuideGrid>
+
+      <h3 class="guide-h3">Gestion des ordres resting</h3>
+      <GuideGrid columns={2}>
+        <GuideCard title="Edge GTC hors bande">
+          <p>
+            Si l'ask du favori claimé sort de la bande edge avant fill → cancel + unmark. Les
+            fills déjà pris restent.
+          </p>
+        </GuideCard>
+        <GuideCard title="Cheap GTC hors bande cheap">
+          <p>
+            Cancel + unmark au tick où l'ask sort. Re-post automatique dès que l'ask cheap rentre
+            dans la bande (edge déjà fillé).
+          </p>
+        </GuideCard>
+      </GuideGrid>
+      <GuideCallout tone="neutral" title="Pas de défense FOK SELL">
+        <p>
+          Edge-lead n'utilise pas le hedge au POST ni la vente de trou cheap d'arb/barbell. Un
+          favori nu (cheap jamais fillé) est un pari directionnel <strong>accepté</strong>.
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">À la fin des 15 minutes</h3>
+      <GuideTable
+        headers={["Scénario", "Résultat"]}
+        rows={RESOLUTION_ROWS["edge-lead"]}
+        rowTone={["neutral", "success", "warning", "danger"]}
+      />
+
+      <GuideDetails title="Les 4 étapes — Edge-lead" defaultOpen>
+        <GuideStack gap={8}>
+          <For each={BOT_STEPS["edge-lead"]}>
+            {(step, i) => <p>{i() + 1}. {step}</p>}
+          </For>
+        </GuideStack>
+      </GuideDetails>
+
+      <GuideDetails title="Paramètres edge-lead">
         <GuideTable
-          headers={["Règle", "Arb", "Barbell"]}
-          rows={COMPARE_ROWS}
-          rowTone={COMPARE_ROWS.map((_, i) => (i === 1 || i === 4 ? "info" : "neutral"))}
+          headers={["Clé", "Rôle"]}
+          rows={EDGE_LEAD_PARAM_ROWS}
+          rowTone={EDGE_LEAD_PARAM_ROWS.map(() => "neutral")}
+        />
+      </GuideDetails>
+    </GuideStack>
+  );
+}
+
+export function StoryTab(): JSX.Element {
+  const [engine, setEngine] = createSignal<EngineId>("arb");
+  const [phase, setPhase] = createSignal<PhaseId>("mid");
+
+  return (
+    <GuideStack>
+      <p>
+        Toutes les 15 minutes, Polymarket pose une question : le Bitcoin va-t-il monter ou
+        descendre ? Deux billets, un seul paie 1 $ à la fin. Trois moteurs jouent ce marché
+        différemment — choisis-en un pour voir sa logique.
+      </p>
+
+      <GuideGrid columns={2}>
+        <GuideCard title="Le favori (edge)">
+          <p>
+            Le billet que tout le monde croit gagnant. Cher (souvent 80–90 centimes). Seul, c'est
+            un pari directionnel.
+          </p>
+        </GuideCard>
+        <GuideCard title="L'outsider (cheap)">
+          <p>
+            Le billet inverse, soldé (souvent 5–20 centimes). Complète le duo ou sert de pari
+            selon le moteur.
+          </p>
+        </GuideCard>
+      </GuideGrid>
+
+      <h3 class="guide-h3">Choisir un moteur</h3>
+      <EngineSelector engine={engine} setEngine={setEngine} />
+
+      <Show when={engine() === "arb"}>
+        <ArbBarbellStory engine="arb" phase={phase} setPhase={setPhase} />
+      </Show>
+      <Show when={engine() === "barbell"}>
+        <ArbBarbellStory engine="barbell" phase={phase} setPhase={setPhase} />
+      </Show>
+      <Show when={engine() === "edge-lead"}>
+        <EdgeLeadStory />
+      </Show>
+
+      <GuideDetails title="Comparer les trois moteurs">
+        <GuideTable
+          headers={["Règle", "Arb", "Barbell", "Edge-lead"]}
+          rows={STRATEGY_COMPARE_ROWS}
+          rowTone={STRATEGY_COMPARE_ROWS.map((_, i) =>
+            i === 0 || i === 2 ? "info" : "neutral",
+          )}
         />
       </GuideDetails>
     </GuideStack>
@@ -268,38 +388,41 @@ export function ArchTab(): JSX.Element {
           <FlowDag />
           <p class="guide-muted guide-small">
             Production : <code>this.strategy</code> via <code>createStrategy(config.strategyId)</code>
-            . Le barrel <code>findOpportunities()</code> reste <strong>arb-only</strong> pour les
-            tests existants — il ignore <code>strategyId</code>.
+            . Trois moteurs : <code>arb</code>, <code>barbell</code>, <code>edge-lead</code>. Le
+            barrel <code>findOpportunities()</code> reste <strong>arb-only</strong> pour les tests
+            existants.
           </p>
         </GuideStack>
       </GuideCard>
-      <GuideGrid columns={2}>
-        <GuideCard
-          title="Politique"
-          trailing={<span class="guide-tag">stratégie</span>}
-        >
+      <GuideGrid columns={3}>
+        <GuideCard title="Arb / Barbell" trailing={<span class="guide-tag">cheap-first</span>}>
           <GuideStack gap={6}>
-            <p>Picks cheap / favori, claim de fenêtre</p>
-            <p>Tailles et prix (ArbSizing ou BarbellSizing)</p>
-            <p>Reprice / cancel cheap resting</p>
-            <p>Défense + revalidation hedge live</p>
+            <p>Picks cheap / favori via orchestrate</p>
+            <p>Lock pairLockMax (arb) ou ratio (barbell)</p>
+            <p>Hedge au POST + défense FOK SELL</p>
+          </GuideStack>
+        </GuideCard>
+        <GuideCard title="Edge-lead" trailing={<span class="guide-tag">edge-first</span>}>
+          <GuideStack gap={6}>
+            <p>Confirmation edge + GTC favori</p>
+            <p>Cheap après fill, bandes séparées</p>
+            <p>Pas de hedgeAtPostTime ni défense</p>
           </GuideStack>
         </GuideCard>
         <GuideCard title="Exécution" trailing={<span class="guide-tag">bot</span>}>
           <GuideStack gap={6}>
             <p>Scan, tick, pause, READONLY_LIVE</p>
             <p>Place / cancel / poll, confirmation tokens</p>
-            <p>Collatéral, exposition, trop près de la clôture</p>
-            <p>Tracker, DB, dashboard, redeem</p>
+            <p>Collatéral, exposition, tracker, DB</p>
           </GuideStack>
         </GuideCard>
       </GuideGrid>
       <GuideCallout tone="warning" title="Cycle d'imports">
         <p>
           <code>arb-strategy.ts</code> / <code>barbell-strategy.ts</code> /{" "}
-          <code>orchestrate.ts</code> n'importent pas <code>src/strategy.ts</code>. Le barrel ne
-          fait que réexporter les prédicats et déléguer à <code>new ArbStrategy()</code>. Pas de{" "}
-          <code>src/strategy/index.ts</code> (le dossier existe déjà).
+          <code>edge-lead-strategy.ts</code> / <code>orchestrate.ts</code> n'importent pas{" "}
+          <code>src/strategy.ts</code>. Pas de <code>src/strategy/index.ts</code> (le dossier
+          existe déjà).
         </p>
       </GuideCallout>
       <h3 class="guide-h3">API TradingStrategy</h3>
@@ -315,6 +438,13 @@ export function ArchTab(): JSX.Element {
 export function HedgeTab(): JSX.Element {
   return (
     <GuideStack>
+      <GuideCallout tone="info" title="Arb & barbell uniquement">
+        <p>
+          Cet onglet décrit <code>hedgeAtPostTime</code> — le hedge immédiat après fill cheap.
+          <strong> Edge-lead</strong> n'utilise pas ce flux : le cheap est posté après fill edge,
+          sans revalidation hedge live.
+        </p>
+      </GuideCallout>
       <p>
         Live uniquement. <code>executeSimulated</code> return L883 — <strong>ne pas</strong> appeler{" "}
         <code>hedgeAtPostTime</code> en dry-run. Remplace le filtre stale L927 et S2.3 L964–1035,{" "}
@@ -368,13 +498,17 @@ export function UiTab(): JSX.Element {
         headers={["Étape", "Effet"]}
         rows={[
           [
-            "Select Moteur (arb / barbell)",
+            "Select Moteur (arb / barbell / edge-lead)",
             "Filtre les profils dans le formulaire ; ne reset pas bandes / GTC / budgets",
           ],
-          ["Ratio hedge", "Onglet hedge ; hint « ignoré par B1 » si arb"],
+          ["Ratio hedge", "Onglet hedge ; hint « ignoré par B1 » si arb ; N/A edge-lead"],
           [
             "pairLockMax",
-            "Toujours validé 0,90–0,99 (pour un retour arb) ; hint « ignoré par barbell »",
+            "Validé 0,90–0,99 pour arb ; hint « ignoré par barbell / edge-lead »",
+          ],
+          [
+            "Bandes edge-lead",
+            "edgeBand*, edgeCheapBand*, edgeOrderUsdc — visibles seulement si moteur edge-lead",
           ],
           [
             "Enregistrer",
@@ -383,30 +517,35 @@ export function UiTab(): JSX.Element {
           ["ConfigBar", "Affiche moteur + lock ou ratio — bouton Configurer seulement"],
           [
             "Positions",
-            "Colonne Moteur = strategyId stampé au POST (GTC) ou au fill (FOK / SIM), pas le moteur courant après hot-swap",
+            "Colonne Moteur = strategyId stampé au POST (GTC) ou au fill (FOK / SIM)",
           ],
         ]}
-        rowTone={["info", "neutral", "neutral", "success", "neutral", "info"]}
+        rowTone={["info", "neutral", "neutral", "info", "success", "neutral", "info"]}
       />
       <h3 class="guide-h3">Presets = packs d'un moteur</h3>
-      <GuideGrid columns={2}>
+      <GuideGrid columns={3}>
         <GuideCard title="coverage-max / conservative">
           <p>
-            Top-level obligatoire <code>"strategyId": "arb"</code>. Pas de preset barbell dans ce
-            lot → hint « Aucun profil pour ce moteur ».
+            <code>"strategyId": "arb"</code>. Profils lock conservateur ou agressif.
+          </p>
+        </GuideCard>
+        <GuideCard title="edge-lead.json">
+          <p>
+            <code>"strategyId": "edge-lead"</code>. Bandes edge/cheap et budgets USDC pré-configurés.
           </p>
         </GuideCard>
         <GuideCard title="applyPreset (frontend)">
           <p>
-            Import JSON statique : merger <code>strategyId: preset.strategyId</code> sinon le clic
-            ne pose pas le moteur. Matching aussi filtré par moteur.
+            Import JSON statique : merger <code>strategyId: preset.strategyId</code>. Matching
+            filtré par moteur sélectionné.
           </p>
         </GuideCard>
       </GuideGrid>
       <GuideCallout tone="warning" title="Hot-swap milieu de fenêtre">
         <p>
           Pas de migration des paires ouvertes. Le tick suivant applique la nouvelle politique. Un
-          switch barbell → arb peut cancel-lock un cheap déjà hors lock.
+          switch barbell → arb peut cancel-lock un cheap déjà hors lock ; vers edge-lead change
+          complètement l'ordre d'achat.
         </p>
       </GuideCallout>
     </GuideStack>
@@ -436,18 +575,18 @@ export function ShipTab(): JSX.Element {
         headers={["Non-goal", "Pourquoi"]}
         rows={[
           ["Oracle / Kelly / EdgeModel", "Séquence 3 audit-5 — vrai B2 plus tard"],
-          ["Presets barbell", "Seulement tagger les deux existants arb"],
+          ["Presets barbell", "Seulement tagger les deux existants arb + edge-lead"],
           ["Nested { arb, barbell } dans un JSON", "Un preset = un moteur + settings plats"],
           ["Revalidation hedge dry-run", "executeSimulated sort avant S2.3 aujourd'hui"],
           ["Accounting covered 1:1 pour barbell", "Paires ratio < 1 restent partial / directional"],
-          ["Changer l'ordre cheap-then-hedge", "Exécution inchangée"],
+          ["1:1 shares en edge-lead", "Budgets USDC indépendants par design"],
         ]}
         rowTone={["neutral", "neutral", "neutral", "neutral", "warning", "neutral"]}
       />
       <GuideCallout tone="info" title="Défauts">
         <p>
           JSON sans <code>strategyId</code> → arb. Id inconnu → sanitizePatch throw, live refuse
-          de démarrer. <code>parseStrategyId("ARB")</code> → <code>"arb"</code>.
+          de démarrer. <code>parseStrategyId("EDGE-LEAD")</code> → <code>"edge-lead"</code>.
         </p>
       </GuideCallout>
     </GuideStack>

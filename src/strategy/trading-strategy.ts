@@ -42,9 +42,11 @@ export interface TradingStrategy {
   readonly id: StrategyId;
   readonly label: string;
   /**
-   * Edge-lead : le moteur achète l'edge (favori) d'abord, puis le cheap en
-   * complément. Quand true, le bot contourne le C2 arb (cheap fill avant
-   * favori), force GTC, et gère les deux jambes resting via un chemin dédié.
+   * Edge-lead : le moteur achète l'edge (favori) d'abord, puis le cheap
+   * seulement après fill edge. Quand true, le bot contourne le C2 arb
+   * (cheap fill avant favori), force GTC, annule le GTC edge resting s'il
+   * sort de la bande edge, et annule le GTC cheap resting s'il sort de la
+   * bande cheap (re-post au tick suivant si l'ask cheap rentre).
    */
   readonly leadsWithEdge: boolean;
   findOpportunities(ctx: StrategyContext): TradeOpportunity[];

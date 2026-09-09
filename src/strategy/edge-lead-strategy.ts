@@ -3,7 +3,7 @@ import { log } from "../logger.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { TokenBook, TradeOpportunity, UpDownEvent } from "../types.js";
 import { tickSizeFromMarket } from "../utils/market.js";
-import { MIN_CLOB_SHARES } from "../utils/prices.js";
+import { computeSize } from "../utils/prices.js";
 import { EdgeConfirmBuffer } from "./edge-confirm.js";
 import { round2 } from "./predicates.js";
 import type {
@@ -17,15 +17,19 @@ import type {
 } from "./trading-strategy.js";
 
 /**
- * Edge-lead : on achète l'edge (favori) d'abord, puis le cheap en complément.
+ * Edge-lead : on achète l'edge (favori) d'abord, on attend le fill, puis le cheap.
  *
  * findOpportunities émet :
  *  - (A) l'edge quand rien n'est posté/fillé et que le signal de confirmation
  *        (N ticks consécutifs dans la bande + série croissante) est prêt ;
- *  - (B) le cheap seul quand l'edge est posté ou fillé mais que le cheap est
- *        absent (retry après POST échoué, ou reconfirm après cancel hors bande).
+ *  - (B) le cheap seul quand l'edge est **fillé** (pas seulement posté) et que
+ *        le cheap est absent. Taille cheap = budget cheap / ask, indépendante
+ *        de la size edge.
  *
- * Le cheap est posté par le bot juste après le POST edge (postComplementCheap).
+ * Le cheap n'est jamais posté tant que l'edge GTC n'a pas fillé.
+ * Après fill, poster si l'ask cheap est dans
+ * [edgeCheapBandMin, edgeCheapBandMax]. Un GTC cheap resting hors bande
+ * est annulé (unmark) ; il est re-posté au tick où l'ask rentre.
  */
 
 /** Token edge = celui au best ask le plus haut (favori). */
@@ -37,30 +41,33 @@ function pickEdgeToken(books: TokenBook[]): TokenBook | null {
   );
 }
 
+/** Ask cheap dans la bande d'entrée configurable. */
+export function cheapAskInBand(ask: number, config: BotConfig): boolean {
+  return ask >= config.edgeCheapBandMin && ask <= config.edgeCheapBandMax;
+}
+
 /**
- * Taille 1:1 (shares) pour edge + cheap, contrainte CLOB : le cheap doit
- * passer 5 shares ET 1$ de notionnel. On dimensionne depuis le cheapLimit
- * (le plus cher des deux), puis on applique les deux budgets USDC :
- *  - edgeOrderUsdc     : edgePrice × size ≤ edgeOrderUsdc
- *  - edgeCheapOrderUsdc: cheapLimit × size ≤ edgeCheapOrderUsdc
- * La taille finale = min des deux contraintes.
+ * Size edge depuis edgeOrderUsdc au prix d'entrée (indépendant du cheap).
  */
-export function computeEdgeCheapSize(
+export function computeEdgeLeadEdgeSize(
   config: BotConfig,
   edgePrice: number,
 ): number | null {
-  const cheapLimit = round2(1 - edgePrice - config.edgeCheapMargin);
-  if (cheapLimit <= 0) return null;
-  // CLOB : >= 5 shares et >= 1$ de notionnel sur le cheap.
-  let size = Math.max(MIN_CLOB_SHARES, Math.ceil(1 / cheapLimit));
-  if (size > config.maxSharesPerOrder) return null;
-  // Budget edge : edgePrice × size ≤ edgeOrderUsdc.
-  const maxByEdge = Math.floor(config.edgeOrderUsdc / edgePrice);
-  // Budget cheap : cheapLimit × size ≤ edgeCheapOrderUsdc.
-  const maxByCheap = Math.floor(config.edgeCheapOrderUsdc / cheapLimit);
-  size = Math.min(size, maxByEdge, maxByCheap);
-  if (size < MIN_CLOB_SHARES) return null;
-  return size;
+  return computeSize(config.edgeOrderUsdc, edgePrice, config.maxSharesPerOrder);
+}
+
+/**
+ * Size cheap depuis edgeCheapOrderUsdc à l'ask live (indépendant de l'edge).
+ */
+export function computeEdgeLeadCheapSize(
+  config: BotConfig,
+  cheapPrice: number,
+): number | null {
+  return computeSize(
+    config.edgeCheapOrderUsdc,
+    cheapPrice,
+    config.maxSharesPerOrder,
+  );
 }
 
 function appendOpportunity(
@@ -74,7 +81,6 @@ function appendOpportunity(
   maxOpenPerSide: number,
 ): void {
   const pairId = `${event.slug}:${event.windowEnd}`;
-  // Anti 2e jambe : open + resting + legs DB déjà présents.
   if (
     tracker.countOpenPositionsForSide(event.slug, token.outcome) +
       tracker.countPendingOrdersForSide(event.slug, token.outcome) >=
@@ -101,22 +107,10 @@ function appendOpportunity(
   });
 }
 
-/** Prix d'entrée de l'edge déjà posté/fillé pour une paire. */
-function edgeEntryPrice(tracker: TradeTracker, pairId: string): number | null {
-  const posted = tracker.getPostedOrdersForPair(pairId, "expensive");
-  if (posted.length > 0) return posted[0].limitPrice;
-  for (const position of tracker.getOpenPositions()) {
-    if (position.pairId === pairId && position.kind === "expensive") {
-      return position.fillPrice;
-    }
-  }
-  return null;
-}
-
 /**
  * Outcome du token edge claimé (posté ou fillé) pour une paire. Sticky :
- * après POST/fill on ne reflip pas — on lit la bande sur ce token, pas sur
- * « le plus cher live ».
+ * après POST/fill on ne reflip pas — le cheap est l'autre token, pas
+ * « le moins cher live ».
  */
 export function edgeClaimedOutcome(tracker: TradeTracker, pairId: string): string | null {
   const posted = tracker.getPostedOrdersForPair(pairId, "expensive");
@@ -132,7 +126,7 @@ export function edgeClaimedOutcome(tracker: TradeTracker, pairId: string): strin
 export class EdgeLeadStrategy implements TradingStrategy {
   readonly id = "edge-lead" as const;
   readonly label =
-    "Edge-lead: confirmer N ticks que l'ask favori monte dans une bande, acheter l'edge GTC, puis cheap limit 1:1";
+    "Edge-lead: confirmer N ticks, GTC edge au budget edge, cheap au budget cheap seulement après fill edge";
   readonly leadsWithEdge = true;
   private readonly buffer = new EdgeConfirmBuffer();
 
@@ -141,21 +135,6 @@ export class EdgeLeadStrategy implements TradingStrategy {
     const opportunities: TradeOpportunity[] = [];
     const pairId = `${event.slug}:${event.windowEnd}`;
 
-    // Book one-sided : pas de claim, reset buffer.
-    if (books.filter((book) => book.bestAsk !== null).length < 2) {
-      this.buffer.reset(pairId);
-      return opportunities;
-    }
-
-    const edgeToken = pickEdgeToken(books);
-    if (!edgeToken || edgeToken.bestAsk === null) {
-      this.buffer.reset(pairId);
-      return opportunities;
-    }
-    const cheapToken =
-      books.find((book) => book.tokenId !== edgeToken.tokenId) ?? null;
-    if (!cheapToken) return opportunities;
-
     const edgePosted =
       tracker.getPostedOrdersForPair(pairId, "expensive").length > 0;
     const edgeFilled = tracker.getFilledExpensiveSizeForPair(pairId) > 0;
@@ -163,68 +142,49 @@ export class EdgeLeadStrategy implements TradingStrategy {
       tracker.getPostedOrdersForPair(pairId, "cheap").length > 0;
     const cheapFilled = tracker.getFilledCheapSizeForPair(pairId) > 0;
 
-    // --- Phase resting : edge posté ou fillé → cheap-only resume ---
-    if (edgePosted || edgeFilled) {
+    // Edge resting, pas encore fillé : attendre le fill, ne pas poster le cheap.
+    if (edgePosted && !edgeFilled) {
+      return opportunities;
+    }
+
+    // --- Phase cheap : uniquement après fill edge ---
+    // Seule condition : l'ask cheap est dans sa bande. La bande edge et le
+    // buffer de confirmation ne servent qu'à l'entrée edge ; une fois fillé,
+    // un favori qui monte (cheap qui baisse) ne doit pas bloquer le cheap.
+    if (edgeFilled) {
       if (cheapPosted || cheapFilled) {
         return opportunities;
       }
-      const edgePrice = edgeEntryPrice(tracker, pairId);
-      if (edgePrice === null) return opportunities;
-      // Sticky : le cheap complémentaire est l'autre token de l'edge claimé,
-      // pas « le plus cher live » (sinon un flip posterait sur le mauvais côté).
+
       const claimedOutcome = edgeClaimedOutcome(tracker, pairId);
-      const claimedEdgeBook = claimedOutcome
-        ? books.find((book) => book.outcome === claimedOutcome) ?? null
-        : null;
+      if (!claimedOutcome) return opportunities;
       const cheapBook =
-        claimedEdgeBook
-          ? books.find((book) => book.tokenId !== claimedEdgeBook.tokenId) ??
-            null
-          : cheapToken;
+        books.find((book) => book.outcome !== claimedOutcome) ?? null;
       if (!cheapBook) return opportunities;
-      const cheapLimit = round2(1 - edgePrice - config.edgeCheapMargin);
-      if (cheapLimit <= 0) return opportunities;
-      const size = computeEdgeCheapSize(config, edgePrice);
+
+      const cheapAsk = cheapBook.bestAsk;
+      if (cheapAsk === null) return opportunities;
+      const cheapPrice = round2(cheapAsk);
+      if (!cheapAskInBand(cheapPrice, config)) {
+        return opportunities;
+      }
+      const size = computeEdgeLeadCheapSize(config, cheapPrice);
       if (size === null) {
-        log("Edge-lead cheap skipped - below CLOB minimums", {
+        log("Edge-lead cheap skipped - budget below CLOB minimums", {
           market: event.title,
-          edgePrice,
-          cheapLimit,
+          cheapPrice,
+          edgeCheapOrderUsdc: config.edgeCheapOrderUsdc,
         });
         return opportunities;
       }
-      // Edge resting (pas fillé) : retry cheap immédiat, sans reconfirm.
-      // Edge fillé (favori nu) : le cheap a été annulé hors bande → on
-      // re-confirme N ticks avant de re-poster le cheap.
-      // Dans les deux cas, si l'edge est hors bande, on ne re-poste pas le
-      // cheap (le buffer est reset ; il faudra re-confirmer quand l'edge
-      // revient in-bande). Sinon manageRestingEdgeLead annulerait le cheap
-      // et findOpportunities le re-posterait au même tick → boucle post/cancel.
-      const claimedAsk = claimedEdgeBook?.bestAsk ?? null;
-      const inBand =
-        claimedAsk !== null &&
-        claimedAsk >= config.edgeBandMin &&
-        claimedAsk <= config.edgeBandMax;
-      if (!inBand) {
-        this.buffer.reset(pairId);
-        return opportunities;
-      }
-      if (edgeFilled) {
-        const ready = this.buffer.push(
-          pairId,
-          claimedAsk,
-          claimedOutcome ?? edgeToken.outcome,
-          config,
-        );
-        if (!ready) return opportunities;
-      }
+
       appendOpportunity(
         tracker,
         opportunities,
         event,
         cheapBook,
         "cheap",
-        cheapLimit,
+        cheapPrice,
         size,
         config.maxOpenPositionsPerSide,
       );
@@ -232,6 +192,15 @@ export class EdgeLeadStrategy implements TradingStrategy {
     }
 
     // --- Phase confirmation : rien de posté/fillé ---
+    if (books.filter((book) => book.bestAsk !== null).length < 2) {
+      this.buffer.reset(pairId);
+      return opportunities;
+    }
+    const edgeToken = pickEdgeToken(books);
+    if (!edgeToken || edgeToken.bestAsk === null) {
+      this.buffer.reset(pairId);
+      return opportunities;
+    }
     const inBand =
       edgeToken.bestAsk >= config.edgeBandMin &&
       edgeToken.bestAsk <= config.edgeBandMax;
@@ -247,9 +216,9 @@ export class EdgeLeadStrategy implements TradingStrategy {
     );
     if (!ready) return opportunities;
 
-    const size = computeEdgeCheapSize(config, edgeToken.bestAsk);
+    const size = computeEdgeLeadEdgeSize(config, edgeToken.bestAsk);
     if (size === null) {
-      log("Edge-lead edge skipped - below CLOB minimums", {
+      log("Edge-lead edge skipped - budget below CLOB minimums", {
         market: event.title,
         edgeAsk: edgeToken.bestAsk,
         edgeOrderUsdc: config.edgeOrderUsdc,
@@ -269,9 +238,10 @@ export class EdgeLeadStrategy implements TradingStrategy {
     return opportunities;
   }
 
-  cheapOrderAction(_ctx: RestingCheapContext): CheapOrderAction {
-    // Gestion resting edge+cheap via un chemin bot dédié (manageRestingEdgeLead).
-    return "keep";
+  cheapOrderAction(ctx: RestingCheapContext): CheapOrderAction {
+    const ask = ctx.cheapBook?.bestAsk;
+    if (ask === null || ask === undefined) return "keep";
+    return cheapAskInBand(round2(ask), ctx.config) ? "keep" : "cancel-lock";
   }
 
   shouldDefend(_ctx: DefendContext): boolean {

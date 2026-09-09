@@ -151,12 +151,16 @@ export interface BotConfig {
   edgeConfirmSamples: number;
   /** Edge-lead : drop tick-à-tick max toléré dans la série de confirmation. */
   edgeMaxDownTick: number;
-  /** Edge-lead : marge cheap = 1 − prix_edge − edgeCheapMargin. */
+  /** Edge-lead : conservé pour JSON/dashboard ; le prix cheap est l'ask live dans la bande. */
   edgeCheapMargin: number;
-  /** Edge-lead : budget USDC de l'ordre edge ; cheap = mêmes shares 1:1. */
+  /** Edge-lead : budget USDC de l'ordre edge (size = budget / prix edge). */
   edgeOrderUsdc: number;
-  /** Edge-lead : plafond USDC de l'ordre cheap (cap indépendant). size = min(edge, cheap). */
+  /** Edge-lead : budget USDC de l'ordre cheap (size = budget / ask cheap). Indépendant de l'edge. */
   edgeCheapOrderUsdc: number;
+  /** Edge-lead : ask cheap minimum pour poster. */
+  edgeCheapBandMin: number;
+  /** Edge-lead : ask cheap maximum pour poster. */
+  edgeCheapBandMax: number;
   dryRun: boolean;
   readonlyLive: boolean;
   clobHost: string;

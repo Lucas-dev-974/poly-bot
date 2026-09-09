@@ -9,37 +9,15 @@ import type { EditableConfigKey } from "./runtime-settings.js";
 import { SimulatedBroker } from "./simulated-broker.js";
 import { SimulatedLedger } from "./simulated-ledger.js";
 import { createStrategy } from "./strategy/registry.js";
-import {
-  computeEdgeCheapSize,
-  edgeClaimedOutcome,
-} from "./strategy/edge-lead-strategy.js";
-import { round2 } from "./strategy/predicates.js";
 import type { TradingStrategy } from "./strategy/trading-strategy.js";
 import { TradeTracker, type PostedOrderContext } from "./trade-tracker.js";
 import { Trader } from "./trader.js";
 import type { OrderResult, TokenBook, TradeOpportunity, UpDownEvent, SimulatedPosition } from "./types.js";
 import { confirmedFillSize } from "./utils/order-status.js";
-import { tickSizeFromMarket } from "./utils/market.js";
 import { formatReturnPct, MIN_CLOB_SHARES } from "./utils/prices.js";
 
 const TOTAL_ATTEMPTS_KEY = "totalAttempts";
 const PAUSED_KEY = "botPaused";
-
-/** Parse `clobTokenIds` (JSON array string) into a list of token ids. */
-function parseTokenIds(raw: string): string[] {
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (Array.isArray(parsed)) {
-      return parsed.map((id) => String(id).trim()).filter(Boolean);
-    }
-  } catch {
-    /* fall through */
-  }
-  return raw
-    .split(",")
-    .map((id) => id.trim())
-    .filter(Boolean);
-}
 
 export class ReverseBot {
   private readonly scanner: MarketScanner;
@@ -402,7 +380,7 @@ export class ReverseBot {
   private async cancelOrphanHedgesIfNeeded(
     order: { key: string; pairId: string; kind: "cheap" | "expensive" } & PostedOrderContext,
   ): Promise<void> {
-    // Edge-lead gère ses deux jambes resting via manageRestingEdgeLead.
+    // Edge-lead gère le GTC edge resting via manageRestingEdgeLead.
     // L'orphan-hedge arb (cheap disparu → cancel le favori) casserait un
     // edge qu'on veut garder in-bande.
     if (this.strategy.leadsWithEdge) return;
@@ -630,6 +608,7 @@ export class ReverseBot {
     if (!this.config.dryRun) {
       if (this.strategy.leadsWithEdge) {
         await this.manageRestingEdgeLead(event, books);
+        await this.replaceMarketableCheap(event, books);
       } else {
         await this.replaceMarketableCheap(event, books);
         await this.defendUncoveredPairs(event, books);
@@ -693,8 +672,10 @@ export class ReverseBot {
    * Manage resting cheap GTC via TradingStrategy.cheapOrderAction:
    *  - take-ask: reprice when the ask is at/below our limit
    *  - cancel-lock: arb = favorite off-band or bid above lock − hedge;
-   *    barbell = favorite off-band only
-   * After cancel+unmark, this tick's findOpportunities can post a new bid.
+   *    barbell = favorite off-band only;
+   *    edge-lead = cheap ask left [edgeCheapBandMin, edgeCheapBandMax]
+   * After cancel+unmark, this tick's findOpportunities can post a new bid
+   * (edge-lead: only if the ask is back in the cheap band).
    */
   private async replaceMarketableCheap(
     event: UpDownEvent,
@@ -737,7 +718,7 @@ export class ReverseBot {
           await this.trader.cancelOrder(tracked.orderId);
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
-          log("Cheap reprice cancel failed, will retry", {
+          log("Cheap cancel failed, will retry", {
             orderId: tracked.orderId,
             error: message,
           });
@@ -765,15 +746,18 @@ export class ReverseBot {
       this.tracker.removePostedOrder(order.key);
       this.tracker.unmark(order.key);
       if (action === "cancel-lock") {
-        log(
+        const cancelWhy =
           this.strategy.id === "arb"
             ? "Cheap cancelled - pair lock no longer achievable"
-            : "Cheap cancelled - favorite left the hedge band",
-          {
+            : this.strategy.id === "edge-lead"
+              ? "Edge-lead cheap cancelled - ask left the cheap band"
+              : "Cheap cancelled - favorite left the hedge band";
+        log(cancelWhy, {
             market: event.title,
             outcome: order.outcome,
             limitPrice: order.limitPrice,
             favoriteAsk: favoriteBook?.bestAsk ?? null,
+            cheapAsk: book?.bestAsk ?? null,
             pairLockMax: this.config.pairLockMax,
             strategyId: this.strategy.id,
           },
@@ -791,10 +775,11 @@ export class ReverseBot {
   }
 
   /**
-   * Edge-lead : gère les GTC resting des deux jambes (edge + cheap).
-   * Quand l'ask du token edge claimé sort de la bande [edgeBandMin,
-   * edgeBandMax], on annule les GTC non fillés des deux jambes (unmark),
-   * on garde les fills, et on reset le buffer de confirmation. Pas de
+   * Edge-lead : gère le GTC edge resting. Quand l'ask du token edge claimé
+   * sort de la bande [edgeBandMin, edgeBandMax], on annule le GTC edge non
+   * fillé (unmark), on garde les fills. Le GTC cheap resting est géré à
+   * part (replaceMarketableCheap / cheapOrderAction) : cancel si l'ask
+   * cheap sort de sa bande, re-post au tick suivant s'il rentre. Pas de
    * FOK SELL : on n'invente pas la vente du favori nu.
    */
   private async manageRestingEdgeLead(
@@ -803,27 +788,21 @@ export class ReverseBot {
   ): Promise<void> {
     const pairId = `${event.slug}:${event.windowEnd}`;
     const edgeOrders = this.tracker.getPostedOrdersForPair(pairId, "expensive");
-    const cheapOrders = this.tracker.getPostedOrdersForPair(pairId, "cheap");
-    if (edgeOrders.length === 0 && cheapOrders.length === 0) return;
+    if (edgeOrders.length === 0) return;
 
-    // Token edge claimé : le premier ordre expensive posté, ou le fill
-    // (l'edge fillé n'est plus dans postedOrders — il est une position).
-    const edgeOutcome =
-      edgeOrders[0]?.outcome ?? edgeClaimedOutcome(this.tracker, pairId);
-    const edgeBook = edgeOutcome
-      ? books.find((book) => book.outcome === edgeOutcome) ??
-        books.find((book) => book.tokenId === edgeOrders[0]?.tokenId)
-      : null;
+    const edgeBook =
+      books.find((book) => book.outcome === edgeOrders[0].outcome) ??
+      books.find((book) => book.tokenId === edgeOrders[0].tokenId);
     const edgeAsk = edgeBook?.bestAsk ?? null;
 
-    // Hors bande → cancel les GTC non fillés des deux jambes.
+    // Hors bande → cancel le GTC edge non fillé.
     const offBand =
       edgeAsk !== null &&
       (edgeAsk < this.config.edgeBandMin || edgeAsk > this.config.edgeBandMax);
 
     if (!offBand) return;
 
-    for (const order of [...edgeOrders, ...cheapOrders]) {
+    for (const order of edgeOrders) {
       if (order.orderId) {
         const tracked = { ...order, orderId: order.orderId };
         const status = await this.getOrderStatusTracked(tracked);
@@ -1347,74 +1326,6 @@ export class ReverseBot {
       size: result.size,
       response: result.response,
     });
-
-    // Edge-lead : dès que l'edge (expensive) est posté, poster le cheap
-    // complémentaire 1:1. Le cheap est émis par findOpportunities au tick
-    // suivant (cheap-only resume), mais on le poste ici immédiatement pour
-    // ne pas attendre un tick.
-    if (this.strategy.leadsWithEdge && opportunity.kind === "expensive") {
-      await this.postComplementCheap(opportunity);
-    }
-  }
-
-  /**
-   * Edge-lead : poste le cheap complémentaire 1:1 après le POST edge.
-   * Le cheap est émis par findOpportunities (cheap-only resume) au tick
-   * suivant ; cette méthode le poste immédiatement pour réduire la latence.
-   */
-  private async postComplementCheap(edge: TradeOpportunity): Promise<void> {
-    const cheapLimit = round2(
-      1 - edge.price - this.config.edgeCheapMargin,
-    );
-    if (cheapLimit <= 0) return;
-    const size = computeEdgeCheapSize(this.config, edge.price);
-    if (size === null) {
-      log("Edge-lead cheap skipped - below CLOB minimums", {
-        market: edge.event.title,
-        edgePrice: edge.price,
-        cheapLimit,
-      });
-      return;
-    }
-    const cheapToken = parseTokenIds(edge.event.market.clobTokenIds).find(
-      (id) => id !== edge.token.tokenId,
-    );
-    if (!cheapToken) return;
-    const cheapBook = await this.scanner.getTokenBook(cheapToken);
-    if (!cheapBook) return;
-    const pairId = edge.pairId;
-    // Garde maxOpenPositionsPerSide : ne pas empiler un 2e cheap si un
-    // cheap est déjà posté/fillé (postComplementCheap n'a pas le garde
-    // d'appendOpportunity de findOpportunities).
-    if (
-      this.tracker.countOpenPositionsForSide(edge.event.slug, cheapBook.outcome) +
-        this.tracker.countPendingOrdersForSide(edge.event.slug, cheapBook.outcome) >=
-      this.config.maxOpenPositionsPerSide
-    ) {
-      return;
-    }
-    if (this.tracker.countLegsByKind(pairId, "cheap") >= this.config.maxOpenPositionsPerSide) {
-      return;
-    }
-    const tradeKey = this.tracker.makeKey(
-      edge.event.slug,
-      cheapBook.outcome,
-      "cheap",
-      cheapLimit,
-    );
-    if (this.tracker.has(tradeKey)) return;
-    const cheapOpportunity: TradeOpportunity = {
-      kind: "cheap",
-      event: edge.event,
-      token: cheapBook,
-      price: cheapLimit,
-      size,
-      tickSize: tickSizeFromMarket(edge.event.market),
-      negRisk: edge.event.market.negRisk,
-      tradeKey,
-      pairId,
-    };
-    await this.executeOpportunity(cheapOpportunity);
   }
 
   /**

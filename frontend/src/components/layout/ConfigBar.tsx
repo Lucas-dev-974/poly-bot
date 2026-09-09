@@ -8,20 +8,32 @@ export function ConfigBar(props: { onConfigure?: () => void }): JSX.Element {
       {(c) => (
         <div class="config-bar">
           <span>
-            Cheap <b>{c().cheapBuyMin}–{c().cheapBuyMax}</b> · {c().cheapOrderUsdc} USDC
+            {c().strategyId === "edge-lead" ? (
+              <>
+                Cheap <b>{c().edgeCheapBandMin}–{c().edgeCheapBandMax}</b>
+                {" · edge "}
+                <b>{c().edgeOrderUsdc}</b> USDC · cheap <b>{c().edgeCheapOrderUsdc}</b> USDC
+              </>
+            ) : (
+              <>
+                Cheap <b>{c().cheapBuyMin}–{c().cheapBuyMax}</b> · {c().cheapOrderUsdc} USDC
+              </>
+            )}
           </span>
           <span>
             Moteur <b>{c().strategyId === "edge-lead" ? "edge-lead" : c().strategyId === "barbell" ? "barbell" : "arb"}</b>
             {c().strategyId === "edge-lead"
-              ? ` · bande ${c().edgeBandMin}–${c().edgeBandMax}`
+              ? ` · edge ${c().edgeBandMin}–${c().edgeBandMax}`
               : c().strategyId === "barbell"
                 ? ` · ratio ${c().barbellHedgeRatio ?? 0.5}`
                 : ` · lock ${c().pairLockMax}`}
           </span>
-          <span>
-            Hedge <b>{c().expensiveBuyMin}–{c().expensiveBuyMax}</b>
-            · plafond {c().expensiveOrderUsdc} USDC
-          </span>
+          <Show when={c().strategyId !== "edge-lead"}>
+            <span>
+              Hedge <b>{c().expensiveBuyMin}–{c().expensiveBuyMax}</b>
+              · plafond {c().expensiveOrderUsdc} USDC
+            </span>
+          </Show>
           <span>
             Marchés <b>{c().marketSlugPrefixes.join(", ")}</b>
           </span>

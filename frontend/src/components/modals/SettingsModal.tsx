@@ -543,8 +543,9 @@ export function SettingsModal(props: {
                   <h4>Jambe edge (favori)</h4>
                   <p class="cfg-section__desc">
                     Edge-lead : on confirme N ticks que l'ask du favori reste dans
-                    la bande et monte, on achète l'edge en GTC, puis on poste le
-                    cheap limit 1:1 à 1 − prix_edge − marge.
+                    la bande et monte, on achète l'edge en GTC, on attend le fill,
+                    puis on poste le cheap au best ask live (bande cheap, budget
+                    cheap indépendant).
                   </p>
                   <div class="cfg-grid">
                     <Field label="Edge band min" hint="Ask favori minimum de la bande de confirmation">
@@ -582,16 +583,25 @@ export function SettingsModal(props: {
                         onInput={(v) => update("edgeMaxDownTick", v)}
                       />
                     </Field>
-                    <Field label="Marge cheap" hint="cheap = 1 − prix_edge − marge (défaut 0.01 → 0.85 → 0.14)">
+                    <Field label="Cheap band min" hint="Ask cheap min (ex. 0.04). Hors bande : pas de POST, et cancel d'un GTC cheap resting">
                       <NumberInput
-                        value={form().edgeCheapMargin}
-                        min={0}
-                        max={0.1}
+                        value={form().edgeCheapBandMin}
+                        min={0.01}
+                        max={0.49}
                         step={0.01}
-                        onInput={(v) => update("edgeCheapMargin", v)}
+                        onInput={(v) => update("edgeCheapBandMin", v)}
                       />
                     </Field>
-                    <Field label="Budget edge (USDC)" hint="Budget de l'ordre edge (edgePrice × size ≤ budget). Size partagée 1:1 avec le cheap">
+                    <Field label="Cheap band max" hint="Ask cheap max (ex. 0.14). GTC au best ask si dans la bande ; cancel + re-post s'il sort puis rentre">
+                      <NumberInput
+                        value={form().edgeCheapBandMax}
+                        min={0.01}
+                        max={0.49}
+                        step={0.01}
+                        onInput={(v) => update("edgeCheapBandMax", v)}
+                      />
+                    </Field>
+                    <Field label="Budget edge (USDC)" hint="Taille edge = budget / prix edge (plafonné par max shares). Indépendant du cheap">
                       <NumberInput
                         value={form().edgeOrderUsdc}
                         min={1}
@@ -599,7 +609,7 @@ export function SettingsModal(props: {
                         onInput={(v) => update("edgeOrderUsdc", v)}
                       />
                     </Field>
-                    <Field label="Budget cheap (USDC)" hint="Budget du cheap (cheapLimit × size ≤ budget). Size finale = min(budget edge, budget cheap)">
+                    <Field label="Budget cheap (USDC)" hint="Taille cheap = budget / ask cheap, seulement après fill edge. Pas de 1:1 en shares">
                       <NumberInput
                         value={form().edgeCheapOrderUsdc}
                         min={1}

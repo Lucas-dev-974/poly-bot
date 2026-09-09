@@ -15,7 +15,7 @@ export function StrategyGuidePage(): JSX.Element {
           <button type="button" class="btn guide-back" onClick={() => navigate("/")}>
             ← Dashboard
           </button>
-          <h1>Deux façons de jouer le même match</h1>
+          <h1>Trois moteurs, un même marché</h1>
         </div>
       </header>
 
@@ -23,16 +23,17 @@ export function StrategyGuidePage(): JSX.Element {
         <GuideStack gap={20}>
           <GuideStack gap={8}>
             <p class="guide-lead">
-              Arb = filet 1 contre 1 (petit gain dans tous les cas). Barbell = filet sur la moitié,
-              pari sur le reste. Les deux moteurs sont interchangeables via{" "}
-              <code>strategyId</code>.
+              <strong>Arb</strong> verrouille un petit gain (1:1). <strong>Barbell</strong> garde
+              la moitié en pari. <strong>Edge-lead</strong> achète le favori d'abord puis hedger
+              l'outsider si le prix le permet. Chaque moteur se choisit via{" "}
+              <code>strategyId</code> dans la configuration.
             </p>
           </GuideStack>
 
           <GuideRow gap={20}>
             <GuideStat value="1:1" label="Arb — outsider = favori" />
             <GuideStat value="1/2" label="Barbell — ratio défaut" />
-            <GuideStat value="15 min" label="Match BTC Up / Down" />
+            <GuideStat value="Edge→" label="Edge-lead — favori d'abord" />
           </GuideRow>
 
           <hr class="guide-divider" />

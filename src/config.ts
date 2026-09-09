@@ -124,16 +124,19 @@ export interface BotConfig {
   edgeConfirmSamples: number;
   /** Edge-lead : drop tick-à-tick max toléré dans la série de confirmation. */
   edgeMaxDownTick: number;
-  /** Edge-lead : marge cheap = 1 − prix_edge − edgeCheapMargin. */
+  /** Edge-lead : conservé pour JSON/dashboard ; le prix cheap est l'ask live dans la bande. */
   edgeCheapMargin: number;
-  /** Edge-lead : budget USDC de l'ordre edge ; cheap = mêmes shares 1:1. */
+  /** Edge-lead : budget USDC de l'ordre edge (size = budget / prix edge). */
   edgeOrderUsdc: number;
   /**
-   * Edge-lead : budget USDC de l'ordre cheap (indépendant du budget edge).
-   * La taille finale en shares = min(size plafonnée par edgeOrderUsdc,
-   * floor(edgeCheapOrderUsdc / cheapLimit)).
+   * Edge-lead : budget USDC de l'ordre cheap (size = budget / ask cheap).
+   * Indépendant du budget edge ; pas de 1:1 en shares.
    */
   edgeCheapOrderUsdc: number;
+  /** Edge-lead : ask cheap minimum pour poster (ex. 0.04). */
+  edgeCheapBandMin: number;
+  /** Edge-lead : ask cheap maximum pour poster (ex. 0.14). */
+  edgeCheapBandMax: number;
 }
 
 /**
@@ -180,6 +183,8 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     edgeCheapMargin: 0.01,
     edgeOrderUsdc: 15,
     edgeCheapOrderUsdc: 5,
+    edgeCheapBandMin: 0.04,
+    edgeCheapBandMax: 0.14,
   };
 }
 
@@ -348,6 +353,12 @@ export function validateConfigCoherence(config: BotConfig): void {
     }
     if (config.edgeCheapOrderUsdc <= 0) {
       throw new Error("EDGE_CHEAP_ORDER_USDC must be > 0");
+    }
+    if (config.edgeCheapBandMin >= config.edgeCheapBandMax) {
+      throw new Error("EDGE_CHEAP_BAND_MIN must be < EDGE_CHEAP_BAND_MAX");
+    }
+    if (config.edgeCheapBandMin < 0.01 || config.edgeCheapBandMax > 0.49) {
+      throw new Error("EDGE_CHEAP_BAND must be within [0.01, 0.49]");
     }
   }
 }

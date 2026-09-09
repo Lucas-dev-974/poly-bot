@@ -20,6 +20,16 @@ export interface EdgeConfirmState {
   edgeOutcome: string;
 }
 
+function seriesIsReady(samples: number[], config: BotConfig): boolean {
+  if (samples.length < config.edgeConfirmSamples) return false;
+  const first = samples[0];
+  const lastSample = samples[samples.length - 1];
+  const mean = samples.reduce((sum, s) => sum + s, 0) / samples.length;
+  // Série globalement croissante : last >= first ET mean > first.
+  // Un plat (0.85 × 5) → mean === first → pas d'entrée.
+  return lastSample >= first && mean > first;
+}
+
 export class EdgeConfirmBuffer {
   private readonly states = new Map<string, EdgeConfirmState>();
 
@@ -64,22 +74,7 @@ export class EdgeConfirmBuffer {
 
     state.samples.push(ask);
     this.states.set(pairId, state);
-
-    if (state.samples.length < config.edgeConfirmSamples) {
-      return false;
-    }
-
-    const first = state.samples[0];
-    const lastSample = state.samples[state.samples.length - 1];
-    const mean =
-      state.samples.reduce((sum, s) => sum + s, 0) / state.samples.length;
-
-    // Série globalement croissante : last >= first ET mean > first.
-    // Un plat (0.85 × 5) → mean === first → pas d'entrée.
-    if (lastSample >= first && mean > first) {
-      return true;
-    }
-    return false;
+    return seriesIsReady(state.samples, config);
   }
 
   /** Reset le buffer d'une paire (cancel hors bande, fenêtre, etc.). */

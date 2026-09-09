@@ -3,7 +3,7 @@
 > Aligné sur le code (`TradingStrategy`, `ArbStrategy`, `BarbellStrategy`, `EdgeLeadStrategy`, `bot.ts`).
 > Live : deposit wallet V2 (`SIGNATURE_TYPE=3` par défaut). La stratégie se lit dans `data/bot-settings.json` (dashboard). `.env` ne contient que les secrets et l'infra.
 
-Le JSON actif choisit le **moteur** (`strategyId` : `arb` | `barbell` | `edge-lead`). Les **profils** (`config/presets/*.json`) sont des packs de paramètres **liés à un moteur** (champ top-level `strategyId` obligatoire). Les deux profils livrés sont `arb` ; `edge-lead.json` est le profil du moteur edge-lead. Barbell **n'est pas** un lock de profit : le leftover cheap est un pari volontaire, variance plus élevée. **Edge-lead** inverse l'ordre : on achète le favori d'abord, puis le cheap en complément.
+Le JSON actif choisit le **moteur** (`strategyId` : `arb` | `barbell` | `edge-lead`). Les **profils** (`config/presets/*.json`) sont des packs de paramètres **liés à un moteur** (champ top-level `strategyId` obligatoire). Les deux profils livrés sont `arb` ; `edge-lead.json` est le profil du moteur edge-lead. Barbell **n'est pas** un lock de profit : le leftover cheap est un pari volontaire, variance plus élevée. **Edge-lead** inverse l'ordre : on achète le favori d'abord, on attend le fill, puis on poste le cheap (budgets USDC indépendants, pas de 1:1 en shares).
 
 ---
 
@@ -245,7 +245,7 @@ La stratégie **couverte** lock un petit profit certain à la résolution (`1 �
 
 ### 7.1 Principe
 
-On confirme que l'ask du **favori** (edge) reste dans une bande et **monte** pendant `edgeConfirmSamples` ticks consécutifs, on achète l'edge en **GTC** au best ask, puis on poste immédiatement le **cheap limit** à `1 − prix_edge − edgeCheapMargin` (ex. edge 0.85 → cheap 0.14), taille **1:1** en shares.
+On confirme que l'ask du **favori** (edge) reste dans une bande et **monte** pendant `edgeConfirmSamples` ticks consécutifs, on achète l'edge en **GTC** au best ask, **on attend le fill**, puis on poste le **cheap** au **best ask live** si son ask est dans `[edgeCheapBandMin, edgeCheapBandMax]` (ex. 0.04–0.14). Les tailles sont **indépendantes** (`edgeOrderUsdc` / prix edge vs `edgeCheapOrderUsdc` / ask cheap). Un déséquilibre de shares si les deux fillent est **accepté**. Jamais de cheap tant que l'edge est seulement resting.
 
 ### 7.2 Confirmation (5 ticks)
 
@@ -253,19 +253,23 @@ On confirme que l'ask du **favori** (edge) reste dans une bande et **monte** pen
 - Chaque sample doit être dans `[edgeBandMin, edgeBandMax]` (défaut 0.85–0.90).
 - Série globalement croissante : `last >= first` **et** `mean > first`. Un plat (0.85 × 5) **n'entre pas**.
 - Drop tick-à-tick `> edgeMaxDownTick` (défaut 0.01) → reset. `0.86 → 0.85` OK.
-- Identité edge sticky : si l'autre token devient plus cher avant tout POST, reset + nouveau claim. Après POST/fill, **pas de reflip** ; la bande se lit sur le token claimé.
+- Identité edge sticky : si l'autre token devient plus cher avant tout POST, reset + nouveau claim. Après POST, le cancel hors bande se lit sur le token claimé. Après fill, le cheap est **toujours l'autre token** (pas de reflip), indépendamment de la bande edge.
 
 ### 7.3 Exécution
 
 - **Edge** : toujours **GTC** au best ask, indépendant de `expensiveOrderType` (défaut global FOK — sinon le dispatch FOK-kill l'edge).
-- **Cheap** : dès le POST edge OK, `cheapLimit = round2(1 − prix_edge_posté − edgeCheapMargin)`, taille 1:1. Si le POST cheap échoue : **retry chaque tick**, sans refaire 5s, sans 2e edge. Le reconfirm 5s n'a lieu que si le cheap a été **annulé hors bande** alors que l'edge est fillé.
-- **Cancel hors bande** : si l'ask du token edge claimé sort de la bande, on annule les GTC **non fillés** des deux jambes, puis `unmark` des tradeKeys (sinon `tracker.has(key)` bloque le re-post au même prix). Fills gardés. Pas de FOK SELL.
-- **Cheap fill avant edge** : garder l'edge GTC tant qu'il est in-bande.
+- **Cheap** : **seulement après fill edge** (pas après le POST). **Seule condition** : `edgeCheapBandMin ≤ round2(bestAsk) ≤ edgeCheapBandMax` → un **GTC au best ask** sur l'autre token que l'edge claimé. Taille = `computeSize(edgeCheapOrderUsdc, ask, maxSharesPerOrder)`. La bande edge et le buffer de confirmation **ne s'appliquent plus** après fill. Ask hors bande cheap → pas de cheap (pas de spam). GTC cheap **resting** hors bande cheap → **cancel + unmark** ; **re-post** au tick où l'ask rentre. Si le POST cheap échoue : **retry chaque tick** tant que l'ask reste in-band.
+- **Cancel hors bande** : si l'ask du token edge claimé sort de la bande alors que l'edge GTC est **resting**, on annule ce GTC, puis `unmark` du tradeKey. Fills gardés. Un cheap resting n'est **pas** annulé par la bande edge. Pas de FOK SELL.
 - **Favori nu assumé** : si le cheap ne remplit jamais, on garde un favori long (pari directionnel) — c'est un risque **accepté** par ce moteur.
 
 ### 7.4 Sizing CLOB
 
-`computeEdgeCheapSize` dimensionne l'edge pour que le cheap passe les minimums CLOB (5 shares **et** 1 $ de notionnel). Ex. edge 0.85 → cheap 0.14 → `ceil(1/0.14) = 8` shares, coût edge `0.85 × 8 = 6.80` ≤ `edgeOrderUsdc`. Si le budget edge ne couvre pas le minimum, pas d'entrée (log explicite).
+Deux budgets **découplés**, via `computeSize` (`utils/prices.ts`) : 5 shares min et 1 $ de notionnel, plafond `maxSharesPerOrder`.
+
+- Edge : `computeEdgeLeadEdgeSize` = `computeSize(edgeOrderUsdc, edgeAsk, maxShares)`.
+- Cheap : `computeEdgeLeadCheapSize` = `computeSize(edgeCheapOrderUsdc, cheapAsk, maxShares)`.
+
+Ex. `edgeOrderUsdc=15` @ 0.85 → ~17.64 shares ; `edgeCheapOrderUsdc=5` @ 0.05 et `maxShares=40` → **40** shares (pas 17.64). Pas de corrélation 1:1. Un budget trop bas pour les minimums CLOB → skip de **cette** jambe seulement.
 
 ### 7.5 Paramètres edge-lead
 
@@ -275,10 +279,12 @@ On confirme que l'ask du **favori** (edge) reste dans une bande et **monte** pen
 | `edgeBandMax`        | 0.90   | Ask favori maximum de la bande de confirmation |
 | `edgeConfirmSamples` | 5      | Ticks consécutifs valides avant d'acheter l'edge |
 | `edgeMaxDownTick`    | 0.01   | Drop tick-à-tick max toléré dans la série |
-| `edgeCheapMargin`    | 0.01   | cheap = 1 − prix_edge − marge |
-| `edgeOrderUsdc`      | 15     | Budget de l'ordre edge ; cheap = mêmes shares 1:1 |
+| `edgeCheapBandMin`   | 0.04   | Ask cheap minimum pour poster |
+| `edgeCheapBandMax`   | 0.14   | Ask cheap maximum pour poster |
+| `edgeOrderUsdc`      | 15     | Budget edge (size = budget / prix edge) |
+| `edgeCheapOrderUsdc` | 5      | Budget cheap (size = budget / ask cheap) |
 
-Preset : `config/presets/edge-lead.json` (`pollIntervalMs: 1000`).
+Preset : `config/presets/edge-lead.json` (`pollIntervalMs: 1000`, `edgeOrderUsdc: 25`, `maxSharesPerOrder: 40`).
 
 ---
 

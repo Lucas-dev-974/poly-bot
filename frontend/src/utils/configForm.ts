@@ -36,6 +36,8 @@ export type ConfigFormState = {
   edgeCheapMargin: string;
   edgeOrderUsdc: string;
   edgeCheapOrderUsdc: string;
+  edgeCheapBandMin: string;
+  edgeCheapBandMax: string;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -78,6 +80,8 @@ export function configToForm(config: BotConfig): ConfigFormState {
     edgeCheapMargin: String(config.edgeCheapMargin),
     edgeOrderUsdc: String(config.edgeOrderUsdc),
     edgeCheapOrderUsdc: String(config.edgeCheapOrderUsdc),
+    edgeCheapBandMin: String(config.edgeCheapBandMin),
+    edgeCheapBandMax: String(config.edgeCheapBandMax),
   };
 }
 
@@ -141,6 +145,8 @@ export function formToPatch(
     edgeCheapMargin: parseNum(form.edgeCheapMargin, "Edge cheap margin"),
     edgeOrderUsdc: parseNum(form.edgeOrderUsdc, "Edge order USDC"),
     edgeCheapOrderUsdc: parseNum(form.edgeCheapOrderUsdc, "Budget cheap"),
+    edgeCheapBandMin: parseNum(form.edgeCheapBandMin, "Cheap band min"),
+    edgeCheapBandMax: parseNum(form.edgeCheapBandMax, "Cheap band max"),
   };
 
   if ((next.marketSlugPrefixes?.length ?? 0) === 0) {
@@ -243,6 +249,8 @@ export function validateConfigForm(
       const edgeCheapMargin = parseNum(form.edgeCheapMargin, "Edge cheap margin");
       const edgeOrderUsdc = parseNum(form.edgeOrderUsdc, "Edge order USDC");
       const edgeCheapOrderUsdc = parseNum(form.edgeCheapOrderUsdc, "Budget cheap");
+      const edgeCheapBandMin = parseNum(form.edgeCheapBandMin, "Cheap band min");
+      const edgeCheapBandMax = parseNum(form.edgeCheapBandMax, "Cheap band max");
       if (edgeBandMin >= edgeBandMax) {
         errors.push("Edge band min doit être < edge band max");
       }
@@ -263,6 +271,12 @@ export function validateConfigForm(
       }
       if (edgeCheapOrderUsdc <= 0) {
         errors.push("Budget cheap doit être > 0");
+      }
+      if (edgeCheapBandMin >= edgeCheapBandMax) {
+        errors.push("Cheap band min doit être < cheap band max");
+      }
+      if (edgeCheapBandMin < 0.01 || edgeCheapBandMax > 0.49) {
+        errors.push("Cheap band doit être dans [0.01, 0.49]");
       }
     }
   } catch (error) {

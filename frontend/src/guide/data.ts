@@ -3,12 +3,39 @@ export type EngineId = "arb" | "barbell" | "edge-lead";
 export type PhaseId = "mid" | "done";
 
 export const TABS: { id: TabId; label: string }[] = [
-  { id: "story", label: "Arb vs barbell" },
+  { id: "story", label: "Les 3 moteurs" },
   { id: "arch", label: "Architecture" },
   { id: "hedge", label: "Hedge au POST" },
   { id: "ui", label: "Moteur & presets" },
   { id: "ship", label: "Livrables" },
 ];
+
+export const ENGINE_META: Record<
+  EngineId,
+  { label: string; subtitle: string; order: string; risk: string; tone: "info" | "warning" }
+> = {
+  arb: {
+    label: "Arb — le filet",
+    subtitle: "Un outsider pour un favori. Petit gain dans tous les cas.",
+    order: "Outsider d'abord → favori 1:1",
+    risk: "Faible — lock sous pairLockMax",
+    tone: "info",
+  },
+  barbell: {
+    label: "Barbell — filet + pari",
+    subtitle: "Moitié couverte, moitié laissée en pari sur l'outsider.",
+    order: "Outsider d'abord → favori au ratio (défaut 0,5)",
+    risk: "Moyenne — upside si l'outsider gagne",
+    tone: "warning",
+  },
+  "edge-lead": {
+    label: "Edge-lead — favori d'abord",
+    subtitle: "Confirmer le momentum du favori, puis hedger l'outsider si le prix le permet.",
+    order: "Favori confirmé → fill edge → cheap si bande OK",
+    risk: "Élevée — favori nu accepté si le cheap ne remplit pas",
+    tone: "warning",
+  },
+};
 
 export const CHEAP = 10;
 export const HEDGE_MID = 3;
@@ -46,6 +73,62 @@ export const COMPARE_ROWS: [string, string, string][] = [
   ["Après défense", "cancel GTC hedge", "cancel GTC hedge (toujours)"],
 ];
 
+export const STRATEGY_COMPARE_ROWS: [string, string, string, string][] = [
+  ["Ordre d'achat", "Outsider → favori", "Outsider → favori (ratio)", "Favori → cheap (après fill edge)"],
+  ["Signal d'entrée", "Bandes cheap + favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant"],
+  ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeOrderUsdc / edgeCheapOrderUsdc indépendants"],
+  ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés"],
+  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Pas de FOK SELL — cancel GTC edge hors bande"],
+  ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu"],
+];
+
+export const EDGE_LEAD_PARAM_ROWS: [string, string][] = [
+  ["edgeBandMin / edgeBandMax", "Bande ask favori pour confirmer et poster l'edge"],
+  ["edgeConfirmSamples", "Ticks consécutifs valides avant achat edge (série croissante)"],
+  ["edgeMaxDownTick", "Drop tick-à-tick max toléré dans la série"],
+  ["edgeCheapBandMin / edgeCheapBandMax", "Bande ask cheap pour poster (après fill edge)"],
+  ["edgeOrderUsdc", "Budget USDC du favori (size = budget / ask edge)"],
+  ["edgeCheapOrderUsdc", "Budget USDC de l'outsider (size = budget / ask cheap)"],
+];
+
+export const RESOLUTION_ROWS: Record<EngineId, [string, string][]> = {
+  arb: [
+    ["Le favori gagne", "10 favoris × 1 $ − coût lock ≈ petit gain verrouillé."],
+    ["L'outsider gagne", "10 outsiders × 1 $ − coût lock ≈ même petit gain verrouillé."],
+  ],
+  barbell: [
+    ["Le favori gagne", "5 favoris × 1 $. Les 5 outsiders pari = 0 → petit moins."],
+    ["L'outsider gagne", "10 outsiders × 1 $ + 5 favoris = 0 → gros plus (c'est le pari)."],
+  ],
+  "edge-lead": [
+    ["Le favori gagne, cheap fillé", "Edge + cheap remplis — P&L selon prix d'entrée (pas de lock 1:1)."],
+    ["Le favori gagne, cheap absent", "Favori nu — gros gain si tu avais raison sur le momentum."],
+    ["L'outsider gagne, cheap fillé", "Cheap paie 1 $, edge perd — résultat selon tailles et prix."],
+    ["L'outsider gagne, cheap absent", "Edge perd tout — pari directionnel raté."],
+  ],
+};
+
+export const BOT_STEPS: Record<EngineId, string[]> = {
+  arb: [
+    "Attendre outsider pas cher + favori dans la bande, avec lock atteignable.",
+    "Poser un GTC sur l'outsider (min de ask, cheapBuyMax, lock − hedge).",
+    "Quand l'outsider est fillé : acheter le favori 1:1 (FOK/GTC).",
+    "Si le favori sort de la zone : revendre tout le trou cheap restant.",
+  ],
+  barbell: [
+    "Attendre outsider pas cher + favori dans la bande (pas de lock requis).",
+    "Poser un GTC sur l'outsider.",
+    "Quand l'outsider est fillé : acheter le favori au ratio (ex. 5 pour 10 cheap).",
+    "Si le favori devient trop cher : vendre seulement la tranche filet manquante, garder le pari.",
+  ],
+  "edge-lead": [
+    "Surveiller l'ask favori : N ticks consécutifs dans la bande, série croissante.",
+    "Poster l'edge en GTC au best ask — attendre le fill (pas de cheap pendant ce temps).",
+    "Après fill edge : poster le cheap en GTC si ask ∈ [edgeCheapBandMin, edgeCheapBandMax].",
+    "Cancel edge GTC si favori sort de bande avant fill ; cancel cheap GTC si ask cheap sort de bande cheap.",
+  ],
+};
+
 export const HEDGE_TREE: [string, string, string][] = [
   ["1", "freshAsk === null", "skip — pas de défense sur book manquant"],
   ["2", "freshAsk > expensiveBuyMax", "defend si shouldDefend, sinon skip couvert"],
@@ -61,6 +144,7 @@ export const NEW_FILES: [string, string][] = [
   ["src/strategy/orchestrate.ts", "Claims + append, paramétré par SizingStrategy"],
   ["src/strategy/arb-strategy.ts", "Politique B1 + ArbSizing"],
   ["src/strategy/barbell-strategy.ts", "Politique ratio"],
+  ["src/strategy/edge-lead-strategy.ts", "Politique favori d'abord + budgets USDC"],
   ["src/strategy/barbell-sizing.ts", "pairLockOk toujours true"],
   ["src/strategy/registry.ts", "createStrategy(id)"],
 ];
@@ -132,10 +216,10 @@ export const EDGE_LEAD_LIFE_NODES: LifeNode[] = [
   { id: "scan", label: "Fenêtre 15m scannée", sub: "Gamma + 2 order books", tone: "neutral" },
   { id: "confirm", label: "Confirmation edge", sub: "N ticks dans la bande + série croissante", tone: "accent" },
   { id: "edgeResting", label: "Edge GTC resting", sub: "au best ask, dans la bande", tone: "accent" },
-  { id: "cheapResting", label: "Cheap GTC resting", sub: "1 − prix_edge − marge", tone: "accent" },
-  { id: "cancelled", label: "Jambes annulées", sub: "edge sort de la bande", tone: "neutral" },
+  { id: "cheapResting", label: "Cheap GTC resting", sub: "best ask si dans la bande cheap", tone: "accent" },
+  { id: "cancelled", label: "Edge annulé", sub: "edge sort de la bande avant fill", tone: "neutral" },
   { id: "edgeFilled", label: "Edge fillé", sub: "favori long", tone: "warning" },
-  { id: "covered", label: "Paire 1:1", sub: "edge + cheap fillés", tone: "success" },
+  { id: "covered", label: "Les deux jambes fillées", sub: "tailles indépendantes", tone: "success" },
   { id: "directional", label: "Favori nu", sub: "cheap jamais fillé", tone: "warning" },
   { id: "resolved", label: "Résolue", sub: "redeem 1 $ / 0 $", tone: "neutral" },
 ];
@@ -143,12 +227,11 @@ export const EDGE_LEAD_LIFE_NODES: LifeNode[] = [
 export const EDGE_LEAD_LIFE_EDGES: LifeEdge[] = [
   { from: "scan", to: "confirm", label: "ask favori dans la bande" },
   { from: "confirm", to: "edgeResting", label: "N ticks + série croissante" },
-  { from: "edgeResting", to: "cheapResting", label: "POST edge OK" },
-  { from: "edgeResting", to: "cancelled", label: "edge sort de la bande" },
-  { from: "cheapResting", to: "cancelled", label: "edge sort de la bande" },
   { from: "edgeResting", to: "edgeFilled", label: "matched + tokens" },
+  { from: "edgeResting", to: "cancelled", label: "edge sort de la bande" },
+  { from: "edgeFilled", to: "cheapResting", label: "ask cheap dans la bande cheap" },
+  { from: "cheapResting", to: "edgeFilled", label: "ask cheap hors bande (cancel)" },
   { from: "cheapResting", to: "covered", label: "cheap fillé" },
-  { from: "edgeFilled", to: "covered", label: "cheap fillé" },
   { from: "edgeFilled", to: "directional", label: "cheap jamais fillé" },
   { from: "covered", to: "resolved", label: "" },
   { from: "directional", to: "resolved", label: "" },
@@ -160,7 +243,6 @@ export type SlotKind = "covered" | "needHedge" | "keepBet";
 export function slotKind(index: number, hedgeFilled: number, engine: EngineId): SlotKind {
   if (index < hedgeFilled) return "covered";
   if (engine === "arb") return "needHedge";
-  if (engine === "edge-lead") return "needHedge";
   const target = CHEAP * RATIO;
   if (index < target) return "needHedge";
   return "keepBet";
@@ -168,6 +250,5 @@ export function slotKind(index: number, hedgeFilled: number, engine: EngineId): 
 
 export function hedgeTarget(engine: EngineId): number {
   if (engine === "arb") return CHEAP;
-  if (engine === "edge-lead") return CHEAP;
   return CHEAP * RATIO;
 }

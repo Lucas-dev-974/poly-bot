@@ -43,6 +43,8 @@ export const EDITABLE_CONFIG_KEYS = [
   "edgeCheapMargin",
   "edgeOrderUsdc",
   "edgeCheapOrderUsdc",
+  "edgeCheapBandMin",
+  "edgeCheapBandMax",
 ] as const;
 
 export type EditableConfigKey = (typeof EDITABLE_CONFIG_KEYS)[number];
@@ -85,6 +87,8 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   edgeCheapMargin: "EDGE_CHEAP_MARGIN",
   edgeOrderUsdc: "EDGE_ORDER_USDC",
   edgeCheapOrderUsdc: "EDGE_CHEAP_ORDER_USDC",
+  edgeCheapBandMin: "EDGE_CHEAP_BAND_MIN",
+  edgeCheapBandMax: "EDGE_CHEAP_BAND_MAX",
 };
 
 const FORBIDDEN_KEYS = new Set([
@@ -200,6 +204,8 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "edgeCheapMargin":
     case "edgeOrderUsdc":
     case "edgeCheapOrderUsdc":
+    case "edgeCheapBandMin":
+    case "edgeCheapBandMax":
       return parseNumber(value, key);
     case "minMinutesBeforeCloseToBuy":
       return parseNullableNumber(value, key);

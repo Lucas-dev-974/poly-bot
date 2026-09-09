@@ -597,6 +597,7 @@ export class ReverseBot {
       pairId: order.pairId,
       bestAskAtFill: order.bestAskAtFill,
       orderType: "GTC",
+      strategyId: order.strategyId ?? this.strategy.id,
     };
     this.tracker.addOpenPosition(position);
     this.tracker.attachLeg(position);
@@ -1255,6 +1256,7 @@ export class ReverseBot {
           pairId: opportunity.pairId,
           bestAskAtFill: opportunity.token.bestAsk,
           orderType: "FOK",
+          strategyId: this.strategy.id,
         };
         this.tracker.addOpenPosition(position);
         this.tracker.attachLeg(position);
@@ -1328,6 +1330,7 @@ export class ReverseBot {
         pairId: opportunity.pairId,
         eventTitle: opportunity.event.title,
         bestAskAtFill: opportunity.token.bestAsk,
+        strategyId: this.strategy.id,
       },
     );
 

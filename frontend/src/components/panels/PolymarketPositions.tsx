@@ -63,10 +63,15 @@ const KIND_FILTERS: Array<{ id: KindFilter; label: string }> = [
 
 function positionMeta(
   position: PolymarketPosition,
-): { kind: "cheap" | "expensive" | null; orderType: "GTC" | "FOK" | "FAK" | "SIM" | null } {
+): {
+  kind: "cheap" | "expensive" | null;
+  orderType: "GTC" | "FOK" | "FAK" | "SIM" | null;
+  strategyId: "arb" | "barbell" | "edge-lead" | null;
+} {
   const botPositions = [...openPositionList(), ...resolvedPositions];
   let kind: "cheap" | "expensive" | null = null;
   let orderType: "GTC" | "FOK" | "FAK" | "SIM" | null = null;
+  let strategyId: "arb" | "barbell" | "edge-lead" | null = null;
 
   // 1. Match autoritatif par tokenId (asset). Les slugs Data API et bot
   //    diffèrent souvent (btc-updown-15m-TS vs slug événement lisible).
@@ -75,6 +80,7 @@ function positionMeta(
     if (byToken?.kind) {
       kind = byToken.kind;
       orderType = byToken.orderType ?? null;
+      strategyId = byToken.strategyId ?? null;
     }
     // Fallback orderType depuis le store orders si la position n'en a pas
     // (positions anciennes créées avant l'ajout du champ orderType).
@@ -87,7 +93,7 @@ function positionMeta(
     }
   }
 
-  if (kind) return { kind, orderType };
+  if (kind) return { kind, orderType, strategyId };
 
   // 2. Match par titre de marché + outcome (même fenêtre horaire).
   const byTitle = botPositions.find(
@@ -100,7 +106,7 @@ function positionMeta(
     const ot = byTitle.orderType
       ?? orders.find((o) => o.tokenId === byTitle.tokenId)?.orderType
       ?? null;
-    return { kind: byTitle.kind, orderType: ot };
+    return { kind: byTitle.kind, orderType: ot, strategyId: byTitle.strategyId ?? null };
   }
 
   // 3. Les deux jambes du même marché : le fill le plus bas est cheap.
@@ -112,17 +118,25 @@ function positionMeta(
     Number.isFinite(position.avgPrice) &&
     Number.isFinite(siblings[0].avgPrice)
   ) {
-    if (position.avgPrice < siblings[0].avgPrice) return { kind: "cheap", orderType: null };
-    if (position.avgPrice > siblings[0].avgPrice) return { kind: "expensive", orderType: null };
+    if (position.avgPrice < siblings[0].avgPrice) {
+      return { kind: "cheap", orderType: null, strategyId: null };
+    }
+    if (position.avgPrice > siblings[0].avgPrice) {
+      return { kind: "expensive", orderType: null, strategyId: null };
+    }
   }
 
   // 4. Marché binaire : sous 0.50 = underdog (cheap), sinon favorite.
   //    Les seuils de config laissent un trou (ex. 0.25–0.85) où un fill
   //    à 0.82 était classé nulle part, ou au mauvais type.
   if (Number.isFinite(position.avgPrice) && position.avgPrice > 0) {
-    return { kind: position.avgPrice < 0.5 ? "cheap" : "expensive", orderType: null };
+    return {
+      kind: position.avgPrice < 0.5 ? "cheap" : "expensive",
+      orderType: null,
+      strategyId: null,
+    };
   }
-  return { kind: null, orderType: null };
+  return { kind: null, orderType: null, strategyId: null };
 }
 
 function positionCost(position: PolymarketPosition): number {
@@ -299,6 +313,7 @@ export function PolymarketPositions(props: {
                   <th>Marché</th>
                   <th>Outcome</th>
                   <th>Type</th>
+                  <th>Moteur</th>
                   <th>Fill</th>
                   <th>Taille</th>
                   <th>Coût</th>
@@ -317,6 +332,7 @@ export function PolymarketPositions(props: {
                     const meta = row.meta;
                     const kind = meta.kind;
                     const orderType = meta.orderType;
+                    const strategyId = meta.strategyId;
                     const status = closed ? (
                       <Badge variant="cheap">clôturée</Badge>
                     ) : isRedeemablePosition(p) ? (
@@ -404,6 +420,7 @@ export function PolymarketPositions(props: {
                             <span class="muted">—</span>
                           )}
                         </td>
+                        <td style={cellStyle}>{strategyId ?? "—"}</td>
                         <td style={cellStyle}>{fmtPrice(p.avgPrice)}</td>
                         <td style={cellStyle}>{p.size}</td>
                         <td style={cellStyle}>{fmtUsd(positionCost(p))}</td>

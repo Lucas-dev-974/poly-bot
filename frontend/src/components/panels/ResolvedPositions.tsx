@@ -20,6 +20,7 @@ export function ResolvedPositions(): JSX.Element {
               <th>Marché</th>
               <th>Outcome</th>
               <th>Type</th>
+              <th>Moteur</th>
               <th>Fill</th>
               <th>Taille</th>
               <th>Coût</th>
@@ -40,6 +41,7 @@ export function ResolvedPositions(): JSX.Element {
                     <td>
                       <Badge variant={p.kind}>{p.kind}</Badge>
                     </td>
+                    <td>{p.strategyId ?? "—"}</td>
                     <td>{fmtPrice(p.fillPrice)}</td>
                     <td>{p.size}</td>
                     <td>{fmtUsd(p.cost)}</td>

@@ -114,4 +114,72 @@ describe("TradeTracker", () => {
     assert.equal(resolved[1]?.id, "old");
     db.close();
   });
+
+  it("loadFromDb preserves strategyId on positions and posted orders", () => {
+    const dir = mkdtempSync(join(tmpdir(), "arb-tracker-"));
+    const db = new Database(join(dir, "t.db"), true);
+    db.init();
+    const repos = createRepositories(db);
+    const open = pos({
+      id: "live:abc",
+      kind: "cheap",
+      status: "open",
+      strategyId: "barbell",
+    });
+    repos.positions.insert(open);
+    repos.postedOrders.insert({
+      key: "k1",
+      eventSlug: open.eventSlug,
+      windowEnd: open.windowEnd,
+      cost: open.cost,
+      createdAt: Date.now(),
+      orderId: "oid-1",
+      tokenId: open.tokenId,
+      outcome: open.outcome,
+      outcomeIndex: open.outcomeIndex,
+      kind: open.kind,
+      limitPrice: open.limitPrice,
+      size: open.size,
+      pairId: open.pairId,
+      eventTitle: open.eventTitle,
+      bestAskAtFill: 0.08,
+      strategyId: "edge-lead",
+    });
+
+    const tracker = new TradeTracker(
+      repos.positions,
+      repos.pairs,
+      repos.keys,
+      repos.retries,
+      repos.windowClaims,
+      repos.postedOrders,
+    );
+    tracker.loadFromDb();
+    assert.equal(tracker.getOpenPositions()[0]?.strategyId, "barbell");
+    const posted = tracker.getPostedOrdersWithOrderId();
+    assert.equal(posted[0]?.strategyId, "edge-lead");
+    const byToken = repos.positions.byTokenIds([open.tokenId]);
+    assert.equal(byToken[0]?.strategyId, "barbell");
+    db.close();
+  });
+
+  it("loadFromDb leaves strategyId undefined for legacy rows", () => {
+    const dir = mkdtempSync(join(tmpdir(), "arb-tracker-"));
+    const db = new Database(join(dir, "t.db"), true);
+    db.init();
+    const repos = createRepositories(db);
+    repos.positions.insert(pos({ id: "legacy", kind: "cheap", status: "open" }));
+
+    const tracker = new TradeTracker(
+      repos.positions,
+      repos.pairs,
+      repos.keys,
+      repos.retries,
+      repos.windowClaims,
+      repos.postedOrders,
+    );
+    tracker.loadFromDb();
+    assert.equal(tracker.getOpenPositions()[0]?.strategyId, undefined);
+    db.close();
+  });
 });

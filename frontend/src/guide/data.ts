@@ -72,6 +72,7 @@ export const TODOS = [
   { id: "bot-wire", content: "ReverseBot.this.strategy + hot-swap strategyId", done: true },
   { id: "config-ui", content: "JSON, parseField, dashboard Moteur / ratio", done: true },
   { id: "presets-bind", content: "strategyId obligatoire sur les presets (les 2 = arb)", done: true },
+  { id: "position-strategy", content: "positions.strategyId persisté + colonne Moteur", done: true },
   { id: "tests-docs", content: "Tests + README / STRATEGY.md", done: true },
 ];
 

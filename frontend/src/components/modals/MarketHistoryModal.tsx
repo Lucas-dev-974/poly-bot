@@ -16,6 +16,7 @@ import { parseSlugWindow } from "../../utils/market";
 import { dateTimeStr, fmtPrice, fmtUsd } from "../../utils/format";
 import { markets } from "../../stores/marketStore";
 import { polyPositions } from "../../stores/polyStore";
+import { openPositionList, resolvedPositions } from "../../stores/positionStore";
 
 interface ModalProps {
   target: ChartTarget;
@@ -147,7 +148,23 @@ function positionTsSec(ts: number | undefined): number {
 }
 
 type TradeOrigin = "bot" | "api" | "position";
-type DisplayTrade = TradePoint & { origin: TradeOrigin; dryRun?: boolean };
+type DisplayTrade = TradePoint & {
+  origin: TradeOrigin;
+  dryRun?: boolean;
+  strategyId?: "arb" | "barbell" | "edge-lead";
+};
+
+function strategyFromBotStore(tokenId: string | undefined): "arb" | "barbell" | "edge-lead" | undefined {
+  if (!tokenId) return undefined;
+  const bot = [...openPositionList(), ...resolvedPositions];
+  return bot.find((p) => p.tokenId === tokenId)?.strategyId;
+}
+
+function tokenIdForOutcome(outcomeIndex: number, target: ChartTarget): string | undefined {
+  if (outcomeIndex === 0) return target.upTokenId || undefined;
+  if (outcomeIndex === 1) return target.downTokenId || undefined;
+  return undefined;
+}
 
 /** Dernier recours : les 2 jambes de la liste positions (heure = heure de la position, imprécise). */
 function pairTradesFromStore(conditionId: string): DisplayTrade[] {
@@ -162,6 +179,7 @@ function pairTradesFromStore(conditionId: string): DisplayTrade[] {
       outcome: p.outcome,
       outcomeIndex: p.outcomeIndex,
       origin: "position" as const,
+      strategyId: strategyFromBotStore(p.asset),
     }))
     .filter((t) => t.timestamp > 0);
 }
@@ -257,8 +275,16 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
   );
 
   const displayTrades = createMemo<DisplayTrade[]>(() => {
-    const bot: DisplayTrade[] = (botFillsResource()?.fills ?? []).map((f) => ({ ...f, origin: "bot" }));
-    const apiTrades: DisplayTrade[] = (tradesResource()?.trades ?? []).map((t) => ({ ...t, origin: "api" }));
+    const bot: DisplayTrade[] = (botFillsResource()?.fills ?? []).map((f) => ({
+      ...f,
+      origin: "bot",
+      strategyId: f.strategyId ?? strategyFromBotStore(f.tokenId),
+    }));
+    const apiTrades: DisplayTrade[] = (tradesResource()?.trades ?? []).map((t) => ({
+      ...t,
+      origin: "api",
+      strategyId: strategyFromBotStore(tokenIdForOutcome(t.outcomeIndex, target)),
+    }));
     return buildTrades(bot, apiTrades, pairTradesFromStore(target.conditionId));
   });
 
@@ -623,6 +649,7 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
                     <th>Outcome</th>
                     <th>Prix</th>
                     <th>Taille</th>
+                    <th>Moteur</th>
                     <th>Source</th>
                   </tr>
                 </thead>
@@ -635,6 +662,7 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
                         <td style={{ color: outcomeColor(trade.outcomeIndex) }}>{trade.outcome}</td>
                         <td>{fmtPrice(trade.price)}</td>
                         <td>{trade.size}</td>
+                        <td>{trade.strategyId ?? "—"}</td>
                         <td class="muted">
                           {trade.origin === "bot" ? (trade.dryRun ? "bot (sim)" : "bot") : trade.origin === "api" ? "API" : "position"}
                         </td>

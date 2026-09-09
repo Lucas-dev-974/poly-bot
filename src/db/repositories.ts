@@ -4,6 +4,7 @@ import type {
   SimulatedArbPair,
   SimulatedPosition,
 } from "../types.js";
+import { asStrategyId } from "../strategy/ids.js";
 import type { Database } from "./database.js";
 
 interface PositionRow {
@@ -26,6 +27,7 @@ interface PositionRow {
   pairId: string;
   bestAskAtFill: number | null;
   orderType: "GTC" | "FOK" | "FAK" | "SIM" | null;
+  strategyId: string | null;
   createdAt: number;
 }
 
@@ -61,6 +63,7 @@ function toPosition(row: PositionRow): SimulatedPosition {
     pairId: row.pairId,
     bestAskAtFill: row.bestAskAtFill ?? null,
     orderType: row.orderType ?? undefined,
+    strategyId: asStrategyId(row.strategyId),
   };
 }
 
@@ -72,8 +75,8 @@ export class PositionRepository {
       `INSERT OR REPLACE INTO positions (
         id, eventSlug, eventTitle, tokenId, outcome, outcomeIndex, kind,
         limitPrice, fillPrice, size, cost, windowEnd, status, resolvedAt,
-        pnl, fillReason, pairId, bestAskAtFill, orderType, createdAt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        pnl, fillReason, pairId, bestAskAtFill, orderType, strategyId, createdAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         position.id,
         position.eventSlug,
@@ -94,6 +97,7 @@ export class PositionRepository {
         position.pairId,
         position.bestAskAtFill ?? null,
         position.orderType ?? null,
+        position.strategyId ?? null,
         Date.now(),
       ],
     );
@@ -118,6 +122,18 @@ export class PositionRepository {
     return this.db
       .all<PositionRow>(
         `SELECT * FROM positions WHERE pairId IN (${placeholders}) ORDER BY createdAt ASC`,
+        ids,
+      )
+      .map(toPosition);
+  }
+
+  /** Positions dont le tokenId est dans `ids` (toutes statuts). Plus récent gagne au merge appelant. */
+  byTokenIds(ids: string[]): SimulatedPosition[] {
+    if (ids.length === 0) return [];
+    const placeholders = ids.map(() => "?").join(",");
+    return this.db
+      .all<PositionRow>(
+        `SELECT * FROM positions WHERE tokenId IN (${placeholders}) ORDER BY createdAt ASC`,
         ids,
       )
       .map(toPosition);
@@ -383,6 +399,7 @@ export interface PostedOrderRow {
   pairId?: string;
   eventTitle?: string;
   bestAskAtFill?: number | null;
+  strategyId?: string | null;
 }
 
 export class PostedOrderRepository {
@@ -392,8 +409,8 @@ export class PostedOrderRepository {
     this.db.run(
       `INSERT OR REPLACE INTO posted_orders (
         key, eventSlug, windowEnd, cost, createdAt, orderId,
-        tokenId, outcome, outcomeIndex, kind, limitPrice, size, pairId, eventTitle, bestAskAtFill
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        tokenId, outcome, outcomeIndex, kind, limitPrice, size, pairId, eventTitle, bestAskAtFill, strategyId
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         order.key,
         order.eventSlug,
@@ -410,6 +427,7 @@ export class PostedOrderRepository {
         order.pairId ?? null,
         order.eventTitle ?? null,
         order.bestAskAtFill ?? null,
+        order.strategyId ?? null,
       ],
     );
   }

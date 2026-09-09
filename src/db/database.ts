@@ -39,6 +39,7 @@ export class Database {
         pairId TEXT NOT NULL,
         bestAskAtFill REAL,
         orderType TEXT,
+        strategyId TEXT,
         createdAt INTEGER NOT NULL
       );
 
@@ -211,12 +212,14 @@ export class Database {
       ["pairId", "TEXT"],
       ["eventTitle", "TEXT"],
       ["bestAskAtFill", "REAL"],
+      ["strategyId", "TEXT"],
     ];
     for (const [col, type] of postedOrdersCols) {
       this.addColumnIfMissing("posted_orders", col, type);
     }
     this.addColumnIfMissing("retry_counts", "updatedAt", "INTEGER");
     this.addColumnIfMissing("positions", "orderType", "TEXT");
+    this.addColumnIfMissing("positions", "strategyId", "TEXT");
     // Heure réelle du fill (ms). Pour un GTC resting, diffère de ts (heure de placement).
     this.addColumnIfMissing("orders", "filledTs", "INTEGER");
   }

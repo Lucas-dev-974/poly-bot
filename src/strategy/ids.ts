@@ -11,3 +11,9 @@ export function parseStrategyId(value: unknown): StrategyId {
   }
   return match;
 }
+
+export function asStrategyId(value: unknown): StrategyId | undefined {
+  if (value == null || value === "") return undefined;
+  const raw = String(value).trim().toLowerCase();
+  return STRATEGY_IDS.find((id) => id === raw);
+}

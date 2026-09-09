@@ -1,3 +1,5 @@
+import type { StrategyId } from "./strategy/ids.js";
+
 export type TradeSide = "BUY" | "SELL";
 
 export interface GammaMarket {
@@ -84,6 +86,8 @@ export interface SimulatedPosition {
   bestAskAtFill?: number | null;
   /** Type d'ordre ayant créé la position : GTC (limit resting), FOK (fill-or-kill), FAK (fill-and-kill), SIM (dry-run). */
   orderType?: "GTC" | "FOK" | "FAK" | "SIM";
+  /** Moteur qui a pris la position. Absent sur les lignes antérieures à la migration. */
+  strategyId?: StrategyId;
 }
 
 export type ArbPairStatus = "open" | "partial" | "covered" | "resolved";

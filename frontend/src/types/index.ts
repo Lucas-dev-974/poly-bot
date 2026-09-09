@@ -82,6 +82,8 @@ export interface SimulatedPosition {
   bestAskAtFill?: number | null;
   /** Type d'ordre ayant crÃ©Ã© la position : GTC, FOK, FAK ou SIM (dry-run). */
   orderType?: "GTC" | "FOK" | "FAK" | "SIM";
+  /** Moteur qui a pris la position. Absent sur les lignes antérieures à la migration. */
+  strategyId?: "arb" | "barbell" | "edge-lead";
 }
 
 export type ArbPairStatus = "open" | "partial" | "covered" | "resolved";
@@ -333,6 +335,7 @@ export interface MarketTradesResponse {
 export interface BotFillPoint extends TradePoint {
   tokenId: string;
   dryRun: boolean;
+  strategyId?: "arb" | "barbell" | "edge-lead";
 }
 
 export interface BotFillsResponse {

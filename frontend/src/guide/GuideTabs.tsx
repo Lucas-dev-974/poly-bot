@@ -381,8 +381,12 @@ export function UiTab(): JSX.Element {
             "PATCH data/bot-settings.json → hot-swap createStrategy si strategyId a changé",
           ],
           ["ConfigBar", "Affiche moteur + lock ou ratio — bouton Configurer seulement"],
+          [
+            "Positions",
+            "Colonne Moteur = strategyId stampé au POST (GTC) ou au fill (FOK / SIM), pas le moteur courant après hot-swap",
+          ],
         ]}
-        rowTone={["info", "neutral", "neutral", "success", "neutral"]}
+        rowTone={["info", "neutral", "neutral", "success", "neutral", "info"]}
       />
       <h3 class="guide-h3">Presets = packs d'un moteur</h3>
       <GuideGrid columns={2}>

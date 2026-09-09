@@ -4,6 +4,7 @@ import type {
   SimulatedPosition,
 } from "./types.js";
 import { log } from "./logger.js";
+import { asStrategyId, type StrategyId } from "./strategy/ids.js";
 import type {
   KeyRepository,
   PairRepository,
@@ -34,6 +35,7 @@ export interface PostedOrderContext {
   pairId: string;
   eventTitle: string;
   bestAskAtFill: number | null;
+  strategyId?: StrategyId;
 }
 
 export type PostedOrderEntry = PostedOrderContext & {
@@ -154,6 +156,7 @@ export class TradeTracker {
           pairId: order.pairId ?? "",
           eventTitle: order.eventTitle ?? "",
           bestAskAtFill: order.bestAskAtFill ?? null,
+          strategyId: asStrategyId(order.strategyId),
         });
       }
     }
@@ -379,6 +382,7 @@ export class TradeTracker {
       pairId: context.pairId,
       eventTitle: context.eventTitle,
       bestAskAtFill: context.bestAskAtFill,
+      strategyId: context.strategyId,
     });
     const row: PostedOrderRow = {
       key,
@@ -396,6 +400,7 @@ export class TradeTracker {
       pairId: context.pairId,
       eventTitle: context.eventTitle,
       bestAskAtFill: context.bestAskAtFill,
+      strategyId: context.strategyId,
     };
     this.postedOrdersRepo?.insert(row);
   }

@@ -4,7 +4,7 @@ import { findOpportunities } from "../src/strategy.js";
 import { ArbStrategy } from "../src/strategy/arb-strategy.js";
 import { BarbellSizing } from "../src/strategy/barbell-sizing.js";
 import { BarbellStrategy } from "../src/strategy/barbell-strategy.js";
-import { parseStrategyId } from "../src/strategy/ids.js";
+import { asStrategyId, parseStrategyId } from "../src/strategy/ids.js";
 import { createStrategy } from "../src/strategy/registry.js";
 import type { HedgePostContext } from "../src/strategy/trading-strategy.js";
 import { TradeTracker } from "../src/trade-tracker.js";
@@ -60,6 +60,18 @@ describe("parseStrategyId", () => {
 
   it("throws on unknown ids", () => {
     assert.throws(() => parseStrategyId("nope"), /Invalid strategyId/);
+  });
+});
+
+describe("asStrategyId", () => {
+  it("returns undefined for empty, null, or unknown values", () => {
+    assert.equal(asStrategyId(null), undefined);
+    assert.equal(asStrategyId(""), undefined);
+    assert.equal(asStrategyId("nope"), undefined);
+  });
+
+  it("accepts known ids case-insensitively", () => {
+    assert.equal(asStrategyId("EDGE-LEAD"), "edge-lead");
   });
 });
 

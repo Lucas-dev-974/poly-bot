@@ -108,6 +108,7 @@ export function OpenPositions(props: { now: number }): JSX.Element {
                       <tr>
                         <th>Outcome</th>
                         <th>Type</th>
+                        <th>Moteur</th>
                         <th>Fill</th>
                         <th>Taille</th>
                         <th>Coût</th>
@@ -126,6 +127,7 @@ export function OpenPositions(props: { now: number }): JSX.Element {
                                   {p.orderType ? `${p.orderType} - ${p.kind}` : p.kind}
                                 </Badge>
                               </td>
+                              <td>{p.strategyId ?? "—"}</td>
                               <td>{fmtPrice(p.fillPrice)}</td>
                               <td>{p.size}</td>
                               <td>{fmtUsd(p.cost)}</td>

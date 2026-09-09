@@ -123,6 +123,7 @@ export class SimulatedBroker {
       pairId: opportunity.pairId,
       bestAskAtFill: bestAsk,
       orderType: "SIM",
+      strategyId: this.config.strategyId,
     };
 
     return { filled: true, position, reason };

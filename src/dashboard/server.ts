@@ -497,6 +497,10 @@ export class DashboardServer {
       return;
     }
     const rows = this.repos?.orders.filledByTokenIds(tokenIds) ?? [];
+    const strategyByToken = new Map<string, string>();
+    for (const position of this.repos?.positions.byTokenIds(tokenIds) ?? []) {
+      if (position.strategyId) strategyByToken.set(position.tokenId, position.strategyId);
+    }
     const fills = rows.map((r) => ({
       timestamp: Math.floor((r.filledTs ?? r.ts) / 1000),
       price: r.fillPrice ?? r.limitPrice,
@@ -506,6 +510,7 @@ export class DashboardServer {
       outcomeIndex: r.outcomeIndex,
       tokenId: r.tokenId,
       dryRun: r.dryRun === 1,
+      strategyId: strategyByToken.get(r.tokenId),
     }));
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ fills }));

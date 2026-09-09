@@ -16,6 +16,7 @@
   "expensiveOrderUsdc": 15,
   "expensiveOrderType": "FOK",
   "maxSharesPerOrder": 20,
+  "maxShareEdge": 20,
   "maxOpenPositionsPerSide": 1,
   "maxExposureUsdc": 45,
   "minutesBeforeCloseMin": 0,

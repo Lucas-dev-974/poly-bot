@@ -226,7 +226,10 @@ export class TradeTracker {
    * quand même l'empilement de plusieurs jambes cheap sur la même fenêtre.
    */
   countLegsByKind(pairId: string, kind: "cheap" | "expensive"): number {
-    return this.positionsRepo?.countLegsByKind(pairId, kind) ?? 0;
+    if (this.positionsRepo) return this.positionsRepo.countLegsByKind(pairId, kind);
+    return [...this.openPositions, ...this.resolvedPositions].filter(
+      (p) => p.pairId === pairId && p.kind === kind,
+    ).length;
   }
 
   /**
@@ -304,18 +307,15 @@ export class TradeTracker {
 
   /**
    * Shares already committed on the cheap leg of a pair (open fills + GTC
-   * resting). Used to know a cheap leg exists before posting a hedge.
-   * Resolved legs are ignored.
+   * working remainder). Used to know a cheap leg exists before posting a hedge.
+   * Resolved legs are ignored. A posted row that is only the crash duplicate
+   * of an already-open fill is not counted twice.
    */
   getCheapSizeForPair(pairId: string): number {
     let total = this.getFilledCheapSizeForPair(pairId);
     for (const order of this.postedOrders.values()) {
-      if (
-        order.pairId === pairId &&
-        order.kind === "cheap" &&
-        !this.postedOverlapsOpen(order)
-      ) {
-        total += order.size;
+      if (order.pairId === pairId && order.kind === "cheap") {
+        total += this.postedWorkingRemainder(order).size;
       }
     }
     return total;
@@ -410,6 +410,32 @@ export class TradeTracker {
     this.postedOrdersRepo?.delete(key);
   }
 
+  /** Shrink a resting GTC after a partial fill so size/cost match the remainder. */
+  updatePostedRemainder(key: string, size: number, cost: number): void {
+    const order = this.postedOrders.get(key);
+    if (!order) return;
+    order.size = size;
+    order.cost = cost;
+    this.postedOrdersRepo?.insert({
+      key,
+      eventSlug: order.eventSlug,
+      windowEnd: order.windowEnd,
+      cost,
+      createdAt: Date.now(),
+      orderId: order.orderId,
+      tokenId: order.tokenId,
+      outcome: order.outcome,
+      outcomeIndex: order.outcomeIndex,
+      kind: order.kind,
+      limitPrice: order.limitPrice,
+      size,
+      pairId: order.pairId,
+      eventTitle: order.eventTitle,
+      bestAskAtFill: order.bestAskAtFill,
+      strategyId: order.strategyId,
+    });
+  }
+
   getStalePostedOrders(
     nowSeconds: number,
   ): Array<{ key: string; orderId?: string } & PostedOrderContext> {
@@ -436,28 +462,57 @@ export class TradeTracker {
   }
 
   /**
-   * True when this posted row is the same fill already in openPositions
-   * (crash between addOpenPosition and removePostedOrder). Match by CLOB
-   * orderId when we have one — tokenId alone would drop a second resting
-   * cheap on the same outcome if maxOpenPositionsPerSide > 1.
+   * True when this posted row is the same working order as an open fill
+   * (crash between addOpenPosition and removePostedOrder, or a GTC
+   * remainder after a partial fill). Match by CLOB orderId when we have
+   * one — tokenId alone would drop a second resting cheap on the same
+   * outcome if maxOpenPositionsPerSide > 1.
    */
   private postedOverlapsOpen(order: PostedOrderEntry): boolean {
+    return this.overlappingOpenSize(order) > 1e-9;
+  }
+
+  private overlappingOpenSize(order: PostedOrderEntry): number {
+    let total = 0;
     if (order.orderId) {
       const liveId = `live:${order.orderId}`;
-      return this.openPositions.some((position) => position.id === liveId);
+      for (const position of this.openPositions) {
+        if (position.id === liveId) total += position.size;
+      }
+      return total;
     }
-    return this.openPositions.some(
-      (position) =>
+    for (const position of this.openPositions) {
+      if (
         position.pairId === order.pairId &&
         position.kind === order.kind &&
-        position.tokenId === order.tokenId,
-    );
+        position.tokenId === order.tokenId
+      ) {
+        total += position.size;
+      }
+    }
+    return total;
+  }
+
+  /**
+   * Working size/cost still on the book. Skip only when open positions
+   * already cover the posted size (full-fill crash duplicate). After a
+   * partial fill the posted row is the remainder (`updatePostedRemainder`)
+   * and must still count toward exposure / committed size.
+   */
+  private postedWorkingRemainder(order: PostedOrderEntry): { size: number; cost: number } {
+    if (!this.postedOverlapsOpen(order)) {
+      return { size: order.size, cost: order.cost };
+    }
+    if (this.overlappingOpenSize(order) + 1e-9 >= order.size) {
+      return { size: 0, cost: 0 };
+    }
+    return { size: order.size, cost: order.cost };
   }
 
   getRestingExposure(): number {
     let total = 0;
     for (const order of this.postedOrders.values()) {
-      if (!this.postedOverlapsOpen(order)) total += order.cost;
+      total += this.postedWorkingRemainder(order).cost;
     }
     return total;
   }
@@ -631,7 +686,7 @@ export class TradeTracker {
     if (position.status === "won") this.cumulativeWins++;
     if (position.status === "lost") this.cumulativeLosses++;
     this.resolvedPositions.push(position);
-    if (this.resolvedPositions.length > MAX_RESOLVED_IN_MEMORY) {
+    if (this.positionsRepo && this.resolvedPositions.length > MAX_RESOLVED_IN_MEMORY) {
       this.resolvedPositions.shift();
     }
     this.positionsRepo?.updateStatus(position);
@@ -662,7 +717,12 @@ export class TradeTracker {
    * cheap already sold), and the resolver would later re-count the same
    * leg (double PnL).
    */
-  closePairCheapAsSold(pairId: string, sellPrice: number, soldSize: number): number {
+  closePairCheapAsSold(
+    pairId: string,
+    sellPrice: number,
+    soldSize: number,
+    nowMs: number = Date.now(),
+  ): number {
     let remaining = soldSize;
     let closedCount = 0;
     for (const position of [...this.openPositions]) {
@@ -672,7 +732,7 @@ export class TradeTracker {
       const proceeds = Math.round(closeSize * sellPrice * 100) / 100;
       if (closeSize >= position.size) {
         position.status = "sold";
-        position.resolvedAt = Date.now();
+        position.resolvedAt = nowMs;
         position.pnl = round2(proceeds - position.cost);
         this.resolvePosition(position);
         closedCount++;
@@ -687,11 +747,11 @@ export class TradeTracker {
         this.positionsRepo?.insert(position);
         const sold: SimulatedPosition = {
           ...position,
-          id: `${position.id}:sold-${Date.now()}`,
+          id: `${position.id}:sold-${nowMs}`,
           size: closeSize,
           cost: Math.round(position.fillPrice * closeSize * 100) / 100,
           status: "sold",
-          resolvedAt: Date.now(),
+          resolvedAt: nowMs,
           pnl: round2(proceeds - Math.round(position.fillPrice * closeSize * 100) / 100),
         };
         this.openPositions.push(sold);

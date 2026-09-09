@@ -29,6 +29,7 @@ export interface TokenBook {
   bestBid: number | null;
   bestAsk: number | null;
   bestAskSize: number | null;
+  bestBidSize: number | null;
 }
 
 export interface TradeOpportunity {
@@ -155,6 +156,8 @@ export interface BotConfig {
   edgeCheapMargin: number;
   /** Edge-lead : budget USDC de l'ordre edge (size = budget / prix edge). */
   edgeOrderUsdc: number;
+  /** Edge-lead : plafond de shares de l'ordre edge (le cheap reste sur maxSharesPerOrder). */
+  maxShareEdge: number;
   /** Edge-lead : budget USDC de l'ordre cheap (size = budget / ask cheap). Indépendant de l'edge. */
   edgeCheapOrderUsdc: number;
   /** Edge-lead : ask cheap minimum pour poster. */
@@ -335,6 +338,18 @@ export interface MarketTradesResponse {
   trades: TradePoint[];
 }
 
+/** Fill Data API du wallet (pas la table locale `positions`). */
+export interface WalletTrade extends TradePoint {
+  conditionId: string;
+  slug: string;
+  eventSlug: string;
+}
+
+export interface WalletTradesResponse {
+  trades: WalletTrade[];
+  configured: boolean;
+}
+
 /** Fill enregistré par le bot (table `orders`, filled=1). */
 export interface BotFillPoint extends TradePoint {
   tokenId: string;
@@ -355,4 +370,117 @@ export interface BookSnapshotPoint {
 
 export interface LocalBookSnapshotResponse {
   snapshots: BookSnapshotPoint[];
+}
+
+export type StrategyId = "arb" | "barbell" | "edge-lead";
+
+export interface BacktestWindowMeta {
+  eventSlug: string;
+  eventTitle: string;
+  windowStart: number;
+  windowEnd: number;
+  complete: boolean;
+  tickCount: number;
+  expectedTicks: number;
+  maxGapMs: number;
+  coveragePct: number;
+  gapCount: number;
+  firstTs?: number | null;
+  lastTs?: number | null;
+  upTokenId: string | null;
+  downTokenId: string | null;
+  conditionId: string | null;
+}
+
+export interface BacktestSeriesPoint {
+  t: number;
+  upMid: number | null;
+  downMid: number | null;
+}
+
+export interface BacktestProgress {
+  runId: string;
+  status: "running" | "done" | "error" | "cancelled";
+  current: number;
+  total: number;
+  eventSlug: string | null;
+  pct: number;
+  error?: string;
+}
+
+export interface BacktestWindowResult {
+  eventSlug: string;
+  pnl: number | null;
+  tradeCount: number;
+  unresolved: boolean;
+}
+
+export interface CompletenessRequest {
+  requireMinTicks?: boolean;
+  minTicks?: number;
+  requireMaxGap?: boolean;
+  maxGapMs?: number;
+  requireEdge?: boolean;
+  maxEdgeGapMs?: number;
+}
+
+export interface BacktestRunRequestSummary {
+  strategyId?: StrategyId;
+  presetId?: string;
+  useCurrentConfig: boolean;
+  completeOnly: boolean;
+  completeness?: CompletenessRequest;
+  settings?: Partial<BotConfig>;
+}
+
+export interface BacktestRunSummary {
+  id: string;
+  startedAt: number;
+  finishedAt: number | null;
+  status: BacktestProgress["status"] | string;
+  request: BacktestRunRequestSummary | null;
+  result: BacktestResult | null;
+  error: string | null;
+}
+
+export interface BacktestResult {
+  runId: string;
+  strategyId: StrategyId;
+  capitalStart: number;
+  capitalEnd: number;
+  pnl: number;
+  windowsTested: number;
+  windowsSkippedIncomplete: number;
+  unresolvedWindows: number;
+  fillCount: number;
+  rejectCount: number;
+  coveredPairs: number;
+  uncoveredPairs: number;
+  windows: BacktestWindowResult[];
+}
+
+export interface BacktestPositionRow {
+  id: string;
+  runId: string;
+  ts: number;
+  eventSlug: string;
+  eventTitle: string;
+  tokenId: string;
+  outcome: string;
+  outcomeIndex: number;
+  kind: string;
+  side: string;
+  limitPrice: number;
+  fillPrice: number;
+  size: number;
+  cost: number;
+  windowEnd: number;
+  status: string;
+  resolvedAt: number | null;
+  pnl: number | null;
+  fillReason: string | null;
+  pairId: string;
+  bestAskAtFill: number | null;
+  orderType: string | null;
+  strategyId: string | null;
 }

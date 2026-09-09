@@ -21,6 +21,7 @@ function edgeConfig(overrides: Record<string, unknown> = {}) {
     edgeMaxDownTick: 0.01,
     edgeCheapMargin: 0.01,
     edgeOrderUsdc: 25,
+    maxShareEdge: 40,
     edgeCheapOrderUsdc: 5,
     edgeCheapBandMin: 0.04,
     edgeCheapBandMax: 0.14,
@@ -156,6 +157,12 @@ describe("computeEdgeLeadEdgeSize / computeEdgeLeadCheapSize", () => {
       computeEdgeLeadEdgeSize(config, 0.85),
       computeSize(25, 0.85, 40),
     );
+  });
+
+  it("caps the edge at maxShareEdge independently of maxSharesPerOrder", () => {
+    const config = edgeConfig({ maxShareEdge: 10, maxSharesPerOrder: 40 });
+    assert.equal(computeEdgeLeadEdgeSize(config, 0.85), computeSize(25, 0.85, 10));
+    assert.equal(computeEdgeLeadCheapSize(config, 0.05), computeSize(5, 0.05, 40));
   });
 
   it("sizes the cheap from edgeCheapOrderUsdc independently of the edge size", () => {

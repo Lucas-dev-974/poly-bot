@@ -182,4 +182,96 @@ describe("TradeTracker", () => {
     assert.equal(tracker.getOpenPositions()[0]?.strategyId, undefined);
     db.close();
   });
+
+  it("counts a GTC remainder after a partial fill", () => {
+    const tracker = new TradeTracker();
+    const pairId = "btc-updown-15m-1000:1900";
+    tracker.recordPostedOrder("k-cheap", "btc-updown-15m-1000", 1900, 2, undefined, {
+      eventSlug: "btc-updown-15m-1000",
+      windowEnd: 1900,
+      tokenId: "t-down",
+      outcome: "Down",
+      outcomeIndex: 1,
+      kind: "cheap",
+      limitPrice: 0.1,
+      size: 20,
+      pairId,
+      eventTitle: "BTC",
+      bestAskAtFill: 0.09,
+    });
+    tracker.addOpenPosition(
+      pos({ id: "bt-1", kind: "cheap", status: "open", size: 5, cost: 0.45, fillPrice: 0.09 }),
+    );
+    tracker.updatePostedRemainder("k-cheap", 15, 1.5);
+    assert.equal(tracker.getCheapSizeForPair(pairId), 20);
+    assert.equal(tracker.getRestingExposure(), 1.5);
+    assert.equal(tracker.getOpenExposure(), 0.45);
+  });
+
+  it("does not double-count a full fill still sitting in postedOrders", () => {
+    const tracker = new TradeTracker();
+    const pairId = "btc-updown-15m-1000:1900";
+    tracker.recordPostedOrder("k-cheap", "btc-updown-15m-1000", 1900, 2, undefined, {
+      eventSlug: "btc-updown-15m-1000",
+      windowEnd: 1900,
+      tokenId: "t-down",
+      outcome: "Down",
+      outcomeIndex: 1,
+      kind: "cheap",
+      limitPrice: 0.1,
+      size: 20,
+      pairId,
+      eventTitle: "BTC",
+      bestAskAtFill: 0.1,
+    });
+    tracker.addOpenPosition(pos({ id: "bt-1", kind: "cheap", status: "open", size: 20, cost: 2 }));
+    assert.equal(tracker.getCheapSizeForPair(pairId), 20);
+    assert.equal(tracker.getRestingExposure(), 0);
+  });
+
+  it("skips a live crash duplicate by orderId", () => {
+    const tracker = new TradeTracker();
+    const pairId = "btc-updown-15m-1000:1900";
+    tracker.recordPostedOrder("k-cheap", "btc-updown-15m-1000", 1900, 2, "abc", {
+      eventSlug: "btc-updown-15m-1000",
+      windowEnd: 1900,
+      tokenId: "t-down",
+      outcome: "Down",
+      outcomeIndex: 1,
+      kind: "cheap",
+      limitPrice: 0.1,
+      size: 20,
+      pairId,
+      eventTitle: "BTC",
+      bestAskAtFill: 0.1,
+    });
+    tracker.addOpenPosition(
+      pos({ id: "live:abc", kind: "cheap", status: "open", size: 20, cost: 2 }),
+    );
+    assert.equal(tracker.getCheapSizeForPair(pairId), 20);
+    assert.equal(tracker.getRestingExposure(), 0);
+  });
+
+  it("counts a second live GTC with a different orderId", () => {
+    const tracker = new TradeTracker();
+    const pairId = "btc-updown-15m-1000:1900";
+    tracker.addOpenPosition(
+      pos({ id: "live:abc", kind: "cheap", status: "open", size: 20, cost: 2 }),
+    );
+    tracker.recordPostedOrder("k-2", "btc-updown-15m-1000", 1900, 1, "xyz", {
+      eventSlug: "btc-updown-15m-1000",
+      windowEnd: 1900,
+      tokenId: "t-down",
+      outcome: "Down",
+      outcomeIndex: 1,
+      kind: "cheap",
+      limitPrice: 0.1,
+      size: 10,
+      pairId,
+      eventTitle: "BTC",
+      bestAskAtFill: 0.1,
+    });
+    assert.equal(tracker.getCheapSizeForPair(pairId), 30);
+    assert.equal(tracker.getRestingExposure(), 1);
+  });
 });

@@ -33,6 +33,7 @@ describe("strategy presets", () => {
     assert.equal(edgeLead.strategyId, "edge-lead");
     assert.equal(edgeLead.settings.strategyId, "edge-lead");
     assert.equal(edgeLead.settings.pollIntervalMs, 1000);
+    assert.equal(edgeLead.settings.maxShareEdge, 40);
   });
 
   it("filters bundled presets by engine", () => {

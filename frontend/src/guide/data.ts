@@ -88,6 +88,7 @@ export const EDGE_LEAD_PARAM_ROWS: [string, string][] = [
   ["edgeMaxDownTick", "Drop tick-à-tick max toléré dans la série"],
   ["edgeCheapBandMin / edgeCheapBandMax", "Bande ask cheap pour poster (après fill edge)"],
   ["edgeOrderUsdc", "Budget USDC du favori (size = budget / ask edge)"],
+  ["maxShareEdge", "Plafond de shares de l'ordre edge (le cheap reste sur maxSharesPerOrder)"],
   ["edgeCheapOrderUsdc", "Budget USDC de l'outsider (size = budget / ask cheap)"],
 ];
 
@@ -147,6 +148,7 @@ export const NEW_FILES: [string, string][] = [
   ["src/strategy/edge-lead-strategy.ts", "Politique favori d'abord + budgets USDC"],
   ["src/strategy/barbell-sizing.ts", "pairLockOk toujours true"],
   ["src/strategy/registry.ts", "createStrategy(id)"],
+  ["src/backtest/", "Replayer book_snapshots + page /backtest"],
 ];
 
 export const TODOS = [
@@ -158,6 +160,7 @@ export const TODOS = [
   { id: "presets-bind", content: "strategyId obligatoire sur les presets (les 2 = arb)", done: true },
   { id: "position-strategy", content: "positions.strategyId persisté + colonne Moteur", done: true },
   { id: "tests-docs", content: "Tests + README / STRATEGY.md", done: true },
+  { id: "backtest", content: "Page /backtest + replayer TOB déterministe", done: true },
 ];
 
 export type LifeTone = "neutral" | "accent" | "success" | "danger" | "warning";

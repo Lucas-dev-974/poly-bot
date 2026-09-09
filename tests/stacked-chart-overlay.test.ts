@@ -1,0 +1,108 @@
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import {
+  diamondPoints,
+  isOverlayPosition,
+  marketRealizedPnl,
+  matchWalletTradesToWindows,
+  overlayMarksForWindow,
+  toChartTimeSec,
+  trianglePoints,
+} from "../frontend/src/utils/stacked-chart.ts";
+
+describe("stacked chart position overlay", () => {
+  it("converts millisecond fill timestamps to chart seconds", () => {
+    assert.equal(toChartTimeSec(1_800_000_000_000), 1_800_000_000);
+    assert.equal(toChartTimeSec(1_800_000_000), 1_800_000_000);
+    assert.equal(toChartTimeSec(0), 0);
+  });
+
+  it("skips sold-clone rows and empty timestamps", () => {
+    assert.equal(
+      isOverlayPosition({ id: "run:key:sold-1800000000000", ts: 1_800_000_000_000, fillPrice: 0.42 }),
+      false,
+    );
+    assert.equal(isOverlayPosition({ id: "run:key:1800000000000", ts: 0, fillPrice: 0.42 }), false);
+    assert.equal(
+      isOverlayPosition({ id: "run:key:1800000000000", ts: 1_800_000_000_000, fillPrice: 0.42 }),
+      true,
+    );
+  });
+
+  it("keeps fills that fall inside the window", () => {
+    const start = 1_800_000_000;
+    const end = start + 900;
+    const rows = [
+      { id: "in", ts: (start + 10) * 1000, fillPrice: 0.4 },
+      { id: "out", ts: (end + 10) * 1000, fillPrice: 0.4 },
+      { id: "run:key:sold-1", ts: (start + 20) * 1000, fillPrice: 0.4 },
+    ];
+    const marks = overlayMarksForWindow(rows, start, end);
+    assert.deepEqual(marks.map((row) => row.id), ["in"]);
+  });
+
+  it("builds an up triangle around the fill point", () => {
+    assert.equal(trianglePoints(10, 20, 4, true), "10,16 6,24 14,24");
+  });
+
+  it("builds a diamond around the wallet fill", () => {
+    assert.equal(diamondPoints(10, 20, 4), "10,16 14,20 10,24 6,20");
+  });
+
+  it("matches wallet trades to windows by slug or conditionId", () => {
+    const windows = [
+      { eventSlug: "btc-updown-15m-1000", conditionId: "0xabc" },
+      { eventSlug: "eth-updown-15m-1000", conditionId: "0xdef" },
+    ];
+    const trades = [
+      {
+        timestamp: 1001,
+        price: 0.4,
+        size: 10,
+        side: "BUY" as const,
+        outcome: "Up",
+        outcomeIndex: 0,
+        conditionId: "",
+        slug: "",
+        eventSlug: "btc-updown-15m-1000",
+      },
+      {
+        timestamp: 1002,
+        price: 0.6,
+        size: 5,
+        side: "SELL" as const,
+        outcome: "Down",
+        outcomeIndex: 1,
+        conditionId: "0xDEF",
+        slug: "eth-updown-15m-1000",
+        eventSlug: "other",
+      },
+      {
+        timestamp: 1003,
+        price: 0.5,
+        size: 1,
+        side: "BUY" as const,
+        outcome: "Up",
+        outcomeIndex: 0,
+        conditionId: "0xzzz",
+        slug: "sol-updown-15m-1000",
+        eventSlug: "sol-updown-15m-1000",
+      },
+    ];
+    const marks = matchWalletTradesToWindows(trades, windows);
+    assert.deepEqual(
+      marks.map((row) => row.eventSlug),
+      ["btc-updown-15m-1000", "eth-updown-15m-1000"],
+    );
+    assert.equal(marks[1]?.fillPrice, 0.6);
+  });
+
+  it("sums realized market PnL and ignores open legs", () => {
+    assert.equal(marketRealizedPnl([]), null);
+    assert.equal(marketRealizedPnl([{ pnl: null }, { pnl: null }]), null);
+    assert.equal(
+      marketRealizedPnl([{ pnl: 1.25 }, { pnl: -0.4 }, { pnl: null }]),
+      0.85,
+    );
+  });
+});

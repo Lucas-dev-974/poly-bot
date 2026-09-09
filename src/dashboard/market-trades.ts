@@ -10,16 +10,48 @@ export interface TradePoint {
   outcomeIndex: number;
 }
 
+/** Fill Data API du wallet, avec identifiants de marché pour le matching chart. */
+export interface WalletTrade extends TradePoint {
+  conditionId: string;
+  slug: string;
+  eventSlug: string;
+}
+
 const FETCH_TIMEOUT_MS = 10_000;
 const CACHE_TTL_MS = 60_000;
 const CACHE_MAX_ENTRIES = 100;
+const RANGE_PAGE_SIZE = 500;
+const RANGE_MAX_OFFSET = 10_000;
 
 interface CacheEntry {
   expiresAt: number;
   value: TradePoint[];
 }
 
+interface RangeCacheEntry {
+  expiresAt: number;
+  value: WalletTrade[];
+}
+
+interface RawTrade {
+  side?: string;
+  price?: number | string;
+  size?: number | string;
+  timestamp?: number | string;
+  outcome?: string;
+  outcomeIndex?: number | string;
+  conditionId?: string;
+  slug?: string;
+  eventSlug?: string;
+}
+
 const cache = new Map<string, CacheEntry>();
+const rangeCache = new Map<string, RangeCacheEntry>();
+
+export function clearMarketTradesCache(): void {
+  cache.clear();
+  rangeCache.clear();
+}
 
 function cacheGet(key: string): TradePoint[] | null {
   const entry = cache.get(key);
@@ -39,6 +71,24 @@ function cacheSet(key: string, value: TradePoint[]): void {
   cache.set(key, { expiresAt: Date.now() + CACHE_TTL_MS, value });
 }
 
+function rangeCacheGet(key: string): WalletTrade[] | null {
+  const entry = rangeCache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    rangeCache.delete(key);
+    return null;
+  }
+  return entry.value;
+}
+
+function rangeCacheSet(key: string, value: WalletTrade[]): void {
+  if (rangeCache.size >= CACHE_MAX_ENTRIES) {
+    const oldest = rangeCache.keys().next().value;
+    if (oldest !== undefined) rangeCache.delete(oldest);
+  }
+  rangeCache.set(key, { expiresAt: Date.now() + CACHE_TTL_MS, value });
+}
+
 async function fetchJson<T>(url: URL): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -53,13 +103,47 @@ async function fetchJson<T>(url: URL): Promise<T> {
   }
 }
 
-interface RawTrade {
-  side?: string;
-  price?: number | string;
-  size?: number | string;
-  timestamp?: number | string;
-  outcome?: string;
-  outcomeIndex?: number | string;
+export function toUnixSec(ts: number): number {
+  if (!Number.isFinite(ts) || ts <= 0) return 0;
+  return ts > 1_000_000_000_000 ? Math.floor(ts / 1000) : Math.floor(ts);
+}
+
+export function parseWalletTrade(raw: RawTrade): WalletTrade | null {
+  if (raw.side !== "BUY" && raw.side !== "SELL") return null;
+  const timestamp = toUnixSec(Number(raw.timestamp ?? 0));
+  const price = Number(raw.price ?? 0);
+  const size = Number(raw.size ?? 0);
+  if (timestamp <= 0 || !Number.isFinite(price) || !Number.isFinite(size) || size <= 0) {
+    return null;
+  }
+  return {
+    timestamp,
+    price,
+    size,
+    side: raw.side,
+    outcome: String(raw.outcome ?? ""),
+    outcomeIndex: Number(raw.outcomeIndex ?? 0),
+    conditionId: String(raw.conditionId ?? ""),
+    slug: String(raw.slug ?? ""),
+    eventSlug: String(raw.eventSlug ?? ""),
+  };
+}
+
+export function walletTradesUrl(
+  host: string,
+  user: string,
+  startSec: number,
+  endSec: number,
+  offset: number,
+): URL {
+  const url = new URL("/trades", host);
+  url.searchParams.set("user", user);
+  url.searchParams.set("start", String(startSec));
+  url.searchParams.set("end", String(endSec));
+  url.searchParams.set("takerOnly", "false");
+  url.searchParams.set("limit", String(RANGE_PAGE_SIZE));
+  url.searchParams.set("offset", String(offset));
+  return url;
 }
 
 /**
@@ -100,5 +184,47 @@ export async function getMarketTrades(
     .sort((a, b) => a.timestamp - b.timestamp);
 
   cacheSet(cacheKey, trades);
+  return trades;
+}
+
+/**
+ * Fills du wallet sur [startSec, endSec] (epoch seconds, inclusif).
+ * Un seul filtrage user+fenêtre — pas un HTTP par marché.
+ * takerOnly=false : les GTC maker du bot doivent apparaître.
+ */
+export async function getWalletTradesInRange(
+  config: BotConfig,
+  startSec: number,
+  endSec: number,
+): Promise<WalletTrade[]> {
+  if (!config.funderAddress) return [];
+  if (!Number.isFinite(startSec) || !Number.isFinite(endSec) || endSec < startSec) return [];
+
+  const start = Math.floor(startSec);
+  const end = Math.floor(endSec) + 1;
+  const cacheKey = `wallet-range:${config.funderAddress}:${start}:${end}`;
+  const cached = rangeCacheGet(cacheKey);
+  if (cached) return cached;
+
+  const trades: WalletTrade[] = [];
+  for (let offset = 0; offset <= RANGE_MAX_OFFSET; offset += RANGE_PAGE_SIZE) {
+    const url = walletTradesUrl(
+      config.dataApiHost,
+      config.funderAddress,
+      start,
+      end,
+      offset,
+    );
+    const raw = await fetchJson<RawTrade[]>(url);
+    const page = Array.isArray(raw) ? raw : [];
+    for (const row of page) {
+      const parsed = parseWalletTrade(row);
+      if (parsed) trades.push(parsed);
+    }
+    if (page.length < RANGE_PAGE_SIZE) break;
+  }
+
+  trades.sort((a, b) => a.timestamp - b.timestamp);
+  rangeCacheSet(cacheKey, trades);
   return trades;
 }

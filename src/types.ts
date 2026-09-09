@@ -28,6 +28,8 @@ export interface TokenBook {
   bestBid: number | null;
   bestAsk: number | null;
   bestAskSize: number | null;
+  /** Size at the best bid. Null when unknown (legacy snapshots). */
+  bestBidSize: number | null;
 }
 
 export interface TradeOpportunity {

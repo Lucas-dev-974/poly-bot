@@ -17,6 +17,7 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     expensiveOrderUsdc: 3,
     expensiveOrderType: "GTC",
     maxSharesPerOrder: 20,
+    edgeBandMin: 0.85,
     maxOpenPositionsPerSide: 1,
     maxExposureUsdc: 45,
     minutesBeforeCloseMin: 0,
@@ -52,6 +53,7 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     edgeMaxDownTick: 0.01,
     edgeCheapMargin: 0.01,
     edgeOrderUsdc: 15,
+    maxShareEdge: 20,
     edgeCheapOrderUsdc: 5,
     edgeCheapBandMin: 0.04,
     edgeCheapBandMax: 0.14,
@@ -87,6 +89,7 @@ export function books(upAsk: number, downAsk: number, size = 50): TokenBook[] {
       bestBid: upAsk - 0.01,
       bestAsk: upAsk,
       bestAskSize: size,
+      bestBidSize: size,
     },
     {
       tokenId: "t-down",
@@ -95,6 +98,7 @@ export function books(upAsk: number, downAsk: number, size = 50): TokenBook[] {
       bestBid: downAsk - 0.01,
       bestAsk: downAsk,
       bestAskSize: size,
+      bestBidSize: size,
     },
   ];
 }

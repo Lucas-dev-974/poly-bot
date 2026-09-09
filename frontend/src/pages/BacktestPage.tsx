@@ -1,0 +1,717 @@
+import { For, Show, createEffect, createMemo, createSignal, onMount } from "solid-js";
+import type { JSX } from "solid-js";
+import { api } from "../api/client";
+import { BacktestPresetPanel } from "../components/backtest/BacktestPresetPanel";
+import { BacktestResultModal } from "../components/backtest/BacktestResultModal";
+import { BacktestRunList } from "../components/backtest/BacktestRunList";
+import { StackedMarketChart } from "../components/backtest/StackedMarketChart";
+import {
+  STRATEGY_PRESETS,
+  presetsForStrategy,
+  type StrategyId,
+} from "../config/strategyPresets";
+import { navigate } from "../router";
+import { setConfig } from "../stores/botStore";
+import type {
+  BacktestPositionRow,
+  BacktestProgress,
+  BacktestResult,
+  BacktestRunSummary,
+  BacktestSeriesPoint,
+  BacktestWindowMeta,
+  BotConfig,
+  CompletenessRequest,
+} from "../types";
+import { settingsForRun } from "../utils/backtest-preset";
+import { matchWalletTradesToWindows, type WalletOverlayMark } from "../utils/stacked-chart";
+import {
+  applySettingsToForm,
+  formToSettings,
+  validateConfigForm,
+  type ConfigFormState,
+} from "../utils/configForm";
+
+export function BacktestPage(): JSX.Element {
+  const [windows, setWindows] = createSignal<BacktestWindowMeta[]>([]);
+  const [series, setSeries] = createSignal<Record<string, BacktestSeriesPoint[]>>({});
+  const [completeOnly, setCompleteOnly] = createSignal(true);
+  const [minTicksOn, setMinTicksOn] = createSignal(true);
+  const [minTicks, setMinTicks] = createSignal("855");
+  const [maxGapOn, setMaxGapOn] = createSignal(true);
+  const [maxGapSec, setMaxGapSec] = createSignal("2");
+  const [edgeOn, setEdgeOn] = createSignal(true);
+  const [edgeSec, setEdgeSec] = createSignal("2");
+  const [cutGaps, setCutGaps] = createSignal(true);
+  const [dateKey, setDateKey] = createSignal("all");
+  const [prefix, setPrefix] = createSignal("");
+  const [engine, setEngine] = createSignal<StrategyId>("arb");
+  const [historyEngineOnly, setHistoryEngineOnly] = createSignal(true);
+  const [presetId, setPresetId] = createSignal<string>("conservative");
+  const [liveConfig, setLiveConfig] = createSignal<BotConfig | null>(null);
+  const [form, setForm] = createSignal<ConfigFormState | null>(null);
+  const [persistence, setPersistence] = createSignal(true);
+  const [progress, setProgress] = createSignal<BacktestProgress | null>(null);
+  const [result, setResult] = createSignal<BacktestResult | null>(null);
+  const [positions, setPositions] = createSignal<BacktestPositionRow[]>([]);
+  const [runs, setRuns] = createSignal<BacktestRunSummary[]>([]);
+  const [resultStartedAt, setResultStartedAt] = createSignal<number | null>(null);
+  const [dialogOpen, setDialogOpen] = createSignal(false);
+  const [openingId, setOpeningId] = createSignal<string | null>(null);
+  const [selectedRun, setSelectedRun] = createSignal<BacktestRunSummary | null>(null);
+  const [chartRunId, setChartRunId] = createSignal<string | null>(null);
+  const [chartPositions, setChartPositions] = createSignal<BacktestPositionRow[]>([]);
+  const [chartLoadingId, setChartLoadingId] = createSignal<string | null>(null);
+  const [walletOn, setWalletOn] = createSignal(false);
+  const [walletMarks, setWalletMarks] = createSignal<WalletOverlayMark[]>([]);
+  const [walletLoading, setWalletLoading] = createSignal(false);
+  const [walletConfigured, setWalletConfigured] = createSignal<boolean | undefined>(undefined);
+  const [error, setError] = createSignal<string | null>(null);
+  const [saving, setSaving] = createSignal(false);
+  const [saveMsg, setSaveMsg] = createSignal<string | null>(null);
+  const [saveErr, setSaveErr] = createSignal<string | null>(null);
+  const [applying, setApplying] = createSignal(false);
+  const [applyMsg, setApplyMsg] = createSignal<string | null>(null);
+  const [applyErr, setApplyErr] = createSignal<string | null>(null);
+  let pollTimer: number | undefined;
+  let windowsTimer: number | undefined;
+  let pollGen = 0;
+  let chartGen = 0;
+  let walletGen = 0;
+  const loadedSlugs = new Set<string>();
+
+  const dates = createMemo(() => {
+    const keys = new Set<string>();
+    for (const w of windows()) {
+      keys.add(dayKey(w.windowStart));
+    }
+    return [...keys].sort().reverse();
+  });
+
+  const filtered = createMemo(() => {
+    const key = dateKey();
+    const p = prefix();
+    return windows().filter((w) => {
+      if (key !== "all" && dayKey(w.windowStart) !== key) return false;
+      if (p && !w.eventSlug.startsWith(p)) return false;
+      return true;
+    });
+  });
+
+  const presets = createMemo(() => presetsForStrategy(engine()));
+  const canApplySelected = createMemo(() => settingsForRun(selectedRun()) != null);
+
+  function loadPresetIntoForm(id: string, strategyId: StrategyId): void {
+    const base = liveConfig();
+    if (!base) return;
+    const preset = STRATEGY_PRESETS.find((p) => p.id === id);
+    if (!preset) {
+      setForm(applySettingsToForm(base, { strategyId }));
+      return;
+    }
+    setForm(applySettingsToForm(base, { ...preset.settings, strategyId: preset.strategyId }));
+  }
+
+  function updateForm<K extends keyof ConfigFormState>(key: K, value: ConfigFormState[K]): void {
+    setForm((prev) => (prev ? { ...prev, [key]: value } : prev));
+    setPresetId("");
+    setSaveMsg(null);
+    setSaveErr(null);
+  }
+
+  async function savePresetLive(): Promise<void> {
+    const f = form();
+    const base = liveConfig();
+    if (!f || !base) return;
+    const errors = validateConfigForm(f, base.dryRun);
+    if (errors.length > 0) {
+      setSaveErr(errors[0] ?? "Formulaire invalide");
+      setSaveMsg(null);
+      return;
+    }
+    setSaving(true);
+    setSaveErr(null);
+    setSaveMsg(null);
+    try {
+      const res = await api.updateConfig(formToSettings(f));
+      if (res.config) {
+        setLiveConfig(res.config);
+        setConfig(res.config);
+      }
+      setSaveMsg("Enregistré pour le live");
+    } catch (err) {
+      setSaveErr(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  function loadLiveIntoForm(): void {
+    const base = liveConfig();
+    if (!base) return;
+    setForm(applySettingsToForm(base, { strategyId: base.strategyId ?? engine() }));
+    setEngine(base.strategyId ?? "arb");
+    setPresetId("");
+    setSaveMsg("Config live chargée");
+    setSaveErr(null);
+  }
+
+  async function applySelectedPreset(): Promise<void> {
+    const patch = settingsForRun(selectedRun());
+    if (!patch) {
+      setApplyErr("Preset indisponible pour ce run");
+      return;
+    }
+    setApplying(true);
+    setApplyErr(null);
+    setApplyMsg(null);
+    try {
+      const res = await api.updateConfig(patch);
+      if (res.config) {
+        setLiveConfig(res.config);
+        setConfig(res.config);
+        setForm(applySettingsToForm(res.config, patch));
+        setEngine(patch.strategyId ?? res.config.strategyId ?? "arb");
+        setPresetId("");
+      }
+      setApplyMsg("Preset appliqué au live");
+    } catch (err) {
+      setApplyErr(err instanceof Error ? err.message : String(err));
+    } finally {
+      setApplying(false);
+    }
+  }
+
+  function completenessPayload(): CompletenessRequest {
+    const ticks = Number(minTicks());
+    const gapSec = Number(maxGapSec());
+    const edge = Number(edgeSec());
+    return {
+      requireMinTicks: minTicksOn(),
+      minTicks: Number.isFinite(ticks) && ticks >= 1 ? Math.round(ticks) : 855,
+      requireMaxGap: maxGapOn(),
+      maxGapMs: Number.isFinite(gapSec) && gapSec > 0 ? Math.round(gapSec * 1000) : 2000,
+      requireEdge: edgeOn(),
+      maxEdgeGapMs: Number.isFinite(edge) && edge > 0 ? Math.round(edge * 1000) : 2000,
+    };
+  }
+
+  function reloadWindowsSoon(): void {
+    window.clearTimeout(windowsTimer);
+    windowsTimer = window.setTimeout(() => {
+      void loadWindows();
+    }, 400);
+  }
+
+  async function loadWindows(): Promise<void> {
+    window.clearTimeout(windowsTimer);
+    const res = await api.backtestWindows({
+      completeOnly: completeOnly(),
+      completeness: completenessPayload(),
+    });
+    setWindows(res.windows);
+    loadedSlugs.clear();
+    setSeries({});
+    void loadVisible(res.windows.slice(0, 20).map((w) => w.eventSlug));
+  }
+
+  async function loadVisible(slugs: string[]): Promise<void> {
+    const missing = slugs.filter((s) => !loadedSlugs.has(s));
+    if (missing.length === 0) return;
+    const res = await api.backtestSeries(missing);
+    for (const slug of missing) loadedSlugs.add(slug);
+    setSeries((prev) => ({ ...prev, ...res.series }));
+  }
+
+  async function loadWalletTrades(list: BacktestWindowMeta[]): Promise<void> {
+    const gen = ++walletGen;
+    if (list.length === 0) {
+      setWalletMarks([]);
+      setWalletLoading(false);
+      return;
+    }
+    setWalletLoading(true);
+    try {
+      const from = Math.min(...list.map((w) => w.windowStart));
+      const to = Math.max(...list.map((w) => w.windowEnd));
+      const res = await api.backtestWalletTrades(from, to);
+      if (gen !== walletGen) return;
+      setWalletConfigured(res.configured);
+      setWalletMarks(matchWalletTradesToWindows(res.trades, list));
+    } catch (err) {
+      if (gen !== walletGen) return;
+      setWalletMarks([]);
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      if (gen === walletGen) setWalletLoading(false);
+    }
+  }
+
+  async function loadRuns(): Promise<BacktestRunSummary[]> {
+    try {
+      const res = await api.backtestRuns(20);
+      setRuns(res.runs);
+      return res.runs;
+    } catch {
+      return runs();
+    }
+  }
+
+  async function openRun(run: BacktestRunSummary): Promise<void> {
+    setError(null);
+    setOpeningId(run.id);
+    try {
+      const st = await api.backtestStatus(run.id);
+      if (!st.result) {
+        setError(st.progress.error ?? "Résultat indisponible");
+        return;
+      }
+      setResult(st.result);
+      setPositions(st.positions);
+      if (chartRunId() === run.id) setChartPositions(st.positions);
+      setResultStartedAt(run.startedAt);
+      setSelectedRun({
+        ...run,
+        request: st.request ?? run.request,
+      });
+      setApplyMsg(null);
+      setApplyErr(null);
+      setDialogOpen(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setOpeningId(null);
+    }
+  }
+
+  async function launch(): Promise<void> {
+    setError(null);
+    const current = form();
+    if (!current) {
+      setError("Preset non chargé");
+      return;
+    }
+    const errors = validateConfigForm(current, true);
+    if (errors.length > 0) {
+      setError(errors[0] ?? "Preset invalide");
+      return;
+    }
+    const range = dateRange(dateKey(), filtered());
+    try {
+      const settings = formToSettings(current);
+      const body = {
+        strategyId: current.strategyId,
+        completeOnly: completeOnly(),
+        completeness: completenessPayload(),
+        from: range?.from,
+        to: range?.to,
+        prefixes: prefix() ? [prefix()] : undefined,
+        presetId: presetId() || undefined,
+        settings,
+      };
+      const started = await api.backtestStart(body);
+      setProgress({
+        runId: started.runId,
+        status: "running",
+        current: 0,
+        total: 0,
+        eventSlug: null,
+        pct: 0,
+      });
+      await loadRuns();
+      poll(started.runId);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  function poll(id: string): void {
+    window.clearInterval(pollTimer);
+    const gen = ++pollGen;
+    const tick = async (): Promise<void> => {
+      if (gen !== pollGen) return;
+      try {
+        const st = await api.backtestStatus(id);
+        if (gen !== pollGen) return;
+        setProgress(st.progress);
+        if (st.progress.status === "running") return;
+        window.clearInterval(pollTimer);
+        const list = await loadRuns();
+        if (gen !== pollGen) return;
+        if (chartRunId() === id) setChartPositions(st.positions);
+        const viewingOther = dialogOpen() && selectedRun()?.id !== id;
+        if (viewingOther) return;
+        setResult(st.result);
+        setPositions(st.positions);
+        if (st.progress.status === "done") {
+          const row = list.find((r) => r.id === id) ?? null;
+          setSelectedRun(
+            row ? { ...row, request: st.request ?? row.request } : row,
+          );
+          setResultStartedAt(row?.startedAt ?? Date.now());
+          setApplyMsg(null);
+          setApplyErr(null);
+          setDialogOpen(true);
+        }
+        if (st.progress.status === "error") setError(st.progress.error ?? "Erreur backtest");
+      } catch (err) {
+        if (gen !== pollGen) return;
+        window.clearInterval(pollTimer);
+        setError(err instanceof Error ? err.message : String(err));
+      }
+    };
+    void tick();
+    pollTimer = window.setInterval(() => {
+      void tick();
+    }, 250);
+  }
+
+  async function toggleChartRun(run: BacktestRunSummary): Promise<void> {
+    if (chartRunId() === run.id) {
+      chartGen += 1;
+      setChartRunId(null);
+      setChartPositions([]);
+      setChartLoadingId(null);
+      return;
+    }
+    const gen = ++chartGen;
+    setChartRunId(run.id);
+    if (selectedRun()?.id === run.id) {
+      setChartPositions(positions());
+    } else {
+      setChartPositions([]);
+    }
+    setChartLoadingId(run.id);
+    setError(null);
+    try {
+      const st = await api.backtestStatus(run.id);
+      if (gen !== chartGen) return;
+      setChartPositions(st.positions);
+    } catch (err) {
+      if (gen !== chartGen) return;
+      setChartRunId(null);
+      setChartPositions([]);
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      if (gen === chartGen) setChartLoadingId(null);
+    }
+  }
+
+  onMount(() => {
+    void (async () => {
+      try {
+        const cfg = await api.config();
+        setLiveConfig(cfg.config);
+        setPersistence(cfg.config.persistenceEnabled !== false);
+        setWalletConfigured(Boolean((cfg.config as { funderAddress?: string }).funderAddress));
+        const sid = cfg.config.strategyId ?? "arb";
+        setEngine(sid);
+        const first = presetsForStrategy(sid)[0];
+        setPresetId(first?.id ?? "");
+        if (first) loadPresetIntoForm(first.id, sid);
+        else setForm(applySettingsToForm(cfg.config, { strategyId: sid }));
+      } catch {
+        /* ignore */
+      }
+      await loadWindows();
+      await loadRuns();
+    })();
+    return () => {
+      pollGen += 1;
+      chartGen += 1;
+      walletGen += 1;
+      window.clearInterval(pollTimer);
+      window.clearTimeout(windowsTimer);
+    };
+  });
+
+  createEffect(() => {
+    const on = walletOn();
+    const list = filtered();
+    if (!on) {
+      walletGen += 1;
+      setWalletMarks([]);
+      setWalletLoading(false);
+      return;
+    }
+    void loadWalletTrades(list);
+  });
+
+  return (
+    <div class="bt-page">
+      <header class="guide-header">
+        <div class="guide-header__left">
+          <button type="button" class="btn guide-back" onClick={() => navigate("/")}>
+            ← Dashboard
+          </button>
+          <h1>Backtest</h1>
+          <a href="/guide" class="btn guide-nav-link">
+            Guide
+          </a>
+        </div>
+      </header>
+
+      <div class="bt-toolbar">
+        <label>
+          Date
+          <select value={dateKey()} onChange={(e) => setDateKey(e.currentTarget.value)}>
+            <option value="all">Toutes</option>
+            <For each={dates()}>{(d) => <option value={d}>{d}</option>}</For>
+          </select>
+        </label>
+        <label>
+          Marché
+          <select value={prefix()} onChange={(e) => setPrefix(e.currentTarget.value)}>
+            <option value="">Tous</option>
+            <option value="btc-updown-15m">BTC</option>
+            <option value="eth-updown-15m">ETH</option>
+          </select>
+        </label>
+        <label class="bt-check" title="Ne garder que les fenêtres qui passent les règles ci-contre">
+          <input
+            type="checkbox"
+            checked={completeOnly()}
+            onChange={(e) => {
+              setCompleteOnly(e.currentTarget.checked);
+              void loadWindows();
+            }}
+          />
+          Complets
+        </label>
+        <div class="bt-rules">
+          <label
+            class={`bt-rule${minTicksOn() ? "" : " is-off"}`}
+            title="Minimum de ticks (les deux outcomes) dans la fenêtre 15 min"
+          >
+            <input
+              type="checkbox"
+              checked={minTicksOn()}
+              onChange={(e) => {
+                setMinTicksOn(e.currentTarget.checked);
+                void loadWindows();
+              }}
+            />
+            Ticks
+            <input
+              type="number"
+              min="1"
+              max="900"
+              step="1"
+              value={minTicks()}
+              disabled={!minTicksOn()}
+              onInput={(e) => {
+                setMinTicks(e.currentTarget.value);
+                reloadWindowsSoon();
+              }}
+            />
+          </label>
+          <label
+            class={`bt-rule${maxGapOn() ? "" : " is-off"}`}
+            title="Écart max entre deux ticks successifs"
+          >
+            <input
+              type="checkbox"
+              checked={maxGapOn()}
+              onChange={(e) => {
+                setMaxGapOn(e.currentTarget.checked);
+                void loadWindows();
+              }}
+            />
+            Trou
+            <input
+              type="number"
+              min="0.5"
+              max="900"
+              step="0.5"
+              value={maxGapSec()}
+              disabled={!maxGapOn()}
+              onInput={(e) => {
+                setMaxGapSec(e.currentTarget.value);
+                reloadWindowsSoon();
+              }}
+            />
+            s
+          </label>
+          <label
+            class={`bt-rule${edgeOn() ? "" : " is-off"}`}
+            title="Premier / dernier tick à moins de N secondes des bords de fenêtre"
+          >
+            <input
+              type="checkbox"
+              checked={edgeOn()}
+              onChange={(e) => {
+                setEdgeOn(e.currentTarget.checked);
+                void loadWindows();
+              }}
+            />
+            Bords
+            <input
+              type="number"
+              min="0.5"
+              max="900"
+              step="0.5"
+              value={edgeSec()}
+              disabled={!edgeOn()}
+              onInput={(e) => {
+                setEdgeSec(e.currentTarget.value);
+                reloadWindowsSoon();
+              }}
+            />
+            s
+          </label>
+        </div>
+        <label class="bt-check" title="Couper les courbes sur les trous">
+          <input
+            type="checkbox"
+            checked={cutGaps()}
+            onChange={(e) => setCutGaps(e.currentTarget.checked)}
+          />
+          Trous
+        </label>
+        <label
+          class="bt-check"
+          title={
+            walletConfigured() === false
+              ? "FUNDER_ADDRESS manquant — pas de wallet à interroger"
+              : "Afficher les fills Data API du wallet sur le graphique"
+          }
+        >
+          <input
+            type="checkbox"
+            checked={walletOn()}
+            disabled={walletConfigured() === false}
+            onChange={(e) => setWalletOn(e.currentTarget.checked)}
+          />
+          Wallet
+          <Show when={walletOn()}>
+            <span class="bt-wallet-count">{walletLoading() ? "…" : walletMarks().length}</span>
+          </Show>
+        </label>
+        <label>
+          Moteur
+          <select
+            value={engine()}
+            onChange={(e) => {
+              const id = e.currentTarget.value as StrategyId;
+              setEngine(id);
+              const first = presetsForStrategy(id)[0];
+              setPresetId(first?.id ?? "");
+              loadPresetIntoForm(first?.id ?? "", id);
+            }}
+          >
+            <option value="arb">Arb</option>
+            <option value="barbell">Barbell</option>
+            <option value="edge-lead">Edge-lead</option>
+          </select>
+        </label>
+        <label>
+          Preset
+          <select
+            value={presetId()}
+            onChange={(e) => {
+              const id = e.currentTarget.value;
+              setPresetId(id);
+              loadPresetIntoForm(id, engine());
+            }}
+          >
+            <option value="">Personnalisé</option>
+            <For each={presets()}>{(p) => <option value={p.id}>{p.name}</option>}</For>
+          </select>
+        </label>
+        <button
+          class="btn"
+          type="button"
+          disabled={progress()?.status === "running" || (completeOnly() && filtered().length === 0) || !form()}
+          onClick={() => void launch()}
+        >
+          Lancer
+        </button>
+      </div>
+
+      <Show when={!persistence()}>
+        <p class="bt-empty">Persistence désactivée — aucun snapshot local.</p>
+      </Show>
+      <Show when={error()}>
+        <p class="err">{error()}</p>
+      </Show>
+      <Show when={progress()?.status === "running"}>
+        <div class="bt-progress">
+          <div class="bt-progress-bar" style={{ width: `${progress()?.pct ?? 0}%` }} />
+          <span>
+            {progress()?.current}/{progress()?.total} {progress()?.eventSlug ?? ""}
+          </span>
+        </div>
+      </Show>
+
+      <div class="bt-body">
+        <div class="bt-main">
+          <StackedMarketChart
+            windows={filtered()}
+            series={series()}
+            cutGaps={cutGaps()}
+            positions={chartPositions()}
+            walletMarks={walletMarks()}
+            walletOn={walletOn()}
+            walletLoading={walletLoading()}
+            onVisible={(slugs) => void loadVisible(slugs)}
+          />
+          <BacktestPresetPanel
+            form={form()}
+            onUpdate={updateForm}
+            saving={saving()}
+            saveMsg={saveMsg()}
+            saveErr={saveErr()}
+            onSave={() => void savePresetLive()}
+            onLoadLive={() => loadLiveIntoForm()}
+          />
+        </div>
+        <BacktestRunList
+          runs={runs()}
+          engine={engine()}
+          engineOnly={historyEngineOnly()}
+          onEngineOnly={setHistoryEngineOnly}
+          progress={progress()}
+          openingId={openingId()}
+          chartRunId={chartRunId()}
+          chartLoadingId={chartLoadingId()}
+          onOpen={(run) => void openRun(run)}
+          onToggleChart={(run) => void toggleChartRun(run)}
+        />
+      </div>
+
+      <BacktestResultModal
+        open={dialogOpen()}
+        result={result()}
+        positions={positions()}
+        run={selectedRun()}
+        startedAt={resultStartedAt()}
+        canApplyPreset={canApplySelected()}
+        applying={applying()}
+        applyMsg={applyMsg()}
+        applyErr={applyErr()}
+        onApplyPreset={() => void applySelectedPreset()}
+        onClose={() => setDialogOpen(false)}
+      />
+    </div>
+  );
+}
+
+function dayKey(windowStart: number): string {
+  const d = new Date(windowStart * 1000);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function dateRange(
+  key: string,
+  list: BacktestWindowMeta[],
+): { from: number; to: number } | undefined {
+  if (key === "all" || list.length === 0) return undefined;
+  const day = list.filter((w) => dayKey(w.windowStart) === key);
+  if (day.length === 0) return undefined;
+  return {
+    from: Math.min(...day.map((w) => w.windowStart)),
+    to: Math.max(...day.map((w) => w.windowStart)),
+  };
+}

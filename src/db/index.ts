@@ -6,6 +6,7 @@ import {
   EventRepository,
   KeyRepository,
   LedgerRepository,
+  MarketResolutionRepository,
   MarketSnapshotRepository,
   OpportunitySnapshotRepository,
   OrderRepository,
@@ -16,6 +17,9 @@ import {
   RetryRepository,
   StatsSnapshotRepository,
   WindowClaimRepository,
+  BacktestPositionRepository,
+  BacktestRunRepository,
+  BacktestTradeRepository,
 } from "./repositories.js";
 
 export interface Repositories {
@@ -35,6 +39,10 @@ export interface Repositories {
   marketSnapshots: MarketSnapshotRepository;
   bookSnapshots: BookSnapshotRepository;
   opportunitySnapshots: OpportunitySnapshotRepository;
+  marketResolutions: MarketResolutionRepository;
+  backtestRuns: BacktestRunRepository;
+  backtestTrades: BacktestTradeRepository;
+  backtestPositions: BacktestPositionRepository;
 }
 
 export function createRepositories(db: Database): Repositories {
@@ -55,5 +63,9 @@ export function createRepositories(db: Database): Repositories {
     marketSnapshots: new MarketSnapshotRepository(db),
     bookSnapshots: new BookSnapshotRepository(db),
     opportunitySnapshots: new OpportunitySnapshotRepository(db),
+    marketResolutions: new MarketResolutionRepository(db),
+    backtestRuns: new BacktestRunRepository(db),
+    backtestTrades: new BacktestTradeRepository(db),
+    backtestPositions: new BacktestPositionRepository(db),
   };
 }

@@ -16,6 +16,9 @@ export function StrategyGuidePage(): JSX.Element {
             ← Dashboard
           </button>
           <h1>Trois moteurs, un même marché</h1>
+          <a href="/backtest" class="btn guide-nav-link">
+            Backtest
+          </a>
         </div>
       </header>
 

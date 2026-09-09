@@ -250,7 +250,8 @@ function EdgeLeadStory(): JSX.Element {
       <GuideGrid columns={2}>
         <GuideCard title="Jambe edge (favori)">
           <p>
-            Budget <code>edgeOrderUsdc</code> → taille = budget / ask edge. Confirmation{" "}
+            Budget <code>edgeOrderUsdc</code> → taille = budget / ask edge, plafonnée par{" "}
+            <code>maxShareEdge</code>. Confirmation{" "}
             <code>edgeConfirmSamples</code> ticks dans <code>[edgeBandMin, edgeBandMax]</code>,
             série croissante. GTC au best ask.
           </p>
@@ -508,7 +509,7 @@ export function UiTab(): JSX.Element {
           ],
           [
             "Bandes edge-lead",
-            "edgeBand*, edgeCheapBand*, edgeOrderUsdc — visibles seulement si moteur edge-lead",
+            "edgeBand*, edgeCheapBand*, edgeOrderUsdc — section Jambe edge ; maxShareEdge aussi dans Risque",
           ],
           [
             "Enregistrer",

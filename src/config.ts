@@ -129,6 +129,11 @@ export interface BotConfig {
   /** Edge-lead : budget USDC de l'ordre edge (size = budget / prix edge). */
   edgeOrderUsdc: number;
   /**
+   * Edge-lead : plafond de shares de l'ordre edge.
+   * Indépendant de maxSharesPerOrder, qui plafonne encore le cheap.
+   */
+  maxShareEdge: number;
+  /**
    * Edge-lead : budget USDC de l'ordre cheap (size = budget / ask cheap).
    * Indépendant du budget edge ; pas de 1:1 en shares.
    */
@@ -182,6 +187,7 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     edgeMaxDownTick: 0.01,
     edgeCheapMargin: 0.01,
     edgeOrderUsdc: 15,
+    maxShareEdge: 20,
     edgeCheapOrderUsdc: 5,
     edgeCheapBandMin: 0.04,
     edgeCheapBandMax: 0.14,
@@ -259,6 +265,11 @@ export function loadConfig(): BotConfig {
       );
     }
     Object.assign(config, overlay);
+    // Anciens JSON sans maxShareEdge : même plafond que maxSharesPerOrder
+    // (comportement d'avant, où l'edge réutilisait ce cap).
+    if (!Object.prototype.hasOwnProperty.call(overlay, "maxShareEdge")) {
+      config.maxShareEdge = config.maxSharesPerOrder;
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (!config.dryRun) {
@@ -350,6 +361,9 @@ export function validateConfigCoherence(config: BotConfig): void {
     }
     if (config.edgeOrderUsdc <= 0) {
       throw new Error("EDGE_ORDER_USDC must be > 0");
+    }
+    if (config.maxShareEdge < 1) {
+      throw new Error("MAX_SHARE_EDGE must be >= 1");
     }
     if (config.edgeCheapOrderUsdc <= 0) {
       throw new Error("EDGE_CHEAP_ORDER_USDC must be > 0");

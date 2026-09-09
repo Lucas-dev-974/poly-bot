@@ -57,6 +57,9 @@ export function Header(props: {
       <a href="/guide" class="btn guide-nav-link">
         Guide stratégie
       </a>
+      <a href="/backtest" class="btn guide-nav-link">
+        Backtest
+      </a>
       {badge()}
       <BotToggle />
       <Show when={config() !== null && mode() === "dry"}>

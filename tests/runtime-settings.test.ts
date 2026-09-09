@@ -34,6 +34,10 @@ describe("sanitizePatch", () => {
     assert.equal(patch.pollIntervalMs, 3000);
   });
 
+  it("accepts maxShareEdge", () => {
+    assert.equal(sanitizePatch({ maxShareEdge: 12 }).maxShareEdge, 12);
+  });
+
   it("rejects unknown fields", () => {
     assert.throws(() => sanitizePatch({ foo: 1 }), /Unknown field: foo/);
   });

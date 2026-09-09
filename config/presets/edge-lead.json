@@ -12,6 +12,7 @@
     "edgeMaxDownTick": 0.01,
     "edgeCheapMargin": 0.01,
     "edgeOrderUsdc": 25,
+    "maxShareEdge": 40,
     "edgeCheapOrderUsdc": 5,
     "edgeCheapBandMin": 0.04,
     "edgeCheapBandMax": 0.14,

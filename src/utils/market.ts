@@ -33,9 +33,10 @@ export function bestPrice(
 
 export function bestSize(
   levels: Array<{ price: string; size: string }> | undefined,
+  mode: "bid" | "ask" = "ask",
 ): number | null {
   if (!levels || levels.length === 0) return null;
-  const best = bestPrice(levels, "ask");
+  const best = bestPrice(levels, mode);
   if (best === null) return null;
   const level = levels.find((l) => Number(l.price) === best);
   if (!level) return null;

@@ -97,7 +97,8 @@ export class MarketScanner {
             outcomeIndex: index,
             bestBid: bestPrice(book.bids, "bid"),
             bestAsk: bestPrice(book.asks, "ask"),
-            bestAskSize: bestSize(book.asks),
+            bestAskSize: bestSize(book.asks, "ask"),
+            bestBidSize: bestSize(book.bids, "bid"),
           } satisfies TokenBook;
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
@@ -128,7 +129,8 @@ export class MarketScanner {
         outcomeIndex: 0,
         bestBid: bestPrice(book.bids, "bid"),
         bestAsk: bestPrice(book.asks, "ask"),
-        bestAskSize: bestSize(book.asks),
+        bestAskSize: bestSize(book.asks, "ask"),
+        bestBidSize: bestSize(book.bids, "bid"),
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

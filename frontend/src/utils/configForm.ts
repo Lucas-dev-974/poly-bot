@@ -35,6 +35,7 @@ export type ConfigFormState = {
   edgeMaxDownTick: string;
   edgeCheapMargin: string;
   edgeOrderUsdc: string;
+  maxShareEdge: string;
   edgeCheapOrderUsdc: string;
   edgeCheapBandMin: string;
   edgeCheapBandMax: string;
@@ -79,6 +80,7 @@ export function configToForm(config: BotConfig): ConfigFormState {
     edgeMaxDownTick: String(config.edgeMaxDownTick),
     edgeCheapMargin: String(config.edgeCheapMargin),
     edgeOrderUsdc: String(config.edgeOrderUsdc),
+    maxShareEdge: String(config.maxShareEdge ?? config.maxSharesPerOrder ?? 20),
     edgeCheapOrderUsdc: String(config.edgeCheapOrderUsdc),
     edgeCheapBandMin: String(config.edgeCheapBandMin),
     edgeCheapBandMax: String(config.edgeCheapBandMax),
@@ -93,10 +95,7 @@ function parseNum(raw: string, label: string): number {
   return parsed;
 }
 
-export function formToPatch(
-  form: ConfigFormState,
-  baseline: BotConfig,
-): Partial<BotConfig> {
+export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
   const next: Partial<BotConfig> = {
     marketSlugPrefixes: form.marketSlugPrefixes
       .split(",")
@@ -144,6 +143,7 @@ export function formToPatch(
     edgeMaxDownTick: parseNum(form.edgeMaxDownTick, "Edge max down tick"),
     edgeCheapMargin: parseNum(form.edgeCheapMargin, "Edge cheap margin"),
     edgeOrderUsdc: parseNum(form.edgeOrderUsdc, "Edge order USDC"),
+    maxShareEdge: parseNum(form.maxShareEdge, "Max shares edge"),
     edgeCheapOrderUsdc: parseNum(form.edgeCheapOrderUsdc, "Budget cheap"),
     edgeCheapBandMin: parseNum(form.edgeCheapBandMin, "Cheap band min"),
     edgeCheapBandMax: parseNum(form.edgeCheapBandMax, "Cheap band max"),
@@ -152,6 +152,18 @@ export function formToPatch(
   if ((next.marketSlugPrefixes?.length ?? 0) === 0) {
     throw new Error("Au moins un préfixe de marché est requis");
   }
+  return next;
+}
+
+export function applySettingsToForm(base: BotConfig, settings: Partial<BotConfig>): ConfigFormState {
+  return configToForm({ ...base, ...settings });
+}
+
+export function formToPatch(
+  form: ConfigFormState,
+  baseline: BotConfig,
+): Partial<BotConfig> {
+  const next = formToSettings(form);
 
   const patch: Partial<BotConfig> = {};
   for (const [key, value] of Object.entries(next) as Array<
@@ -248,6 +260,7 @@ export function validateConfigForm(
       const edgeMaxDownTick = parseNum(form.edgeMaxDownTick, "Edge max down tick");
       const edgeCheapMargin = parseNum(form.edgeCheapMargin, "Edge cheap margin");
       const edgeOrderUsdc = parseNum(form.edgeOrderUsdc, "Edge order USDC");
+      const maxShareEdge = parseNum(form.maxShareEdge, "Max shares edge");
       const edgeCheapOrderUsdc = parseNum(form.edgeCheapOrderUsdc, "Budget cheap");
       const edgeCheapBandMin = parseNum(form.edgeCheapBandMin, "Cheap band min");
       const edgeCheapBandMax = parseNum(form.edgeCheapBandMax, "Cheap band max");
@@ -268,6 +281,9 @@ export function validateConfigForm(
       }
       if (edgeOrderUsdc <= 0) {
         errors.push("Edge order USDC doit être > 0");
+      }
+      if (maxShareEdge < 1) {
+        errors.push("Max shares edge doit être ≥ 1");
       }
       if (edgeCheapOrderUsdc <= 0) {
         errors.push("Budget cheap doit être > 0");

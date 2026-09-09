@@ -774,6 +774,28 @@ export class MarketSnapshotRepository {
   prune(beforeTs: number): void {
     this.db.run("DELETE FROM market_snapshots WHERE ts < ?", [beforeTs]);
   }
+
+  latestBySlug(eventSlug: string): MarketSnapshotRow | undefined {
+    return this.db.get<MarketSnapshotRow>(
+      `SELECT ts, eventSlug, eventTitle, conditionId, windowStart, windowEnd
+       FROM market_snapshots WHERE eventSlug = ? ORDER BY ts DESC LIMIT 1`,
+      [eventSlug],
+    );
+  }
+
+  titlesBySlug(): Array<{
+    eventSlug: string;
+    eventTitle: string;
+    conditionId: string;
+    windowStart: number;
+    windowEnd: number;
+  }> {
+    return this.db.all(
+      `SELECT eventSlug, MAX(eventTitle) AS eventTitle, MAX(conditionId) AS conditionId,
+              MAX(windowStart) AS windowStart, MAX(windowEnd) AS windowEnd
+       FROM market_snapshots GROUP BY eventSlug`,
+    );
+  }
 }
 
 export interface BookSnapshotRow {
@@ -785,6 +807,7 @@ export interface BookSnapshotRow {
   bestBid: number | null;
   bestAsk: number | null;
   bestAskSize: number | null;
+  bestBidSize?: number | null;
 }
 
 export class BookSnapshotRepository {
@@ -792,8 +815,8 @@ export class BookSnapshotRepository {
 
   insert(snapshot: BookSnapshotRow): void {
     this.db.run(
-      `INSERT INTO book_snapshots (ts, eventSlug, tokenId, outcome, outcomeIndex, bestBid, bestAsk, bestAskSize)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO book_snapshots (ts, eventSlug, tokenId, outcome, outcomeIndex, bestBid, bestAsk, bestAskSize, bestBidSize)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         snapshot.ts,
         snapshot.eventSlug,
@@ -803,6 +826,7 @@ export class BookSnapshotRepository {
         snapshot.bestBid,
         snapshot.bestAsk,
         snapshot.bestAskSize,
+        snapshot.bestBidSize ?? null,
       ],
     );
   }
@@ -813,11 +837,38 @@ export class BookSnapshotRepository {
 
   byTokenAndRange(tokenId: string, startTs: number, endTs: number): BookSnapshotRow[] {
     return this.db.all<BookSnapshotRow>(
-      `SELECT ts, eventSlug, tokenId, outcome, outcomeIndex, bestBid, bestAsk, bestAskSize
+      `SELECT ts, eventSlug, tokenId, outcome, outcomeIndex, bestBid, bestAsk, bestAskSize, bestBidSize
        FROM book_snapshots
        WHERE tokenId = ? AND ts >= ? AND ts <= ?
        ORDER BY ts ASC`,
       [tokenId, startTs, endTs],
+    );
+  }
+
+  listTickGroups(): Array<{ eventSlug: string; ts: number; n: number }> {
+    return this.db.all(
+      `SELECT eventSlug, ts, COUNT(DISTINCT outcomeIndex) AS n
+       FROM book_snapshots
+       GROUP BY eventSlug, ts
+       ORDER BY eventSlug, ts`,
+    );
+  }
+
+  bySlugAndRange(eventSlug: string, startTs: number, endTs: number): BookSnapshotRow[] {
+    return this.db.all<BookSnapshotRow>(
+      `SELECT ts, eventSlug, tokenId, outcome, outcomeIndex, bestBid, bestAsk, bestAskSize, bestBidSize
+       FROM book_snapshots
+       WHERE eventSlug = ? AND ts >= ? AND ts <= ?
+       ORDER BY ts ASC`,
+      [eventSlug, startTs, endTs],
+    );
+  }
+
+  tokensBySlug(): Array<{ eventSlug: string; tokenId: string; outcomeIndex: number; outcome: string }> {
+    return this.db.all(
+      `SELECT eventSlug, tokenId, outcomeIndex, MAX(outcome) AS outcome
+       FROM book_snapshots
+       GROUP BY eventSlug, tokenId, outcomeIndex`,
     );
   }
 }
@@ -857,5 +908,236 @@ export class OpportunitySnapshotRepository {
 
   prune(beforeTs: number): void {
     this.db.run("DELETE FROM opportunity_snapshots WHERE ts < ?", [beforeTs]);
+  }
+}
+
+export interface MarketResolutionRow {
+  eventSlug: string;
+  winnerOutcomeIndex: number;
+  source: string;
+  ts: number;
+}
+
+export class MarketResolutionRepository {
+  constructor(private readonly db: Database) {}
+
+  get(eventSlug: string): MarketResolutionRow | undefined {
+    return this.db.get<MarketResolutionRow>(
+      `SELECT eventSlug, winnerOutcomeIndex, source, ts FROM market_resolutions WHERE eventSlug = ?`,
+      [eventSlug],
+    );
+  }
+
+  upsert(row: MarketResolutionRow): void {
+    this.db.run(
+      `INSERT OR REPLACE INTO market_resolutions (eventSlug, winnerOutcomeIndex, source, ts)
+       VALUES (?, ?, ?, ?)`,
+      [row.eventSlug, row.winnerOutcomeIndex, row.source, row.ts],
+    );
+  }
+}
+
+export type BacktestRunStatus = "running" | "done" | "error" | "cancelled";
+
+export interface BacktestRunRow {
+  id: string;
+  startedAt: number;
+  finishedAt: number | null;
+  status: BacktestRunStatus;
+  requestJson: string;
+  resultJson: string | null;
+  error: string | null;
+}
+
+export class BacktestRunRepository {
+  constructor(private readonly db: Database) {}
+
+  insert(row: BacktestRunRow): void {
+    this.db.run(
+      `INSERT INTO backtest_runs (id, startedAt, finishedAt, status, requestJson, resultJson, error)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        row.id,
+        row.startedAt,
+        row.finishedAt,
+        row.status,
+        row.requestJson,
+        row.resultJson,
+        row.error,
+      ],
+    );
+  }
+
+  update(row: Pick<BacktestRunRow, "id" | "finishedAt" | "status" | "resultJson" | "error">): void {
+    this.db.run(
+      `UPDATE backtest_runs SET finishedAt = ?, status = ?, resultJson = ?, error = ? WHERE id = ?`,
+      [row.finishedAt, row.status, row.resultJson, row.error, row.id],
+    );
+  }
+
+  get(id: string): BacktestRunRow | undefined {
+    return this.db.get<BacktestRunRow>(
+      `SELECT id, startedAt, finishedAt, status, requestJson, resultJson, error FROM backtest_runs WHERE id = ?`,
+      [id],
+    );
+  }
+
+  recent(limit: number): BacktestRunRow[] {
+    return this.db.all<BacktestRunRow>(
+      `SELECT id, startedAt, finishedAt, status, requestJson, resultJson, error
+       FROM backtest_runs ORDER BY startedAt DESC LIMIT ?`,
+      [limit],
+    );
+  }
+
+  pruneKeepLatest(keep: number): void {
+    const kept = this.recent(keep);
+    if (kept.length === 0) return;
+    const placeholders = kept.map(() => "?").join(",");
+    const ids = kept.map((row) => row.id);
+    this.db.run(
+      `DELETE FROM backtest_trades WHERE runId NOT IN (${placeholders})`,
+      ids,
+    );
+    this.db.run(
+      `DELETE FROM backtest_positions WHERE runId NOT IN (${placeholders})`,
+      ids,
+    );
+    this.db.run(
+      `DELETE FROM backtest_runs WHERE id NOT IN (${placeholders})`,
+      ids,
+    );
+  }
+}
+
+export interface BacktestTradeRow {
+  runId: string;
+  ts: number;
+  eventSlug: string;
+  kind: string;
+  outcome: string;
+  side: string;
+  limitPrice: number;
+  fillPrice: number | null;
+  size: number;
+  filled: number;
+  reason: string | null;
+  fillReason: string | null;
+  orderType: string | null;
+  pairId: string | null;
+  pnl: number | null;
+}
+
+export class BacktestTradeRepository {
+  constructor(private readonly db: Database) {}
+
+  insert(row: BacktestTradeRow): void {
+    this.db.run(
+      `INSERT INTO backtest_trades (
+        runId, ts, eventSlug, kind, outcome, side, limitPrice, fillPrice, size,
+        filled, reason, fillReason, orderType, pairId, pnl
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        row.runId,
+        row.ts,
+        row.eventSlug,
+        row.kind,
+        row.outcome,
+        row.side,
+        row.limitPrice,
+        row.fillPrice,
+        row.size,
+        row.filled,
+        row.reason,
+        row.fillReason,
+        row.orderType,
+        row.pairId,
+        row.pnl,
+      ],
+    );
+  }
+
+  byRun(runId: string): BacktestTradeRow[] {
+    return this.db.all<BacktestTradeRow>(
+      `SELECT runId, ts, eventSlug, kind, outcome, side, limitPrice, fillPrice, size,
+              filled, reason, fillReason, orderType, pairId, pnl
+       FROM backtest_trades WHERE runId = ? ORDER BY ts ASC`,
+      [runId],
+    );
+  }
+}
+
+export interface BacktestPositionRow {
+  id: string;
+  runId: string;
+  ts: number;
+  eventSlug: string;
+  eventTitle: string;
+  tokenId: string;
+  outcome: string;
+  outcomeIndex: number;
+  kind: string;
+  side: string;
+  limitPrice: number;
+  fillPrice: number;
+  size: number;
+  cost: number;
+  windowEnd: number;
+  status: string;
+  resolvedAt: number | null;
+  pnl: number | null;
+  fillReason: string | null;
+  pairId: string;
+  bestAskAtFill: number | null;
+  orderType: string | null;
+  strategyId: string | null;
+}
+
+export class BacktestPositionRepository {
+  constructor(private readonly db: Database) {}
+
+  upsert(row: BacktestPositionRow): void {
+    this.db.run(
+      `INSERT OR REPLACE INTO backtest_positions (
+        id, runId, ts, eventSlug, eventTitle, tokenId, outcome, outcomeIndex, kind, side,
+        limitPrice, fillPrice, size, cost, windowEnd, status, resolvedAt, pnl, fillReason,
+        pairId, bestAskAtFill, orderType, strategyId
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        row.id,
+        row.runId,
+        row.ts,
+        row.eventSlug,
+        row.eventTitle,
+        row.tokenId,
+        row.outcome,
+        row.outcomeIndex,
+        row.kind,
+        row.side,
+        row.limitPrice,
+        row.fillPrice,
+        row.size,
+        row.cost,
+        row.windowEnd,
+        row.status,
+        row.resolvedAt,
+        row.pnl,
+        row.fillReason,
+        row.pairId,
+        row.bestAskAtFill,
+        row.orderType,
+        row.strategyId,
+      ],
+    );
+  }
+
+  byRun(runId: string): BacktestPositionRow[] {
+    return this.db.all<BacktestPositionRow>(
+      `SELECT id, runId, ts, eventSlug, eventTitle, tokenId, outcome, outcomeIndex, kind, side,
+              limitPrice, fillPrice, size, cost, windowEnd, status, resolvedAt, pnl, fillReason,
+              pairId, bestAskAtFill, orderType, strategyId
+       FROM backtest_positions WHERE runId = ? ORDER BY ts ASC`,
+      [runId],
+    );
   }
 }

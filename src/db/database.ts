@@ -170,7 +170,8 @@ export class Database {
         outcomeIndex INTEGER NOT NULL,
         bestBid REAL,
         bestAsk REAL,
-        bestAskSize REAL
+        bestAskSize REAL,
+        bestBidSize REAL
       );
 
       CREATE TABLE IF NOT EXISTS opportunity_snapshots (
@@ -199,6 +200,70 @@ export class Database {
       CREATE INDEX IF NOT EXISTS idx_book_snapshots_slug_ts ON book_snapshots(eventSlug, ts);
       CREATE INDEX IF NOT EXISTS idx_opportunity_snapshots_ts ON opportunity_snapshots(ts);
       CREATE INDEX IF NOT EXISTS idx_opportunity_snapshots_slug_ts ON opportunity_snapshots(eventSlug, ts);
+
+      CREATE TABLE IF NOT EXISTS market_resolutions (
+        eventSlug TEXT PRIMARY KEY,
+        winnerOutcomeIndex INTEGER NOT NULL,
+        source TEXT NOT NULL,
+        ts INTEGER NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS backtest_runs (
+        id TEXT PRIMARY KEY,
+        startedAt INTEGER NOT NULL,
+        finishedAt INTEGER,
+        status TEXT NOT NULL,
+        requestJson TEXT NOT NULL,
+        resultJson TEXT,
+        error TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS backtest_positions (
+        id TEXT PRIMARY KEY,
+        runId TEXT NOT NULL,
+        ts INTEGER NOT NULL,
+        eventSlug TEXT NOT NULL,
+        eventTitle TEXT NOT NULL,
+        tokenId TEXT NOT NULL,
+        outcome TEXT NOT NULL,
+        outcomeIndex INTEGER NOT NULL,
+        kind TEXT NOT NULL,
+        side TEXT NOT NULL DEFAULT 'BUY',
+        limitPrice REAL NOT NULL,
+        fillPrice REAL NOT NULL,
+        size REAL NOT NULL,
+        cost REAL NOT NULL,
+        windowEnd INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        resolvedAt INTEGER,
+        pnl REAL,
+        fillReason TEXT,
+        pairId TEXT NOT NULL,
+        bestAskAtFill REAL,
+        orderType TEXT,
+        strategyId TEXT
+      );
+      CREATE INDEX IF NOT EXISTS idx_backtest_positions_run ON backtest_positions(runId);
+
+      CREATE TABLE IF NOT EXISTS backtest_trades (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        runId TEXT NOT NULL,
+        ts INTEGER NOT NULL,
+        eventSlug TEXT NOT NULL,
+        kind TEXT NOT NULL,
+        outcome TEXT NOT NULL,
+        side TEXT NOT NULL,
+        limitPrice REAL NOT NULL,
+        fillPrice REAL,
+        size REAL NOT NULL,
+        filled INTEGER NOT NULL,
+        reason TEXT,
+        fillReason TEXT,
+        orderType TEXT,
+        pairId TEXT,
+        pnl REAL
+      );
+      CREATE INDEX IF NOT EXISTS idx_backtest_trades_run ON backtest_trades(runId);
     `);
 
     this.addColumnIfMissing("posted_orders", "orderId", "TEXT");
@@ -222,6 +287,7 @@ export class Database {
     this.addColumnIfMissing("positions", "strategyId", "TEXT");
     // Heure réelle du fill (ms). Pour un GTC resting, diffère de ts (heure de placement).
     this.addColumnIfMissing("orders", "filledTs", "INTEGER");
+    this.addColumnIfMissing("book_snapshots", "bestBidSize", "REAL");
   }
 
   private addColumnIfMissing(table: string, column: string, type: string): void {
@@ -269,6 +335,10 @@ export class Database {
       DELETE FROM market_snapshots;
       DELETE FROM book_snapshots;
       DELETE FROM opportunity_snapshots;
+      DELETE FROM market_resolutions;
+      DELETE FROM backtest_runs;
+      DELETE FROM backtest_trades;
+      DELETE FROM backtest_positions;
     `);
   }
 

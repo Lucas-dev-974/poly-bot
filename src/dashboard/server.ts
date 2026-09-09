@@ -17,7 +17,14 @@ import {
 import type { EditableConfigKey } from "../runtime-settings.js";
 import { listStrategyPresets } from "../strategy-presets.js";
 import { getMarketHistory } from "./market-history.js";
-import { getMarketTrades } from "./market-trades.js";
+import { getMarketTrades, getWalletTradesInRange } from "./market-trades.js";
+import { BacktestJob, type BacktestRunRequest } from "../backtest/job.js";
+import {
+  completenessFromSearchParams,
+  normalizeCompletenessRequest,
+} from "../backtest/completeness.js";
+import { invalidateWindowsCache, listBacktestWindows, seriesForSlugs } from "../backtest/windows.js";
+import { parseStrategyId } from "../strategy/ids.js";
 
 /**
  * Always prefer the Vite build output (dist/dashboard/public).
@@ -59,12 +66,15 @@ export class DashboardServer {
   private configHandler: ((changed: Set<EditableConfigKey>) => void) | null = null;
   private controlHandler: ((enabled: boolean) => void) | null = null;
   private isPausedFn: (() => boolean) | null = null;
+  private readonly backtestJob: BacktestJob;
 
   constructor(
     private readonly port: number,
     private readonly config: BotConfig,
     private readonly repos?: Repositories,
-  ) {}
+  ) {
+    this.backtestJob = new BacktestJob(config, repos);
+  }
 
   setTracker(tracker: TradeTracker): void {
     this.tracker = tracker;
@@ -94,7 +104,8 @@ export class DashboardServer {
       if (
         url.pathname === "/" ||
         url.pathname === "/index.html" ||
-        url.pathname === "/guide"
+        url.pathname === "/guide" ||
+        url.pathname === "/backtest"
       ) {
         void this.serveHtml(res);
         return;
@@ -165,8 +176,45 @@ export class DashboardServer {
         return;
       }
 
+      if (url.pathname === "/api/backtest/windows" && req.method === "GET") {
+        this.handleBacktestWindows(url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/backtest/series" && req.method === "GET") {
+        this.handleBacktestSeries(url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/backtest/wallet-trades" && req.method === "GET") {
+        void this.handleBacktestWalletTrades(url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/backtest/runs" && req.method === "GET") {
+        this.handleBacktestRuns(url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/backtest/run" && req.method === "POST") {
+        void this.handleBacktestStart(req, res);
+        return;
+      }
+
+      if (url.pathname.startsWith("/api/backtest/run/")) {
+        const rest = url.pathname.slice("/api/backtest/run/".length);
+        if (rest.endsWith("/cancel") && req.method === "POST") {
+          this.handleBacktestCancel(req, res, rest.slice(0, -"/cancel".length));
+          return;
+        }
+        if (req.method === "GET") {
+          this.handleBacktestStatus(res, rest);
+          return;
+        }
+      }
+
       if (url.pathname === "/api/reset" && req.method === "POST") {
-        this.handleReset(res, req);
+        void this.handleReset(res, req);
         return;
       }
 
@@ -528,15 +576,18 @@ export class DashboardServer {
     return allowed.includes(origin);
   }
 
-  private handleReset(
+  private async handleReset(
     res: import("node:http").ServerResponse,
     req: import("node:http").IncomingMessage,
-  ): void {
+  ): Promise<void> {
     if (!this.isAllowedOrigin(req)) {
       res.writeHead(403, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
       return;
     }
+    this.backtestJob.cancelCurrent();
+    await this.backtestJob.waitUntilIdle();
+    invalidateWindowsCache();
     if (!this.config.dryRun) {
       res.writeHead(403, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ ok: false, error: "Reset désactivé en mode live" }));
@@ -646,6 +697,153 @@ export class DashboardServer {
     }
   }
 
+  private handleBacktestWindows(
+    url: URL,
+    res: import("node:http").ServerResponse,
+  ): void {
+    const from = url.searchParams.get("from");
+    const to = url.searchParams.get("to");
+    const prefix = url.searchParams.get("prefix") ?? undefined;
+    const completeOnly = url.searchParams.get("completeOnly") === "1";
+    const windows = listBacktestWindows(this.repos, {
+      from: from ? Number(from) : undefined,
+      to: to ? Number(to) : undefined,
+      prefix,
+      completeOnly,
+      completeness: completenessFromSearchParams(url.searchParams),
+    });
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ windows }));
+  }
+
+  private async handleBacktestWalletTrades(
+    url: URL,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    const from = Number(url.searchParams.get("from"));
+    const to = Number(url.searchParams.get("to"));
+    if (!Number.isFinite(from) || !Number.isFinite(to)) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "from and to are required" }));
+      return;
+    }
+    try {
+      const trades = await getWalletTradesInRange(this.config, from, to);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          trades,
+          configured: Boolean(this.config.funderAddress),
+        }),
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: message }));
+    }
+  }
+
+  private handleBacktestSeries(
+    url: URL,
+    res: import("node:http").ServerResponse,
+  ): void {
+    const slugs = (url.searchParams.get("slugs") ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const series = seriesForSlugs(this.repos, slugs);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ series }));
+  }
+
+  private handleBacktestRuns(
+    url: URL,
+    res: import("node:http").ServerResponse,
+  ): void {
+    const limit = Math.min(20, Math.max(1, Number(url.searchParams.get("limit") ?? 20)));
+    const runs = this.repos?.backtestRuns.recent(limit) ?? [];
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        runs: runs.map((row) => ({
+          id: row.id,
+          startedAt: row.startedAt,
+          finishedAt: row.finishedAt,
+          status: row.status,
+          request: parseBacktestRequest(row.requestJson),
+          result: parseJsonUnknown(row.resultJson),
+          error: row.error,
+        })),
+      }),
+    );
+  }
+
+  private async handleBacktestStart(
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return;
+    }
+    try {
+      const body = JSON.parse(await this.readBody(req)) as BacktestRunRequest;
+      body.strategyId = parseStrategyId(body.strategyId);
+      const started = this.backtestJob.start(body);
+      if ("error" in started) {
+        res.writeHead(started.status, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: started.error, runId: started.runId }));
+        return;
+      }
+      res.writeHead(202, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ runId: started.runId }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: message }));
+    }
+  }
+
+  private handleBacktestStatus(
+    res: import("node:http").ServerResponse,
+    id: string,
+  ): void {
+    const progress = this.backtestJob.getProgress(id);
+    if (!progress) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Run introuvable" }));
+      return;
+    }
+    const result = this.backtestJob.getResult(id);
+    const positions = this.repos?.backtestPositions.byRun(id) ?? [];
+    const row = this.repos?.backtestRuns.get(id);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        progress,
+        result,
+        positions,
+        request: row ? parseBacktestRequest(row.requestJson) : null,
+      }),
+    );
+  }
+
+  private handleBacktestCancel(
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+    id: string,
+  ): void {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return;
+    }
+    const ok = this.backtestJob.cancel(id);
+    res.writeHead(ok ? 200 : 404, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ ok }));
+  }
+
   private readBody(req: import("node:http").IncomingMessage): Promise<string> {
     return new Promise((resolve, reject) => {
       let data = "";
@@ -659,5 +857,41 @@ export class DashboardServer {
       req.on("end", () => resolve(data));
       req.on("error", reject);
     });
+  }
+}
+
+function parseJsonUnknown(json: string | null): unknown {
+  if (!json) return null;
+  try {
+    return JSON.parse(json) as unknown;
+  } catch {
+    return null;
+  }
+}
+
+function parseBacktestRequest(json: string): {
+  strategyId?: string;
+  presetId?: string;
+  useCurrentConfig: boolean;
+  completeOnly: boolean;
+  completeness?: ReturnType<typeof normalizeCompletenessRequest>;
+  settings?: Record<string, unknown>;
+} | null {
+  try {
+    const body = JSON.parse(json) as BacktestRunRequest;
+    const settings =
+      body.settings && typeof body.settings === "object" && !Array.isArray(body.settings)
+        ? (body.settings as Record<string, unknown>)
+        : undefined;
+    return {
+      strategyId: body.strategyId,
+      presetId: body.presetId,
+      useCurrentConfig: body.useCurrentConfig === true,
+      completeOnly: body.completeOnly !== false,
+      completeness: normalizeCompletenessRequest(body.completeness),
+      ...(settings ? { settings } : {}),
+    };
+  } catch {
+    return null;
   }
 }

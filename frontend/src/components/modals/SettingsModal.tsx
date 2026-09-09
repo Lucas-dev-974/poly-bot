@@ -601,12 +601,20 @@ export function SettingsModal(props: {
                         onInput={(v) => update("edgeCheapBandMax", v)}
                       />
                     </Field>
-                    <Field label="Budget edge (USDC)" hint="Taille edge = budget / prix edge (plafonné par max shares). Indépendant du cheap">
+                    <Field label="Budget edge (USDC)" hint="Taille edge = budget / prix edge, plafonnée par max shares edge. Indépendant du cheap">
                       <NumberInput
                         value={form().edgeOrderUsdc}
                         min={1}
                         step={1}
                         onInput={(v) => update("edgeOrderUsdc", v)}
+                      />
+                    </Field>
+                    <Field label="Max shares edge" hint="Plafond de shares de l'ordre favori. Le cheap reste plafonné par Max shares / ordre">
+                      <NumberInput
+                        value={form().maxShareEdge}
+                        min={1}
+                        step={1}
+                        onInput={(v) => update("maxShareEdge", v)}
                       />
                     </Field>
                     <Field label="Budget cheap (USDC)" hint="Taille cheap = budget / ask cheap, seulement après fill edge. Pas de 1:1 en shares">
@@ -630,12 +638,20 @@ export function SettingsModal(props: {
                     globale pour contenir le risque.
                   </p>
                   <div class="cfg-grid">
-                    <Field label="Max shares / ordre">
+                    <Field label="Max shares / ordre" hint="Plafond cheap (arb/barbell : tout ordre). Edge-lead : jambe cheap seulement">
                       <NumberInput
                         value={form().maxSharesPerOrder}
                         min={1}
                         step={1}
                         onInput={(v) => update("maxSharesPerOrder", v)}
+                      />
+                    </Field>
+                    <Field label="Max shares edge" hint="Plafond de shares de l'ordre favori (edge-lead). Ignoré par arb/barbell">
+                      <NumberInput
+                        value={form().maxShareEdge}
+                        min={1}
+                        step={1}
+                        onInput={(v) => update("maxShareEdge", v)}
                       />
                     </Field>
                     <Field label="Max positions / côté" hint="Par market window">

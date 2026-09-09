@@ -47,13 +47,18 @@ export function cheapAskInBand(ask: number, config: BotConfig): boolean {
 }
 
 /**
- * Size edge depuis edgeOrderUsdc au prix d'entrée (indépendant du cheap).
+ * Size edge depuis edgeOrderUsdc au prix d'entrée, plafonnée par maxShareEdge
+ * (indépendant du cheap et de maxSharesPerOrder).
  */
 export function computeEdgeLeadEdgeSize(
   config: BotConfig,
   edgePrice: number,
 ): number | null {
-  return computeSize(config.edgeOrderUsdc, edgePrice, config.maxSharesPerOrder);
+  return computeSize(
+    config.edgeOrderUsdc,
+    edgePrice,
+    config.maxShareEdge ?? config.maxSharesPerOrder,
+  );
 }
 
 /**
@@ -222,6 +227,7 @@ export class EdgeLeadStrategy implements TradingStrategy {
         market: event.title,
         edgeAsk: edgeToken.bestAsk,
         edgeOrderUsdc: config.edgeOrderUsdc,
+        maxShareEdge: config.maxShareEdge,
       });
       return opportunities;
     }

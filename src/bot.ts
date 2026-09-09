@@ -469,6 +469,7 @@ export class ReverseBot {
           bestBid: null,
           bestAsk: order.bestAskAtFill ?? null,
           bestAskSize: null,
+          bestBidSize: null,
         },
         price: order.limitPrice,
         size: order.size,
@@ -603,6 +604,7 @@ export class ReverseBot {
         bestBid: book.bestBid,
         bestAsk: book.bestAsk,
         bestAskSize: book.bestAskSize,
+        bestBidSize: book.bestBidSize ?? null,
       });
     }
     if (!this.config.dryRun) {
@@ -1438,6 +1440,7 @@ export class ReverseBot {
         bestBid,
         bestAsk: freshBook?.bestAsk ?? null,
         bestAskSize: freshBook?.bestAskSize ?? null,
+        bestBidSize: freshBook?.bestBidSize ?? null,
       },
       price: bestBid,
       size: uncoveredSize,

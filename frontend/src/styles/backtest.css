@@ -380,19 +380,17 @@ body:has(.bt-page) {
 }
 
 .bt-swatch-mark {
-  width: 0;
-  height: 0;
+  width: 7px;
+  height: 7px;
   display: inline-block;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 7px solid #d7dde8;
+  border-radius: 50%;
+  background: #d7dde8;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-sizing: border-box;
 }
 
 .bt-swatch-mark.wallet {
-  width: 7px;
-  height: 7px;
-  background: #d7dde8;
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 0;
   transform: rotate(45deg);
 }
 

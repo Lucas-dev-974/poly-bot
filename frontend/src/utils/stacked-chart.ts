@@ -284,16 +284,6 @@ export function matchWalletTradesToWindows<W extends { eventSlug: string; condit
   return marks;
 }
 
-export function trianglePoints(cx: number, cy: number, r: number, up: boolean): string {
-  const x = round1(cx);
-  const y = round1(cy);
-  const rr = round1(Math.max(r, 0.8));
-  if (up) {
-    return `${x},${round1(y - rr)} ${round1(x - rr)},${round1(y + rr)} ${round1(x + rr)},${round1(y + rr)}`;
-  }
-  return `${x},${round1(y + rr)} ${round1(x - rr)},${round1(y - rr)} ${round1(x + rr)},${round1(y - rr)}`;
-}
-
 export function diamondPoints(cx: number, cy: number, r: number): string {
   const x = round1(cx);
   const y = round1(cy);
@@ -301,9 +291,27 @@ export function diamondPoints(cx: number, cy: number, r: number): string {
   return `${x},${round1(y - rr)} ${round1(x + rr)},${y} ${x},${round1(y + rr)} ${round1(x - rr)},${y}`;
 }
 
+/** World radii that render as a ~px circle despite preserveAspectRatio="none". */
+export function markerRadiiWorld(
+  vbW: number,
+  vbH: number,
+  containerW: number,
+  containerH: number,
+  px = 5.5,
+): { rx: number; ry: number } {
+  let rx = (px / Math.max(containerW, 1)) * vbW;
+  let ry = (px / Math.max(containerH, 1)) * vbH;
+  const cap = CHART_ROW_H * 0.4;
+  if (ry > cap && ry > 0) {
+    const s = cap / ry;
+    rx *= s;
+    ry = cap;
+  }
+  return { rx: Math.max(rx, 0.8), ry: Math.max(ry, 0.8) };
+}
+
 export function markerRadiusWorld(vbH: number, containerH: number, px = 5.5): number {
-  const r = (px / Math.max(containerH, 1)) * vbH;
-  return Math.min(Math.max(r, 1.2), CHART_ROW_H * 0.4);
+  return markerRadiiWorld(vbH, vbH, containerH, containerH, px).ry;
 }
 
 export function overlayMarksForWindow<T extends { id: string; ts: number; fillPrice: number }>(

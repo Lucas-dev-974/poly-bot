@@ -7,7 +7,7 @@ import {
   matchWalletTradesToWindows,
   overlayMarksForWindow,
   toChartTimeSec,
-  trianglePoints,
+  markerRadiiWorld,
 } from "../frontend/src/utils/stacked-chart.ts";
 
 describe("stacked chart position overlay", () => {
@@ -41,12 +41,14 @@ describe("stacked chart position overlay", () => {
     assert.deepEqual(marks.map((row) => row.id), ["in"]);
   });
 
-  it("builds an up triangle around the fill point", () => {
-    assert.equal(trianglePoints(10, 20, 4, true), "10,16 6,24 14,24");
-  });
-
   it("builds a diamond around the wallet fill", () => {
     assert.equal(diamondPoints(10, 20, 4), "10,16 14,20 10,24 6,20");
+  });
+
+  it("sizes overlay dots so they stay circular on a stretched SVG", () => {
+    const { rx, ry } = markerRadiiWorld(1200, 480, 800, 480, 8);
+    assert.equal(rx, 12);
+    assert.equal(ry, 8);
   });
 
   it("matches wallet trades to windows by slug or conditionId", () => {

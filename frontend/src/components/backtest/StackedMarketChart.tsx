@@ -23,7 +23,7 @@ import {
   lastMid,
   marketRealizedPnl,
   overlayMarksForWindow,
-  markerRadiusWorld,
+  markerRadiiWorld,
   nearestOverlayHit,
   nearestPoint,
   rowAsset,
@@ -32,7 +32,6 @@ import {
   rowTimeX,
   seriesPath,
   toChartTimeSec,
-  trianglePoints,
   visibleRowRange,
   worldXToTime,
   type ChartViewBox,
@@ -120,7 +119,7 @@ export function StackedMarketChart(props: {
   const walletBySlug = createMemo(() => groupPositionsBySlug(props.walletMarks ?? []));
   const overlayCount = createMemo(() => countMarks(props.windows, positionsBySlug()));
   const walletCount = createMemo(() => countMarks(props.windows, walletBySlug()));
-  const markerR = createMemo(() => markerRadiusWorld(vb().h, size().h));
+  const marker = createMemo(() => markerRadiiWorld(vb().w, vb().h, size().w, size().h));
 
   function applyVb(next: ChartViewBox): void {
     setVb(clampViewBox(next, contentH(), size().w, size().h));
@@ -390,7 +389,8 @@ export function StackedMarketChart(props: {
                   cutGaps={props.cutGaps}
                   positions={positionsBySlug().get(w.eventSlug) ?? []}
                   walletMarks={walletBySlug().get(w.eventSlug) ?? []}
-                  markerR={markerR()}
+                  markerRx={marker().rx}
+                  markerRy={marker().ry}
                 />
               )}
             </For>
@@ -494,7 +494,8 @@ function MarketRow(props: {
   cutGaps: boolean;
   positions: BacktestPositionRow[];
   walletMarks: WalletOverlayMark[];
-  markerR: number;
+  markerRx: number;
+  markerRy: number;
 }): JSX.Element {
   const top = () => props.index * CHART_ROW_H;
   const x = () => rowTimeX(props.window.windowStart, props.window.windowEnd);
@@ -596,8 +597,11 @@ function MarketRow(props: {
             const cy = y()(p.fillPrice);
             const color = p.outcomeIndex === 1 ? NO_COLOR : YES_COLOR;
             return (
-              <polygon
-                points={trianglePoints(cx, cy, props.markerR, p.side !== "SELL")}
+              <ellipse
+                cx={cx}
+                cy={cy}
+                rx={props.markerRx}
+                ry={props.markerRy}
                 fill={color}
                 stroke="rgba(255,255,255,0.9)"
                 stroke-width="1"
@@ -614,7 +618,7 @@ function MarketRow(props: {
             const color = p.outcomeIndex === 1 ? NO_COLOR : YES_COLOR;
             return (
               <polygon
-                points={diamondPoints(cx, cy, props.markerR)}
+                points={diamondPoints(cx, cy, props.markerRy)}
                 fill={color}
                 stroke="rgba(255,255,255,0.95)"
                 stroke-width="1"

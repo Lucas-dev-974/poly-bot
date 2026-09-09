@@ -23,6 +23,7 @@ export class ArbStrategy implements TradingStrategy {
   readonly id = "arb" as const;
   readonly label =
     "B1 arb: maker cheap GTC, 1:1 hedge after fill if fill+hedge <= pairLockMax";
+  readonly leadsWithEdge = false;
   private readonly sizing = new ArbSizing();
 
   findOpportunities(ctx: StrategyContext): TradeOpportunity[] {

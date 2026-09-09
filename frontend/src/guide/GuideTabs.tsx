@@ -21,6 +21,8 @@ import {
   BARBELL_LIFE_NODES,
   CHEAP,
   COMPARE_ROWS,
+  EDGE_LEAD_LIFE_EDGES,
+  EDGE_LEAD_LIFE_NODES,
   HEDGE_MID,
   HEDGE_TREE,
   NEW_FILES,
@@ -75,6 +77,9 @@ export function StoryTab(): JSX.Element {
         <GuidePill active={engine() === "barbell"} onClick={() => setEngine("barbell")}>
           Barbell — filet + pari
         </GuidePill>
+        <GuidePill active={engine() === "edge-lead"} onClick={() => setEngine("edge-lead")}>
+          Edge-lead — favori d'abord
+        </GuidePill>
       </GuideRow>
       <GuideRow>
         <GuidePill active={phase() === "mid"} onClick={() => setPhase("mid")}>
@@ -93,12 +98,20 @@ export function StoryTab(): JSX.Element {
             que tu as mis. Ennuyeux, et c'est le but.
           </p>
         </GuideCallout>
-      ) : (
+      ) : engine() === "barbell" ? (
         <GuideCallout tone="warning" title="Barbell = la moitié en filet, la moitié en pari">
           <p>
             Sur 10 outsiders, tu n'achètes que 5 favoris. Les 5 autres restent un pari : si
             l'outsider gagne, tu gagnes gros. Si le favori gagne, tu perds un peu. Ce n'est plus
             un coup sûr.
+          </p>
+        </GuideCallout>
+      ) : (
+        <GuideCallout tone="info" title="Edge-lead = le favori d'abord">
+          <p>
+            On confirme que l'ask du favori monte dans une bande pendant N ticks, on achète
+            l'edge en GTC, puis on poste le cheap limit 1:1 à 1 − prix_edge − marge. Si le
+            cheap ne remplit jamais, on garde un favori nu (pari directionnel assumé).
           </p>
         </GuideCallout>
       )}
@@ -107,13 +120,15 @@ export function StoryTab(): JSX.Element {
         title={
           engine() === "arb"
             ? "Chaque outsider doit avoir son favori"
-            : "Moitié duo, moitié pari (ratio 0,5)"
+            : engine() === "barbell"
+              ? "Moitié duo, moitié pari (ratio 0,5)"
+              : "Edge d'abord, cheap en complément 1:1"
         }
       >
         <TicketStrip engine={engine()} hedgeFilled={hedgeFilled()} />
       </GuideCard>
 
-      <GuideCard title={`Cycle de vie d'une paire — ${engine() === "arb" ? "Arb" : "Barbell"}`}>
+      <GuideCard title={`Cycle de vie d'une paire — ${engine() === "arb" ? "Arb" : engine() === "barbell" ? "Barbell" : "Edge-lead"}`}>
         <GuideStack gap={10}>
           <p class="guide-muted guide-small">
             Les états colorés engagent du capital ; les flèches sont la condition de passage.
@@ -126,12 +141,19 @@ export function StoryTab(): JSX.Element {
               markerId="life-arrow-arb"
               ariaLabel="Cycle de vie d'une paire arb"
             />
-          ) : (
+          ) : engine() === "barbell" ? (
             <LifecycleDiagram
               nodes={BARBELL_LIFE_NODES}
               edges={BARBELL_LIFE_EDGES}
               markerId="life-arrow-barbell"
               ariaLabel="Cycle de vie d'une paire barbell"
+            />
+          ) : (
+            <LifecycleDiagram
+              nodes={EDGE_LEAD_LIFE_NODES}
+              edges={EDGE_LEAD_LIFE_EDGES}
+              markerId="life-arrow-edge-lead"
+              ariaLabel="Cycle de vie d'une paire edge-lead"
             />
           )}
           {engine() === "arb" ? (
@@ -139,11 +161,18 @@ export function StoryTab(): JSX.Element {
               Trois sorties après un cheap fillé : filet 1:1 si le lock tient ; directionnel si
               lock cassé ou ask &lt; min ; vente de tout le trou si le favori dépasse le max.
             </p>
-          ) : (
+          ) : engine() === "barbell" ? (
             <p class="guide-muted guide-small">
               Pas de branche « lock raté ». Le hedge part même au-dessus de 1 $. La défense ne
               vend que la tranche filet manquante ; le leftover « pari » reste jusqu'à la
               résolution.
+            </p>
+          ) : (
+            <p class="guide-muted guide-small">
+              L'edge (favori) est acheté d'abord après confirmation de N ticks dans la bande.
+              Le cheap est posté juste après le POST edge. Si l'edge sort de la bande, les GTC
+              non fillés des deux jambes sont annulés ; un favori nu est accepté si le cheap ne
+              remplit jamais.
             </p>
           )}
         </GuideStack>

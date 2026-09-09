@@ -1,11 +1,13 @@
 import { ArbStrategy } from "./arb-strategy.js";
 import { BarbellStrategy } from "./barbell-strategy.js";
+import { EdgeLeadStrategy } from "./edge-lead-strategy.js";
 import type { StrategyId } from "./ids.js";
 import type { TradingStrategy } from "./trading-strategy.js";
 
 const STRATEGIES: Record<StrategyId, () => TradingStrategy> = {
   arb: () => new ArbStrategy(),
   barbell: () => new BarbellStrategy(),
+  "edge-lead": () => new EdgeLeadStrategy(),
 };
 
 export function createStrategy(id: StrategyId): TradingStrategy {

@@ -1,0 +1,31 @@
+{
+  "id": "edge-lead",
+  "strategyId": "edge-lead",
+  "name": "Edge-lead",
+  "description": "Confirmer 5 ticks que l'ask favori monte dans une bande, acheter l'edge GTC, puis cheap limit 1:1 à 1 − edge − 0.01.",
+  "settings": {
+    "pollIntervalMs": 1000,
+    "marketSlugPrefixes": ["btc-updown-15m"],
+    "edgeBandMin": 0.85,
+    "edgeBandMax": 0.9,
+    "edgeConfirmSamples": 5,
+    "edgeMaxDownTick": 0.01,
+    "edgeCheapMargin": 0.01,
+    "edgeOrderUsdc": 15,
+    "edgeCheapOrderUsdc": 5,
+    "maxSharesPerOrder": 20,
+    "maxOpenPositionsPerSide": 1,
+    "maxExposureUsdc": 40,
+    "minutesBeforeCloseMin": 0,
+    "minutesBeforeCloseMax": 15,
+    "minMinutesBeforeCloseToBuy": null,
+    "simulatedCapital": 50,
+    "simFillProbabilityNonMarketable": 0.3,
+    "simResolveDelaySeconds": 5,
+    "simResolveRetryIntervalMs": 5000,
+    "simResolveMaxRetries": 5,
+    "simResolveFallback": "none",
+    "simMaxRetryAttempts": 20,
+    "simRequireCoveredPair": true
+  }
+}

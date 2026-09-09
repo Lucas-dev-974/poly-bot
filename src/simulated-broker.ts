@@ -49,10 +49,12 @@ export class SimulatedBroker {
     // well below the expensive buy range, the market is pricing this token as
     // a likely loser — filling it as a "hedge" creates a directional bet, not
     // an arb. aligned with the strategy's expensiveBuyMin.
-    if (
-      opportunity.kind === "expensive" &&
-      bestAsk < this.config.expensiveBuyMin
-    ) {
+    // Edge-lead : le seuil est la bande edge (edgeBandMin), pas expensiveBuyMin.
+    const favoriteMin =
+      this.config.strategyId === "edge-lead"
+        ? this.config.edgeBandMin
+        : this.config.expensiveBuyMin;
+    if (opportunity.kind === "expensive" && bestAsk < favoriteMin) {
       return { filled: false, reason: "not-a-favorite" };
     }
 

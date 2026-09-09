@@ -11,15 +11,17 @@ import {
 import { testConfig } from "./helpers.js";
 
 describe("strategy presets", () => {
-  it("loads Couverture max and Conservateur from config/presets", () => {
+  it("loads Couverture max, Conservateur and Edge-lead from config/presets", () => {
     const presets = listStrategyPresets();
     const ids = presets.map((preset) => preset.id).sort();
-    assert.deepEqual(ids, ["conservative", "coverage-max"]);
+    assert.deepEqual(ids, ["conservative", "coverage-max", "edge-lead"]);
 
     const coverage = presets.find((preset) => preset.id === "coverage-max");
     const conservative = presets.find((preset) => preset.id === "conservative");
+    const edgeLead = presets.find((preset) => preset.id === "edge-lead");
     assert.ok(coverage);
     assert.ok(conservative);
+    assert.ok(edgeLead);
     assert.equal(coverage.settings.expensiveOrderType, "FOK");
     assert.equal(coverage.settings.expensiveOrderUsdc, 15);
     assert.equal(conservative.settings.expensiveOrderType, "GTC");
@@ -28,6 +30,9 @@ describe("strategy presets", () => {
     assert.equal(conservative.strategyId, "arb");
     assert.equal(coverage.settings.strategyId, "arb");
     assert.equal(conservative.settings.strategyId, "arb");
+    assert.equal(edgeLead.strategyId, "edge-lead");
+    assert.equal(edgeLead.settings.strategyId, "edge-lead");
+    assert.equal(edgeLead.settings.pollIntervalMs, 1000);
   });
 
   it("filters bundled presets by engine", () => {
@@ -36,6 +41,10 @@ describe("strategy presets", () => {
       ["conservative", "coverage-max"],
     );
     assert.deepEqual(presetsForStrategy("barbell"), []);
+    assert.deepEqual(
+      presetsForStrategy("edge-lead").map((preset) => preset.id),
+      ["edge-lead"],
+    );
   });
 
   it("throws when a preset file omits strategyId", () => {

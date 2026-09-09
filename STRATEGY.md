@@ -1,9 +1,9 @@
-# Stratégie — moteurs arb (B1) et barbell
+# Stratégie — moteurs arb (B1), barbell et edge-lead
 
-> Aligné sur le code (`TradingStrategy`, `ArbStrategy`, `BarbellStrategy`, `bot.ts`).
+> Aligné sur le code (`TradingStrategy`, `ArbStrategy`, `BarbellStrategy`, `EdgeLeadStrategy`, `bot.ts`).
 > Live : deposit wallet V2 (`SIGNATURE_TYPE=3` par défaut). La stratégie se lit dans `data/bot-settings.json` (dashboard). `.env` ne contient que les secrets et l'infra.
 
-Le JSON actif choisit le **moteur** (`strategyId` : `arb` | `barbell`). Les **profils** (`config/presets/*.json`) sont des packs de paramètres **liés à un moteur** (champ top-level `strategyId` obligatoire). Les deux profils livrés sont `arb`. Barbell **n'est pas** un lock de profit : le leftover cheap est un pari volontaire, variance plus élevée.
+Le JSON actif choisit le **moteur** (`strategyId` : `arb` | `barbell` | `edge-lead`). Les **profils** (`config/presets/*.json`) sont des packs de paramètres **liés à un moteur** (champ top-level `strategyId` obligatoire). Les deux profils livrés sont `arb` ; `edge-lead.json` est le profil du moteur edge-lead. Barbell **n'est pas** un lock de profit : le leftover cheap est un pari volontaire, variance plus élevée. **Edge-lead** inverse l'ordre : on achète le favori d'abord, puis le cheap en complément.
 
 ---
 
@@ -239,7 +239,50 @@ La stratégie **couverte** lock un petit profit certain à la résolution (`1 �
 
 ---
 
-## 7. Synthèse
+## 7. Moteur edge-lead (favori d'abord)
+
+`strategyId: "edge-lead"` est un moteur **neuf**, indépendant d'arb/barbell. Il n'utilise **pas** `orchestrate.ts` pour l'entrée, ni `pairLockMax` / `cheapBuyMin/Max` comme signal. Le C2 arb (cheap fill avant favori) est **contourné seulement** pour ce moteur (`TradingStrategy.leadsWithEdge`).
+
+### 7.1 Principe
+
+On confirme que l'ask du **favori** (edge) reste dans une bande et **monte** pendant `edgeConfirmSamples` ticks consécutifs, on achète l'edge en **GTC** au best ask, puis on poste immédiatement le **cheap limit** à `1 − prix_edge − edgeCheapMargin` (ex. edge 0.85 → cheap 0.14), taille **1:1** en shares.
+
+### 7.2 Confirmation (5 ticks)
+
+- `edgeConfirmSamples` ticks **consécutifs** valides (défaut 5). Durée réelle ≈ `(N−1) × pollIntervalMs` (poll 1s → ~4s entre 1er et 5e sample). Pas de fenêtre murale glissante.
+- Chaque sample doit être dans `[edgeBandMin, edgeBandMax]` (défaut 0.85–0.90).
+- Série globalement croissante : `last >= first` **et** `mean > first`. Un plat (0.85 × 5) **n'entre pas**.
+- Drop tick-à-tick `> edgeMaxDownTick` (défaut 0.01) → reset. `0.86 → 0.85` OK.
+- Identité edge sticky : si l'autre token devient plus cher avant tout POST, reset + nouveau claim. Après POST/fill, **pas de reflip** ; la bande se lit sur le token claimé.
+
+### 7.3 Exécution
+
+- **Edge** : toujours **GTC** au best ask, indépendant de `expensiveOrderType` (défaut global FOK — sinon le dispatch FOK-kill l'edge).
+- **Cheap** : dès le POST edge OK, `cheapLimit = round2(1 − prix_edge_posté − edgeCheapMargin)`, taille 1:1. Si le POST cheap échoue : **retry chaque tick**, sans refaire 5s, sans 2e edge. Le reconfirm 5s n'a lieu que si le cheap a été **annulé hors bande** alors que l'edge est fillé.
+- **Cancel hors bande** : si l'ask du token edge claimé sort de la bande, on annule les GTC **non fillés** des deux jambes, puis `unmark` des tradeKeys (sinon `tracker.has(key)` bloque le re-post au même prix). Fills gardés. Pas de FOK SELL.
+- **Cheap fill avant edge** : garder l'edge GTC tant qu'il est in-bande.
+- **Favori nu assumé** : si le cheap ne remplit jamais, on garde un favori long (pari directionnel) — c'est un risque **accepté** par ce moteur.
+
+### 7.4 Sizing CLOB
+
+`computeEdgeCheapSize` dimensionne l'edge pour que le cheap passe les minimums CLOB (5 shares **et** 1 $ de notionnel). Ex. edge 0.85 → cheap 0.14 → `ceil(1/0.14) = 8` shares, coût edge `0.85 × 8 = 6.80` ≤ `edgeOrderUsdc`. Si le budget edge ne couvre pas le minimum, pas d'entrée (log explicite).
+
+### 7.5 Paramètres edge-lead
+
+| Clé JSON             | Défaut | Rôle |
+|----------------------|--------|------|
+| `edgeBandMin`        | 0.85   | Ask favori minimum de la bande de confirmation |
+| `edgeBandMax`        | 0.90   | Ask favori maximum de la bande de confirmation |
+| `edgeConfirmSamples` | 5      | Ticks consécutifs valides avant d'acheter l'edge |
+| `edgeMaxDownTick`    | 0.01   | Drop tick-à-tick max toléré dans la série |
+| `edgeCheapMargin`    | 0.01   | cheap = 1 − prix_edge − marge |
+| `edgeOrderUsdc`      | 15     | Budget de l'ordre edge ; cheap = mêmes shares 1:1 |
+
+Preset : `config/presets/edge-lead.json` (`pollIntervalMs: 1000`).
+
+---
+
+## 8. Synthèse
 
 Le projet implémente un **arbitrage binaire maker** (B1) sur marchés de prédiction 15 min :
 

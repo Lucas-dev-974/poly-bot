@@ -46,6 +46,13 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     relayerHost: "https://relayer-v2.polymarket.com",
     autoRedeemWinners: false,
     minMinutesBeforeCloseToBuy: null,
+    edgeBandMin: 0.85,
+    edgeBandMax: 0.9,
+    edgeConfirmSamples: 5,
+    edgeMaxDownTick: 0.01,
+    edgeCheapMargin: 0.01,
+    edgeOrderUsdc: 15,
+    edgeCheapOrderUsdc: 5,
     ...overrides,
   };
 }

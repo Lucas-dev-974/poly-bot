@@ -129,7 +129,7 @@ export interface BotConfig {
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: number;
   /** Trading engine: arb = 1:1 + lock; barbell = cheap/hedge ratio, no lock. */
-  strategyId: "arb" | "barbell";
+  strategyId: "arb" | "barbell" | "edge-lead";
   /** Target hedge / cheap fill ratio for barbell. Ignored by arb. (0, 1]. */
   barbellHedgeRatio: number;
   /** Verrou profit : bid+hedge à l'entrée et fillPrice+hedge après fill, tous deux ≤ pairLockMax. */
@@ -142,6 +142,19 @@ export interface BotConfig {
   minutesBeforeCloseMin: number;
   minutesBeforeCloseMax: number;
   minMinutesBeforeCloseToBuy: number | null;
+  /** Edge-lead : bande de confirmation de l'ask du favori (edge). */
+  edgeBandMin: number;
+  edgeBandMax: number;
+  /** Edge-lead : nombre de ticks consécutifs valides avant d'acheter l'edge. */
+  edgeConfirmSamples: number;
+  /** Edge-lead : drop tick-à-tick max toléré dans la série de confirmation. */
+  edgeMaxDownTick: number;
+  /** Edge-lead : marge cheap = 1 − prix_edge − edgeCheapMargin. */
+  edgeCheapMargin: number;
+  /** Edge-lead : budget USDC de l'ordre edge ; cheap = mêmes shares 1:1. */
+  edgeOrderUsdc: number;
+  /** Edge-lead : plafond USDC de l'ordre cheap (cap indépendant). size = min(edge, cheap). */
+  edgeCheapOrderUsdc: number;
   dryRun: boolean;
   readonlyLive: boolean;
   clobHost: string;

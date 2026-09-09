@@ -8,7 +8,7 @@ export type ConfigFormState = {
   expensiveBuyMax: string;
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: string;
-  strategyId: "arb" | "barbell";
+  strategyId: "arb" | "barbell" | "edge-lead";
   barbellHedgeRatio: string;
   pairLockMax: string;
   expensiveOrderUsdc: string;
@@ -29,6 +29,13 @@ export type ConfigFormState = {
   simMaxRetryAttempts: string;
   simRandomSeed: string;
   simRequireCoveredPair: boolean;
+  edgeBandMin: string;
+  edgeBandMax: string;
+  edgeConfirmSamples: string;
+  edgeMaxDownTick: string;
+  edgeCheapMargin: string;
+  edgeOrderUsdc: string;
+  edgeCheapOrderUsdc: string;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -64,6 +71,13 @@ export function configToForm(config: BotConfig): ConfigFormState {
     simMaxRetryAttempts: String(config.simMaxRetryAttempts),
     simRandomSeed: config.simRandomSeed ?? "",
     simRequireCoveredPair: config.simRequireCoveredPair,
+    edgeBandMin: String(config.edgeBandMin),
+    edgeBandMax: String(config.edgeBandMax),
+    edgeConfirmSamples: String(config.edgeConfirmSamples),
+    edgeMaxDownTick: String(config.edgeMaxDownTick),
+    edgeCheapMargin: String(config.edgeCheapMargin),
+    edgeOrderUsdc: String(config.edgeOrderUsdc),
+    edgeCheapOrderUsdc: String(config.edgeCheapOrderUsdc),
   };
 }
 
@@ -120,6 +134,13 @@ export function formToPatch(
     simMaxRetryAttempts: parseNum(form.simMaxRetryAttempts, "Max retry attempts"),
     simRandomSeed: form.simRandomSeed.trim() === "" ? undefined : form.simRandomSeed.trim(),
     simRequireCoveredPair: form.simRequireCoveredPair,
+    edgeBandMin: parseNum(form.edgeBandMin, "Edge band min"),
+    edgeBandMax: parseNum(form.edgeBandMax, "Edge band max"),
+    edgeConfirmSamples: parseNum(form.edgeConfirmSamples, "Edge confirm samples"),
+    edgeMaxDownTick: parseNum(form.edgeMaxDownTick, "Edge max down tick"),
+    edgeCheapMargin: parseNum(form.edgeCheapMargin, "Edge cheap margin"),
+    edgeOrderUsdc: parseNum(form.edgeOrderUsdc, "Edge order USDC"),
+    edgeCheapOrderUsdc: parseNum(form.edgeCheapOrderUsdc, "Budget cheap"),
   };
 
   if ((next.marketSlugPrefixes?.length ?? 0) === 0) {
@@ -178,14 +199,18 @@ export function validateConfigForm(
     if (expensiveBuyMin > expensiveBuyMax) {
       errors.push("Hedge min doit être ≤ hedge max");
     }
-    if (cheapBuyMax >= expensiveBuyMin) {
-      errors.push("Cheap max doit être < hedge min");
-    }
-    if (pairLockMax < 0.90 || pairLockMax >= 1.00) {
-      errors.push("Pair lock max doit être entre 0.90 et 0.99");
-    }
-    if (!(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
-      errors.push("Ratio hedge doit être dans (0, 1]");
+    // Les validations arb/barbell (bandes cheap/hedge, lock, ratio) ne
+    // s'appliquent pas à edge-lead : ces champs ne sont pas utilisés.
+    if (form.strategyId !== "edge-lead") {
+      if (cheapBuyMax >= expensiveBuyMin) {
+        errors.push("Cheap max doit être < hedge min");
+      }
+      if (pairLockMax < 0.90 || pairLockMax >= 1.00) {
+        errors.push("Pair lock max doit être entre 0.90 et 0.99");
+      }
+      if (!(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
+        errors.push("Ratio hedge doit être dans (0, 1]");
+      }
     }
     if (minutesBeforeCloseMin > minutesBeforeCloseMax) {
       errors.push("Minutes min doit être ≤ minutes max");
@@ -207,6 +232,38 @@ export function validateConfigForm(
     }
     if (form.marketSlugPrefixes.split(",").map((s) => s.trim()).filter(Boolean).length === 0) {
       errors.push("Au moins un préfixe de marché est requis");
+    }
+    // Edge-lead : validations dédiées. Les champs arb/barbell (cheap/hedge
+    // bandes, pairLockMax, barbellHedgeRatio) ne s'appliquent pas à ce moteur.
+    if (form.strategyId === "edge-lead") {
+      const edgeBandMin = parseNum(form.edgeBandMin, "Edge band min");
+      const edgeBandMax = parseNum(form.edgeBandMax, "Edge band max");
+      const edgeConfirmSamples = parseNum(form.edgeConfirmSamples, "Edge confirm samples");
+      const edgeMaxDownTick = parseNum(form.edgeMaxDownTick, "Edge max down tick");
+      const edgeCheapMargin = parseNum(form.edgeCheapMargin, "Edge cheap margin");
+      const edgeOrderUsdc = parseNum(form.edgeOrderUsdc, "Edge order USDC");
+      const edgeCheapOrderUsdc = parseNum(form.edgeCheapOrderUsdc, "Budget cheap");
+      if (edgeBandMin >= edgeBandMax) {
+        errors.push("Edge band min doit être < edge band max");
+      }
+      if (edgeBandMin < 0.50 || edgeBandMax > 0.99) {
+        errors.push("Edge band doit être dans [0.50, 0.99]");
+      }
+      if (edgeConfirmSamples < 2) {
+        errors.push("Edge confirm samples doit être ≥ 2");
+      }
+      if (edgeMaxDownTick <= 0) {
+        errors.push("Edge max down tick doit être > 0");
+      }
+      if (edgeCheapMargin < 0) {
+        errors.push("Edge cheap margin doit être ≥ 0");
+      }
+      if (edgeOrderUsdc <= 0) {
+        errors.push("Edge order USDC doit être > 0");
+      }
+      if (edgeCheapOrderUsdc <= 0) {
+        errors.push("Budget cheap doit être > 0");
+      }
     }
   } catch (error) {
     errors.push(error instanceof Error ? error.message : String(error));

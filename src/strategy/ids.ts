@@ -1,4 +1,4 @@
-export const STRATEGY_IDS = ["arb", "barbell"] as const;
+export const STRATEGY_IDS = ["arb", "barbell", "edge-lead"] as const;
 export type StrategyId = (typeof STRATEGY_IDS)[number];
 
 export function parseStrategyId(value: unknown): StrategyId {

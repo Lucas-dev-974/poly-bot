@@ -36,6 +36,13 @@ export const EDITABLE_CONFIG_KEYS = [
   "simMaxRetryAttempts",
   "simRandomSeed",
   "simRequireCoveredPair",
+  "edgeBandMin",
+  "edgeBandMax",
+  "edgeConfirmSamples",
+  "edgeMaxDownTick",
+  "edgeCheapMargin",
+  "edgeOrderUsdc",
+  "edgeCheapOrderUsdc",
 ] as const;
 
 export type EditableConfigKey = (typeof EDITABLE_CONFIG_KEYS)[number];
@@ -71,6 +78,13 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   simMaxRetryAttempts: "SIM_MAX_RETRY_ATTEMPTS",
   simRandomSeed: "SIM_RANDOM_SEED",
   simRequireCoveredPair: "SIM_REQUIRE_COVERED_PAIR",
+  edgeBandMin: "EDGE_BAND_MIN",
+  edgeBandMax: "EDGE_BAND_MAX",
+  edgeConfirmSamples: "EDGE_CONFIRM_SAMPLES",
+  edgeMaxDownTick: "EDGE_MAX_DOWN_TICK",
+  edgeCheapMargin: "EDGE_CHEAP_MARGIN",
+  edgeOrderUsdc: "EDGE_ORDER_USDC",
+  edgeCheapOrderUsdc: "EDGE_CHEAP_ORDER_USDC",
 };
 
 const FORBIDDEN_KEYS = new Set([
@@ -179,6 +193,13 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "simResolveRetryIntervalMs":
     case "simResolveMaxRetries":
     case "simMaxRetryAttempts":
+    case "edgeBandMin":
+    case "edgeBandMax":
+    case "edgeConfirmSamples":
+    case "edgeMaxDownTick":
+    case "edgeCheapMargin":
+    case "edgeOrderUsdc":
+    case "edgeCheapOrderUsdc":
       return parseNumber(value, key);
     case "minMinutesBeforeCloseToBuy":
       return parseNullableNumber(value, key);

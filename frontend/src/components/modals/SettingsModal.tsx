@@ -80,7 +80,7 @@ function NumberInput(props: {
 
 /* ---------- définition des sections ---------- */
 
-type SectionId = "presets" | "markets" | "cheap" | "hedge" | "risk" | "window" | "sim";
+type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "risk" | "window" | "sim";
 
 interface SectionDef {
   id: SectionId;
@@ -94,6 +94,7 @@ const SECTIONS: SectionDef[] = [
   { id: "markets", label: "Marchés", icon: "◉", desc: "Marchés surveillés et cadence de scan" },
   { id: "cheap", label: "Jambe cheap", icon: "▾", desc: "Bid maker underdog et verrou de paire" },
   { id: "hedge", label: "Jambe hedge", icon: "▴", desc: "Hedge après fill cheap" },
+  { id: "edge", label: "Jambe edge", icon: "▴", desc: "Bande de confirmation edge-lead" },
   { id: "risk", label: "Risque", icon: "◆", desc: "Limites de taille, positions et exposition" },
   { id: "window", label: "Fenêtre", icon: "◷", desc: "Plage de trading avant clôture" },
   { id: "sim", label: "Simulation", icon: "▦", desc: "Paramètres du dry-run" },
@@ -266,7 +267,19 @@ export function SettingsModal(props: {
             <nav class="cfg-sidebar">
               <For each={SECTIONS}>
                 {(s) => (
-                  <Show when={!(s.id === "sim" && !props.config.dryRun)}>
+                  <Show
+                    when={
+                      !(s.id === "sim" && !props.config.dryRun) &&
+                      !(
+                        form().strategyId === "edge-lead" &&
+                        (s.id === "cheap" || s.id === "hedge")
+                      ) &&
+                      !(
+                        form().strategyId !== "edge-lead" &&
+                        s.id === "edge"
+                      )
+                    }
+                  >
                     <button
                       type="button"
                       class={`cfg-nav${activeSection() === s.id ? " cfg-nav--active" : ""}`}
@@ -355,7 +368,14 @@ export function SettingsModal(props: {
                         onInput={(e) => update("marketSlugPrefixes", e.currentTarget.value)}
                       />
                     </Field>
-                    <Field label="Poll interval (ms)" hint="Minimum 500 ms">
+                    <Field
+                      label="Poll interval (ms)"
+                      hint={
+                        form().strategyId === "edge-lead" && Number(form().pollIntervalMs) > 2000
+                          ? `Poll lent : ~${form().edgeConfirmSamples} ticks × ${form().pollIntervalMs}ms pour confirmer (défaut 5 × 1s = 5s)`
+                          : "Minimum 500 ms"
+                      }
+                    >
                       <NumberInput
                         value={form().pollIntervalMs}
                         min={500}
@@ -514,6 +534,80 @@ export function SettingsModal(props: {
                     checked={form().enableExpensiveHedge}
                     onChange={(v) => update("enableExpensiveHedge", v)}
                   />
+                </div>
+              </Show>
+
+              {/* ---- Jambe edge (edge-lead) ---- */}
+              <Show when={activeSection() === "edge"}>
+                <div class="cfg-section">
+                  <h4>Jambe edge (favori)</h4>
+                  <p class="cfg-section__desc">
+                    Edge-lead : on confirme N ticks que l'ask du favori reste dans
+                    la bande et monte, on achète l'edge en GTC, puis on poste le
+                    cheap limit 1:1 à 1 − prix_edge − marge.
+                  </p>
+                  <div class="cfg-grid">
+                    <Field label="Edge band min" hint="Ask favori minimum de la bande de confirmation">
+                      <NumberInput
+                        value={form().edgeBandMin}
+                        min={0.5}
+                        max={0.99}
+                        step={0.01}
+                        onInput={(v) => update("edgeBandMin", v)}
+                      />
+                    </Field>
+                    <Field label="Edge band max" hint="Ask favori maximum de la bande de confirmation">
+                      <NumberInput
+                        value={form().edgeBandMax}
+                        min={0.5}
+                        max={0.99}
+                        step={0.01}
+                        onInput={(v) => update("edgeBandMax", v)}
+                      />
+                    </Field>
+                    <Field label="Ticks de confirmation" hint="Nombre de ticks consécutifs valides avant d'acheter l'edge (défaut 5)">
+                      <NumberInput
+                        value={form().edgeConfirmSamples}
+                        min={2}
+                        step={1}
+                        onInput={(v) => update("edgeConfirmSamples", v)}
+                      />
+                    </Field>
+                    <Field label="Drop max / tick" hint="Drop tick-à-tick max toléré dans la série (défaut 0.01)">
+                      <NumberInput
+                        value={form().edgeMaxDownTick}
+                        min={0.001}
+                        max={0.1}
+                        step={0.001}
+                        onInput={(v) => update("edgeMaxDownTick", v)}
+                      />
+                    </Field>
+                    <Field label="Marge cheap" hint="cheap = 1 − prix_edge − marge (défaut 0.01 → 0.85 → 0.14)">
+                      <NumberInput
+                        value={form().edgeCheapMargin}
+                        min={0}
+                        max={0.1}
+                        step={0.01}
+                        onInput={(v) => update("edgeCheapMargin", v)}
+                      />
+                    </Field>
+                    <Field label="Budget edge (USDC)" hint="Budget de l'ordre edge (edgePrice × size ≤ budget). Size partagée 1:1 avec le cheap">
+                      <NumberInput
+                        value={form().edgeOrderUsdc}
+                        min={1}
+                        step={1}
+                        onInput={(v) => update("edgeOrderUsdc", v)}
+                      />
+                    </Field>
+                    <Field label="Budget cheap (USDC)" hint="Budget du cheap (cheapLimit × size ≤ budget). Size finale = min(budget edge, budget cheap)">
+                      <NumberInput
+                        value={form().edgeCheapOrderUsdc}
+                        min={1}
+                        step={1}
+                        onInput={(v) => update("edgeCheapOrderUsdc", v)}
+                      />
+                    </Field>
+                  </div>
                 </div>
               </Show>
 

@@ -1,5 +1,5 @@
 export type TabId = "story" | "arch" | "hedge" | "ui" | "ship";
-export type EngineId = "arb" | "barbell";
+export type EngineId = "arb" | "barbell" | "edge-lead";
 export type PhaseId = "mid" | "done";
 
 export const TABS: { id: TabId; label: string }[] = [
@@ -127,16 +127,46 @@ export const BARBELL_LIFE_EDGES: LifeEdge[] = [
   { from: "leftover", to: "resolved", label: "" },
 ];
 
+export const EDGE_LEAD_LIFE_NODES: LifeNode[] = [
+  { id: "scan", label: "Fenêtre 15m scannée", sub: "Gamma + 2 order books", tone: "neutral" },
+  { id: "confirm", label: "Confirmation edge", sub: "N ticks dans la bande + série croissante", tone: "accent" },
+  { id: "edgeResting", label: "Edge GTC resting", sub: "au best ask, dans la bande", tone: "accent" },
+  { id: "cheapResting", label: "Cheap GTC resting", sub: "1 − prix_edge − marge", tone: "accent" },
+  { id: "cancelled", label: "Jambes annulées", sub: "edge sort de la bande", tone: "neutral" },
+  { id: "edgeFilled", label: "Edge fillé", sub: "favori long", tone: "warning" },
+  { id: "covered", label: "Paire 1:1", sub: "edge + cheap fillés", tone: "success" },
+  { id: "directional", label: "Favori nu", sub: "cheap jamais fillé", tone: "warning" },
+  { id: "resolved", label: "Résolue", sub: "redeem 1 $ / 0 $", tone: "neutral" },
+];
+
+export const EDGE_LEAD_LIFE_EDGES: LifeEdge[] = [
+  { from: "scan", to: "confirm", label: "ask favori dans la bande" },
+  { from: "confirm", to: "edgeResting", label: "N ticks + série croissante" },
+  { from: "edgeResting", to: "cheapResting", label: "POST edge OK" },
+  { from: "edgeResting", to: "cancelled", label: "edge sort de la bande" },
+  { from: "cheapResting", to: "cancelled", label: "edge sort de la bande" },
+  { from: "edgeResting", to: "edgeFilled", label: "matched + tokens" },
+  { from: "cheapResting", to: "covered", label: "cheap fillé" },
+  { from: "edgeFilled", to: "covered", label: "cheap fillé" },
+  { from: "edgeFilled", to: "directional", label: "cheap jamais fillé" },
+  { from: "covered", to: "resolved", label: "" },
+  { from: "directional", to: "resolved", label: "" },
+  { from: "cancelled", to: "resolved", label: "" },
+];
+
 export type SlotKind = "covered" | "needHedge" | "keepBet";
 
 export function slotKind(index: number, hedgeFilled: number, engine: EngineId): SlotKind {
   if (index < hedgeFilled) return "covered";
   if (engine === "arb") return "needHedge";
+  if (engine === "edge-lead") return "needHedge";
   const target = CHEAP * RATIO;
   if (index < target) return "needHedge";
   return "keepBet";
 }
 
 export function hedgeTarget(engine: EngineId): number {
-  return engine === "arb" ? CHEAP : CHEAP * RATIO;
+  if (engine === "arb") return CHEAP;
+  if (engine === "edge-lead") return CHEAP;
+  return CHEAP * RATIO;
 }

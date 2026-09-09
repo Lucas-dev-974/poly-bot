@@ -117,6 +117,23 @@ export interface BotConfig {
   marketSnapshotRetentionMs: number;
   bookSnapshotRetentionMs: number;
   opportunitySnapshotRetentionMs: number;
+  /** Edge-lead : bande de confirmation de l'ask du favori (edge). */
+  edgeBandMin: number;
+  edgeBandMax: number;
+  /** Edge-lead : nombre de ticks consécutifs valides avant d'acheter l'edge. */
+  edgeConfirmSamples: number;
+  /** Edge-lead : drop tick-à-tick max toléré dans la série de confirmation. */
+  edgeMaxDownTick: number;
+  /** Edge-lead : marge cheap = 1 − prix_edge − edgeCheapMargin. */
+  edgeCheapMargin: number;
+  /** Edge-lead : budget USDC de l'ordre edge ; cheap = mêmes shares 1:1. */
+  edgeOrderUsdc: number;
+  /**
+   * Edge-lead : budget USDC de l'ordre cheap (indépendant du budget edge).
+   * La taille finale en shares = min(size plafonnée par edgeOrderUsdc,
+   * floor(edgeCheapOrderUsdc / cheapLimit)).
+   */
+  edgeCheapOrderUsdc: number;
 }
 
 /**
@@ -156,6 +173,13 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     simMaxRetryAttempts: 20,
     simRandomSeed: undefined,
     simRequireCoveredPair: true,
+    edgeBandMin: 0.85,
+    edgeBandMax: 0.9,
+    edgeConfirmSamples: 5,
+    edgeMaxDownTick: 0.01,
+    edgeCheapMargin: 0.01,
+    edgeOrderUsdc: 15,
+    edgeCheapOrderUsdc: 5,
   };
 }
 
@@ -302,6 +326,29 @@ export function validateConfigCoherence(config: BotConfig): void {
   }
   if (config.maxOpenPositionsPerSide < 1) {
     throw new Error("MAX_OPEN_POSITIONS_PER_SIDE must be >= 1");
+  }
+  if (config.strategyId === "edge-lead") {
+    if (config.edgeBandMin >= config.edgeBandMax) {
+      throw new Error("EDGE_BAND_MIN must be < EDGE_BAND_MAX");
+    }
+    if (config.edgeBandMin < 0.50 || config.edgeBandMax > 0.99) {
+      throw new Error("EDGE_BAND must be within [0.50, 0.99]");
+    }
+    if (config.edgeConfirmSamples < 2) {
+      throw new Error("EDGE_CONFIRM_SAMPLES must be >= 2");
+    }
+    if (config.edgeMaxDownTick <= 0) {
+      throw new Error("EDGE_MAX_DOWN_TICK must be > 0");
+    }
+    if (config.edgeCheapMargin < 0) {
+      throw new Error("EDGE_CHEAP_MARGIN must be >= 0");
+    }
+    if (config.edgeOrderUsdc <= 0) {
+      throw new Error("EDGE_ORDER_USDC must be > 0");
+    }
+    if (config.edgeCheapOrderUsdc <= 0) {
+      throw new Error("EDGE_CHEAP_ORDER_USDC must be > 0");
+    }
   }
 }
 

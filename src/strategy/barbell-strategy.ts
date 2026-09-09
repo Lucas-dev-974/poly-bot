@@ -22,6 +22,7 @@ export class BarbellStrategy implements TradingStrategy {
   readonly id = "barbell" as const;
   readonly label =
     "Barbell: maker cheap GTC, hedge at barbellHedgeRatio after fill (no pair lock)";
+  readonly leadsWithEdge = false;
   private readonly sizing = new BarbellSizing();
 
   findOpportunities(ctx: StrategyContext): TradeOpportunity[] {

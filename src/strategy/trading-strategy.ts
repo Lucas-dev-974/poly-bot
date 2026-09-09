@@ -41,6 +41,12 @@ export type HedgePostDecision =
 export interface TradingStrategy {
   readonly id: StrategyId;
   readonly label: string;
+  /**
+   * Edge-lead : le moteur achète l'edge (favori) d'abord, puis le cheap en
+   * complément. Quand true, le bot contourne le C2 arb (cheap fill avant
+   * favori), force GTC, et gère les deux jambes resting via un chemin dédié.
+   */
+  readonly leadsWithEdge: boolean;
   findOpportunities(ctx: StrategyContext): TradeOpportunity[];
   cheapOrderAction(ctx: RestingCheapContext): CheapOrderAction;
   shouldDefend(ctx: DefendContext): boolean;

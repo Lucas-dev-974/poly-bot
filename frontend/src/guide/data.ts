@@ -76,7 +76,7 @@ export const COMPARE_ROWS: [string, string, string][] = [
 export const STRATEGY_COMPARE_ROWS: [string, string, string, string][] = [
   ["Ordre d'achat", "Outsider → favori", "Outsider → favori (ratio)", "Favori → cheap (après fill edge)"],
   ["Signal d'entrée", "Bandes cheap + favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant"],
-  ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeOrderUsdc / edgeCheapOrderUsdc indépendants"],
+  ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeSizingMode : shares / pUSD / dynamic (budgets indépendants)"],
   ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés"],
   ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Pas de FOK SELL — cancel GTC edge hors bande"],
   ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu"],
@@ -87,9 +87,11 @@ export const EDGE_LEAD_PARAM_ROWS: [string, string][] = [
   ["edgeConfirmSamples", "Ticks consécutifs valides avant achat edge (série croissante)"],
   ["edgeMaxDownTick", "Drop tick-à-tick max toléré dans la série"],
   ["edgeCheapBandMin / edgeCheapBandMax", "Bande ask cheap pour poster (après fill edge)"],
-  ["edgeOrderUsdc", "Budget USDC du favori (size = budget / ask edge)"],
+  ["edgeOrderUsdc", "Budget USDC du favori (size = budget / ask edge) — mode pUSD / dynamic"],
   ["maxShareEdge", "Plafond de shares de l'ordre edge (le cheap reste sur maxSharesPerOrder)"],
-  ["edgeCheapOrderUsdc", "Budget USDC de l'outsider (size = budget / ask cheap)"],
+  ["edgeCheapOrderUsdc", "Budget USDC de l'outsider (size = budget / ask cheap) — mode pUSD / dynamic"],
+  ["edgeSizingMode", "Mode de sizing : shares (fixe) / pUSD (budget USDC) / dynamic (comportement actuel)"],
+  ["edgeSharesEdge / edgeSharesCheap", "Shares fixes de l'edge et du cheap en mode shares (≥ 5)"],
 ];
 
 export const RESOLUTION_ROWS: Record<EngineId, [string, string][]> = {

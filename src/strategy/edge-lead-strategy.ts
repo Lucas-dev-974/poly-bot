@@ -3,7 +3,7 @@ import { log } from "../logger.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { TokenBook, TradeOpportunity, UpDownEvent } from "../types.js";
 import { tickSizeFromMarket } from "../utils/market.js";
-import { computeSize } from "../utils/prices.js";
+import { computeSize, MIN_CLOB_SHARES } from "../utils/prices.js";
 import { EdgeConfirmBuffer } from "./edge-confirm.js";
 import { round2 } from "./predicates.js";
 import type {
@@ -47,13 +47,21 @@ export function cheapAskInBand(ask: number, config: BotConfig): boolean {
 }
 
 /**
- * Size edge depuis edgeOrderUsdc au prix d'entrée, plafonnée par maxShareEdge
- * (indépendant du cheap et de maxSharesPerOrder).
+ * Size edge selon le mode de sizing.
+ * - "shares" : nombre fixe edgeSharesEdge (garde >= MIN_CLOB_SHARES).
+ * - "pusd"   : budget edgeOrderUsdc / prix, plafonné par maxShareEdge.
+ * - "dynamic": comportement actuel (budget USDC + confirmation).
+ * En mode shares/pusd, la confirmation et les bandes restent appliquées ;
+ * seul le calcul de taille change.
  */
 export function computeEdgeLeadEdgeSize(
   config: BotConfig,
   edgePrice: number,
 ): number | null {
+  const mode = config.edgeSizingMode ?? "dynamic";
+  if (mode === "shares") {
+    return config.edgeSharesEdge >= MIN_CLOB_SHARES ? config.edgeSharesEdge : null;
+  }
   return computeSize(
     config.edgeOrderUsdc,
     edgePrice,
@@ -62,12 +70,19 @@ export function computeEdgeLeadEdgeSize(
 }
 
 /**
- * Size cheap depuis edgeCheapOrderUsdc à l'ask live (indépendant de l'edge).
+ * Size cheap selon le mode de sizing.
+ * - "shares" : nombre fixe edgeSharesCheap (garde >= MIN_CLOB_SHARES).
+ * - "pusd"   : budget edgeCheapOrderUsdc / ask, plafonné par maxSharesPerOrder.
+ * - "dynamic": comportement actuel (budget USDC + confirmation).
  */
 export function computeEdgeLeadCheapSize(
   config: BotConfig,
   cheapPrice: number,
 ): number | null {
+  const mode = config.edgeSizingMode ?? "dynamic";
+  if (mode === "shares") {
+    return config.edgeSharesCheap >= MIN_CLOB_SHARES ? config.edgeSharesCheap : null;
+  }
   return computeSize(
     config.edgeCheapOrderUsdc,
     cheapPrice,

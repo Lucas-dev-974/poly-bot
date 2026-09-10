@@ -142,6 +142,18 @@ export interface BotConfig {
   edgeCheapBandMin: number;
   /** Edge-lead : ask cheap maximum pour poster (ex. 0.14). */
   edgeCheapBandMax: number;
+  /**
+   * Edge-lead : mode de sizing des ordres.
+   * - "shares" : nombre fixe de shares par side (edgeSharesEdge / edgeSharesCheap).
+   * - "pusd"   : montant USDC fixe par side (edgeOrderUsdc / edgeCheapOrderUsdc), converti en shares.
+   * - "dynamic": comportement actuel (budgets USDC + confirmation N ticks + bandes).
+   * En mode shares/pusd, la confirmation et les bandes restent appliquées ; seul le calcul de taille change.
+   */
+  edgeSizingMode: "shares" | "pusd" | "dynamic";
+  /** Edge-lead : shares fixes de l'ordre edge en mode "shares". */
+  edgeSharesEdge: number;
+  /** Edge-lead : shares fixes de l'ordre cheap en mode "shares". */
+  edgeSharesCheap: number;
 }
 
 /**
@@ -190,6 +202,9 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     edgeCheapOrderUsdc: 5,
     edgeCheapBandMin: 0.04,
     edgeCheapBandMax: 0.14,
+    edgeSizingMode: "dynamic",
+    edgeSharesEdge: 20,
+    edgeSharesCheap: 20,
   };
 }
 
@@ -369,6 +384,23 @@ export function validateConfigCoherence(config: BotConfig): void {
     }
     if (config.edgeCheapBandMin < 0.01 || config.edgeCheapBandMax > 0.49) {
       throw new Error("EDGE_CHEAP_BAND must be within [0.01, 0.49]");
+    }
+    if (
+      config.edgeSizingMode !== "shares" &&
+      config.edgeSizingMode !== "pusd" &&
+      config.edgeSizingMode !== "dynamic"
+    ) {
+      throw new Error(
+        `EDGE_SIZING_MODE must be one of shares, pusd, dynamic (got ${config.edgeSizingMode})`,
+      );
+    }
+    if (config.edgeSizingMode === "shares") {
+      if (config.edgeSharesEdge < 5) {
+        throw new Error("EDGE_SHARES_EDGE must be >= 5 (CLOB minimum)");
+      }
+      if (config.edgeSharesCheap < 5) {
+        throw new Error("EDGE_SHARES_CHEAP must be >= 5 (CLOB minimum)");
+      }
     }
   }
 }

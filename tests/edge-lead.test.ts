@@ -188,6 +188,38 @@ describe("computeEdgeLeadEdgeSize / computeEdgeLeadCheapSize", () => {
     assert.ok(computeEdgeLeadEdgeSize(config, 0.9) !== null);
     assert.ok(computeEdgeLeadCheapSize(config, 0.04) !== null);
   });
+
+  it("shares mode returns the fixed edge/cheap share counts", () => {
+    const config = edgeConfig({
+      edgeSizingMode: "shares",
+      edgeSharesEdge: 12,
+      edgeSharesCheap: 8,
+    });
+    assert.equal(computeEdgeLeadEdgeSize(config, 0.85), 12);
+    assert.equal(computeEdgeLeadCheapSize(config, 0.05), 8);
+  });
+
+  it("shares mode returns null when a fixed count is below the CLOB minimum", () => {
+    const config = edgeConfig({
+      edgeSizingMode: "shares",
+      edgeSharesEdge: 3,
+      edgeSharesCheap: 4,
+    });
+    assert.equal(computeEdgeLeadEdgeSize(config, 0.85), null);
+    assert.equal(computeEdgeLeadCheapSize(config, 0.05), null);
+  });
+
+  it("pusd mode sizes from the USDC budgets (same as dynamic)", () => {
+    const config = edgeConfig({ edgeSizingMode: "pusd" });
+    assert.equal(computeEdgeLeadEdgeSize(config, 0.85), computeSize(25, 0.85, 40));
+    assert.equal(computeEdgeLeadCheapSize(config, 0.05), computeSize(5, 0.05, 40));
+  });
+
+  it("falls back to dynamic when edgeSizingMode is undefined (legacy config)", () => {
+    const config = edgeConfig({ edgeSizingMode: undefined as never });
+    assert.equal(computeEdgeLeadEdgeSize(config, 0.85), computeSize(25, 0.85, 40));
+    assert.equal(computeEdgeLeadCheapSize(config, 0.05), computeSize(5, 0.05, 40));
+  });
 });
 
 describe("EdgeLeadStrategy.findOpportunities", () => {

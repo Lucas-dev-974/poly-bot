@@ -106,6 +106,9 @@ const SETTING_GROUPS: Array<{
       ["edgeCheapBandMax", "Cheap max"],
       ["edgeOrderUsdc", "Edge USDC"],
       ["edgeCheapOrderUsdc", "Cheap USDC"],
+      ["edgeSizingMode", "Mode sizing"],
+      ["edgeSharesEdge", "Shares edge"],
+      ["edgeSharesCheap", "Shares cheap"],
     ],
   },
   {

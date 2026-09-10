@@ -11,7 +11,7 @@ import type { TradeTracker } from "../trade-tracker.js";
 import type { Trader } from "../trader.js";
 import {
   applyRuntimeSettings,
-  EDITABLE_CONFIG_KEYS,
+  keysForStrategy,
   sanitizePatch,
 } from "../runtime-settings.js";
 import type { EditableConfigKey } from "../runtime-settings.js";
@@ -362,7 +362,7 @@ export class DashboardServer {
     res.end(
       JSON.stringify({
         config: toPublicConfig(this.config),
-        editableKeys: EDITABLE_CONFIG_KEYS,
+        editableKeys: keysForStrategy(this.config.strategyId),
       }),
     );
   }

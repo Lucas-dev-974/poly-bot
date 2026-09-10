@@ -177,6 +177,12 @@ export interface BotConfig {
   edgeCheapBandMin: number;
   /** Edge-lead : ask cheap maximum pour poster. */
   edgeCheapBandMax: number;
+  /** Edge-lead : mode de sizing des ordres (shares / pusd / dynamic). */
+  edgeSizingMode: "shares" | "pusd" | "dynamic";
+  /** Edge-lead : shares fixes de l'ordre edge en mode "shares". */
+  edgeSharesEdge: number;
+  /** Edge-lead : shares fixes de l'ordre cheap en mode "shares". */
+  edgeSharesCheap: number;
   dryRun: boolean;
   readonlyLive: boolean;
   clobHost: string;

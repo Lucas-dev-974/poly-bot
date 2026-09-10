@@ -117,9 +117,31 @@ export function BacktestPresetPanel(props: {
                 <Num label="Drop / tick" value={form().edgeMaxDownTick} step={0.001} onInput={(v) => props.onUpdate("edgeMaxDownTick", v)} />
                 <Num label="Cheap min" value={form().edgeCheapBandMin} step={0.01} onInput={(v) => props.onUpdate("edgeCheapBandMin", v)} />
                 <Num label="Cheap max" value={form().edgeCheapBandMax} step={0.01} onInput={(v) => props.onUpdate("edgeCheapBandMax", v)} />
-                <Num label="Edge USDC" value={form().edgeOrderUsdc} step={1} onInput={(v) => props.onUpdate("edgeOrderUsdc", v)} />
-                <Num label="Max shares edge" value={form().maxShareEdge} step={1} onInput={(v) => props.onUpdate("maxShareEdge", v)} />
-                <Num label="Cheap USDC" value={form().edgeCheapOrderUsdc} step={1} onInput={(v) => props.onUpdate("edgeCheapOrderUsdc", v)} />
+                <label class="bt-pf bt-pf-wide">
+                  <span>Mode sizing</span>
+                  <select
+                    value={form().edgeSizingMode}
+                    onChange={(e) =>
+                      props.onUpdate(
+                        "edgeSizingMode",
+                        e.currentTarget.value as ConfigFormState["edgeSizingMode"],
+                      )
+                    }
+                  >
+                    <option value="dynamic">Dynamique (budgets USDC)</option>
+                    <option value="pusd">pUSD (budget USDC fixe)</option>
+                    <option value="shares">Shares (nombre fixe)</option>
+                  </select>
+                </label>
+                <Show when={form().edgeSizingMode === "shares"}>
+                  <Num label="Shares edge" value={form().edgeSharesEdge} step={1} onInput={(v) => props.onUpdate("edgeSharesEdge", v)} />
+                  <Num label="Shares cheap" value={form().edgeSharesCheap} step={1} onInput={(v) => props.onUpdate("edgeSharesCheap", v)} />
+                </Show>
+                <Show when={form().edgeSizingMode !== "shares"}>
+                  <Num label="Edge USDC" value={form().edgeOrderUsdc} step={1} onInput={(v) => props.onUpdate("edgeOrderUsdc", v)} />
+                  <Num label="Max shares edge" value={form().maxShareEdge} step={1} onInput={(v) => props.onUpdate("maxShareEdge", v)} />
+                  <Num label="Cheap USDC" value={form().edgeCheapOrderUsdc} step={1} onInput={(v) => props.onUpdate("edgeCheapOrderUsdc", v)} />
+                </Show>
               </div>
             </Show>
             <Show when={active() === "risk"}>

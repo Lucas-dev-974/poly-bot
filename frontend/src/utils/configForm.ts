@@ -38,6 +38,9 @@ export type ConfigFormState = {
   edgeCheapOrderUsdc: string;
   edgeCheapBandMin: string;
   edgeCheapBandMax: string;
+  edgeSizingMode: "shares" | "pusd" | "dynamic";
+  edgeSharesEdge: string;
+  edgeSharesCheap: string;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -82,6 +85,9 @@ export function configToForm(config: BotConfig): ConfigFormState {
     edgeCheapOrderUsdc: String(config.edgeCheapOrderUsdc),
     edgeCheapBandMin: String(config.edgeCheapBandMin),
     edgeCheapBandMax: String(config.edgeCheapBandMax),
+    edgeSizingMode: config.edgeSizingMode ?? "dynamic",
+    edgeSharesEdge: String(config.edgeSharesEdge ?? 20),
+    edgeSharesCheap: String(config.edgeSharesCheap ?? 20),
   };
 }
 
@@ -144,6 +150,9 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     edgeCheapOrderUsdc: parseNum(form.edgeCheapOrderUsdc, "Budget cheap"),
     edgeCheapBandMin: parseNum(form.edgeCheapBandMin, "Cheap band min"),
     edgeCheapBandMax: parseNum(form.edgeCheapBandMax, "Cheap band max"),
+    edgeSizingMode: form.edgeSizingMode,
+    edgeSharesEdge: parseNum(form.edgeSharesEdge, "Shares edge"),
+    edgeSharesCheap: parseNum(form.edgeSharesCheap, "Shares cheap"),
   };
 
   if ((next.marketSlugPrefixes?.length ?? 0) === 0) {
@@ -286,6 +295,23 @@ export function validateConfigForm(
       }
       if (edgeCheapBandMin < 0.01 || edgeCheapBandMax > 0.49) {
         errors.push("Cheap band doit être dans [0.01, 0.49]");
+      }
+      if (
+        form.edgeSizingMode !== "shares" &&
+        form.edgeSizingMode !== "pusd" &&
+        form.edgeSizingMode !== "dynamic"
+      ) {
+        errors.push("Mode de sizing doit être shares, pusd ou dynamic");
+      }
+      if (form.edgeSizingMode === "shares") {
+        const edgeSharesEdge = parseNum(form.edgeSharesEdge, "Shares edge");
+        const edgeSharesCheap = parseNum(form.edgeSharesCheap, "Shares cheap");
+        if (edgeSharesEdge < 5) {
+          errors.push("Shares edge doit être ≥ 5 (minimum CLOB)");
+        }
+        if (edgeSharesCheap < 5) {
+          errors.push("Shares cheap doit être ≥ 5 (minimum CLOB)");
+        }
       }
     }
   } catch (error) {

@@ -601,30 +601,69 @@ export function SettingsModal(props: {
                         onInput={(v) => update("edgeCheapBandMax", v)}
                       />
                     </Field>
-                    <Field label="Budget edge (USDC)" hint="Taille edge = budget / prix edge, plafonnée par max shares edge. Indépendant du cheap">
-                      <NumberInput
-                        value={form().edgeOrderUsdc}
-                        min={1}
-                        step={1}
-                        onInput={(v) => update("edgeOrderUsdc", v)}
-                      />
+                    <Field
+                      label="Mode de sizing"
+                      hint="Shares = nombre fixe par side. pUSD = budget USDC par side. Dynamique = comportement actuel (budgets + confirmation). La confirmation et les bandes restent appliquées dans tous les modes."
+                    >
+                      <select
+                        class="cfg-input"
+                        value={form().edgeSizingMode}
+                        onChange={(e) =>
+                          update(
+                            "edgeSizingMode",
+                            e.currentTarget.value as ConfigFormState["edgeSizingMode"],
+                          )
+                        }
+                      >
+                        <option value="dynamic">Dynamique (budgets USDC)</option>
+                        <option value="pusd">pUSD (budget USDC fixe)</option>
+                        <option value="shares">Shares (nombre fixe)</option>
+                      </select>
                     </Field>
-                    <Field label="Max shares edge" hint="Plafond de shares de l'ordre favori. Le cheap reste plafonné par Max shares / ordre">
-                      <NumberInput
-                        value={form().maxShareEdge}
-                        min={1}
-                        step={1}
-                        onInput={(v) => update("maxShareEdge", v)}
-                      />
-                    </Field>
-                    <Field label="Budget cheap (USDC)" hint="Taille cheap = budget / ask cheap, seulement après fill edge. Pas de 1:1 en shares">
-                      <NumberInput
-                        value={form().edgeCheapOrderUsdc}
-                        min={1}
-                        step={1}
-                        onInput={(v) => update("edgeCheapOrderUsdc", v)}
-                      />
-                    </Field>
+                    <Show when={form().edgeSizingMode === "shares"}>
+                      <Field label="Shares edge" hint="Nombre fixe de shares de l'ordre favori (≥ 5)">
+                        <NumberInput
+                          value={form().edgeSharesEdge}
+                          min={5}
+                          step={1}
+                          onInput={(v) => update("edgeSharesEdge", v)}
+                        />
+                      </Field>
+                      <Field label="Shares cheap" hint="Nombre fixe de shares de l'ordre cheap (≥ 5)">
+                        <NumberInput
+                          value={form().edgeSharesCheap}
+                          min={5}
+                          step={1}
+                          onInput={(v) => update("edgeSharesCheap", v)}
+                        />
+                      </Field>
+                    </Show>
+                    <Show when={form().edgeSizingMode !== "shares"}>
+                      <Field label="Budget edge (USDC)" hint="Taille edge = budget / prix edge, plafonnée par max shares edge. Indépendant du cheap">
+                        <NumberInput
+                          value={form().edgeOrderUsdc}
+                          min={1}
+                          step={1}
+                          onInput={(v) => update("edgeOrderUsdc", v)}
+                        />
+                      </Field>
+                      <Field label="Max shares edge" hint="Plafond de shares de l'ordre favori. Le cheap reste plafonné par Max shares / ordre">
+                        <NumberInput
+                          value={form().maxShareEdge}
+                          min={1}
+                          step={1}
+                          onInput={(v) => update("maxShareEdge", v)}
+                        />
+                      </Field>
+                      <Field label="Budget cheap (USDC)" hint="Taille cheap = budget / ask cheap, seulement après fill edge. Pas de 1:1 en shares">
+                        <NumberInput
+                          value={form().edgeCheapOrderUsdc}
+                          min={1}
+                          step={1}
+                          onInput={(v) => update("edgeCheapOrderUsdc", v)}
+                        />
+                      </Field>
+                    </Show>
                   </div>
                 </div>
               </Show>

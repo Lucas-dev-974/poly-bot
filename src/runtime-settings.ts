@@ -45,6 +45,9 @@ export const EDITABLE_CONFIG_KEYS = [
   "edgeCheapOrderUsdc",
   "edgeCheapBandMin",
   "edgeCheapBandMax",
+  "edgeSizingMode",
+  "edgeSharesEdge",
+  "edgeSharesCheap",
 ] as const;
 
 export type EditableConfigKey = (typeof EDITABLE_CONFIG_KEYS)[number];
@@ -89,6 +92,9 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   edgeCheapOrderUsdc: "EDGE_CHEAP_ORDER_USDC",
   edgeCheapBandMin: "EDGE_CHEAP_BAND_MIN",
   edgeCheapBandMax: "EDGE_CHEAP_BAND_MAX",
+  edgeSizingMode: "EDGE_SIZING_MODE",
+  edgeSharesEdge: "EDGE_SHARES_EDGE",
+  edgeSharesCheap: "EDGE_SHARES_CHEAP",
 };
 
 const FORBIDDEN_KEYS = new Set([
@@ -206,7 +212,11 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "edgeCheapOrderUsdc":
     case "edgeCheapBandMin":
     case "edgeCheapBandMax":
+    case "edgeSharesEdge":
+    case "edgeSharesCheap":
       return parseNumber(value, key);
+    case "edgeSizingMode":
+      return parseEnum(value, ["shares", "pusd", "dynamic"] as const, key);
     case "minMinutesBeforeCloseToBuy":
       return parseNullableNumber(value, key);
     case "enableExpensiveHedge":
@@ -254,9 +264,81 @@ export function sanitizePatch(body: unknown): RuntimeSettingsPatch {
   return patch;
 }
 
+/**
+ * Clés communes à toutes les stratégies (boucle bot, scanner, risk, résolution).
+ */
+const SHARED_KEYS: readonly EditableConfigKey[] = [
+  "pollIntervalMs",
+  "marketSlugPrefixes",
+  "strategyId",
+  "maxSharesPerOrder",
+  "maxOpenPositionsPerSide",
+  "maxExposureUsdc",
+  "minutesBeforeCloseMin",
+  "minutesBeforeCloseMax",
+  "minMinutesBeforeCloseToBuy",
+  "simResolveDelaySeconds",
+  "simResolveRetryIntervalMs",
+  "simResolveMaxRetries",
+  "simResolveFallback",
+  "simMaxRetryAttempts",
+];
+
+/**
+ * Clés propres à arb / barbell (hedge, lock, bandes cheap/expensive, budgets).
+ */
+const ARB_BARBELL_KEYS: readonly EditableConfigKey[] = [
+  "cheapBuyMin",
+  "cheapBuyMax",
+  "expensiveBuyMin",
+  "expensiveBuyMax",
+  "enableExpensiveHedge",
+  "cheapOrderUsdc",
+  "barbellHedgeRatio",
+  "pairLockMax",
+  "expensiveOrderUsdc",
+  "expensiveOrderType",
+  "simRequireCoveredPair",
+];
+
+/**
+ * Clés propres à edge-lead (bandes edge/cheap, confirmation, sizing edge).
+ */
+const EDGE_LEAD_KEYS: readonly EditableConfigKey[] = [
+  "edgeBandMin",
+  "edgeBandMax",
+  "edgeConfirmSamples",
+  "edgeMaxDownTick",
+  "edgeOrderUsdc",
+  "maxShareEdge",
+  "edgeCheapOrderUsdc",
+  "edgeCheapBandMin",
+  "edgeCheapBandMax",
+  "edgeSizingMode",
+  "edgeSharesEdge",
+  "edgeSharesCheap",
+];
+
+/**
+ * Clés utilisées uniquement en dry-run (simulatedCapital, fill probability).
+ */
+const SIM_DRYRUN_KEYS: readonly EditableConfigKey[] = [
+  "simulatedCapital",
+  "simFillProbabilityNonMarketable",
+  "simRandomSeed",
+];
+
+export function keysForStrategy(strategyId: BotConfig["strategyId"]): readonly EditableConfigKey[] {
+  const strategyKeys =
+    strategyId === "edge-lead"
+      ? EDGE_LEAD_KEYS
+      : ARB_BARBELL_KEYS;
+  return [...SHARED_KEYS, ...strategyKeys, ...SIM_DRYRUN_KEYS];
+}
+
 export function snapshotEditableSettings(config: BotConfig): RuntimeSettingsPatch {
   const snapshot: RuntimeSettingsPatch = {};
-  for (const key of EDITABLE_CONFIG_KEYS) {
+  for (const key of keysForStrategy(config.strategyId)) {
     (snapshot as Record<string, unknown>)[key] = config[key];
   }
   return snapshot;
@@ -322,7 +404,10 @@ export async function writeRuntimeSettings(
 
 function restoreSnapshot(config: BotConfig, snapshot: RuntimeSettingsPatch): void {
   const target = config as unknown as Record<string, unknown>;
-  for (const key of EDITABLE_CONFIG_KEYS) {
+  // Only restore keys present in the snapshot. snapshotEditableSettings
+  // filters by strategy, so iterating all EDITABLE_CONFIG_KEYS would set
+  // omitted keys to undefined and corrupt the config.
+  for (const key of Object.keys(snapshot) as EditableConfigKey[]) {
     target[key] = snapshot[key];
   }
 }

@@ -56,6 +56,9 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     edgeCheapOrderUsdc: 5,
     edgeCheapBandMin: 0.04,
     edgeCheapBandMax: 0.14,
+    edgeSizingMode: "dynamic",
+    edgeSharesEdge: 20,
+    edgeSharesCheap: 20,
     ...overrides,
   };
 }

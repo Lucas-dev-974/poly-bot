@@ -264,10 +264,13 @@ On confirme que l'ask du **favori** (edge) reste dans une bande et **monte** pen
 
 ### 7.4 Sizing CLOB
 
-Deux budgets **découplés**, via `computeSize` (`utils/prices.ts`) : 5 shares min et 1 $ de notionnel. Chaque jambe a son propre plafond de shares :
+Le mode de sizing est piloté par `edgeSizingMode` (`shares` | `pusd` | `dynamic`). Dans tous les modes, la confirmation N ticks et les bandes (edge/cheap) restent appliquées — seul le calcul de **taille** change.
 
-- **Edge** : `computeEdgeLeadEdgeSize` = `computeSize(edgeOrderUsdc, edgeAsk, maxShareEdge)`. Plafonné par `maxShareEdge` (indépendant de `maxSharesPerOrder` qui plafonne le cheap). Défaut `maxShareEdge = 20` (`config.ts`) ; le preset `edge-lead.json` le monte à `40`.
-- **Cheap** : `computeEdgeLeadCheapSize` = `computeSize(edgeCheapOrderUsdc, cheapAsk, maxSharesPerOrder)`.
+- **`dynamic`** (défaut) : budgets USDC découplés via `computeSize` (`utils/prices.ts`) : 5 shares min et 1 $ de notionnel. Chaque jambe a son propre plafond de shares :
+  - **Edge** : `computeEdgeLeadEdgeSize` = `computeSize(edgeOrderUsdc, edgeAsk, maxShareEdge)`. Plafonné par `maxShareEdge` (indépendant de `maxSharesPerOrder` qui plafonne le cheap). Défaut `maxShareEdge = 20` (`config.ts`) ; le preset `edge-lead.json` le monte à `40`.
+  - **Cheap** : `computeEdgeLeadCheapSize` = `computeSize(edgeCheapOrderUsdc, cheapAsk, maxSharesPerOrder)`.
+- **`pusd`** : identique à `dynamic` pour le calcul (budget USDC / prix), mais le mode est explicite.
+- **`shares`** : taille **fixe** par side — `edgeSharesEdge` (edge) et `edgeSharesCheap` (cheap), sans conversion budget/prix. Garde `>= 5` (minimum CLOB) : sous 5, la jambe est skip.
 
 Ex. (preset `edge-lead.json`, `maxShareEdge = maxSharesPerOrder = 40`) : `edgeOrderUsdc=25` @ 0.85 → ~29.41 shares ; `edgeCheapOrderUsdc=5` @ 0.05 → **40** shares (plafonné). Pas de corrélation 1:1 entre les deux jambes. Un budget trop bas pour les minimums CLOB → skip de **cette** jambe seulement.
 
@@ -281,8 +284,11 @@ Ex. (preset `edge-lead.json`, `maxShareEdge = maxSharesPerOrder = 40`) : `edgeOr
 | `edgeMaxDownTick`    | 0.01   | Drop tick-à-tick max toléré dans la série |
 | `edgeCheapBandMin`   | 0.04   | Ask cheap minimum pour poster |
 | `edgeCheapBandMax`   | 0.14   | Ask cheap maximum pour poster |
-| `edgeOrderUsdc`      | 15     | Budget edge (size = budget / prix edge) |
-| `edgeCheapOrderUsdc` | 5      | Budget cheap (size = budget / ask cheap) |
+| `edgeOrderUsdc`      | 15     | Budget edge (size = budget / prix edge) — modes pUSD / dynamic |
+| `edgeCheapOrderUsdc` | 5      | Budget cheap (size = budget / ask cheap) — modes pUSD / dynamic |
+| `edgeSizingMode`     | dynamic| Mode de sizing : shares (fixe) / pUSD (budget USDC) / dynamic (actuel) |
+| `edgeSharesEdge`     | 20     | Shares fixes de l'edge en mode shares (≥ 5) |
+| `edgeSharesCheap`    | 20     | Shares fixes du cheap en mode shares (≥ 5) |
 
 Preset : `config/presets/edge-lead.json` (`pollIntervalMs: 1000`, `edgeOrderUsdc: 25`, `maxSharesPerOrder: 40`).
 

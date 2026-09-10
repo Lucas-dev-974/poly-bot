@@ -69,7 +69,8 @@ Le code est en TypeScript (ESM, via `tsx`), organisé en modules clairs :
 src/
 ├── index.ts           — point d'entrée
 ├── config.ts          — chargement/validation des paramètres (.env)
-├── bot.ts             — boucle principale (ReverseBot)
+├── bot.ts             — re-export ReverseBot
+├── bot/               — reverse-bot (orchestration) + lifecycle / resting / executor / balance-guard / tick-snapshots
 ├── market-scanner.ts  — découverte des marchés + order books (API Gamma + CLOB)
 ├── strategy.ts        — barrel arb (tests) + réexport des prédicats
 ├── strategy/          — TradingStrategy (arb, barbell), sizing, registry
@@ -80,7 +81,9 @@ src/
 └── types.ts           — types (UpDownEvent, TokenBook, TradeOpportunity...)
 ```
 
-### 3.1 Boucle de trading (`bot.ts`)
+### 3.1 Boucle de trading (`bot.ts` / `bot/`)
+
+L'orchestration vit dans `reverse-bot.ts` ; la logique live / resting / exécution / snapshots est sous `src/bot/`.
 
 Toutes les `pollIntervalMs` (défaut code **5000** ms, JSON dashboard) :
 

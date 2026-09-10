@@ -38,7 +38,8 @@ A GTC hedge is never posted against a *resting* cheap (anti naked-favorite). If 
 src/
 ├── index.ts                 # Entry point, wiring + main loop
 ├── config.ts                # All settings via env vars (validated)
-├── bot.ts                   # Orchestrator: scan → books → opportunities → fills → resolve
+├── bot.ts                   # Re-export ReverseBot (compat for index / tests)
+├── bot/                     # ReverseBot façade + live modules (lifecycle, resting, executor, balance-guard, tick-snapshots)
 ├── strategy.ts              # Barrel: arb findOpportunities + predicate re-exports
 ├── strategy/                # TradingStrategy plugins (arb, barbell), sizing, registry
 ├── trader.ts                # Live trading via @polymarket/clob-client-v2 (Polygon, CLOB)
@@ -257,7 +258,7 @@ DRY_RUN=true npm start
 
 ## Project Structure Rationale
 
-- **Backend-side grouping**: All data transformation (pairing, enrichment, stats) happens in `bot.ts`/`strategy.ts`/`trade-tracker.ts` — the dashboard is a thin viewer
+- **Backend-side grouping**: All data transformation (pairing, enrichment, stats) happens in `bot/` (orchestration in `reverse-bot.ts`)/`strategy.ts`/`trade-tracker.ts` — the dashboard is a thin viewer
 - **Window claims**: Outcomes stay locked for the window to avoid flip-flopping, unless nothing is committed and the underdog flips (claim is cleared and re-picked)
 - **Posted order tracking**: Live GTC orders tracked separately from filled positions (they're "resting" exposure)
 - **Deterministic simulation**: Seeded RNG enables reproducible backtests with identical seeds

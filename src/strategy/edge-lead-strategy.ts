@@ -9,6 +9,7 @@ import { round2 } from "./predicates.js";
 import type {
   CheapOrderAction,
   DefendContext,
+  EdgeSellContext,
   HedgePostContext,
   HedgePostDecision,
   RestingCheapContext,
@@ -149,6 +150,8 @@ export class EdgeLeadStrategy implements TradingStrategy {
     "Edge-lead: confirmer N ticks, GTC edge au budget edge, cheap au budget cheap seulement après fill edge";
   readonly leadsWithEdge = true;
   private readonly buffer = new EdgeConfirmBuffer();
+  /** Début (ms) de la perte continue de l'edge par paire, pour la vente. */
+  private readonly lossStart = new Map<string, number>();
 
   findOpportunities(ctx: StrategyContext): TradeOpportunity[] {
     const { config, tracker, event, books } = ctx;
@@ -275,5 +278,50 @@ export class EdgeLeadStrategy implements TradingStrategy {
 
   hedgeAtPostTime(_ctx: HedgePostContext): HedgePostDecision {
     return { action: "skip", reason: "edge-lead-managed-in-bot" };
+  }
+
+  /**
+   * Vendre l'edge (favori nu) quand :
+   *  - la vente est activée (edgeSellExpensiveEnabled) ;
+   *  - aucun cheap n'est fillé (cheapFilled === 0) ;
+   *  - le marché a au moins edgeSellExpensiveAfterMin minutes ;
+   *  - le best bid est en perte >= edgeSellExpensiveLossPct % sous le fill
+   *    price, de façon continue pendant edgeSellExpensiveLossWindowMs.
+   * La perte est mesurée en % du fill price : lossPct = (bid - fill)/fill*100.
+   * Une perte < seuil (ou un bid manquant) reset le timer de perte continue.
+   */
+  shouldSellExpensiveEdge(ctx: EdgeSellContext): boolean {
+    const { config, pairId } = ctx;
+    if (!config.edgeSellExpensiveEnabled) {
+      this.lossStart.delete(pairId);
+      return false;
+    }
+    if (ctx.cheapFilled > 0) {
+      this.lossStart.delete(pairId);
+      return false;
+    }
+    const afterMs = config.edgeSellExpensiveAfterMin * 60_000;
+    if (ctx.marketAgeMs < afterMs) {
+      this.lossStart.delete(pairId);
+      return false;
+    }
+    if (ctx.expensiveBid === null || ctx.expensiveFillPrice <= 0) {
+      this.lossStart.delete(pairId);
+      return false;
+    }
+
+    const lossPct =
+      ((ctx.expensiveBid - ctx.expensiveFillPrice) / ctx.expensiveFillPrice) *
+      100;
+    // Pas en perte au-delà du seuil → reset du timer de perte continue.
+    if (lossPct > -config.edgeSellExpensiveLossPct) {
+      this.lossStart.delete(pairId);
+      return false;
+    }
+
+    const now = Date.now();
+    const start = this.lossStart.get(pairId) ?? now;
+    this.lossStart.set(pairId, start);
+    return now - start >= config.edgeSellExpensiveLossWindowMs;
   }
 }

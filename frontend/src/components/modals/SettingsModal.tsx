@@ -664,6 +664,38 @@ export function SettingsModal(props: {
                         />
                       </Field>
                     </Show>
+                    <Toggle
+                      label="Vendre l'edge si perte"
+                      hint="Vendre le favori nu (FOK SELL) si aucun cheap fillé et en perte soutenue"
+                      checked={form().edgeSellExpensiveEnabled}
+                      onChange={(v) => update("edgeSellExpensiveEnabled", v)}
+                    />
+                    <Show when={form().edgeSellExpensiveEnabled}>
+                      <Field label="Vente edge après (min)" hint="Âge du marché (min depuis l'ouverture) avant déclenchement (défaut 8)">
+                        <NumberInput
+                          value={form().edgeSellExpensiveAfterMin}
+                          min={0}
+                          step={1}
+                          onInput={(v) => update("edgeSellExpensiveAfterMin", v)}
+                        />
+                      </Field>
+                      <Field label="Perte edge (%)" hint="Perte % sous le prix de fill pour déclencher (ex. 10 = -10%)">
+                        <NumberInput
+                          value={form().edgeSellExpensiveLossPct}
+                          min={0.1}
+                          step={1}
+                          onInput={(v) => update("edgeSellExpensiveLossPct", v)}
+                        />
+                      </Field>
+                      <Field label="Fenêtre perte edge (ms)" hint="Durée de perte continue requise avant la vente (défaut 10000)">
+                        <NumberInput
+                          value={form().edgeSellExpensiveLossWindowMs}
+                          min={100}
+                          step={100}
+                          onInput={(v) => update("edgeSellExpensiveLossWindowMs", v)}
+                        />
+                      </Field>
+                    </Show>
                   </div>
                 </div>
               </Show>

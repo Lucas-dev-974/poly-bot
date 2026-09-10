@@ -25,6 +25,10 @@ function edgeConfig(overrides: Record<string, unknown> = {}) {
     edgeCheapBandMin: 0.04,
     edgeCheapBandMax: 0.14,
     maxSharesPerOrder: 40,
+    edgeSellExpensiveEnabled: true,
+    edgeSellExpensiveAfterMin: 8,
+    edgeSellExpensiveLossPct: 10,
+    edgeSellExpensiveLossWindowMs: 10_000,
     ...overrides,
   });
 }
@@ -565,6 +569,92 @@ describe("EdgeLeadStrategy.cheapOrderAction", () => {
         favoriteAsk: 0.86,
       }),
       "keep",
+    );
+  });
+});
+
+describe("EdgeLeadStrategy.shouldSellExpensiveEdge", () => {
+  const strategy = new EdgeLeadStrategy();
+  const pairId = "btc-updown-15m-123:1800000000";
+  const base = {
+    config: edgeConfig(),
+    tracker: new TradeTracker(),
+    pairId,
+    expensiveBid: 0.75,
+    expensiveFillPrice: 0.85,
+    expensiveSize: 29.41,
+    cheapFilled: 0,
+    marketAgeMs: 9 * 60_000, // 9 min > 8 min
+  };
+
+  it("returns false before the market reaches edgeSellExpensiveAfterMin", () => {
+    assert.equal(
+      strategy.shouldSellExpensiveEdge({ ...base, marketAgeMs: 5 * 60_000 }),
+      false,
+    );
+  });
+
+  it("returns false when a cheap leg is filled", () => {
+    assert.equal(
+      strategy.shouldSellExpensiveEdge({ ...base, cheapFilled: 20 }),
+      false,
+    );
+  });
+
+  it("returns false when the edge is not in loss", () => {
+    assert.equal(
+      strategy.shouldSellExpensiveEdge({ ...base, expensiveBid: 0.85 }),
+      false,
+    );
+  });
+
+  it("returns false when the loss is below the threshold", () => {
+    // -5% loss < 10% threshold
+    assert.equal(
+      strategy.shouldSellExpensiveEdge({ ...base, expensiveBid: 0.8075 }),
+      false,
+    );
+  });
+
+  it("returns false on the first tick of a sustained loss (window not elapsed)", () => {
+    assert.equal(strategy.shouldSellExpensiveEdge(base), false);
+  });
+
+  it("returns true after the loss window elapses", async () => {
+    // First tick starts the timer.
+    strategy.shouldSellExpensiveEdge(base);
+    // Let the loss window elapse.
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    const config = edgeConfig({ edgeSellExpensiveLossWindowMs: 1 });
+    assert.equal(
+      strategy.shouldSellExpensiveEdge({ ...base, config }),
+      true,
+    );
+  });
+
+  it("resets the loss timer when the loss disappears", async () => {
+    strategy.shouldSellExpensiveEdge(base); // start timer
+    strategy.shouldSellExpensiveEdge({ ...base, expensiveBid: 0.85 }); // reset
+    // A fresh loss must re-accumulate the full window.
+    const config = edgeConfig({ edgeSellExpensiveLossWindowMs: 1 });
+    assert.equal(
+      strategy.shouldSellExpensiveEdge({ ...base, config }),
+      false,
+    );
+  });
+
+  it("returns false when the sell is disabled", () => {
+    const config = edgeConfig({ edgeSellExpensiveEnabled: false });
+    assert.equal(
+      strategy.shouldSellExpensiveEdge({ ...base, config }),
+      false,
+    );
+  });
+
+  it("returns false when the bid is missing", () => {
+    assert.equal(
+      strategy.shouldSellExpensiveEdge({ ...base, expensiveBid: null }),
+      false,
     );
   });
 });

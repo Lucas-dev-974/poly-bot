@@ -142,6 +142,19 @@ export function BacktestPresetPanel(props: {
                   <Num label="Max shares edge" value={form().maxShareEdge} step={1} onInput={(v) => props.onUpdate("maxShareEdge", v)} />
                   <Num label="Cheap USDC" value={form().edgeCheapOrderUsdc} step={1} onInput={(v) => props.onUpdate("edgeCheapOrderUsdc", v)} />
                 </Show>
+                <label class="bt-pf bt-pf-wide">
+                  <span>Vendre l'edge si perte</span>
+                  <input
+                    type="checkbox"
+                    checked={form().edgeSellExpensiveEnabled}
+                    onChange={(e) => props.onUpdate("edgeSellExpensiveEnabled", e.currentTarget.checked)}
+                  />
+                </label>
+                <Show when={form().edgeSellExpensiveEnabled}>
+                  <Num label="Vente après (min)" value={form().edgeSellExpensiveAfterMin} step={1} onInput={(v) => props.onUpdate("edgeSellExpensiveAfterMin", v)} />
+                  <Num label="Perte (%)" value={form().edgeSellExpensiveLossPct} step={1} onInput={(v) => props.onUpdate("edgeSellExpensiveLossPct", v)} />
+                  <Num label="Fenêtre perte (ms)" value={form().edgeSellExpensiveLossWindowMs} step={100} onInput={(v) => props.onUpdate("edgeSellExpensiveLossWindowMs", v)} />
+                </Show>
               </div>
             </Show>
             <Show when={active() === "risk"}>

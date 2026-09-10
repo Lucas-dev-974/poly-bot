@@ -288,10 +288,13 @@ function EdgeLeadStory(): JSX.Element {
           </p>
         </GuideCard>
       </GuideGrid>
-      <GuideCallout tone="neutral" title="Pas de défense FOK SELL">
+      <GuideCallout tone="warning" title="Vente de l'edge nu en perte">
         <p>
-          Edge-lead n'utilise pas le hedge au POST ni la vente de trou cheap d'arb/barbell. Un
-          favori nu (cheap jamais fillé) est un pari directionnel <strong>accepté</strong>.
+          Edge-lead n'utilise pas le hedge au POST ni la vente de trou cheap d'arb/barbell. Mais
+          si le cheap ne remplit jamais, le favori nu est <strong>vendu</strong> (FOK SELL) quand
+          le marché a au moins <code>edgeSellExpensiveAfterMin</code> min et que le best bid est
+          en perte <code>edgeSellExpensiveLossPct</code> % sous le prix de fill, de façon continue
+          pendant <code>edgeSellExpensiveLossWindowMs</code>.
         </p>
       </GuideCallout>
 

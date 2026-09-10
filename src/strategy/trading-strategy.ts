@@ -33,6 +33,22 @@ export interface HedgePostContext {
   freshAsk: number | null;
 }
 
+export interface EdgeSellContext {
+  config: BotConfig;
+  tracker: TradeTracker;
+  pairId: string;
+  /** Best bid live du token edge (favori). Null si book manquant. */
+  expensiveBid: number | null;
+  /** Prix de fill moyen de la jambe expensive. */
+  expensiveFillPrice: number;
+  /** Shares expensive fillées. */
+  expensiveSize: number;
+  /** Shares cheap fillées (0 = favori nu). */
+  cheapFilled: number;
+  /** Âge du marché en ms depuis windowStart. */
+  marketAgeMs: number;
+}
+
 export type HedgePostDecision =
   | { action: "post"; price: number }
   | { action: "skip"; reason: string }
@@ -55,4 +71,10 @@ export interface TradingStrategy {
   /** Shares of cheap to sell if `shouldDefend`. Rounded to 2 decimals. 0 → no SELL. */
   defendShares(ctx: DefendContext): number;
   hedgeAtPostTime(ctx: HedgePostContext): HedgePostDecision;
+  /**
+   * Edge-lead : vendre la jambe expensive (favori nu) quand aucun cheap n'est
+   * fillé après un délai et que l'edge est en perte soutenue. Retourne false
+   * pour arb/barbell (jamais de vente de l'edge).
+   */
+  shouldSellExpensiveEdge(ctx: EdgeSellContext): boolean;
 }

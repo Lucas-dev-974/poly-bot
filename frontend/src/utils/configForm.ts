@@ -41,6 +41,10 @@ export type ConfigFormState = {
   edgeSizingMode: "shares" | "pusd" | "dynamic";
   edgeSharesEdge: string;
   edgeSharesCheap: string;
+  edgeSellExpensiveEnabled: boolean;
+  edgeSellExpensiveAfterMin: string;
+  edgeSellExpensiveLossPct: string;
+  edgeSellExpensiveLossWindowMs: string;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -88,6 +92,10 @@ export function configToForm(config: BotConfig): ConfigFormState {
     edgeSizingMode: config.edgeSizingMode ?? "dynamic",
     edgeSharesEdge: String(config.edgeSharesEdge ?? 20),
     edgeSharesCheap: String(config.edgeSharesCheap ?? 20),
+    edgeSellExpensiveEnabled: config.edgeSellExpensiveEnabled ?? true,
+    edgeSellExpensiveAfterMin: String(config.edgeSellExpensiveAfterMin ?? 8),
+    edgeSellExpensiveLossPct: String(config.edgeSellExpensiveLossPct ?? 10),
+    edgeSellExpensiveLossWindowMs: String(config.edgeSellExpensiveLossWindowMs ?? 10000),
   };
 }
 
@@ -153,6 +161,10 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     edgeSizingMode: form.edgeSizingMode,
     edgeSharesEdge: parseNum(form.edgeSharesEdge, "Shares edge"),
     edgeSharesCheap: parseNum(form.edgeSharesCheap, "Shares cheap"),
+    edgeSellExpensiveEnabled: form.edgeSellExpensiveEnabled,
+    edgeSellExpensiveAfterMin: parseNum(form.edgeSellExpensiveAfterMin, "Vente edge après (min)"),
+    edgeSellExpensiveLossPct: parseNum(form.edgeSellExpensiveLossPct, "Perte edge %"),
+    edgeSellExpensiveLossWindowMs: parseNum(form.edgeSellExpensiveLossWindowMs, "Fenêtre perte edge (ms)"),
   };
 
   if ((next.marketSlugPrefixes?.length ?? 0) === 0) {
@@ -312,6 +324,18 @@ export function validateConfigForm(
         if (edgeSharesCheap < 5) {
           errors.push("Shares cheap doit être ≥ 5 (minimum CLOB)");
         }
+      }
+      const sellAfterMin = parseNum(form.edgeSellExpensiveAfterMin, "Vente edge après (min)");
+      const sellLossPct = parseNum(form.edgeSellExpensiveLossPct, "Perte edge %");
+      const sellLossWindowMs = parseNum(form.edgeSellExpensiveLossWindowMs, "Fenêtre perte edge (ms)");
+      if (sellAfterMin < 0) {
+        errors.push("Vente edge après (min) doit être ≥ 0");
+      }
+      if (sellLossPct <= 0) {
+        errors.push("Perte edge % doit être > 0");
+      }
+      if (sellLossWindowMs <= 0) {
+        errors.push("Fenêtre perte edge (ms) doit être > 0");
       }
     }
   } catch (error) {

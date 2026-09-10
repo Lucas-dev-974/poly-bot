@@ -183,6 +183,14 @@ export interface BotConfig {
   edgeSharesEdge: number;
   /** Edge-lead : shares fixes de l'ordre cheap en mode "shares". */
   edgeSharesCheap: number;
+  /** Edge-lead : vendre l'edge (favori nu) si aucun cheap fillé et en perte soutenue. */
+  edgeSellExpensiveEnabled: boolean;
+  /** Edge-lead : âge du marché (min) avant déclenchement de la vente. */
+  edgeSellExpensiveAfterMin: number;
+  /** Edge-lead : perte % sous le fill price pour déclencher la vente. */
+  edgeSellExpensiveLossPct: number;
+  /** Edge-lead : durée de perte continue requise (ms) avant la vente. */
+  edgeSellExpensiveLossWindowMs: number;
   dryRun: boolean;
   readonlyLive: boolean;
   clobHost: string;

@@ -259,8 +259,8 @@ On confirme que l'ask du **favori** (edge) reste dans une bande et **monte** pen
 
 - **Edge** : toujours **GTC** au best ask, indépendant de `expensiveOrderType` (défaut global FOK — sinon le dispatch FOK-kill l'edge).
 - **Cheap** : **seulement après fill edge** (pas après le POST). **Seule condition** : `edgeCheapBandMin ≤ round2(bestAsk) ≤ edgeCheapBandMax` → un **GTC au best ask** sur l'autre token que l'edge claimé. Taille = `computeSize(edgeCheapOrderUsdc, ask, maxSharesPerOrder)`. La bande edge et le buffer de confirmation **ne s'appliquent plus** après fill. Ask hors bande cheap → pas de cheap (pas de spam). GTC cheap **resting** hors bande cheap → **cancel + unmark** ; **re-post** au tick où l'ask rentre. Si le POST cheap échoue : **retry chaque tick** tant que l'ask reste in-band.
-- **Cancel hors bande** : si l'ask du token edge claimé sort de la bande alors que l'edge GTC est **resting**, on annule ce GTC, puis `unmark` du tradeKey. Fills gardés. Un cheap resting n'est **pas** annulé par la bande edge. Pas de FOK SELL.
-- **Favori nu assumé** : si le cheap ne remplit jamais, on garde un favori long (pari directionnel) — c'est un risque **accepté** par ce moteur.
+- **Cancel hors bande** : si l'ask du token edge claimé sort de la bande alors que l'edge GTC est **resting**, on annule ce GTC, puis `unmark` du tradeKey. Fills gardés. Un cheap resting n'est **pas** annulé par la bande edge.
+- **Vente de l'edge nu** : si le cheap ne remplit jamais, l'edge (favori) reste un pari directionnel. Pour limiter la perte, le bot peut **vendre l'edge** (FOK SELL au best bid) quand (1) aucun cheap n'est fillé, (2) le marché a au moins `edgeSellExpensiveAfterMin` minutes, et (3) le best bid est en perte `>= edgeSellExpensiveLossPct` % sous le prix de fill, de façon **continue** pendant `edgeSellExpensiveLossWindowMs`. La perte est mesurée en % du fill price : `lossPct = (bid − fill)/fill × 100`. Une perte sous le seuil (ou un bid manquant) reset le timer de perte continue. Après la vente, la jambe expensive est marquée `sold` et le GTC edge resting est annulé.
 
 ### 7.4 Sizing CLOB
 
@@ -289,6 +289,10 @@ Ex. (preset `edge-lead.json`, `maxShareEdge = maxSharesPerOrder = 40`) : `edgeOr
 | `edgeSizingMode`     | dynamic| Mode de sizing : shares (fixe) / pUSD (budget USDC) / dynamic (actuel) |
 | `edgeSharesEdge`     | 20     | Shares fixes de l'edge en mode shares (≥ 5) |
 | `edgeSharesCheap`    | 20     | Shares fixes du cheap en mode shares (≥ 5) |
+| `edgeSellExpensiveEnabled` | true | Active la vente de l'edge nu en perte |
+| `edgeSellExpensiveAfterMin` | 8  | Âge du marché (min depuis l'ouverture) avant déclenchement |
+| `edgeSellExpensiveLossPct`  | 10  | Perte % sous le fill price pour déclencher (ex. 10 = -10%) |
+| `edgeSellExpensiveLossWindowMs` | 10000 | Durée de perte continue requise avant la vente |
 
 Preset : `config/presets/edge-lead.json` (`pollIntervalMs: 1000`, `edgeOrderUsdc: 25`, `maxSharesPerOrder: 40`).
 

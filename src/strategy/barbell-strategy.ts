@@ -72,4 +72,8 @@ export class BarbellStrategy implements TradingStrategy {
       defendShares: (defend) => this.defendShares(defend),
     });
   }
+
+  shouldSellExpensiveEdge(): boolean {
+    return false;
+  }
 }

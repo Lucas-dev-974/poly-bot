@@ -630,6 +630,7 @@ export class ReverseBot {
       if (this.strategy.leadsWithEdge) {
         await this.manageRestingEdgeLead(event, books);
         await this.replaceMarketableCheap(event, books);
+        await this.sellExpensiveEdgeIfNeeded(event, books);
       } else {
         await this.replaceMarketableCheap(event, books);
         await this.defendUncoveredPairs(event, books);
@@ -914,6 +915,130 @@ export class ReverseBot {
       strategyId: this.strategy.id,
     });
     await this.defendPair(pairId);
+  }
+
+  /**
+   * Edge-lead : vendre l'edge (favori nu) quand aucun cheap n'est fillé
+   * après un délai et que l'edge est en perte soutenue. La politique vit
+   * dans TradingStrategy.shouldSellExpensiveEdge ; ici on exécute le FOK
+   * SELL au best bid et on marque la jambe expensive comme vendue.
+   */
+  private async sellExpensiveEdgeIfNeeded(
+    event: UpDownEvent,
+    books: TokenBook[],
+  ): Promise<void> {
+    const pairId = `${event.slug}:${event.windowEnd}`;
+    const expensiveTokenId = this.tracker.getExpensiveTokenForPair(pairId);
+    if (!expensiveTokenId) return;
+    const expensiveFillPrice = this.tracker.getExpensiveFillPriceForPair(pairId);
+    if (expensiveFillPrice === null) return;
+    const expensiveSize = this.tracker.getFilledExpensiveSizeForPair(pairId);
+    if (expensiveSize <= 0) return;
+    const cheapFilled = this.tracker.getFilledCheapSizeForPair(pairId);
+
+    const expensiveBook =
+      books.find((book) => book.tokenId === expensiveTokenId) ??
+      books.find((book) => book.outcome === this.tracker.getOpenPositions().find(
+        (p) => p.pairId === pairId && p.kind === "expensive",
+      )?.outcome) ??
+      null;
+    const expensiveBid = expensiveBook?.bestBid ?? null;
+
+    const nowSec = Date.now() / 1000;
+    const marketAgeMs = Math.max(0, (nowSec - event.windowStart) * 1000);
+
+    if (
+      !this.strategy.shouldSellExpensiveEdge({
+        config: this.config,
+        tracker: this.tracker,
+        pairId,
+        expensiveBid,
+        expensiveFillPrice,
+        expensiveSize,
+        cheapFilled,
+        marketAgeMs,
+      })
+    ) {
+      return;
+    }
+
+    if (expensiveBid === null || expensiveBid <= 0) {
+      log("Edge-lead sell skipped - no bid to sell the edge into", {
+        market: event.title,
+        pairId,
+        expensiveTokenId,
+      });
+      return;
+    }
+
+    const pair = this.tracker.getPair(pairId);
+    const sellOpportunity: TradeOpportunity = {
+      kind: "expensive",
+      event: {
+        title: pair?.eventTitle ?? event.title,
+        slug: pair?.eventSlug ?? event.slug,
+        market: {} as never,
+        windowStart: 0,
+        windowEnd: pair?.windowEnd ?? event.windowEnd,
+      },
+      token: {
+        tokenId: expensiveTokenId,
+        outcome: expensiveBook?.outcome ?? "",
+        outcomeIndex: expensiveBook?.outcomeIndex ?? 0,
+        bestBid: expensiveBid,
+        bestAsk: expensiveBook?.bestAsk ?? null,
+        bestAskSize: expensiveBook?.bestAskSize ?? null,
+        bestBidSize: expensiveBook?.bestBidSize ?? null,
+      },
+      price: expensiveBid,
+      size: expensiveSize,
+      tickSize: "0.01",
+      negRisk: false,
+      tradeKey: `edge-sell:${pairId}`,
+      pairId,
+    };
+
+    try {
+      const result = await this.trader.placeSell(sellOpportunity);
+      if (result.filled && (result.filledSize ?? 0) > 0) {
+        const fillPrice = result.fillPrice ?? expensiveBid;
+        const soldSize = Math.min(result.filledSize ?? expensiveSize, expensiveSize);
+        this.tracker.closePairExpensiveAsSold(pairId, fillPrice, soldSize);
+        log("Edge-lead: expensive sold via FOK SELL (naked favorite)", {
+          market: event.title,
+          pairId,
+          expensiveTokenId,
+          fillPrice,
+          soldSize,
+          expensiveFillPrice,
+          cheapFilled,
+        });
+        bus.emit({ type: "order", result, opportunity: sellOpportunity });
+        await this.cancelRestingHedgesForPair(pairId, "edge sold by edge-lead");
+      } else if (result.reason === "sell-unconfirmed") {
+        log("Edge-lead: SELL unconfirmed — not treating edge as sold", {
+          market: event.title,
+          pairId,
+          expensiveTokenId,
+          bestBid: expensiveBid,
+        });
+      } else {
+        log("Edge-lead: FOK SELL killed — holding edge as directional", {
+          market: event.title,
+          pairId,
+          expensiveTokenId,
+          bestBid: expensiveBid,
+        });
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      log("Edge-lead: SELL failed — holding edge as directional", {
+        market: event.title,
+        pairId,
+        expensiveTokenId,
+        error: message,
+      });
+    }
   }
 
   private async executeOpportunity(opportunity: TradeOpportunity): Promise<void> {

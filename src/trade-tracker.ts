@@ -306,6 +306,38 @@ export class TradeTracker {
   }
 
   /**
+   * Returns the tokenId of the expensive (edge) leg for a pair (from the
+   * first filled expensive position). Used by edge-lead to know which
+   * token to sell when the edge is a naked favorite.
+   */
+  getExpensiveTokenForPair(pairId: string): string | null {
+    for (const position of this.openPositions) {
+      if (position.pairId === pairId && position.kind === "expensive") {
+        return position.tokenId;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Volume-weighted average fill price of the expensive (edge) legs for a
+   * pair. Used by edge-lead to measure the loss % of a naked favorite.
+   * Returns null if no expensive leg has been filled.
+   */
+  getExpensiveFillPriceForPair(pairId: string): number | null {
+    let totalCost = 0;
+    let totalSize = 0;
+    for (const position of this.openPositions) {
+      if (position.pairId === pairId && position.kind === "expensive") {
+        totalCost += position.fillPrice * position.size;
+        totalSize += position.size;
+      }
+    }
+    if (totalSize === 0) return null;
+    return Math.round((totalCost / totalSize) * 100) / 100;
+  }
+
+  /**
    * Shares already committed on the cheap leg of a pair (open fills + GTC
    * working remainder). Used to know a cheap leg exists before posting a hedge.
    * Resolved legs are ignored. A posted row that is only the crash duplicate
@@ -764,6 +796,68 @@ export class TradeTracker {
 
     // Finalize the pair when every leg is resolved (sold/won/lost) so the
     // pair-level realizedPnl is written once, like the resolver path does.
+    if (closedCount > 0) {
+      const pair = this.pairs.get(pairId);
+      if (pair && pair.status !== "resolved") {
+        const allLegsResolved =
+          pair.cheapLegs.every((leg) => leg.status !== "open") &&
+          pair.expensiveLegs.every((leg) => leg.status !== "open");
+        if (allLegsResolved) {
+          this.finalizePair(pair);
+        }
+      }
+    }
+    return closedCount;
+  }
+
+  /**
+   * Edge-lead : résout les jambes expensive (edge) d'une paire comme SOLD
+   * à `sellPrice × size` proceeds. Utilisé après un FOK SELL réussi de
+   * l'edge nu (favori en perte, cheap jamais fillé). Miroir de
+   * closePairCheapAsSold mais ciblant kind === "expensive".
+   */
+  closePairExpensiveAsSold(
+    pairId: string,
+    sellPrice: number,
+    soldSize: number,
+    nowMs: number = Date.now(),
+  ): number {
+    let remaining = soldSize;
+    let closedCount = 0;
+    for (const position of [...this.openPositions]) {
+      if (remaining <= 0) break;
+      if (position.pairId !== pairId || position.kind !== "expensive") continue;
+      const closeSize = Math.min(position.size, remaining);
+      const proceeds = Math.round(closeSize * sellPrice * 100) / 100;
+      if (closeSize >= position.size) {
+        position.status = "sold";
+        position.resolvedAt = nowMs;
+        position.pnl = round2(proceeds - position.cost);
+        this.resolvePosition(position);
+        closedCount++;
+      } else {
+        // Partial sale of a larger leg: split into a sold remainder and keep
+        // the rest open.
+        position.size = Math.round((position.size - closeSize) * 100) / 100;
+        position.cost = Math.round(position.fillPrice * position.size * 100) / 100;
+        this.positionsRepo?.insert(position);
+        const sold: SimulatedPosition = {
+          ...position,
+          id: `${position.id}:sold-${nowMs}`,
+          size: closeSize,
+          cost: Math.round(position.fillPrice * closeSize * 100) / 100,
+          status: "sold",
+          resolvedAt: nowMs,
+          pnl: round2(proceeds - Math.round(position.fillPrice * closeSize * 100) / 100),
+        };
+        this.openPositions.push(sold);
+        this.positionsRepo?.insert(sold);
+        this.resolvePosition(sold);
+        closedCount++;
+      }
+      remaining = Math.round((remaining - closeSize) * 100) / 100;
+    }
+
     if (closedCount > 0) {
       const pair = this.pairs.get(pairId);
       if (pair && pair.status !== "resolved") {

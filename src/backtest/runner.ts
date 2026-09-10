@@ -382,6 +382,96 @@ function manageRestingPolicy(ctx: {
   }
 
   defendCheapLegs(ctx, pairId);
+  sellExpensiveEdge(ctx, pairId);
+}
+
+function sellExpensiveEdge(
+  ctx: {
+    config: BotConfig;
+    strategy: TradingStrategy;
+    tracker: TradeTracker;
+    ledger: BacktestLedger;
+    resting: BacktestRestingBook;
+    books: TokenBook[];
+    event: UpDownEvent;
+    nowMs: number;
+    trades: BacktestTradeRecord[];
+    runId: string;
+    repos?: Repositories;
+  },
+  pairId: string,
+): void {
+  if (!ctx.strategy.leadsWithEdge) return;
+  const expensiveTokenId = ctx.tracker.getExpensiveTokenForPair(pairId);
+  if (!expensiveTokenId) return;
+  const expensiveFillPrice = ctx.tracker.getExpensiveFillPriceForPair(pairId);
+  if (expensiveFillPrice === null) return;
+  const expensiveSize = ctx.tracker.getFilledExpensiveSizeForPair(pairId);
+  if (expensiveSize <= 0) return;
+  const cheapFilled = ctx.tracker.getFilledCheapSizeForPair(pairId);
+  const expensiveBook = ctx.books.find((b) => b.tokenId === expensiveTokenId);
+  const expensiveBid = expensiveBook?.bestBid ?? null;
+  const marketAgeMs = Math.max(0, (ctx.nowMs - ctx.event.windowStart * 1000));
+
+  if (
+    !ctx.strategy.shouldSellExpensiveEdge({
+      config: ctx.config,
+      tracker: ctx.tracker,
+      pairId,
+      expensiveBid,
+      expensiveFillPrice,
+      expensiveSize,
+      cheapFilled,
+      marketAgeMs,
+    })
+  ) {
+    return;
+  }
+  if (expensiveBid === null || expensiveBid <= 0) return;
+
+  const fill = sellFillAgainstBook(0, expensiveSize, expensiveBook);
+  if (fill.filled && fill.fillPrice !== undefined && fill.size !== undefined) {
+    ctx.ledger.credit(round2(fill.fillPrice * fill.size));
+    ctx.tracker.closePairExpensiveAsSold(pairId, fill.fillPrice, fill.size, ctx.nowMs);
+    const outcome = expensiveBook?.outcome ?? "Up";
+    ctx.trades.push({
+      ts: ctx.nowMs,
+      eventSlug: ctx.event.slug,
+      kind: "expensive",
+      outcome,
+      side: "SELL",
+      limitPrice: fill.fillPrice,
+      fillPrice: fill.fillPrice,
+      size: fill.size,
+      filled: true,
+      reason: "edge-sell",
+      fillReason: "marketable",
+      orderType: "FOK",
+      pairId,
+      pnl: null,
+    });
+    ctx.repos?.backtestTrades.insert({
+      runId: ctx.runId,
+      ts: ctx.nowMs,
+      eventSlug: ctx.event.slug,
+      kind: "expensive",
+      outcome,
+      side: "SELL",
+      limitPrice: fill.fillPrice,
+      fillPrice: fill.fillPrice,
+      size: fill.size,
+      filled: 1,
+      reason: "edge-sell",
+      fillReason: "marketable",
+      orderType: "FOK",
+      pairId,
+      pnl: null,
+    });
+    // A resting edge GTC would keep filling after the sell.
+    for (const order of ctx.resting.listForPair(pairId, "expensive")) {
+      cancelResting(ctx, order.key, "edge-sell");
+    }
+  }
 }
 
 function defendCheapLegs(

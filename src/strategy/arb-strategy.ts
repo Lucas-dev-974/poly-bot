@@ -73,4 +73,8 @@ export class ArbStrategy implements TradingStrategy {
       defendShares: (defend) => this.defendShares(defend),
     });
   }
+
+  shouldSellExpensiveEdge(): boolean {
+    return false;
+  }
 }

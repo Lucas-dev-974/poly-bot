@@ -32,7 +32,7 @@ export const ENGINE_META: Record<
     label: "Edge-lead — favori d'abord",
     subtitle: "Confirmer le momentum du favori, puis hedger l'outsider si le prix le permet.",
     order: "Favori confirmé → fill edge → cheap si bande OK",
-    risk: "Élevée — favori nu accepté si le cheap ne remplit pas",
+    risk: "Élevée — favori nu vendu si en perte soutenue",
     tone: "warning",
   },
 };
@@ -78,8 +78,8 @@ export const STRATEGY_COMPARE_ROWS: [string, string, string, string][] = [
   ["Signal d'entrée", "Bandes cheap + favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant"],
   ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeSizingMode : shares / pUSD / dynamic (budgets indépendants)"],
   ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés"],
-  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Pas de FOK SELL — cancel GTC edge hors bande"],
-  ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu"],
+  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Vend l'edge nu si en perte soutenue (FOK SELL)"],
+  ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu (vendu si perte)"],
 ];
 
 export const EDGE_LEAD_PARAM_ROWS: [string, string][] = [
@@ -92,6 +92,10 @@ export const EDGE_LEAD_PARAM_ROWS: [string, string][] = [
   ["edgeCheapOrderUsdc", "Budget USDC de l'outsider (size = budget / ask cheap) — mode pUSD / dynamic"],
   ["edgeSizingMode", "Mode de sizing : shares (fixe) / pUSD (budget USDC) / dynamic (comportement actuel)"],
   ["edgeSharesEdge / edgeSharesCheap", "Shares fixes de l'edge et du cheap en mode shares (≥ 5)"],
+  ["edgeSellExpensiveEnabled", "Vendre l'edge nu (favori) si aucun cheap fillé et en perte soutenue"],
+  ["edgeSellExpensiveAfterMin", "Âge du marché (min depuis l'ouverture) avant déclenchement de la vente"],
+  ["edgeSellExpensiveLossPct", "Perte % sous le fill price pour déclencher (ex. 10 = -10%)"],
+  ["edgeSellExpensiveLossWindowMs", "Durée de perte continue requise avant la vente"],
 ];
 
 export const RESOLUTION_ROWS: Record<EngineId, [string, string][]> = {
@@ -129,6 +133,7 @@ export const BOT_STEPS: Record<EngineId, string[]> = {
     "Poster l'edge en GTC au best ask — attendre le fill (pas de cheap pendant ce temps).",
     "Après fill edge : poster le cheap en GTC si ask ∈ [edgeCheapBandMin, edgeCheapBandMax].",
     "Cancel edge GTC si favori sort de bande avant fill ; cancel cheap GTC si ask cheap sort de bande cheap.",
+    "Si le cheap ne remplit jamais et que l'edge est en perte soutenue après un délai : vendre l'edge (FOK SELL).",
   ],
 };
 
@@ -226,6 +231,7 @@ export const EDGE_LEAD_LIFE_NODES: LifeNode[] = [
   { id: "edgeFilled", label: "Edge fillé", sub: "favori long", tone: "warning" },
   { id: "covered", label: "Les deux jambes fillées", sub: "tailles indépendantes", tone: "success" },
   { id: "directional", label: "Favori nu", sub: "cheap jamais fillé", tone: "warning" },
+  { id: "edgeSold", label: "Edge vendu", sub: "perte soutenue, FOK SELL", tone: "danger" },
   { id: "resolved", label: "Résolue", sub: "redeem 1 $ / 0 $", tone: "neutral" },
 ];
 
@@ -238,8 +244,10 @@ export const EDGE_LEAD_LIFE_EDGES: LifeEdge[] = [
   { from: "cheapResting", to: "edgeFilled", label: "ask cheap hors bande (cancel)" },
   { from: "cheapResting", to: "covered", label: "cheap fillé" },
   { from: "edgeFilled", to: "directional", label: "cheap jamais fillé" },
+  { from: "edgeFilled", to: "edgeSold", label: "perte continue + marché âgé" },
   { from: "covered", to: "resolved", label: "" },
   { from: "directional", to: "resolved", label: "" },
+  { from: "edgeSold", to: "resolved", label: "" },
   { from: "cancelled", to: "resolved", label: "" },
 ];
 

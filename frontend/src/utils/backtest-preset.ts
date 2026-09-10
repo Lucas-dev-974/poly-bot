@@ -109,6 +109,10 @@ const SETTING_GROUPS: Array<{
       ["edgeSizingMode", "Mode sizing"],
       ["edgeSharesEdge", "Shares edge"],
       ["edgeSharesCheap", "Shares cheap"],
+      ["edgeSellExpensiveEnabled", "Vendre edge si perte"],
+      ["edgeSellExpensiveAfterMin", "Vente après (min)"],
+      ["edgeSellExpensiveLossPct", "Perte edge (%)"],
+      ["edgeSellExpensiveLossWindowMs", "Fenêtre perte (ms)"],
     ],
   },
   {

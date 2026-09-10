@@ -48,6 +48,10 @@ export const EDITABLE_CONFIG_KEYS = [
   "edgeSizingMode",
   "edgeSharesEdge",
   "edgeSharesCheap",
+  "edgeSellExpensiveEnabled",
+  "edgeSellExpensiveAfterMin",
+  "edgeSellExpensiveLossPct",
+  "edgeSellExpensiveLossWindowMs",
 ] as const;
 
 export type EditableConfigKey = (typeof EDITABLE_CONFIG_KEYS)[number];
@@ -95,6 +99,10 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   edgeSizingMode: "EDGE_SIZING_MODE",
   edgeSharesEdge: "EDGE_SHARES_EDGE",
   edgeSharesCheap: "EDGE_SHARES_CHEAP",
+  edgeSellExpensiveEnabled: "EDGE_SELL_EXPENSIVE_ENABLED",
+  edgeSellExpensiveAfterMin: "EDGE_SELL_EXPENSIVE_AFTER_MIN",
+  edgeSellExpensiveLossPct: "EDGE_SELL_EXPENSIVE_LOSS_PCT",
+  edgeSellExpensiveLossWindowMs: "EDGE_SELL_EXPENSIVE_LOSS_WINDOW_MS",
 };
 
 const FORBIDDEN_KEYS = new Set([
@@ -214,6 +222,9 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "edgeCheapBandMax":
     case "edgeSharesEdge":
     case "edgeSharesCheap":
+    case "edgeSellExpensiveAfterMin":
+    case "edgeSellExpensiveLossPct":
+    case "edgeSellExpensiveLossWindowMs":
       return parseNumber(value, key);
     case "edgeSizingMode":
       return parseEnum(value, ["shares", "pusd", "dynamic"] as const, key);
@@ -221,6 +232,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
       return parseNullableNumber(value, key);
     case "enableExpensiveHedge":
     case "simRequireCoveredPair":
+    case "edgeSellExpensiveEnabled":
       return parseBoolean(value, key);
     case "marketSlugPrefixes":
       return parseStringArray(value, key);
@@ -317,6 +329,10 @@ const EDGE_LEAD_KEYS: readonly EditableConfigKey[] = [
   "edgeSizingMode",
   "edgeSharesEdge",
   "edgeSharesCheap",
+  "edgeSellExpensiveEnabled",
+  "edgeSellExpensiveAfterMin",
+  "edgeSellExpensiveLossPct",
+  "edgeSellExpensiveLossWindowMs",
 ];
 
 /**

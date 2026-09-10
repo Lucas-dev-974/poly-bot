@@ -154,6 +154,14 @@ export interface BotConfig {
   edgeSharesEdge: number;
   /** Edge-lead : shares fixes de l'ordre cheap en mode "shares". */
   edgeSharesCheap: number;
+  /** Edge-lead : vendre l'edge (favori nu) si aucun cheap fillé et en perte soutenue. */
+  edgeSellExpensiveEnabled: boolean;
+  /** Edge-lead : âge du marché (min depuis windowStart) avant déclenchement de la vente. */
+  edgeSellExpensiveAfterMin: number;
+  /** Edge-lead : perte % sous le fill price pour déclencher la vente (ex. 10 = -10%). */
+  edgeSellExpensiveLossPct: number;
+  /** Edge-lead : durée de perte continue requise (ms) avant la vente. */
+  edgeSellExpensiveLossWindowMs: number;
 }
 
 /**
@@ -205,6 +213,10 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     edgeSizingMode: "dynamic",
     edgeSharesEdge: 20,
     edgeSharesCheap: 20,
+    edgeSellExpensiveEnabled: true,
+    edgeSellExpensiveAfterMin: 8,
+    edgeSellExpensiveLossPct: 10,
+    edgeSellExpensiveLossWindowMs: 10_000,
   };
 }
 
@@ -401,6 +413,15 @@ export function validateConfigCoherence(config: BotConfig): void {
       if (config.edgeSharesCheap < 5) {
         throw new Error("EDGE_SHARES_CHEAP must be >= 5 (CLOB minimum)");
       }
+    }
+    if (config.edgeSellExpensiveAfterMin < 0) {
+      throw new Error("EDGE_SELL_EXPENSIVE_AFTER_MIN must be >= 0");
+    }
+    if (config.edgeSellExpensiveLossPct <= 0) {
+      throw new Error("EDGE_SELL_EXPENSIVE_LOSS_PCT must be > 0");
+    }
+    if (config.edgeSellExpensiveLossWindowMs <= 0) {
+      throw new Error("EDGE_SELL_EXPENSIVE_LOSS_WINDOW_MS must be > 0");
     }
   }
 }

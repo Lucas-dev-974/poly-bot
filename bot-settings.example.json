@@ -29,5 +29,9 @@
   "simResolveMaxRetries": 5,
   "simResolveFallback": "none",
   "simMaxRetryAttempts": 20,
-  "simRequireCoveredPair": true
+  "simRequireCoveredPair": true,
+  "edgeSellExpensiveEnabled": true,
+  "edgeSellExpensiveAfterMin": 8,
+  "edgeSellExpensiveLossPct": 10,
+  "edgeSellExpensiveLossWindowMs": 10000
 }

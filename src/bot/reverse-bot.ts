@@ -196,9 +196,7 @@ export class ReverseBot {
         await this.lifecycle.cancelStaleOrders(nowSeconds);
         await this.lifecycle.pollOrderFills();
       }
-      if (this.paused) {
-        return;
-      }
+      // Keep scanning + market data persistence even while paused; only trading is gated.
       const events = await this.scanner.scan();
       const tickTs = Date.now();
       this.snapshots.insertMarketSnapshots(events, tickTs);
@@ -227,7 +225,7 @@ export class ReverseBot {
   private async processEvent(event: UpDownEvent, tickTs: number): Promise<void> {
     const books = await this.scanner.getTokenBooks(event);
     this.snapshots.insertBooks(event, books, tickTs);
-    if (!this.config.dryRun) {
+    if (!this.config.dryRun && !this.paused) {
       await this.resting.manageLiveResting(event, books);
     }
     const opportunities = this.strategy.findOpportunities({
@@ -239,6 +237,10 @@ export class ReverseBot {
     this.snapshots.insertOpportunities(event, opportunities, tickTs);
 
     bus.emit({ type: "watching", event, books });
+
+    if (this.paused) {
+      return;
+    }
 
     if (opportunities.length === 0) {
       log("Watching market", {

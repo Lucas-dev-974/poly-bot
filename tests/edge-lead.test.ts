@@ -529,6 +529,7 @@ describe("EdgeLeadStrategy.cheapOrderAction", () => {
         limitPrice: 0.05,
         cheapBook: down,
         favoriteAsk: 0.86,
+        pairId: "test-pair",
       }),
       "keep",
     );
@@ -544,6 +545,7 @@ describe("EdgeLeadStrategy.cheapOrderAction", () => {
         limitPrice: 0.05,
         cheapBook: high,
         favoriteAsk: 0.86,
+        pairId: "test-pair",
       }),
       "cancel-lock",
     );
@@ -554,6 +556,7 @@ describe("EdgeLeadStrategy.cheapOrderAction", () => {
         limitPrice: 0.05,
         cheapBook: low,
         favoriteAsk: 0.86,
+        pairId: "test-pair",
       }),
       "cancel-lock",
     );
@@ -567,6 +570,7 @@ describe("EdgeLeadStrategy.cheapOrderAction", () => {
         limitPrice: 0.05,
         cheapBook: undefined,
         favoriteAsk: 0.86,
+        pairId: "test-pair",
       }),
       "keep",
     );

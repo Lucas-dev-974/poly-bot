@@ -226,9 +226,13 @@ export function toChartTimeSec(ts: number): number {
 }
 
 export function isOverlayPosition(row: { id: string; ts: number; fillPrice: number }): boolean {
-  if (row.id.includes(":sold-")) return false;
   if (!Number.isFinite(row.ts) || row.ts <= 0) return false;
   return Number.isFinite(row.fillPrice);
+}
+
+/** Vente (défense / sell edge) : l'id contient :sold- ou le side est SELL. */
+export function isSellMark(row: { id: string; side?: string; status?: string }): boolean {
+  return row.id.includes(":sold-") || row.side === "SELL" || row.status === "sold";
 }
 
 /** Sum of realized leg PnL on a market. Null if no legs, or none have a PnL yet. */

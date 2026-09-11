@@ -765,6 +765,7 @@ export class TradeTracker {
       if (closeSize >= position.size) {
         position.status = "sold";
         position.resolvedAt = nowMs;
+        position.sellPrice = sellPrice;
         position.pnl = round2(proceeds - position.cost);
         this.resolvePosition(position);
         closedCount++;
@@ -784,6 +785,7 @@ export class TradeTracker {
           cost: Math.round(position.fillPrice * closeSize * 100) / 100,
           status: "sold",
           resolvedAt: nowMs,
+          sellPrice,
           pnl: round2(proceeds - Math.round(position.fillPrice * closeSize * 100) / 100),
         };
         this.openPositions.push(sold);
@@ -832,6 +834,7 @@ export class TradeTracker {
       if (closeSize >= position.size) {
         position.status = "sold";
         position.resolvedAt = nowMs;
+        position.sellPrice = sellPrice;
         position.pnl = round2(proceeds - position.cost);
         this.resolvePosition(position);
         closedCount++;
@@ -848,6 +851,7 @@ export class TradeTracker {
           cost: Math.round(position.fillPrice * closeSize * 100) / 100,
           status: "sold",
           resolvedAt: nowMs,
+          sellPrice,
           pnl: round2(proceeds - Math.round(position.fillPrice * closeSize * 100) / 100),
         };
         this.openPositions.push(sold);

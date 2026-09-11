@@ -28,6 +28,7 @@ interface PositionRow {
   bestAskAtFill: number | null;
   orderType: "GTC" | "FOK" | "FAK" | "SIM" | null;
   strategyId: string | null;
+  sellPrice: number | null;
   createdAt: number;
 }
 
@@ -64,6 +65,7 @@ function toPosition(row: PositionRow): SimulatedPosition {
     bestAskAtFill: row.bestAskAtFill ?? null,
     orderType: row.orderType ?? undefined,
     strategyId: asStrategyId(row.strategyId),
+    sellPrice: row.sellPrice ?? null,
   };
 }
 
@@ -75,8 +77,8 @@ export class PositionRepository {
       `INSERT OR REPLACE INTO positions (
         id, eventSlug, eventTitle, tokenId, outcome, outcomeIndex, kind,
         limitPrice, fillPrice, size, cost, windowEnd, status, resolvedAt,
-        pnl, fillReason, pairId, bestAskAtFill, orderType, strategyId, createdAt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        pnl, fillReason, pairId, bestAskAtFill, orderType, strategyId, sellPrice, createdAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         position.id,
         position.eventSlug,
@@ -98,6 +100,7 @@ export class PositionRepository {
         position.bestAskAtFill ?? null,
         position.orderType ?? null,
         position.strategyId ?? null,
+        position.sellPrice ?? null,
         Date.now(),
       ],
     );
@@ -105,8 +108,8 @@ export class PositionRepository {
 
   updateStatus(position: SimulatedPosition): void {
     this.db.run(
-      `UPDATE positions SET status = ?, resolvedAt = ?, pnl = ? WHERE id = ?`,
-      [position.status, position.resolvedAt ?? null, position.pnl ?? null, position.id],
+      `UPDATE positions SET status = ?, resolvedAt = ?, pnl = ?, sellPrice = ? WHERE id = ?`,
+      [position.status, position.resolvedAt ?? null, position.pnl ?? null, position.sellPrice ?? null, position.id],
     );
   }
 
@@ -819,6 +822,27 @@ export class MarketSnapshotRepository {
        FROM market_snapshots GROUP BY eventSlug`,
     );
   }
+
+  listForStrategyChart(): Array<{
+    eventSlug: string;
+    eventTitle: string;
+    windowStart: number;
+    windowEnd: number;
+    ticks: number;
+  }> {
+    return this.db.all(
+      `SELECT m.eventSlug,
+              MAX(m.eventTitle) AS eventTitle,
+              MAX(m.windowStart) AS windowStart,
+              MAX(m.windowEnd) AS windowEnd,
+              (SELECT COUNT(DISTINCT b.ts)
+                 FROM book_snapshots b
+                WHERE b.eventSlug = m.eventSlug) AS ticks
+       FROM market_snapshots m
+       GROUP BY m.eventSlug
+       ORDER BY MAX(m.windowEnd) DESC`,
+    );
+  }
 }
 
 export interface BookSnapshotRow {
@@ -912,6 +936,38 @@ export class BookSnapshotRepository {
        FROM book_snapshots
        GROUP BY eventSlug, tokenId, outcomeIndex`,
     );
+  }
+
+  seriesUpDownBySlug(
+    eventSlug: string,
+    startTsMs: number,
+    endTsMs: number,
+  ): {
+    up: Array<{ t: number; ask: number | null; bid: number | null }>;
+    down: Array<{ t: number; ask: number | null; bid: number | null }>;
+    upTokenId: string | null;
+    downTokenId: string | null;
+  } {
+    const rows = this.bySlugAndRange(eventSlug, startTsMs, endTsMs);
+    const up: Array<{ t: number; ask: number | null; bid: number | null }> = [];
+    const down: Array<{ t: number; ask: number | null; bid: number | null }> = [];
+    let upTokenId: string | null = null;
+    let downTokenId: string | null = null;
+    for (const row of rows) {
+      const point = {
+        t: Math.floor(row.ts / 1000),
+        ask: row.bestAsk,
+        bid: row.bestBid ?? null,
+      };
+      if (row.outcomeIndex === 0) {
+        up.push(point);
+        upTokenId ??= row.tokenId;
+      } else {
+        down.push(point);
+        downTokenId ??= row.tokenId;
+      }
+    }
+    return { up, down, upTokenId, downTokenId };
   }
 }
 
@@ -1133,6 +1189,7 @@ export interface BacktestPositionRow {
   bestAskAtFill: number | null;
   orderType: string | null;
   strategyId: string | null;
+  sellPrice: number | null;
 }
 
 export class BacktestPositionRepository {
@@ -1143,8 +1200,8 @@ export class BacktestPositionRepository {
       `INSERT OR REPLACE INTO backtest_positions (
         id, runId, ts, eventSlug, eventTitle, tokenId, outcome, outcomeIndex, kind, side,
         limitPrice, fillPrice, size, cost, windowEnd, status, resolvedAt, pnl, fillReason,
-        pairId, bestAskAtFill, orderType, strategyId
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        pairId, bestAskAtFill, orderType, strategyId, sellPrice
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         row.id,
         row.runId,
@@ -1169,6 +1226,7 @@ export class BacktestPositionRepository {
         row.bestAskAtFill,
         row.orderType,
         row.strategyId,
+        row.sellPrice,
       ],
     );
   }
@@ -1177,7 +1235,7 @@ export class BacktestPositionRepository {
     return this.db.all<BacktestPositionRow>(
       `SELECT id, runId, ts, eventSlug, eventTitle, tokenId, outcome, outcomeIndex, kind, side,
               limitPrice, fillPrice, size, cost, windowEnd, status, resolvedAt, pnl, fillReason,
-              pairId, bestAskAtFill, orderType, strategyId
+              pairId, bestAskAtFill, orderType, strategyId, sellPrice
        FROM backtest_positions WHERE runId = ? ORDER BY ts ASC`,
       [runId],
     );

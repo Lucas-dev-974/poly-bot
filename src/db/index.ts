@@ -21,6 +21,7 @@ import {
   BacktestRunRepository,
   BacktestTradeRepository,
 } from "./repositories.js";
+import { StrategyGraphRepository } from "./strategy-graph-repo.js";
 
 export interface Repositories {
   positions: PositionRepository;
@@ -43,6 +44,7 @@ export interface Repositories {
   backtestRuns: BacktestRunRepository;
   backtestTrades: BacktestTradeRepository;
   backtestPositions: BacktestPositionRepository;
+  strategyGraphs: StrategyGraphRepository;
 }
 
 export function createRepositories(db: Database): Repositories {
@@ -67,5 +69,6 @@ export function createRepositories(db: Database): Repositories {
     backtestRuns: new BacktestRunRepository(db),
     backtestTrades: new BacktestTradeRepository(db),
     backtestPositions: new BacktestPositionRepository(db),
+    strategyGraphs: new StrategyGraphRepository(db),
   };
 }

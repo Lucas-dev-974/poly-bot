@@ -1,6 +1,7 @@
 import { For, Show, createEffect, createMemo, createSignal, onMount } from "solid-js";
 import type { JSX } from "solid-js";
 import { api } from "../api/client";
+import type { StrategyEngineSummary } from "../api/client";
 import { BacktestPresetPanel } from "../components/backtest/BacktestPresetPanel";
 import { BacktestResultModal } from "../components/backtest/BacktestResultModal";
 import { BacktestRunList } from "../components/backtest/BacktestRunList";
@@ -16,6 +17,7 @@ import type {
   BacktestPositionRow,
   BacktestProgress,
   BacktestResult,
+  BacktestRunRequestSummary,
   BacktestRunSummary,
   BacktestSeriesPoint,
   BacktestWindowMeta,
@@ -45,6 +47,7 @@ export function BacktestPage(): JSX.Element {
   const [dateKey, setDateKey] = createSignal("all");
   const [prefix, setPrefix] = createSignal("");
   const [engine, setEngine] = createSignal<StrategyId>("arb");
+  const [customEngines, setCustomEngines] = createSignal<StrategyEngineSummary[]>([]);
   const [historyEngineOnly, setHistoryEngineOnly] = createSignal(true);
   const [presetId, setPresetId] = createSignal<string>("conservative");
   const [liveConfig, setLiveConfig] = createSignal<BotConfig | null>(null);
@@ -58,6 +61,16 @@ export function BacktestPage(): JSX.Element {
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [openingId, setOpeningId] = createSignal<string | null>(null);
   const [selectedRun, setSelectedRun] = createSignal<BacktestRunSummary | null>(null);
+  const [runChartRules, setRunChartRules] = createSignal<
+    Array<{
+      action: "buy" | "sell";
+      token: "cheap" | "favorite";
+      startSec: number;
+      endSec: number;
+      bandMin: number | null;
+      bandMax: number | null;
+    }>
+  >([]);
   const [chartRunId, setChartRunId] = createSignal<string | null>(null);
   const [chartPositions, setChartPositions] = createSignal<BacktestPositionRow[]>([]);
   const [chartLoadingId, setChartLoadingId] = createSignal<string | null>(null);
@@ -122,7 +135,9 @@ export function BacktestPage(): JSX.Element {
     const f = form();
     const base = liveConfig();
     if (!f || !base) return;
-    const errors = validateConfigForm(f, base.dryRun);
+    const errors = validateConfigForm(f, base.dryRun, {
+      leadsWithEdge: f.strategyId === "edge-lead" || f.strategyId.startsWith("custom:"),
+    });
     if (errors.length > 0) {
       setSaveErr(errors[0] ?? "Formulaire invalide");
       setSaveMsg(null);
@@ -256,6 +271,35 @@ export function BacktestPage(): JSX.Element {
     }
   }
 
+  async function loadRunChartRules(
+    run: BacktestRunSummary,
+    request: BacktestRunRequestSummary | null,
+  ): Promise<void> {
+    setRunChartRules([]);
+    const sid =
+      request?.settings?.strategyId ??
+      request?.strategyId ??
+      run.result?.strategyId ??
+      run.request?.strategyId;
+    if (typeof sid !== "string" || !sid.startsWith("custom:")) {
+      return;
+    }
+    try {
+      const res = await api.strategyGet(sid);
+      const rules = (res.graph.chartRules ?? []).map((r) => ({
+        action: r.action as "buy" | "sell",
+        token: r.token as "cheap" | "favorite",
+        startSec: r.startSec,
+        endSec: r.endSec,
+        bandMin: r.bandMin ?? null,
+        bandMax: r.bandMax ?? null,
+      }));
+      setRunChartRules(rules);
+    } catch {
+      setRunChartRules([]);
+    }
+  }
+
   async function openRun(run: BacktestRunSummary): Promise<void> {
     setError(null);
     setOpeningId(run.id);
@@ -273,6 +317,7 @@ export function BacktestPage(): JSX.Element {
         ...run,
         request: st.request ?? run.request,
       });
+      await loadRunChartRules(run, st.request);
       setApplyMsg(null);
       setApplyErr(null);
       setDialogOpen(true);
@@ -290,7 +335,9 @@ export function BacktestPage(): JSX.Element {
       setError("Preset non chargé");
       return;
     }
-    const errors = validateConfigForm(current, true);
+    const errors = validateConfigForm(current, true, {
+      leadsWithEdge: current.strategyId === "edge-lead" || current.strategyId.startsWith("custom:"),
+    });
     if (errors.length > 0) {
       setError(errors[0] ?? "Preset invalide");
       return;
@@ -412,6 +459,12 @@ export function BacktestPage(): JSX.Element {
       } catch {
         /* ignore */
       }
+      try {
+        const listRes = await api.strategyList();
+        setCustomEngines(listRes.engines.filter((engine) => !engine.native));
+      } catch {
+        setCustomEngines([]);
+      }
       await loadWindows();
       await loadRuns();
     })();
@@ -446,6 +499,9 @@ export function BacktestPage(): JSX.Element {
           <h1>Backtest</h1>
           <a href="/guide" class="btn guide-nav-link">
             Guide
+          </a>
+          <a href="/strategy-editor" class="btn guide-nav-link">
+            Éditeur
           </a>
         </div>
       </header>
@@ -601,6 +657,13 @@ export function BacktestPage(): JSX.Element {
             <option value="arb">Arb</option>
             <option value="barbell">Barbell</option>
             <option value="edge-lead">Edge-lead</option>
+            <For each={customEngines()}>
+              {(engine) => (
+                <option value={engine.id}>
+                  {engine.name} ({engine.id})
+                </option>
+              )}
+            </For>
           </select>
         </label>
         <label>
@@ -683,6 +746,7 @@ export function BacktestPage(): JSX.Element {
         result={result()}
         positions={positions()}
         run={selectedRun()}
+        runChartRules={runChartRules()}
         startedAt={resultStartedAt()}
         canApplyPreset={canApplySelected()}
         applying={applying()}

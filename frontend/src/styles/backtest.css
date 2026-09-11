@@ -424,6 +424,12 @@ body:has(.bt-page) {
   transform: rotate(45deg);
 }
 
+.bt-swatch-mark.sell {
+  border-radius: 0;
+  background: #ff4444;
+  border-color: #ff4444;
+}
+
 .bt-chart-wallet {
   margin-left: 4px;
   gap: 5px;
@@ -784,6 +790,74 @@ body:has(.bt-page) {
 .bt-pos-table table {
   width: 100%;
   font-size: 12px;
+}
+
+.bt-modal-chart-rules {
+  margin: 8px 0 4px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+}
+
+.bt-modal-chart-rules h4 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.bt-rule-table {
+  width: 100%;
+  font-size: 12px;
+  border-collapse: collapse;
+}
+
+.bt-rule-table td,
+.bt-rule-table th {
+  padding: 3px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.bt-modal-chart-rules .err {
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.bt-modal-chart-rules code {
+  background: var(--bg);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+
+.bt-modal-chart-rules {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.bt-modal-chart-rules h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+.bt-rule-table {
+  width: 100%;
+  font-size: 12px;
+  border-collapse: collapse;
+  margin-bottom: 8px;
+}
+
+.bt-rule-table th,
+.bt-rule-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
 }
 
 .bt-preset {

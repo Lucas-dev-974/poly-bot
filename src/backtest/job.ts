@@ -4,6 +4,7 @@ import { validateConfigCoherence, validateTradingConfig } from "../config.js";
 import type { Repositories } from "../db/index.js";
 import { sanitizePatch, type RuntimeSettingsPatch } from "../runtime-settings.js";
 import { parseStrategyId, type StrategyId } from "../strategy/ids.js";
+import { leadsWithEdgeFor } from "../strategy/registry.js";
 import { listStrategyPresets } from "../strategy-presets.js";
 import {
   normalizeCompletenessRequest,
@@ -239,8 +240,9 @@ export class BacktestJob {
     } else {
       copy.strategyId = parseStrategyId(body.strategyId);
     }
-    validateConfigCoherence(copy);
-    validateTradingConfig(copy);
+    const leadsWithEdge = leadsWithEdgeFor(copy.strategyId, this.repos);
+    validateConfigCoherence(copy, { leadsWithEdge });
+    validateTradingConfig(copy, { leadsWithEdge });
     return copy;
   }
 }

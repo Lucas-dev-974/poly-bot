@@ -58,6 +58,14 @@ describe("parseStrategyId", () => {
     assert.equal(parseStrategyId(" barbell "), "barbell");
   });
 
+  it("accepts custom:<id> and lowercases it", () => {
+    assert.equal(parseStrategyId("custom:Edge-Lead-POC"), "custom:edge-lead-poc");
+  });
+
+  it("throws on empty custom id", () => {
+    assert.throws(() => parseStrategyId("custom:"), /custom id must be non-empty/);
+  });
+
   it("throws on unknown ids", () => {
     assert.throws(() => parseStrategyId("nope"), /Invalid strategyId/);
   });
@@ -72,6 +80,7 @@ describe("asStrategyId", () => {
 
   it("accepts known ids case-insensitively", () => {
     assert.equal(asStrategyId("EDGE-LEAD"), "edge-lead");
+    assert.equal(asStrategyId("custom:Abc"), "custom:abc");
   });
 });
 
@@ -89,6 +98,13 @@ describe("createStrategy", () => {
       barrel.map((o) => ({ kind: o.kind, price: o.price, size: o.size })),
     );
   });
+
+  it("throws when a custom id is requested without persistence", () => {
+    assert.throws(
+      () => createStrategy("custom:edge-lead-poc"),
+      /requires persistence/,
+    );
+  });
 });
 
 describe("ArbStrategy interface", () => {
@@ -103,6 +119,7 @@ describe("ArbStrategy interface", () => {
         limitPrice: 0.18,
         cheapBook,
         favoriteAsk: 0.85,
+        pairId: "test-pair",
       }),
       "cancel-lock",
     );
@@ -123,6 +140,7 @@ describe("ArbStrategy interface", () => {
           bestAskSize: 50,
         },
         favoriteAsk: 0.87,
+        pairId: "test-pair",
       }),
       "take-ask",
     );
@@ -182,6 +200,7 @@ describe("ArbStrategy interface", () => {
         favoriteAsk: 0.97,
         filledCheap: 10,
         filledExpensive: 3,
+        pairId: "test-pair",
       }),
       7,
     );
@@ -207,6 +226,7 @@ describe("BarbellStrategy", () => {
         limitPrice: 0.18,
         cheapBook: restingCheap,
         favoriteAsk: 0.85,
+        pairId: "test-pair",
       }),
       "keep",
     );
@@ -216,6 +236,7 @@ describe("BarbellStrategy", () => {
         limitPrice: 0.13,
         cheapBook: restingCheap,
         favoriteAsk: 0.7,
+        pairId: "test-pair",
       }),
       "cancel-lock",
     );
@@ -303,6 +324,7 @@ describe("BarbellStrategy", () => {
         favoriteAsk: 0.97,
         filledCheap: 10,
         filledExpensive: 3,
+        pairId: "test-pair",
       }),
       2,
     );

@@ -27,6 +27,7 @@ import {
   metricScaleMax,
   overlayMarksForWindow,
   markerRadiiWorld,
+  isSellMark,
   nearestOverlayHit,
   nearestPoint,
   rowAsset,
@@ -368,6 +369,8 @@ export function StackedMarketChart(props: {
             <span class="bt-swatch-mark buy" />
             Run
             <span class="bt-chart-pos">{overlayCount()}</span>
+            <span class="bt-swatch-mark sell" />
+            Sell
           </Show>
           <Show when={props.walletOn}>
             <span class="bt-swatch-mark wallet" />
@@ -696,6 +699,42 @@ function MarketRow(props: {
             const cx = x()(t);
             const cy = y()(p.fillPrice);
             const color = p.outcomeIndex === 1 ? NO_COLOR : YES_COLOR;
+            const sell = isSellMark(p);
+            if (sell) {
+              // Marqueur de vente : croix rouge au prix de revente.
+              const r = props.markerRx;
+              return (
+                <g pointer-events="none">
+                  <line
+                    x1={cx - r}
+                    y1={cy - r}
+                    x2={cx + r}
+                    y2={cy + r}
+                    stroke="#ff4444"
+                    stroke-width="2"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <line
+                    x1={cx - r}
+                    y1={cy + r}
+                    x2={cx + r}
+                    y2={cy - r}
+                    stroke="#ff4444"
+                    stroke-width="2"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={r * 0.4}
+                    fill="none"
+                    stroke="#ff4444"
+                    stroke-width="1"
+                    vector-effect="non-scaling-stroke"
+                  />
+                </g>
+              );
+            }
             return (
               <ellipse
                 cx={cx}

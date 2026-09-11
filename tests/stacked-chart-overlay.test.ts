@@ -19,10 +19,10 @@ describe("stacked chart position overlay", () => {
     assert.equal(toChartTimeSec(0), 0);
   });
 
-  it("skips sold-clone rows and empty timestamps", () => {
+  it("accepts sold-clone rows and skips empty timestamps", () => {
     assert.equal(
       isOverlayPosition({ id: "run:key:sold-1800000000000", ts: 1_800_000_000_000, fillPrice: 0.42 }),
-      false,
+      true,
     );
     assert.equal(isOverlayPosition({ id: "run:key:1800000000000", ts: 0, fillPrice: 0.42 }), false);
     assert.equal(
@@ -31,7 +31,7 @@ describe("stacked chart position overlay", () => {
     );
   });
 
-  it("keeps fills that fall inside the window", () => {
+  it("keeps fills that fall inside the window, including sold rows", () => {
     const start = 1_800_000_000;
     const end = start + 900;
     const rows = [
@@ -40,7 +40,7 @@ describe("stacked chart position overlay", () => {
       { id: "run:key:sold-1", ts: (start + 20) * 1000, fillPrice: 0.4 },
     ];
     const marks = overlayMarksForWindow(rows, start, end);
-    assert.deepEqual(marks.map((row) => row.id), ["in"]);
+    assert.deepEqual(marks.map((row) => row.id), ["in", "run:key:sold-1"]);
   });
 
   it("builds a diamond around the wallet fill", () => {

@@ -344,7 +344,10 @@ export function toPublicConfig(config: BotConfig): PublicBotConfig {
   return publicConfig;
 }
 
-export function validateConfigCoherence(config: BotConfig): void {
+export function validateConfigCoherence(
+  config: BotConfig,
+  opts?: { leadsWithEdge?: boolean },
+): void {
   if (config.cheapBuyMin > config.cheapBuyMax) {
     throw new Error("CHEAP_BUY_MIN must be <= CHEAP_BUY_MAX");
   }
@@ -369,7 +372,9 @@ export function validateConfigCoherence(config: BotConfig): void {
   if (config.maxOpenPositionsPerSide < 1) {
     throw new Error("MAX_OPEN_POSITIONS_PER_SIDE must be >= 1");
   }
-  if (config.strategyId === "edge-lead") {
+  const validateEdge =
+    opts?.leadsWithEdge === true || config.strategyId === "edge-lead";
+  if (validateEdge) {
     if (config.edgeBandMin >= config.edgeBandMax) {
       throw new Error("EDGE_BAND_MIN must be < EDGE_BAND_MAX");
     }
@@ -426,8 +431,11 @@ export function validateConfigCoherence(config: BotConfig): void {
   }
 }
 
-export function validateTradingConfig(config: BotConfig): void {
-  validateConfigCoherence(config);
+export function validateTradingConfig(
+  config: BotConfig,
+  opts?: { leadsWithEdge?: boolean },
+): void {
+  validateConfigCoherence(config, opts);
   if (config.dryRun) return;
 
   if (config.simResolveFallback !== "none") {

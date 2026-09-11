@@ -223,6 +223,7 @@ export class OpportunityExecutor {
         tracker: this.deps.tracker,
         pairId: opportunity.pairId,
         freshAsk,
+        nowMs: Date.now(),
       });
       if (decision.action === "defend") {
         log("Hedge skipped - defending uncovered pair at post time", {
@@ -377,6 +378,7 @@ export class OpportunityExecutor {
         };
         this.deps.tracker.addOpenPosition(position);
         this.deps.tracker.attachLeg(position);
+        this.strategy.onBuyCommitted?.(opportunity);
         bus.emit({ type: "openedPosition", position });
         log("FOK hedge filled — position created", {
           orderId,
@@ -453,6 +455,7 @@ export class OpportunityExecutor {
 
     this.deps.tracker.mark(opportunity.tradeKey);
     this.deps.onAttempt();
+    this.strategy.onBuyCommitted?.(opportunity);
 
     bus.emit({ type: "opportunity", opportunity });
     bus.emit({ type: "order", result, opportunity });
@@ -519,6 +522,7 @@ export class OpportunityExecutor {
       this.deps.tracker.mark(opportunity.tradeKey);
       this.deps.tracker.addOpenPosition(result.position);
       this.deps.tracker.attachLeg(result.position);
+      this.strategy.onBuyCommitted?.(opportunity);
       bus.emit({ type: "openedPosition", position: result.position });
 
       const orderResult = {

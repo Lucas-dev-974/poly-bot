@@ -13,7 +13,7 @@ import { openPositionList, resolvedPositions } from "../../stores/positionStore"
 import { dateTimeStr, fmtPrice, fmtUsd } from "../../utils/format";
 import { marketRecencyMs } from "../../utils/market";
 import { MarketHistoryModal, positionToChartTarget } from "../modals/MarketHistoryModal";
-import type { PolymarketPosition } from "../../types";
+import type { PolymarketPosition, StrategyId } from "../../types";
 
 /** Identifie un marché par son créneau visible (titre = date + heure), pas par token. */
 function marketKey(position: PolymarketPosition): string {
@@ -66,12 +66,12 @@ function positionMeta(
 ): {
   kind: "cheap" | "expensive" | null;
   orderType: "GTC" | "FOK" | "FAK" | "SIM" | null;
-  strategyId: "arb" | "barbell" | "edge-lead" | null;
+  strategyId: StrategyId | null;
 } {
   const botPositions = [...openPositionList(), ...resolvedPositions];
   let kind: "cheap" | "expensive" | null = null;
   let orderType: "GTC" | "FOK" | "FAK" | "SIM" | null = null;
-  let strategyId: "arb" | "barbell" | "edge-lead" | null = null;
+  let strategyId: StrategyId | null = null;
 
   // 1. Match autoritatif par tokenId (asset). Les slugs Data API et bot
   //    diffèrent souvent (btc-updown-15m-TS vs slug événement lisible).

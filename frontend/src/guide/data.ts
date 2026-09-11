@@ -145,6 +145,27 @@ export const HEDGE_TREE: [string, string, string][] = [
   ["5", "sinon", "post à min(ask, expensiveBuyMax)"],
 ];
 
+
+/** Sémantique des zones chart (éditeur /strategy-editor). */
+export const CHART_ZONE_SEMANTICS: [string, string][] = [
+  [
+    "once",
+    "Se verrouille dès qu’un POST buy/sell est accepté. Un POST raté se retente. Un GTC ensuite cancel-locké reste verrouillé.",
+  ],
+  [
+    "dependsOn",
+    "La zone enfant n’est prête qu’après le fill du parent buy (pas seulement le POST). Plusieurs enfants possibles.",
+  ],
+  [
+    "ask vs bid",
+    "Les tendances buy utilisent le best ask ; les sells favorite trendent sur le best bid (séries séparées).",
+  ],
+  [
+    "sell",
+    "Uniquement si une position fillée existe. Liquidation complète (pas de vente partielle).",
+  ],
+];
+
 export const NEW_FILES: [string, string][] = [
   ["src/strategy/ids.ts", "STRATEGY_IDS, parseStrategyId"],
   ["src/strategy/trading-strategy.ts", "Interface TradingStrategy"],
@@ -154,7 +175,9 @@ export const NEW_FILES: [string, string][] = [
   ["src/strategy/barbell-strategy.ts", "Politique ratio"],
   ["src/strategy/edge-lead-strategy.ts", "Politique favori d'abord + budgets USDC"],
   ["src/strategy/barbell-sizing.ts", "pairLockOk toujours true"],
-  ["src/strategy/registry.ts", "createStrategy(id)"],
+  ["src/strategy/registry.ts", "createStrategy(id, repos) natif + custom"],
+  ["src/strategy/graph/", "DSL + interpréteur GraphStrategy"],
+  ["frontend/src/strategy-editor/", "Éditeur chart + zones /strategy-editor"],
   ["src/backtest/", "Replayer book_snapshots + page /backtest"],
 ];
 
@@ -168,6 +191,7 @@ export const TODOS = [
   { id: "position-strategy", content: "positions.strategyId persisté + colonne Moteur", done: true },
   { id: "tests-docs", content: "Tests + README / STRATEGY.md", done: true },
   { id: "backtest", content: "Page /backtest + replayer TOB déterministe", done: true },
+  { id: "graph-editor", content: "Éditeur chart /strategy-editor + chartRules persistés", done: true },
 ];
 
 export type LifeTone = "neutral" | "accent" | "success" | "danger" | "warning";

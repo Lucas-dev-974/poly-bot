@@ -58,6 +58,8 @@ export interface TradeOpportunity {
   negRisk: boolean;
   tradeKey: string;
   pairId: string;
+  /** Chart rule that emitted this buy. Used to commit once / dependsOn after POST. */
+  chartRuleId?: string;
 }
 
 export interface OrderResult {
@@ -99,6 +101,8 @@ export interface SimulatedPosition {
   status: PositionStatus;
   resolvedAt?: number;
   pnl?: number;
+  /** Prix de revente pour les positions sold. Null si non vendue. */
+  sellPrice?: number | null;
   fillReason: FillReason;
   pairId: string;
   bestAskAtFill?: number | null;

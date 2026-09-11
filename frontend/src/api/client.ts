@@ -1,12 +1,13 @@
-import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, MarketHistoryResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, WalletTradesResponse } from "../types";
+import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, MarketHistoryResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, StrategyId, WalletTradesResponse } from "../types";
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
   if (!res.ok) {
     let message = `HTTP ${res.status} for ${url}`;
     try {
-      const body = (await res.json()) as { error?: string };
+      const body = (await res.json()) as { error?: string; errors?: string[] };
       if (body.error) message = body.error;
+      else if (body.errors?.length) message = body.errors.join("; ");
     } catch {
       /* ignore */
     }
@@ -43,6 +44,29 @@ export interface RedeemResponse {
 export interface ConfigResponse {
   config: BotConfig;
   editableKeys: string[];
+  leadsWithEdge?: boolean;
+}
+
+export interface StrategyEngineSummary {
+  id: string;
+  name: string;
+  description?: string | null;
+  leadsWithEdge: boolean;
+  native: boolean;
+  version?: number;
+}
+
+export interface StrategyListResponse {
+  engines: StrategyEngineSummary[];
+  activeId: string;
+  active: unknown;
+}
+
+export interface StrategyGraphResponse {
+  ok?: boolean;
+  graph: import("../strategy-editor/graph-types").StrategyGraph;
+  errors?: string[];
+  error?: string;
 }
 
 export interface RelayerQuotaResponse {
@@ -161,7 +185,7 @@ export const api = {
       `/api/backtest/wallet-trades?from=${encodeURIComponent(String(from))}&to=${encodeURIComponent(String(to))}`,
     ),
   backtestStart: (body: {
-    strategyId: "arb" | "barbell" | "edge-lead";
+    strategyId: StrategyId;
     presetId?: string;
     useCurrentConfig?: boolean;
     settings?: Partial<BotConfig>;
@@ -191,4 +215,72 @@ export const api = {
     request<{ ok: boolean }>(`/api/backtest/run/${encodeURIComponent(id)}/cancel`, {
       method: "POST",
     }),
+  strategyChartWindows: () =>
+    request<{
+      windows: Array<{
+        eventSlug: string;
+        eventTitle: string;
+        windowStart: number;
+        windowEnd: number;
+        ticks: number;
+      }>;
+    }>("/api/strategy-chart/windows"),
+  strategyChartSeries: (p: {
+    eventSlug: string;
+    windowStart: number;
+    windowEnd: number;
+  }) => {
+    const params = new URLSearchParams({
+      eventSlug: p.eventSlug,
+      windowStart: String(p.windowStart),
+      windowEnd: String(p.windowEnd),
+    });
+    return request<{
+      eventSlug: string;
+      windowStart: number;
+      windowEnd: number;
+      up: Array<{ t: number; ask: number | null; bid: number | null }>;
+      down: Array<{ t: number; ask: number | null; bid: number | null }>;
+      upTokenId: string | null;
+      downTokenId: string | null;
+    }>(`/api/strategy-chart/series?${params.toString()}`);
+  },
+  strategyList: () => request<StrategyListResponse>("/api/strategy"),
+  strategyTemplate: () =>
+    request<{ graph: import("../strategy-editor/graph-types").StrategyGraph }>(
+      "/api/strategy/templates/edge-lead-poc",
+    ),
+  strategyGet: (id: string) =>
+    request<{ graph: import("../strategy-editor/graph-types").StrategyGraph }>(
+      `/api/strategy/${encodeURIComponent(id)}`,
+    ),
+  strategyValidate: async (graph: import("../strategy-editor/graph-types").StrategyGraph) => {
+    const res = await fetch("/api/strategy/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(graph),
+    });
+    const body = (await res.json()) as { ok?: boolean; errors?: string[]; error?: string };
+    return {
+      ok: Boolean(body.ok),
+      errors: body.errors ?? (body.error ? [body.error] : []),
+    };
+  },
+  strategyCreate: (graph: import("../strategy-editor/graph-types").StrategyGraph) =>
+    request<StrategyGraphResponse>("/api/strategy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(graph),
+    }),
+  strategyUpdate: (id: string, graph: import("../strategy-editor/graph-types").StrategyGraph) =>
+    request<StrategyGraphResponse>(`/api/strategy/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(graph),
+    }),
+  strategyActivate: (id: string) =>
+    request<{ ok: boolean; config?: BotConfig; error?: string }>(
+      `/api/strategy/${encodeURIComponent(id)}/activate`,
+      { method: "POST" },
+    ),
 };

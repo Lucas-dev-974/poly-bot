@@ -9,10 +9,12 @@ import { round2 } from "./predicates.js";
 import type {
   CheapOrderAction,
   DefendContext,
+  EdgeOrderAction,
   EdgeSellContext,
   HedgePostContext,
   HedgePostDecision,
   RestingCheapContext,
+  RestingEdgeContext,
   StrategyContext,
   TradingStrategy,
 } from "./trading-strategy.js";
@@ -34,7 +36,7 @@ import type {
  */
 
 /** Token edge = celui au best ask le plus haut (favori). */
-function pickEdgeToken(books: TokenBook[]): TokenBook | null {
+export function pickEdgeToken(books: TokenBook[]): TokenBook | null {
   const withAsk = books.filter((book) => book.bestAsk !== null);
   if (withAsk.length === 0) return null;
   return withAsk.reduce((highest, book) =>
@@ -45,6 +47,17 @@ function pickEdgeToken(books: TokenBook[]): TokenBook | null {
 /** Ask cheap dans la bande d'entrée configurable. */
 export function cheapAskInBand(ask: number, config: BotConfig): boolean {
   return ask >= config.edgeCheapBandMin && ask <= config.edgeCheapBandMax;
+}
+
+/** Ask edge hors [edgeBandMin, edgeBandMax] → cancel le GTC favori. */
+export function configEdgeOrderAction(
+  ask: number | null | undefined,
+  config: BotConfig,
+): EdgeOrderAction {
+  if (ask == null) return "keep";
+  return ask < config.edgeBandMin || ask > config.edgeBandMax
+    ? "cancel-lock"
+    : "keep";
 }
 
 /**
@@ -91,7 +104,7 @@ export function computeEdgeLeadCheapSize(
   );
 }
 
-function appendOpportunity(
+export function appendOpportunity(
   tracker: TradeTracker,
   opportunities: TradeOpportunity[],
   event: UpDownEvent,
@@ -266,6 +279,10 @@ export class EdgeLeadStrategy implements TradingStrategy {
     const ask = ctx.cheapBook?.bestAsk;
     if (ask === null || ask === undefined) return "keep";
     return cheapAskInBand(round2(ask), ctx.config) ? "keep" : "cancel-lock";
+  }
+
+  edgeOrderAction(ctx: RestingEdgeContext): EdgeOrderAction {
+    return configEdgeOrderAction(ctx.edgeBook?.bestAsk, ctx.config);
   }
 
   shouldDefend(_ctx: DefendContext): boolean {

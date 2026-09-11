@@ -19,6 +19,9 @@ export function StrategyGuidePage(): JSX.Element {
           <a href="/backtest" class="btn guide-nav-link">
             Backtest
           </a>
+          <a href="/strategy-editor" class="btn guide-nav-link">
+            Éditeur
+          </a>
         </div>
       </header>
 
@@ -29,7 +32,8 @@ export function StrategyGuidePage(): JSX.Element {
               <strong>Arb</strong> verrouille un petit gain (1:1). <strong>Barbell</strong> garde
               la moitié en pari. <strong>Edge-lead</strong> achète le favori d'abord puis hedger
               l'outsider si le prix le permet. Chaque moteur se choisit via{" "}
-              <code>strategyId</code> dans la configuration.
+              <code>strategyId</code> dans la configuration. Les stratégies custom se définissent
+              par zones sur le chart dans l'<a href="/strategy-editor">éditeur de stratégie</a>.
             </p>
           </GuideStack>
 

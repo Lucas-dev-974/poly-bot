@@ -10,9 +10,11 @@ import {
 import type {
   CheapOrderAction,
   DefendContext,
+  EdgeOrderAction,
   HedgePostContext,
   HedgePostDecision,
   RestingCheapContext,
+  RestingEdgeContext,
   StrategyContext,
   TradingStrategy,
 } from "./trading-strategy.js";
@@ -45,6 +47,10 @@ export class BarbellStrategy implements TradingStrategy {
     ) {
       return "take-ask";
     }
+    return "keep";
+  }
+
+  edgeOrderAction(_ctx: RestingEdgeContext): EdgeOrderAction {
     return "keep";
   }
 

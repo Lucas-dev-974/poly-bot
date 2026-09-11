@@ -21,12 +21,14 @@ export function ConfigBar(props: { onConfigure?: () => void }): JSX.Element {
             )}
           </span>
           <span>
-            Moteur <b>{c().strategyId === "edge-lead" ? "edge-lead" : c().strategyId === "barbell" ? "barbell" : "arb"}</b>
+            Moteur <b>{c().strategyId}</b>
             {c().strategyId === "edge-lead"
               ? ` · edge ${c().edgeBandMin}–${c().edgeBandMax}`
               : c().strategyId === "barbell"
                 ? ` · ratio ${c().barbellHedgeRatio ?? 0.5}`
-                : ` · lock ${c().pairLockMax}`}
+                : c().strategyId.startsWith("custom:")
+                  ? ""
+                  : ` · lock ${c().pairLockMax}`}
           </span>
           <Show when={c().strategyId !== "edge-lead"}>
             <span>

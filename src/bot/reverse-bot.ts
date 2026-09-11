@@ -58,7 +58,7 @@ export class ReverseBot {
       : null;
     this.broker = this.ledger ? new SimulatedBroker(config, this.ledger) : null;
     this.resolver = new PositionResolver(config, this.tracker, this.ledger);
-    this.strategy = createStrategy(config.strategyId);
+    this.strategy = createStrategy(config.strategyId, repos);
     this.lifecycle = new LiveOrderLifecycle({ config, trader, tracker: this.tracker }, this.strategy);
     this.resting = new RestingManager(
       {
@@ -172,7 +172,7 @@ export class ReverseBot {
       this.resolver?.reseed(this.config.simRandomSeed);
     }
     if (changed.has("strategyId")) {
-      this.strategy = createStrategy(this.config.strategyId);
+      this.strategy = createStrategy(this.config.strategyId, this.repos);
       this.lifecycle.setStrategy(this.strategy);
       this.resting.setStrategy(this.strategy);
       this.executor.setStrategy(this.strategy);
@@ -233,6 +233,7 @@ export class ReverseBot {
       tracker: this.tracker,
       event,
       books,
+      nowMs: tickTs,
     });
     this.snapshots.insertOpportunities(event, opportunities, tickTs);
 

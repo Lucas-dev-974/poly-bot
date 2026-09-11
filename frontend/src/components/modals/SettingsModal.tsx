@@ -1,9 +1,10 @@
 import { For, Show, createEffect, createMemo, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { api } from "../../api/client";
-import { STRATEGY_ENGINE_OPTIONS, STRATEGY_PRESETS, presetsForStrategy, type StrategyPreset } from "../../config/strategyPresets";
+import { STRATEGY_ENGINE_OPTIONS, STRATEGY_PRESETS, engineUsesEdge, presetsForStrategy, type StrategyPreset } from "../../config/strategyPresets";
 import { setConfig } from "../../stores/botStore";
 import type { BotConfig } from "../../types";
+import type { StrategyEngineSummary } from "../../api/client";
 import {
   configToForm,
   formToPatch,
@@ -114,6 +115,7 @@ export function SettingsModal(props: {
   const [saving, setSaving] = createSignal(false);
   const [saveError, setSaveError] = createSignal<string | null>(null);
   const [activeSection, setActiveSection] = createSignal<SectionId>("presets");
+  const [customEngines, setCustomEngines] = createSignal<StrategyEngineSummary[]>([]);
 
   createEffect(() => {
     if (props.open) {
@@ -122,10 +124,25 @@ export function SettingsModal(props: {
       setBaseline(next);
       setSaveError(null);
       setActiveSection("presets");
+      void api.strategyList().then((res) => {
+        setCustomEngines(res.engines.filter((engine) => !engine.native));
+      }).catch(() => {
+        setCustomEngines([]);
+      });
     }
   });
 
-  const errors = createMemo(() => validateConfigForm(form(), props.config.dryRun));
+  const selectedCustom = createMemo(() =>
+    customEngines().find((engine) => engine.id === form().strategyId),
+  );
+  const usesEdge = createMemo(() =>
+    engineUsesEdge(form().strategyId, selectedCustom()?.leadsWithEdge),
+  );
+  const errors = createMemo(() =>
+    validateConfigForm(form(), props.config.dryRun, {
+      leadsWithEdge: selectedCustom()?.leadsWithEdge,
+    }),
+  );
   const dirty = createMemo(() => !formsEqual(form(), baseline()));
   const matchingPresetId = createMemo(() => {
     const current = form();
@@ -230,6 +247,11 @@ export function SettingsModal(props: {
               <For each={STRATEGY_ENGINE_OPTIONS}>
                 {(option) => <option value={option.id}>{option.label}</option>}
               </For>
+              <For each={customEngines()}>
+                {(engine) => (
+                  <option value={engine.id}>{engine.name} ({engine.id})</option>
+                )}
+              </For>
             </select>
             <span class="cfg-presets__label">Profil stratégie</span>
             <div class="cfg-presets__list">
@@ -271,11 +293,11 @@ export function SettingsModal(props: {
                     when={
                       !(s.id === "sim" && !props.config.dryRun) &&
                       !(
-                        form().strategyId === "edge-lead" &&
+                        usesEdge() &&
                         (s.id === "cheap" || s.id === "hedge")
                       ) &&
                       !(
-                        form().strategyId !== "edge-lead" &&
+                        !usesEdge() &&
                         s.id === "edge"
                       )
                     }
@@ -303,7 +325,8 @@ export function SettingsModal(props: {
                   <p class="cfg-section__desc">
                     Choisis le moteur, éventuellement un profil, puis Enregistrer.
                     Ça écrit data/bot-settings.json (la config active). Tu peux encore
-                    ajuster les champs dans les autres onglets.
+                    ajuster les champs dans les autres onglets. Les stratégies custom se
+                    configurent par chart dans <a href="/strategy-editor">l'éditeur</a>.
                   </p>
                   <Field label="Moteur">
                     <select
@@ -318,6 +341,11 @@ export function SettingsModal(props: {
                     >
                       <For each={STRATEGY_ENGINE_OPTIONS}>
                         {(option) => <option value={option.id}>{option.label}</option>}
+                      </For>
+                      <For each={customEngines()}>
+                        {(engine) => (
+                          <option value={engine.id}>{engine.name} ({engine.id})</option>
+                        )}
                       </For>
                     </select>
                   </Field>
@@ -371,7 +399,7 @@ export function SettingsModal(props: {
                     <Field
                       label="Poll interval (ms)"
                       hint={
-                        form().strategyId === "edge-lead" && Number(form().pollIntervalMs) > 2000
+                        usesEdge() && Number(form().pollIntervalMs) > 2000
                           ? `Poll lent : ~${form().edgeConfirmSamples} ticks × ${form().pollIntervalMs}ms pour confirmer (défaut 5 × 1s = 5s)`
                           : "Minimum 500 ms"
                       }

@@ -8,6 +8,7 @@ import {
   applyRuntimeSettings,
   readRuntimeSettings,
   readRuntimeSettingsSync,
+  keysForStrategy,
   sanitizePatch,
   writeRuntimeSettings,
 } from "../src/runtime-settings.js";
@@ -69,6 +70,13 @@ describe("sanitizePatch", () => {
 
   it("rejects unknown strategyId", () => {
     assert.throws(() => sanitizePatch({ strategyId: "nope" }), /Invalid strategyId/);
+  });
+
+  it("accepts custom strategy ids", () => {
+    assert.equal(
+      sanitizePatch({ strategyId: "custom:Edge-Lead-POC" }).strategyId,
+      "custom:edge-lead-poc",
+    );
   });
 });
 
@@ -157,5 +165,14 @@ describe("validateTradingConfig with JSON settings", () => {
   it("accepts coherent merged config", () => {
     const config = testConfig({ cheapBuyMin: 0.08 });
     assert.doesNotThrow(() => validateTradingConfig(config));
+  });
+});
+
+describe("keysForStrategy", () => {
+  it("keeps edge keys for edge-lead and for custom when leadsWithEdge is true", () => {
+    assert.ok(keysForStrategy("edge-lead").includes("edgeBandMin"));
+    assert.ok(!keysForStrategy("arb").includes("edgeBandMin"));
+    assert.ok(!keysForStrategy("custom:foo").includes("edgeBandMin"));
+    assert.ok(keysForStrategy("custom:foo", true).includes("edgeBandMin"));
   });
 });

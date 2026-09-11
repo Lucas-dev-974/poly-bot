@@ -1,12 +1,22 @@
 export const STRATEGY_IDS = ["arb", "barbell", "edge-lead"] as const;
-export type StrategyId = (typeof STRATEGY_IDS)[number];
+export type NativeStrategyId = (typeof STRATEGY_IDS)[number];
+export type StrategyId = NativeStrategyId | `custom:${string}`;
 
 export function parseStrategyId(value: unknown): StrategyId {
   const raw = String(value).trim().toLowerCase();
+  if (raw.startsWith("custom:")) {
+    const rest = raw.slice("custom:".length);
+    if (!rest) {
+      throw new Error(
+        `Invalid strategyId: ${String(value)}. custom id must be non-empty`,
+      );
+    }
+    return `custom:${rest}`;
+  }
   const match = STRATEGY_IDS.find((id) => id === raw);
   if (!match) {
     throw new Error(
-      `Invalid strategyId: ${String(value)}. Allowed: ${STRATEGY_IDS.join(", ")}`,
+      `Invalid strategyId: ${String(value)}. Allowed: ${STRATEGY_IDS.join(", ")}, or custom:<id>`,
     );
   }
   return match;
@@ -14,6 +24,9 @@ export function parseStrategyId(value: unknown): StrategyId {
 
 export function asStrategyId(value: unknown): StrategyId | undefined {
   if (value == null || value === "") return undefined;
-  const raw = String(value).trim().toLowerCase();
-  return STRATEGY_IDS.find((id) => id === raw);
+  try {
+    return parseStrategyId(value);
+  } catch {
+    return undefined;
+  }
 }

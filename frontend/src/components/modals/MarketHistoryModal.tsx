@@ -7,6 +7,7 @@ import type {
   MarketView,
   PolymarketPosition,
   PricePoint,
+  StrategyId,
   TokenBook,
   TradePoint,
 } from "../../types";
@@ -235,10 +236,10 @@ type TradeOrigin = "bot" | "api" | "position";
 type DisplayTrade = TradePoint & {
   origin: TradeOrigin;
   dryRun?: boolean;
-  strategyId?: "arb" | "barbell" | "edge-lead";
+  strategyId?: StrategyId;
 };
 
-function strategyFromBotStore(tokenId: string | undefined): "arb" | "barbell" | "edge-lead" | undefined {
+function strategyFromBotStore(tokenId: string | undefined): StrategyId | undefined {
   if (!tokenId) return undefined;
   const bot = [...openPositionList(), ...resolvedPositions];
   return bot.find((p) => p.tokenId === tokenId)?.strategyId;

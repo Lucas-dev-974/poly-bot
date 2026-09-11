@@ -7,6 +7,7 @@ import { bus } from "./dashboard/events.js";
 import { Database } from "./db/database.js";
 import { createRepositories } from "./db/index.js";
 import { logError } from "./logger.js";
+import { leadsWithEdgeFor } from "./strategy/registry.js";
 import { Trader } from "./trader.js";
 
 let db: Database | null = null;
@@ -20,6 +21,16 @@ async function main(): Promise<void> {
   db = new Database(config.dbPath, config.persistenceEnabled);
   db.init();
   const repos = createRepositories(db);
+  if (config.strategyId.startsWith("custom:")) {
+    if (!config.persistenceEnabled) {
+      throw new Error(`custom strategy ${config.strategyId} requires persistence`);
+    }
+    const leadsWithEdge = leadsWithEdgeFor(config.strategyId, repos);
+    if (leadsWithEdge === undefined) {
+      throw new Error(`custom strategy ${config.strategyId} not found`);
+    }
+    validateTradingConfig(config, { leadsWithEdge });
+  }
   bus.setEventRepository(repos.events);
   bus.setOrderRepository(repos.orders);
 

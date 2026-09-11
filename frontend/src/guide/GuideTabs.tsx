@@ -29,6 +29,7 @@ import {
   HEDGE_MID,
   HEDGE_TREE,
   NEW_FILES,
+  CHART_ZONE_SEMANTICS,
   RESOLUTION_ROWS,
   STRATEGY_COMPARE_ROWS,
   TODOS,
@@ -502,8 +503,8 @@ export function UiTab(): JSX.Element {
         headers={["Étape", "Effet"]}
         rows={[
           [
-            "Select Moteur (arb / barbell / edge-lead)",
-            "Filtre les profils dans le formulaire ; ne reset pas bandes / GTC / budgets",
+            "Select Moteur (arb / barbell / edge-lead / custom:…)",
+            "Filtre les profils ; un custom n'a pas de presets — règles chart dans /strategy-editor",
           ],
           ["Ratio hedge", "Onglet hedge ; hint « ignoré par B1 » si arb ; N/A edge-lead"],
           [
@@ -538,10 +539,15 @@ export function UiTab(): JSX.Element {
             <code>"strategyId": "edge-lead"</code>. Bandes edge/cheap et budgets USDC pré-configurés.
           </p>
         </GuideCard>
-        <GuideCard title="applyPreset (frontend)">
+        <GuideCard title="Éditeur /strategy-editor">
           <p>
-            Import JSON statique : merger <code>strategyId: preset.strategyId</code>. Matching
-            filtré par moteur sélectionné.
+            Éditeur chart : zones (bande ou tendance), liens nœuds (1→2 et 1→3, enfant après fill
+            du parent buy), sauvegarde <code>chartRules</code>.
+            Activation <code>custom:…</code> avec des zones lance{" "}
+            <code>ChartRulesStrategy</code> (live et backtest). Sans zone, le squelette graphe
+            edge-lead s'exécute. Preset Edge-lead = confirm 5 ticks, cheap après fill, vente à perte.
+            Une zone de vente avec « Tous vendre » ferme la position complète de l'achat lié.
+            Le replay est une preview de signaux, pas un fill.
           </p>
         </GuideCard>
       </GuideGrid>
@@ -561,7 +567,13 @@ export function ShipTab(): JSX.Element {
     <GuideStack>
       <GuideTodoList items={TODOS} />
       <h3 class="guide-h3">Fichiers nouveaux</h3>
-      <GuideTable
+            <GuideTable
+        caption="Zones chart — once vs dependsOn"
+        headers={["Concept", "Comportement"]}
+        rows={CHART_ZONE_SEMANTICS}
+        rowTone={CHART_ZONE_SEMANTICS.map(() => "neutral")}
+      />
+<GuideTable
         headers={["Chemin", "Contenu"]}
         rows={NEW_FILES}
         rowTone={NEW_FILES.map(() => "neutral")}

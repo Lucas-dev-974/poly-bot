@@ -8,6 +8,8 @@ export interface StrategyContext {
   tracker: TradeTracker;
   event: UpDownEvent;
   books: TokenBook[];
+  /** Backtest snapshot time. Live omits this → Date.now() at method entry. */
+  nowMs?: number;
 }
 
 export interface RestingCheapContext {
@@ -15,15 +17,35 @@ export interface RestingCheapContext {
   limitPrice: number;
   cheapBook: TokenBook | undefined;
   favoriteAsk: number | null;
+  pairId: string;
+  tracker?: TradeTracker;
+  /** Backtest snapshot time. Live omits this → Date.now() at method entry. */
+  nowMs?: number;
 }
 
 export type CheapOrderAction = "keep" | "take-ask" | "cancel-lock";
+
+export interface RestingEdgeContext {
+  config: BotConfig;
+  edgeBook: TokenBook | undefined;
+  pairId: string;
+  tracker?: TradeTracker;
+  nowMs?: number;
+}
+
+export type EdgeOrderAction = "keep" | "cancel-lock";
 
 export interface DefendContext {
   config: BotConfig;
   favoriteAsk: number | null;
   filledCheap: number;
   filledExpensive: number;
+  pairId: string;
+  /** Ask of the filled cheap token. Needed for banded sell-cheap rules. */
+  cheapAsk?: number | null;
+  tracker?: TradeTracker;
+  /** Backtest snapshot time. Live omits this → Date.now() at method entry. */
+  nowMs?: number;
 }
 
 export interface HedgePostContext {
@@ -31,6 +53,8 @@ export interface HedgePostContext {
   tracker: TradeTracker;
   pairId: string;
   freshAsk: number | null;
+  /** Backtest snapshot time. Live omits this → Date.now() at method entry. */
+  nowMs?: number;
 }
 
 export interface EdgeSellContext {
@@ -47,6 +71,8 @@ export interface EdgeSellContext {
   cheapFilled: number;
   /** Âge du marché en ms depuis windowStart. */
   marketAgeMs: number;
+  /** Backtest snapshot time. Live omits this → Date.now() at method entry. Native edge-lead ignores it. */
+  nowMs?: number;
 }
 
 export type HedgePostDecision =
@@ -67,6 +93,8 @@ export interface TradingStrategy {
   readonly leadsWithEdge: boolean;
   findOpportunities(ctx: StrategyContext): TradeOpportunity[];
   cheapOrderAction(ctx: RestingCheapContext): CheapOrderAction;
+  /** Resting GTC edge (favori). Edge-lead / chart : cancel si hors bande. */
+  edgeOrderAction(ctx: RestingEdgeContext): EdgeOrderAction;
   shouldDefend(ctx: DefendContext): boolean;
   /** Shares of cheap to sell if `shouldDefend`. Rounded to 2 decimals. 0 → no SELL. */
   defendShares(ctx: DefendContext): number;
@@ -77,4 +105,10 @@ export interface TradingStrategy {
    * pour arb/barbell (jamais de vente de l'edge).
    */
   shouldSellExpensiveEdge(ctx: EdgeSellContext): boolean;
+  /** After a buy POST/GTC is accepted (not on emit). Chart once / dependsOn. */
+  onBuyCommitted?(opportunity: TradeOpportunity): void;
+  /** After a successful FOK SELL of the naked favorite. */
+  onSellExpensiveCommitted?(pairId: string): void;
+  /** After a successful FOK SELL of filled cheap (defend). */
+  onDefendCommitted?(pairId: string): void;
 }

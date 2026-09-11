@@ -51,7 +51,7 @@ export async function runBacktest(params: {
 }): Promise<BacktestResult> {
   const { runId, config, repos, hooks } = params;
   const selected = [...params.windows].sort((a, b) => a.windowStart - b.windowStart);
-  const strategy = createStrategy(config.strategyId);
+  const strategy = createStrategy(config.strategyId, repos);
   const tracker = new TradeTracker();
   const ledger = new BacktestLedger(config.simulatedCapital);
   const resting = new BacktestRestingBook();
@@ -259,6 +259,7 @@ function processTick(ctx: {
       tracker: ctx.tracker,
       event: ctx.event,
       books: ctx.books,
+      nowMs: ctx.nowMs,
     });
     opportunities.sort((a, b) =>
       ctx.strategy.leadsWithEdge
@@ -351,8 +352,14 @@ function manageRestingPolicy(ctx: {
       const book =
         ctx.books.find((b) => b.tokenId === order.context.tokenId) ??
         ctx.books.find((b) => b.outcome === order.context.outcome);
-      const ask = book?.bestAsk ?? null;
-      if (ask !== null && (ask < ctx.config.edgeBandMin || ask > ctx.config.edgeBandMax)) {
+      const action = ctx.strategy.edgeOrderAction({
+        config: ctx.config,
+        edgeBook: book,
+        pairId,
+        nowMs: ctx.nowMs,
+        tracker: ctx.tracker,
+      });
+      if (action === "cancel-lock") {
         cancelResting(ctx, order.key, "edge-off-band");
       }
     }
@@ -369,6 +376,9 @@ function manageRestingPolicy(ctx: {
       limitPrice: order.context.limitPrice,
       cheapBook: book,
       favoriteAsk: favoriteBook?.bestAsk ?? null,
+      pairId,
+      nowMs: ctx.nowMs,
+      tracker: ctx.tracker,
     });
     if (action === "keep") continue;
     // Ask crossed this tick and we already took the TOB slice: keep the
@@ -423,6 +433,7 @@ function sellExpensiveEdge(
       expensiveSize,
       cheapFilled,
       marketAgeMs,
+      nowMs: ctx.nowMs,
     })
   ) {
     return;
@@ -433,6 +444,7 @@ function sellExpensiveEdge(
   if (fill.filled && fill.fillPrice !== undefined && fill.size !== undefined) {
     ctx.ledger.credit(round2(fill.fillPrice * fill.size));
     ctx.tracker.closePairExpensiveAsSold(pairId, fill.fillPrice, fill.size, ctx.nowMs);
+    ctx.strategy.onSellExpensiveCommitted?.(pairId);
     const outcome = expensiveBook?.outcome ?? "Up";
     ctx.trades.push({
       ts: ctx.nowMs,
@@ -490,7 +502,10 @@ function defendCheapLegs(
   },
   pairId: string,
 ): void {
-  if (ctx.strategy.leadsWithEdge) return;
+  // Let the strategy decide: native edge-lead returns false from shouldDefend,
+  // but a custom chart-rules strategy with leadsWithEdge may define a
+  // "sell cheap" zone that must fire. Short-circuiting here would silently
+  // suppress all cheap sells for any edge-lead-like custom strategy.
   const cheapTokenId = ctx.tracker.getCheapTokenForPair(pairId);
   const cheapBook = cheapTokenId
     ? ctx.books.find((b) => b.tokenId === cheapTokenId)
@@ -499,7 +514,16 @@ function defendCheapLegs(
   const favoriteAsk = favorite?.bestAsk ?? null;
   const filledCheap = ctx.tracker.getFilledCheapSizeForPair(pairId);
   const filledExpensive = ctx.tracker.getFilledExpensiveSizeForPair(pairId);
-  const defendCtx = { config: ctx.config, favoriteAsk, filledCheap, filledExpensive };
+  const defendCtx = {
+    config: ctx.config,
+    favoriteAsk,
+    filledCheap,
+    filledExpensive,
+    pairId,
+    nowMs: ctx.nowMs,
+    cheapAsk: cheapBook?.bestAsk ?? null,
+    tracker: ctx.tracker,
+  };
   if (!ctx.strategy.shouldDefend(defendCtx)) return;
   const shares = ctx.strategy.defendShares(defendCtx);
   if (shares < MIN_CLOB_SHARES) return;
@@ -507,6 +531,7 @@ function defendCheapLegs(
   if (fill.filled && fill.fillPrice !== undefined && fill.size !== undefined) {
     ctx.ledger.credit(round2(fill.fillPrice * fill.size));
     ctx.tracker.closePairCheapAsSold(pairId, fill.fillPrice, fill.size, ctx.nowMs);
+    ctx.strategy.onDefendCommitted?.(pairId);
     const outcome = cheapBook?.outcome ?? "Down";
     ctx.trades.push({
       ts: ctx.nowMs,
@@ -598,6 +623,7 @@ function executeOpp(
       tracker: ctx.tracker,
       pairId: opportunity.pairId,
       freshAsk,
+      nowMs: ctx.nowMs,
     });
     if (decision.action === "defend") {
       ctx.trades.push(tradeFromOpp(opportunity, ctx.nowMs, false, decision.reason, null));
@@ -638,6 +664,7 @@ function executeOpp(
     }
     ctx.ledger.debit(fillCost);
     openFill(ctx, opportunity, fillPrice, size, "marketable", "FOK");
+    ctx.strategy.onBuyCommitted?.(opportunity);
     ctx.trades.push(tradeFromOpp(opportunity, ctx.nowMs, true, null, "marketable", fillPrice, size, "FOK"));
     persistTrade(ctx, opportunity, ctx.nowMs, true, null, "marketable", fillPrice, size, "FOK");
     return;
@@ -660,6 +687,7 @@ function executeOpp(
     ctx.ledger.debit(fillCost);
     openFill(ctx, opportunity, fillPrice, size, "marketable", "GTC");
     ctx.tracker.mark(opportunity.tradeKey);
+    ctx.strategy.onBuyCommitted?.(opportunity);
     ctx.trades.push(tradeFromOpp(opportunity, ctx.nowMs, true, null, "marketable", fillPrice, size, "GTC"));
     persistTrade(ctx, opportunity, ctx.nowMs, true, null, "marketable", fillPrice, size, "GTC");
     if (gtcRemainder > 1e-9) {
@@ -669,6 +697,7 @@ function executeOpp(
   }
 
   postResting(ctx, opportunity, remainderCost);
+  ctx.strategy.onBuyCommitted?.(opportunity);
   persistTrade(ctx, opportunity, ctx.nowMs, false, "resting", null, null, opportunity.size, "GTC");
 }
 
@@ -889,6 +918,72 @@ function flushPositions(
     ...tracker.getResolvedPositions(),
   ].filter((p) => p.eventSlug === eventSlug);
   for (const position of legs) {
+    if (position.status === "sold") {
+      // Une position vendue génère deux marqueurs sur le graphique :
+      //  1. L'achat (BUY) au prix et timestamp d'origine.
+      //  2. La vente (SELL) au sellPrice et au timestamp de résolution.
+      // Sans cette séparation, l'upsert (INSERT OR REPLACE) écraserait la
+      // ligne BUY avec la ligne SELL, et seul le marqueur de vente
+      // apparaîtrait — l'achat serait invisible.
+      const buyTs = buyTimestampFromId(position.id);
+      const buyRow: BacktestPositionRow = {
+        id: `${runId}:${position.id}`,
+        runId,
+        ts: buyTs,
+        eventSlug: position.eventSlug,
+        eventTitle: position.eventTitle,
+        tokenId: position.tokenId,
+        outcome: position.outcome,
+        outcomeIndex: position.outcomeIndex,
+        kind: position.kind,
+        side: "BUY",
+        limitPrice: position.limitPrice,
+        fillPrice: position.fillPrice,
+        size: position.size,
+        cost: position.cost,
+        windowEnd: position.windowEnd,
+        status: position.status,
+        resolvedAt: position.resolvedAt ?? null,
+        pnl: position.pnl ?? null,
+        fillReason: position.fillReason,
+        pairId: position.pairId,
+        bestAskAtFill: position.bestAskAtFill ?? null,
+        orderType: position.orderType ?? null,
+        strategyId: position.strategyId ?? null,
+        sellPrice: position.sellPrice ?? null,
+      };
+      repos?.backtestPositions.upsert(buyRow);
+
+      const sellRow: BacktestPositionRow = {
+        id: `${runId}:${position.id}:sold-${position.resolvedAt ?? 0}`,
+        runId,
+        ts: position.resolvedAt ?? buyTs,
+        eventSlug: position.eventSlug,
+        eventTitle: position.eventTitle,
+        tokenId: position.tokenId,
+        outcome: position.outcome,
+        outcomeIndex: position.outcomeIndex,
+        kind: position.kind,
+        side: "SELL",
+        limitPrice: position.limitPrice,
+        fillPrice: position.sellPrice ?? position.fillPrice,
+        size: position.size,
+        cost: position.cost,
+        windowEnd: position.windowEnd,
+        status: position.status,
+        resolvedAt: position.resolvedAt ?? null,
+        pnl: position.pnl ?? null,
+        fillReason: position.fillReason,
+        pairId: position.pairId,
+        bestAskAtFill: position.bestAskAtFill ?? null,
+        orderType: position.orderType ?? null,
+        strategyId: position.strategyId ?? null,
+        sellPrice: position.sellPrice ?? null,
+      };
+      repos?.backtestPositions.upsert(sellRow);
+      continue;
+    }
+
     const row: BacktestPositionRow = {
       id: `${runId}:${position.id}`,
       runId,
@@ -899,7 +994,7 @@ function flushPositions(
       outcome: position.outcome,
       outcomeIndex: position.outcomeIndex,
       kind: position.kind,
-      side: position.status === "sold" ? "SELL" : "BUY",
+      side: "BUY",
       limitPrice: position.limitPrice,
       fillPrice: position.fillPrice,
       size: position.size,
@@ -913,9 +1008,18 @@ function flushPositions(
       bestAskAtFill: position.bestAskAtFill ?? null,
       orderType: position.orderType ?? null,
       strategyId: position.strategyId ?? null,
+      sellPrice: position.sellPrice ?? null,
     };
     repos?.backtestPositions.upsert(row);
   }
+}
+
+/** Extrait le timestamp d'achat (epoch ms) depuis l'id d'une position. */
+function buyTimestampFromId(positionId: string): number {
+  const suffix = positionId.split(":").pop();
+  const parsed = Number(suffix);
+  if (Number.isFinite(parsed) && parsed > 1_000_000_000_000) return parsed;
+  return 0;
 }
 
 function fillTsFromPosition(position: SimulatedPosition): number {

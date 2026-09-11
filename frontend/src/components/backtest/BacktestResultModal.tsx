@@ -9,6 +9,14 @@ export function BacktestResultModal(props: {
   result: BacktestResult | null;
   positions: BacktestPositionRow[];
   run: BacktestRunSummary | null;
+  runChartRules?: Array<{
+    action: "buy" | "sell";
+    token: "cheap" | "favorite";
+    startSec: number;
+    endSec: number;
+    bandMin: number | null;
+    bandMax: number | null;
+  }>;
   startedAt?: number | null;
   canApplyPreset: boolean;
   applying: boolean;
@@ -24,6 +32,10 @@ export function BacktestResultModal(props: {
     return groupedSettings(s, props.result?.strategyId ?? props.run?.request?.strategyId);
   });
   const presetTitle = createMemo(() => runPresetLabel(props.run, props.result?.strategyId));
+  const strategyId = createMemo(
+    () => props.result?.strategyId ?? props.run?.request?.strategyId,
+  );
+  const isCustom = createMemo(() => strategyId()?.startsWith("custom:") === true);
 
   return (
     <Show when={props.open && props.result}>
@@ -66,6 +78,65 @@ export function BacktestResultModal(props: {
               <span>Couvert {result().coveredPairs}</span>
               <span>Découvert {result().uncoveredPairs}</span>
             </div>
+            <Show when={isCustom()}>
+              <section class="bt-modal-chart-rules">
+                <h4>Zones de la stratégie (diagnostic)</h4>
+                <Show
+                  when={props.runChartRules && props.runChartRules.length > 0}
+                  fallback={
+                    <p class="muted">
+                      Aucune zone (chartRules vide) — le squelette graphe est utilisé, pas le
+                      moteur chart.
+                    </p>
+                  }
+                >
+                  <table class="bt-rule-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Action</th>
+                        <th>Token</th>
+                        <th>Fenêtre (s)</th>
+                        <th>Bande prix</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <For each={props.runChartRules}>
+                        {(r, i) => (
+                          <tr>
+                            <td>{i() + 1}</td>
+                            <td class={r.action === "buy" ? "ok" : "err"}>{r.action}</td>
+                            <td>{r.token}</td>
+                            <td>
+                              {r.startSec}–{r.endSec}
+                            </td>
+                            <td>
+                              {r.bandMin != null ? `${r.bandMin}–${r.bandMax}` : "—"}
+                            </td>
+                          </tr>
+                        )}
+                      </For>
+                    </tbody>
+                  </table>
+                </Show>
+                <Show
+                  when={
+                    props.runChartRules &&
+                    props.runChartRules.length > 0 &&
+                    result().fillCount === 0 &&
+                    result().rejectCount === 0
+                  }
+                >
+                  <p class="err">
+                    Aucun ordre tenté (Fills 0 / Rejects 0) : <code>findOpportunities</code> n'a
+                    renvoyé aucun signal. Vérifie que tes zones sont des{" "}
+                    <code>action: buy</code> (une vente sans position ouverte ne frappe jamais) ,
+                    que la bande de prix est atteinte par l'ask, que les confirm ticks sont
+                    satisfaits (série croissante) et que le capital / l'exposition le permettent.
+                  </p>
+                </Show>
+              </section>
+            </Show>
             <div class="bt-modal-split">
               <section class="bt-modal-cfg">
                 <h4>Config du run</h4>
@@ -103,6 +174,7 @@ export function BacktestResultModal(props: {
                       <thead>
                         <tr>
                           <th>Marché</th>
+                          <th>Side</th>
                           <th>Kind</th>
                           <th>Outcome</th>
                           <th>Fill</th>
@@ -116,6 +188,7 @@ export function BacktestResultModal(props: {
                           {(p) => (
                             <tr>
                               <td>{p.eventSlug}</td>
+                              <td class={p.side === "SELL" ? "err" : "ok"}>{p.side}</td>
                               <td>{p.kind}</td>
                               <td>{p.outcome}</td>
                               <td>{p.fillPrice.toFixed(3)}</td>

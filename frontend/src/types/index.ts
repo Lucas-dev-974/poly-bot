@@ -2,6 +2,8 @@
 // Garder synchronisÃ© avec le backend lors des changements.
 
 export type TradeSide = "BUY" | "SELL";
+export type NativeStrategyId = "arb" | "barbell" | "edge-lead";
+export type StrategyId = NativeStrategyId | `custom:${string}`;
 
 export interface GammaMarket {
   conditionId: string;
@@ -57,6 +59,7 @@ export interface TradeOpportunity {
   negRisk: boolean;
   tradeKey: string;
   pairId: string;
+  chartRuleId?: string;
 }
 
 export interface OrderResult {
@@ -99,7 +102,7 @@ export interface SimulatedPosition {
   /** Type d'ordre ayant crÃ©Ã© la position : GTC, FOK, FAK ou SIM (dry-run). */
   orderType?: "GTC" | "FOK" | "FAK" | "SIM";
   /** Moteur qui a pris la position. Absent sur les lignes antérieures à la migration. */
-  strategyId?: "arb" | "barbell" | "edge-lead";
+  strategyId?: StrategyId;
 }
 
 export type ArbPairStatus = "open" | "partial" | "covered" | "resolved";
@@ -147,7 +150,7 @@ export interface BotConfig {
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: number;
   /** Trading engine: arb = 1:1 + lock; barbell = cheap/hedge ratio, no lock. */
-  strategyId: "arb" | "barbell" | "edge-lead";
+  strategyId: StrategyId;
   /** Target hedge / cheap fill ratio for barbell. Ignored by arb. (0, 1]. */
   barbellHedgeRatio: number;
   /** Verrou profit : bid+hedge à l'entrée et fillPrice+hedge après fill, tous deux ≤ pairLockMax. */
@@ -381,7 +384,7 @@ export interface WalletTradesResponse {
 export interface BotFillPoint extends TradePoint {
   tokenId: string;
   dryRun: boolean;
-  strategyId?: "arb" | "barbell" | "edge-lead";
+  strategyId?: StrategyId;
 }
 
 export interface BotFillsResponse {
@@ -413,8 +416,6 @@ export interface MarketMetricPoint {
 export interface LocalMarketSnapshotResponse {
   snapshots: MarketMetricPoint[];
 }
-
-export type StrategyId = "arb" | "barbell" | "edge-lead";
 
 export interface BacktestWindowMeta {
   eventSlug: string;
@@ -533,4 +534,5 @@ export interface BacktestPositionRow {
   bestAskAtFill: number | null;
   orderType: string | null;
   strategyId: string | null;
+  sellPrice: number | null;
 }

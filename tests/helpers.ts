@@ -59,6 +59,10 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     edgeSizingMode: "dynamic",
     edgeSharesEdge: 20,
     edgeSharesCheap: 20,
+    edgeSellExpensiveEnabled: true,
+    edgeSellExpensiveAfterMin: 8,
+    edgeSellExpensiveLossPct: 10,
+    edgeSellExpensiveLossWindowMs: 10_000,
     ...overrides,
   };
 }

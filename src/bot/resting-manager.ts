@@ -37,6 +37,11 @@ export class RestingManager {
       await this.manageRestingEdgeLead(event, books);
       await this.replaceMarketableCheap(event, books);
       await this.sellExpensiveEdgeIfNeeded(event, books);
+      // A custom chart-rules strategy with leadsWithEdge may define a
+      // "sell cheap" zone. Native edge-lead returns false from shouldDefend,
+      // so this is a no-op for the native engine. Custom strategies get
+      // their cheap sells evaluated.
+      await this.defendUncoveredPairs(event, books);
     } else {
       await this.replaceMarketableCheap(event, books);
       await this.defendUncoveredPairs(event, books);
@@ -69,6 +74,8 @@ export class RestingManager {
         limitPrice: order.limitPrice,
         cheapBook: book,
         favoriteAsk: favoriteBook?.bestAsk ?? null,
+        pairId,
+        tracker: this.deps.tracker,
       });
       if (action === "keep") {
         continue;
@@ -170,12 +177,13 @@ export class RestingManager {
       books.find((book) => book.tokenId === edgeOrders[0].tokenId);
     const edgeAsk = edgeBook?.bestAsk ?? null;
 
-    // Hors bande → cancel le GTC edge non fillé.
-    const offBand =
-      edgeAsk !== null &&
-      (edgeAsk < this.deps.config.edgeBandMin || edgeAsk > this.deps.config.edgeBandMax);
-
-    if (!offBand) return;
+    const action = this.strategy.edgeOrderAction({
+      config: this.deps.config,
+      edgeBook,
+      pairId,
+      tracker: this.deps.tracker,
+    });
+    if (action !== "cancel-lock") return;
 
     for (const order of edgeOrders) {
       if (order.orderId) {
@@ -218,8 +226,7 @@ export class RestingManager {
         kind: order.kind,
         limitPrice: order.limitPrice,
         edgeAsk,
-        edgeBandMin: this.deps.config.edgeBandMin,
-        edgeBandMax: this.deps.config.edgeBandMax,
+        strategyId: this.strategy.id,
       });
     }
   }
@@ -230,7 +237,10 @@ export class RestingManager {
    * (1:1 for arb, ratio for barbell). Ask below min does not dump the cheap.
    */
   async defendUncoveredPairs(event: UpDownEvent, books: TokenBook[]): Promise<void> {
-    if (!this.deps.config.enableExpensiveHedge) return;
+    // Native arb/barbell need the hedge flag to defend. A custom chart-rules
+    // strategy with leadsWithEdge may define a "sell cheap" zone that is
+    // independent of the hedge setting — don't block it here.
+    if (!this.deps.config.enableExpensiveHedge && !this.strategy.id.startsWith("custom:")) return;
     const pairId = `${event.slug}:${event.windowEnd}`;
     const filledCheap = this.deps.tracker.getFilledCheapSizeForPair(pairId);
     if (filledCheap <= 0) return;
@@ -245,11 +255,16 @@ export class RestingManager {
 
     const favoriteAsk = favoriteBook.bestAsk;
     const filledExpensive = this.deps.tracker.getFilledExpensiveSizeForPair(pairId);
+    const cheapBook =
+      books.find((book) => book.tokenId === cheapTokenId) ?? undefined;
     const defendCtx = {
       config: this.deps.config,
       favoriteAsk,
       filledCheap,
       filledExpensive,
+      pairId,
+      cheapAsk: cheapBook?.bestAsk ?? null,
+      tracker: this.deps.tracker,
     };
     if (!this.strategy.shouldDefend(defendCtx)) {
       return;
@@ -310,6 +325,7 @@ export class RestingManager {
         expensiveSize,
         cheapFilled,
         marketAgeMs,
+        nowMs: Date.now(),
       })
     ) {
       return;
@@ -357,6 +373,7 @@ export class RestingManager {
         const fillPrice = result.fillPrice ?? expensiveBid;
         const soldSize = Math.min(result.filledSize ?? expensiveSize, expensiveSize);
         this.deps.tracker.closePairExpensiveAsSold(pairId, fillPrice, soldSize);
+        this.strategy.onSellExpensiveCommitted?.(pairId);
         log("Edge-lead: expensive sold via FOK SELL (naked favorite)", {
           market: event.title,
           pairId,
@@ -412,11 +429,15 @@ export class RestingManager {
       return;
     }
     const filledExpensiveSize = this.deps.tracker.getFilledExpensiveSizeForPair(pairId);
+    const freshBook = await this.deps.scanner.getTokenBook(cheapTokenId);
     const uncoveredSize = this.strategy.defendShares({
       config: this.deps.config,
       favoriteAsk: null,
       filledCheap: filledCheapSize,
       filledExpensive: filledExpensiveSize,
+      pairId,
+      cheapAsk: freshBook?.bestAsk ?? null,
+      tracker: this.deps.tracker,
     });
     if (uncoveredSize <= 0) {
       log("defendPair: pair already covered for this engine — holding both legs", {
@@ -438,8 +459,7 @@ export class RestingManager {
       return;
     }
 
-    // Refresh the cheap book to get a current best bid.
-    const freshBook = await this.deps.scanner.getTokenBook(cheapTokenId);
+    // Current cheap book for bid + chart sell-cheap bands.
     const bestBid = freshBook?.bestBid ?? null;
     if (bestBid === null || bestBid <= 0) {
       log("defendPair: no bid to sell into — holding cheap as directional", {
@@ -486,6 +506,7 @@ export class RestingManager {
         // Update the tracker FIRST so the sold legs leave openPositions
         // before any new opportunity is generated (exposure, hedge guards).
         this.deps.tracker.closePairCheapAsSold(pairId, fillPrice, soldSize);
+        this.strategy.onDefendCommitted?.(pairId);
         this.deps.lifecycle.clearCheapMissing(pairId);
         log("defendPair: cheap sold via FOK SELL", {
           pairId,

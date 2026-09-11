@@ -5,11 +5,16 @@ import type { BacktestProgress, BacktestRunSummary, StrategyId } from "../../typ
 import { dateTimeStr, fmtUsd } from "../../utils/format";
 import { runEngineId } from "../../utils/backtest-preset";
 
-const ENGINE_SHORT: Record<StrategyId, string> = {
+const ENGINE_SHORT: Partial<Record<string, string>> = {
   arb: "Arb",
   barbell: "Barbell",
   "edge-lead": "Edge",
 };
+
+function engineLabel(id: string | undefined): string {
+  if (!id) return "?";
+  return ENGINE_SHORT[id] ?? (id.startsWith("custom:") ? id.slice("custom:".length) : id);
+}
 
 export function BacktestRunList(props: {
   runs: BacktestRunSummary[];
@@ -43,7 +48,7 @@ export function BacktestRunList(props: {
             class={`bt-runs-seg-btn${props.engineOnly ? " is-on" : ""}`}
             onClick={() => props.onEngineOnly(true)}
           >
-            {ENGINE_SHORT[props.engine]}
+            {engineLabel(props.engine)}
           </button>
         </div>
       </div>
@@ -51,7 +56,7 @@ export function BacktestRunList(props: {
         <Show when={visible().length === 0}>
           <p class="bt-runs-empty">
             {props.engineOnly
-              ? `Aucun backtest ${ENGINE_SHORT[props.engine]}.`
+              ? `Aucun backtest ${engineLabel(props.engine)}.`
               : "Aucun backtest enregistré."}
           </p>
         </Show>
@@ -112,7 +117,7 @@ export function BacktestRunList(props: {
 }
 
 function runTitle(run: BacktestRunSummary): string {
-  const sid = runEngineId(run) ?? "—";
+  const sid = engineLabel(runEngineId(run));
   if (run.request?.useCurrentConfig) return `${sid} · config live`;
   const preset = STRATEGY_PRESETS.find((p) => p.id === run.request?.presetId);
   return preset ? `${sid} · ${preset.name}` : sid;

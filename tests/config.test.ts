@@ -75,6 +75,19 @@ describe("validateTradingConfig", () => {
       validateConfigCoherence(testConfig({ barbellHedgeRatio: 1 })),
     );
   });
+
+  it("skips edge-band checks for custom ids unless leadsWithEdge is set", () => {
+    const custom = testConfig({
+      strategyId: "custom:edge-lead-poc",
+      edgeBandMin: 0.9,
+      edgeBandMax: 0.8,
+    });
+    assert.doesNotThrow(() => validateConfigCoherence(custom));
+    assert.throws(
+      () => validateConfigCoherence(custom, { leadsWithEdge: true }),
+      /EDGE_BAND_MIN must be < EDGE_BAND_MAX/,
+    );
+  });
 });
 
 /**

@@ -1,4 +1,5 @@
-import type { BotConfig } from "../types";
+import type { BotConfig, StrategyId } from "../types";
+import { engineUsesEdge } from "../config/strategyPresets";
 
 export type ConfigFormState = {
   marketSlugPrefixes: string;
@@ -8,7 +9,7 @@ export type ConfigFormState = {
   expensiveBuyMax: string;
   enableExpensiveHedge: boolean;
   cheapOrderUsdc: string;
-  strategyId: "arb" | "barbell" | "edge-lead";
+  strategyId: StrategyId;
   barbellHedgeRatio: string;
   pairLockMax: string;
   expensiveOrderUsdc: string;
@@ -203,8 +204,10 @@ export function formToPatch(
 export function validateConfigForm(
   form: ConfigFormState,
   dryRun: boolean,
+  opts?: { leadsWithEdge?: boolean },
 ): string[] {
   const errors: string[] = [];
+  const edge = engineUsesEdge(form.strategyId, opts?.leadsWithEdge);
 
   try {
     const cheapBuyMin = parseNum(form.cheapBuyMin, "Cheap min");
@@ -237,7 +240,7 @@ export function validateConfigForm(
     }
     // Les validations arb/barbell (bandes cheap/hedge, lock, ratio) ne
     // s'appliquent pas à edge-lead : ces champs ne sont pas utilisés.
-    if (form.strategyId !== "edge-lead") {
+    if (!edge) {
       if (cheapBuyMax >= expensiveBuyMin) {
         errors.push("Cheap max doit être < hedge min");
       }
@@ -271,7 +274,7 @@ export function validateConfigForm(
     }
     // Edge-lead : validations dédiées. Les champs arb/barbell (cheap/hedge
     // bandes, pairLockMax, barbellHedgeRatio) ne s'appliquent pas à ce moteur.
-    if (form.strategyId === "edge-lead") {
+    if (edge) {
       const edgeBandMin = parseNum(form.edgeBandMin, "Edge band min");
       const edgeBandMax = parseNum(form.edgeBandMax, "Edge band max");
       const edgeConfirmSamples = parseNum(form.edgeConfirmSamples, "Edge confirm samples");

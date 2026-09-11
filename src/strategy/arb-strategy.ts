@@ -11,9 +11,11 @@ import {
 import type {
   CheapOrderAction,
   DefendContext,
+  EdgeOrderAction,
   HedgePostContext,
   HedgePostDecision,
   RestingCheapContext,
+  RestingEdgeContext,
   StrategyContext,
   TradingStrategy,
 } from "./trading-strategy.js";
@@ -52,6 +54,10 @@ export class ArbStrategy implements TradingStrategy {
     ) {
       return "take-ask";
     }
+    return "keep";
+  }
+
+  edgeOrderAction(_ctx: RestingEdgeContext): EdgeOrderAction {
     return "keep";
   }
 

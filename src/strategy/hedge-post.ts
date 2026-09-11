@@ -24,6 +24,8 @@ export function evaluateHedgeAtPostTime(
     favoriteAsk: freshAsk,
     filledCheap: tracker.getFilledCheapSizeForPair(pairId),
     filledExpensive: tracker.getFilledExpensiveSizeForPair(pairId),
+    pairId,
+    tracker,
   };
 
   if (freshAsk > config.expensiveBuyMax) {

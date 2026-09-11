@@ -344,17 +344,23 @@ const SIM_DRYRUN_KEYS: readonly EditableConfigKey[] = [
   "simRandomSeed",
 ];
 
-export function keysForStrategy(strategyId: BotConfig["strategyId"]): readonly EditableConfigKey[] {
+export function keysForStrategy(
+  strategyId: BotConfig["strategyId"],
+  leadsWithEdge?: boolean,
+): readonly EditableConfigKey[] {
   const strategyKeys =
-    strategyId === "edge-lead"
+    leadsWithEdge === true || strategyId === "edge-lead"
       ? EDGE_LEAD_KEYS
       : ARB_BARBELL_KEYS;
   return [...SHARED_KEYS, ...strategyKeys, ...SIM_DRYRUN_KEYS];
 }
 
-export function snapshotEditableSettings(config: BotConfig): RuntimeSettingsPatch {
+export function snapshotEditableSettings(
+  config: BotConfig,
+  leadsWithEdge?: boolean,
+): RuntimeSettingsPatch {
   const snapshot: RuntimeSettingsPatch = {};
-  for (const key of keysForStrategy(config.strategyId)) {
+  for (const key of keysForStrategy(config.strategyId, leadsWithEdge)) {
     (snapshot as Record<string, unknown>)[key] = config[key];
   }
   return snapshot;
@@ -432,8 +438,9 @@ export async function applyRuntimeSettings(
   config: BotConfig,
   patch: RuntimeSettingsPatch,
   path = RUNTIME_SETTINGS_PATH,
+  leadsWithEdge?: boolean,
 ): Promise<Set<EditableConfigKey>> {
-  const snapshot = snapshotEditableSettings(config);
+  const snapshot = snapshotEditableSettings(config, leadsWithEdge);
   const changed = new Set<EditableConfigKey>();
 
   const target = config as unknown as Record<string, unknown>;
@@ -443,15 +450,15 @@ export async function applyRuntimeSettings(
   }
 
   try {
-    validateConfigCoherence(config);
-    validateTradingConfig(config);
+    validateConfigCoherence(config, { leadsWithEdge });
+    validateTradingConfig(config, { leadsWithEdge });
   } catch (error) {
     restoreSnapshot(config, snapshot);
     throw error;
   }
 
   try {
-    await writeRuntimeSettings(snapshotEditableSettings(config), path);
+    await writeRuntimeSettings(snapshotEditableSettings(config, leadsWithEdge), path);
   } catch (error) {
     restoreSnapshot(config, snapshot);
     throw error;

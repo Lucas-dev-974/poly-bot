@@ -40,6 +40,7 @@ export class Database {
         bestAskAtFill REAL,
         orderType TEXT,
         strategyId TEXT,
+        sellPrice REAL,
         createdAt INTEGER NOT NULL
       );
 
@@ -143,6 +144,17 @@ export class Database {
         source TEXT NOT NULL,
         success INTEGER NOT NULL,
         errorMessage TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS strategy_graphs (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT,
+        leadsWithEdge INTEGER NOT NULL DEFAULT 0,
+        graphJson TEXT NOT NULL,
+        version INTEGER NOT NULL DEFAULT 1,
+        createdAt INTEGER NOT NULL,
+        updatedAt INTEGER NOT NULL
       );
 
       CREATE TABLE IF NOT EXISTS stats_snapshots (
@@ -254,7 +266,8 @@ export class Database {
         pairId TEXT NOT NULL,
         bestAskAtFill REAL,
         orderType TEXT,
-        strategyId TEXT
+        strategyId TEXT,
+        sellPrice REAL
       );
       CREATE INDEX IF NOT EXISTS idx_backtest_positions_run ON backtest_positions(runId);
 
@@ -298,6 +311,8 @@ export class Database {
     this.addColumnIfMissing("retry_counts", "updatedAt", "INTEGER");
     this.addColumnIfMissing("positions", "orderType", "TEXT");
     this.addColumnIfMissing("positions", "strategyId", "TEXT");
+    this.addColumnIfMissing("positions", "sellPrice", "REAL");
+    this.addColumnIfMissing("backtest_positions", "sellPrice", "REAL");
     // Heure réelle du fill (ms). Pour un GTC resting, diffère de ts (heure de placement).
     this.addColumnIfMissing("orders", "filledTs", "INTEGER");
     const marketSnapshotCols: Array<[string, string]> = [

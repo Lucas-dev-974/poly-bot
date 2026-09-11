@@ -226,6 +226,7 @@ export function ChartRulesCanvas(props: {
         }),
       signals: (props.signals ?? [])
         .filter((s) => {
+          if (s.phase === "fill") return false; // internal for dependsOn; POST already marked
           if (s.elapsedSec > playhead + 0.001) return false;
           if (s.outcomeIndex === 0) return showYes;
           return showNo;

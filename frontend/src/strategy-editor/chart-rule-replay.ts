@@ -181,6 +181,7 @@ function confirmPush(
  * Rejoue les chartRules (preview).
  * A1 — aligné moteur :
  * - buy : signal = POST (`once` se verrouille ici) ; fill = tick suivant (`dependsOn` / `afterFill`).
+ *   `once=false` peut re-POST après fill (cycle cancel-lock), comme le live.
  * - sell favorite tendance : samples **bid** (pas ask).
  */
 export function replayChartRules(opts: {
@@ -250,8 +251,9 @@ export function replayChartRules(opts: {
 
     // Promote previous-tick posts → fills (dependsOn / afterFill wait for this).
     for (const id of [...pendingFill]) {
-      if (!satisfied.has(id)) {
+      if (!satisfied.has(id) || posted.has(id)) {
         satisfied.add(id);
+        posted.delete(id); // once=false may re-post after fill (live cancel-lock cycle)
         const rule = rules.find((r) => r.id === id);
         const prev = out.filter((s) => s.ruleId === id && s.action === "buy").at(-1);
         if (rule && prev) {
@@ -292,7 +294,8 @@ export function replayChartRules(opts: {
       } else {
         if (rule.afterFill === "favorite" && !sawFill("favorite")) continue;
         if (rule.afterFill === "cheap" && !sawFill("cheap")) continue;
-        if (posted.has(rule.id) || satisfied.has(rule.id)) continue;
+        // Awaiting simulated fill; once=false may fire again after posted cleared on fill.
+        if (posted.has(rule.id)) continue;
       }
 
       const favBuy = lastFavBuyFill();

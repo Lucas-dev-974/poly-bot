@@ -417,11 +417,7 @@ export function StrategyEditorPage(): JSX.Element {
       const res = await api.strategyActivate(stored.graph.id);
       if (res.config) setConfig(res.config);
       const n = stored.graph.chartRules?.length ?? 0;
-      setStatus(
-        n > 0
-          ? `Activé : ${stored.graph.id} — ${n} zone(s) exécutées live et en backtest`
-          : `Activé : ${stored.graph.id} — aucune zone, moteur graphe (squelette edge-lead)`,
-      );
+      setStatus(`Activé : ${stored.graph.id} — ${n} zone(s) exécutées live et en backtest`);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : String(error));
     } finally {
@@ -558,10 +554,11 @@ export function StrategyEditorPage(): JSX.Element {
   );
 }
 
+/** B1: auto-enable when a favorite-buy zone exists; never force-disable (sidebar can). */
 function syncLeadsWithEdge(graph: StrategyGraph, rules: ChartRule[]): StrategyGraph {
   const wantsEdge = rules.some((r) => r.action === "buy" && r.token === "favorite");
-  if (wantsEdge === graph.leadsWithEdge) return graph;
-  return { ...graph, leadsWithEdge: wantsEdge };
+  if (!wantsEdge || graph.leadsWithEdge) return graph;
+  return { ...graph, leadsWithEdge: true };
 }
 
 function tokenIdsFromWatching(slug: string | null): { up: string | null; down: string | null } {

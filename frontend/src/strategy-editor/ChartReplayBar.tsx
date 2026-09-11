@@ -20,7 +20,7 @@ export function ChartReplayBar(props: {
     <div class="se-player">
       <span
         class="se-player-title"
-        title="Preview : les enfants s’allument au signal parent, pas au fill live."
+        title="Preview : POST = once ; fill (tick suivant) = dependsOn / afterFill. Sell favori sur bid."
       >
         Lecture (preview)
       </span>
@@ -72,7 +72,13 @@ export function ChartReplayBar(props: {
       </span>
       <span class={`se-player-signal${props.lastSignal ? ` is-${props.lastSignal.action}` : ""}`}>
         {props.lastSignal
-          ? `${props.lastSignal.action === "buy" ? "acheter" : "vendre"} ${props.lastSignal.token}`
+          ? `${
+              props.lastSignal.phase === "fill"
+                ? "fill"
+                : props.lastSignal.action === "buy"
+                  ? "post"
+                  : "vendre"
+            } ${props.lastSignal.token}`
           : "—"}
       </span>
     </div>

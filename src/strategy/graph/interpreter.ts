@@ -10,7 +10,6 @@ import type {
   StrategyContext,
   TradingStrategy,
 } from "../trading-strategy.js";
-import { configEdgeOrderAction } from "../edge-lead-strategy.js";
 import type { StrategyId } from "../ids.js";
 import type { TradeOpportunity } from "../../types.js";
 import { EdgeConfirmBuffer } from "../edge-confirm.js";
@@ -221,7 +220,17 @@ export class GraphStrategy implements TradingStrategy {
 
   edgeOrderAction(ctx: RestingEdgeContext): EdgeOrderAction {
     if (!this.leadsWithEdge) return "keep";
-    return configEdgeOrderAction(ctx.edgeBook?.bestAsk, ctx.config);
+    const gctx = emptyGraphContext();
+    gctx.config = ctx.config;
+    gctx.pairId = ctx.pairId;
+    gctx.favoriteAsk = ctx.edgeBook?.bestAsk ?? null;
+    gctx.nowMs = methodClock(ctx.nowMs);
+    return interpretMethod(
+      this.graph.edgeOrderAction,
+      gctx,
+      this.state,
+      "value",
+    ) as EdgeOrderAction;
   }
 
   shouldDefend(ctx: DefendContext): boolean {

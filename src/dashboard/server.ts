@@ -30,6 +30,7 @@ import { leadsWithEdgeFor } from "../strategy/registry.js";
 import type { StrategyGraph } from "../strategy/graph/types.js";
 import { validateStrategyGraph } from "../strategy/graph/validate.js";
 import { edgeLeadPocGraph } from "../strategy/graph/edge-lead-graph.js";
+import { ensureEdgeOrderAction } from "../strategy/graph/ensure-edge-order.js";
 import {
   getStrategyChartSeries,
   listStrategyChartWindows,
@@ -750,7 +751,7 @@ export class DashboardServer {
     if (!value || typeof value !== "object") {
       throw new Error("Invalid strategy graph");
     }
-    return value as StrategyGraph;
+    return ensureEdgeOrderAction(value as StrategyGraph);
   }
 
   private handleStrategyChartWindows(

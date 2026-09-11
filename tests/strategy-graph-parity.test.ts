@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { edgeLeadPocGraph } from "../src/strategy/graph/edge-lead-graph.js";
 import { GraphStrategy } from "../src/strategy/graph/interpreter.js";
+import { ensureEdgeOrderAction } from "../src/strategy/graph/ensure-edge-order.js";
 import { validateStrategyGraph } from "../src/strategy/graph/validate.js";
 import { EdgeLeadStrategy } from "../src/strategy/edge-lead-strategy.js";
 import { TradeTracker } from "../src/trade-tracker.js";
@@ -506,5 +507,68 @@ describe("GraphStrategy parity with EdgeLeadStrategy", () => {
       native.shouldSellExpensiveEdge({ ...base, expensiveBid: null }),
       graph.shouldSellExpensiveEdge({ ...base, expensiveBid: null }),
     );
+  });
+});
+
+describe("graph edgeOrderAction", () => {
+  it("edgeOrderAction matches native config bands", () => {
+    const graph = edgeLeadPocGraph();
+    assert.deepEqual(validateStrategyGraph(graph), []);
+    const strategy = new GraphStrategy(graph);
+    const config = testConfig({ edgeBandMin: 0.85, edgeBandMax: 0.9 });
+    const pairId = "p:1";
+    const inBand = {
+      tokenId: "t-up",
+      outcome: "Up",
+      outcomeIndex: 0,
+      bestBid: 0.84,
+      bestAsk: 0.87,
+      bestAskSize: 10,
+    };
+    const outBand = { ...inBand, bestAsk: 0.92 };
+    assert.equal(
+      strategy.edgeOrderAction({ config, edgeBook: inBand, pairId }),
+      "keep",
+    );
+    assert.equal(
+      strategy.edgeOrderAction({ config, edgeBook: outBand, pairId }),
+      "cancel-lock",
+    );
+    assert.equal(
+      strategy.edgeOrderAction({ config, edgeBook: undefined, pairId }),
+      "keep",
+    );
+  });
+
+  it("custom edgeOrderAction is not overridden by config bands", () => {
+    const graph = edgeLeadPocGraph();
+    // Always keep — even outside config bands.
+    graph.edgeOrderAction = {
+      root: "keep",
+      nodes: [{ id: "keep", op: "const", params: { value: { kind: "literal", value: "keep" } } }],
+      edges: [],
+    };
+    const strategy = new GraphStrategy(graph);
+    const config = testConfig({ edgeBandMin: 0.85, edgeBandMax: 0.9 });
+    const edgeBook = {
+      tokenId: "t-up",
+      outcome: "Up",
+      outcomeIndex: 0,
+      bestBid: 0.5,
+      bestAsk: 0.5,
+      bestAskSize: 10,
+    };
+    assert.equal(
+      strategy.edgeOrderAction({ config, edgeBook, pairId: "p:1" }),
+      "keep",
+    );
+  });
+
+  it("ensureEdgeOrderAction fills missing method", () => {
+    const graph = edgeLeadPocGraph() as StrategyGraph & { edgeOrderAction?: unknown };
+    delete graph.edgeOrderAction;
+    const fixed = ensureEdgeOrderAction(graph as StrategyGraph);
+    assert.ok(fixed.edgeOrderAction);
+    assert.deepEqual(validateStrategyGraph(fixed), []);
   });
 });

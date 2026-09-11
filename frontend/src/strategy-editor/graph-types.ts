@@ -57,6 +57,7 @@ export interface StrategyGraph {
   leadsWithEdge: boolean;
   findOpportunities: GraphMethod;
   cheapOrderAction: GraphMethod;
+  edgeOrderAction: GraphMethod;
   shouldDefend: GraphMethod;
   defendShares: GraphMethod;
   hedgeAtPostTime: GraphMethod;

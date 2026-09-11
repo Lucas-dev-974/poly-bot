@@ -1,4 +1,5 @@
 import type { StrategyGraph } from "../strategy/graph/types.js";
+import { ensureEdgeOrderAction } from "../strategy/graph/ensure-edge-order.js";
 import type { Database } from "./database.js";
 
 interface StrategyGraphRow {
@@ -61,10 +62,11 @@ export class StrategyGraphRepository {
         [jsonFlag ? 1 : 0, id],
       );
     }
-    return graph;
+    return ensureEdgeOrderAction(graph);
   }
 
   upsert(graph: StrategyGraph): StrategyGraph {
+    graph = ensureEdgeOrderAction(graph);
     const now = Date.now();
     const existing = this.db.get<{ version: number; createdAt: number }>(
       `SELECT version, createdAt FROM strategy_graphs WHERE id = ?`,

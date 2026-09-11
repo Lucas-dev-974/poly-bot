@@ -73,3 +73,10 @@ cassait les cas où le contexte porte la taille sans fill tracker miroir.
 2. Étendre `GraphStrategy` avec une méthode `edgeOrderAction` graph-native si des customs sans chartRules en ont besoin.
 3. ~~Test non-mélange ask/bid~~ — fait (`falling asks must not fake…`).
 4. ~~Guide once / dependsOn~~ — fait (éditeur + onglet Livrables).
+
+## Suivi — edgeOrderAction graph (2026-09-11)
+
+Trou de contrat comblé : StrategyGraph.edgeOrderAction est une vraie GraphMethod.
+GraphStrategy l\'interprète (plus de hardcode config). Soft-migration via
+ensureEdgeOrderAction (repo get/upsert, registry, parse API). POC + tests de parité.
+Le chemin ChartRulesStrategy est inchangé.

@@ -161,6 +161,7 @@ export interface StrategyGraph {
   leadsWithEdge: boolean;
   findOpportunities: GraphMethod;
   cheapOrderAction: GraphMethod;
+  edgeOrderAction: GraphMethod;
   shouldDefend: GraphMethod;
   defendShares: GraphMethod;
   hedgeAtPostTime: GraphMethod;
@@ -175,6 +176,7 @@ export type GraphMethodName = keyof Pick<
   StrategyGraph,
   | "findOpportunities"
   | "cheapOrderAction"
+  | "edgeOrderAction"
   | "shouldDefend"
   | "defendShares"
   | "hedgeAtPostTime"

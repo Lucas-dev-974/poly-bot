@@ -1,6 +1,7 @@
 import type { Repositories } from "../db/index.js";
 import { ChartRulesStrategy } from "./chart-rules-strategy.js";
 import { GraphStrategy } from "./graph/interpreter.js";
+import { ensureEdgeOrderAction } from "./graph/ensure-edge-order.js";
 import { ArbStrategy } from "./arb-strategy.js";
 import { BarbellStrategy } from "./barbell-strategy.js";
 import { EdgeLeadStrategy } from "./edge-lead-strategy.js";
@@ -37,10 +38,11 @@ export function createStrategy(
     if (!graph) {
       throw new Error(`Unknown custom strategy: ${id}`);
     }
-    if ((graph.chartRules?.length ?? 0) > 0) {
-      return new ChartRulesStrategy(graph);
+    const normalized = ensureEdgeOrderAction(graph);
+    if ((normalized.chartRules?.length ?? 0) > 0) {
+      return new ChartRulesStrategy(normalized);
     }
-    return new GraphStrategy(graph);
+    return new GraphStrategy(normalized);
   }
   const factory = STRATEGIES[id as NativeStrategyId];
   if (!factory) {

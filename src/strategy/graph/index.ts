@@ -1,5 +1,5 @@
 export { GraphStrategy } from "./interpreter.js";
-export { edgeLeadPocGraph } from "./edge-lead-graph.js";
+export { edgeLeadPocGraph, defaultEdgeOrderActionMethod } from "./edge-lead-graph.js";
 export { validateStrategyGraph } from "./validate.js";
 export type {
   ChartRule,
@@ -7,3 +7,4 @@ export type {
   GraphOp,
   StrategyGraph,
 } from "./types.js";
+export { ensureEdgeOrderAction } from "./ensure-edge-order.js";

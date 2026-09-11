@@ -46,7 +46,7 @@ function leaf(
 
 function stubGraph(
   id: string,
-  overrides: Partial<Pick<StrategyGraph, "shouldDefend" | "findOpportunities" | "cheapOrderAction">>,
+  overrides: Partial<Pick<StrategyGraph, "shouldDefend" | "findOpportunities" | "cheapOrderAction" | "edgeOrderAction">>,
 ): StrategyGraph {
   const now = Date.now();
   return {
@@ -55,6 +55,7 @@ function stubGraph(
     leadsWithEdge: true,
     findOpportunities: leaf("skip", "skip"),
     cheapOrderAction: leaf("keep", "keep"),
+    edgeOrderAction: leaf("keep", "keep"),
     shouldDefend: leaf("no-defend", "no-defend"),
     defendShares: leaf("zero", "const", { value: lit(0) }),
     hedgeAtPostTime: leaf("hedge-skip", "hedge-skip", {

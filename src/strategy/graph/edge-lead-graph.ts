@@ -174,6 +174,39 @@ function findOpportunities(): GraphMethod {
   };
 }
 
+
+/** Cancel GTC favori hors [edgeBandMin, edgeBandMax] — parité configEdgeOrderAction. */
+export function defaultEdgeOrderActionMethod(): GraphMethod {
+  return {
+    root: "edge-action",
+    nodes: [
+      n("fav-ask", "favoriteAsk"),
+      n("ask-null", "isNull", { value: ref("fav-ask") }),
+      n("edge-action", "if", { cond: ref("ask-null") }),
+      n("in-band", "inBand", {
+        ask: ref("fav-ask"),
+        bandMin: cfg("edgeBandMin"),
+        bandMax: cfg("edgeBandMax"),
+      }),
+      n("keep", "const", { value: lit("keep") }),
+      n("cancel-lock", "const", { value: lit("cancel-lock") }),
+    ],
+    edges: [
+      d("fav-ask", "ask-null", "value"),
+      d("ask-null", "edge-action", "cond"),
+      c("edge-action", "keep", "then"),
+      c("edge-action", "in-band", "else"),
+      d("fav-ask", "in-band", "ask"),
+      c("in-band", "keep", "then"),
+      c("in-band", "cancel-lock", "else"),
+    ],
+  };
+}
+
+function edgeOrderAction(): GraphMethod {
+  return defaultEdgeOrderActionMethod();
+}
+
 function cheapOrderAction(): GraphMethod {
   return {
     root: "cheap-action",
@@ -290,6 +323,7 @@ export function edgeLeadPocGraph(): StrategyGraph {
     leadsWithEdge: true,
     findOpportunities: findOpportunities(),
     cheapOrderAction: cheapOrderAction(),
+    edgeOrderAction: edgeOrderAction(),
     shouldDefend: constMethod("no-defend", "const", lit(false)),
     defendShares: constMethod("zero", "const", lit(0)),
     hedgeAtPostTime: {

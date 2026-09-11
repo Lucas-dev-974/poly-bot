@@ -230,9 +230,13 @@ export function isOverlayPosition(row: { id: string; ts: number; fillPrice: numb
   return Number.isFinite(row.fillPrice);
 }
 
-/** Vente (défense / sell edge) : l'id contient :sold- ou le side est SELL. */
+/**
+ * Vente mid-marché (défense / edge-sell).
+ * Ne pas utiliser status==="sold" : la ligne BUY clonée garde ce status
+ * et doit rester un marqueur d'entrée (cercle), pas une croix.
+ */
 export function isSellMark(row: { id: string; side?: string; status?: string }): boolean {
-  return row.id.includes(":sold-") || row.side === "SELL" || row.status === "sold";
+  return row.side === "SELL" || row.id.includes(":sold-");
 }
 
 /** Sum of realized leg PnL on a market. Null if no legs, or none have a PnL yet. */

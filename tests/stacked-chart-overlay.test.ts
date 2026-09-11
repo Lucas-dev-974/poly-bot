@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   diamondPoints,
   isOverlayPosition,
+  isSellMark,
   marketRealizedPnl,
   matchWalletTradesToWindows,
   metricScaleMax,
@@ -41,6 +42,13 @@ describe("stacked chart position overlay", () => {
     ];
     const marks = overlayMarksForWindow(rows, start, end);
     assert.deepEqual(marks.map((row) => row.id), ["in", "run:key:sold-1"]);
+  });
+
+
+  it("marks only SELL / :sold- rows as exits, not BUY with status sold", () => {
+    assert.equal(isSellMark({ id: "run:pos:sold-1", side: "SELL", status: "sold" }), true);
+    assert.equal(isSellMark({ id: "run:pos", side: "BUY", status: "sold" }), false);
+    assert.equal(isSellMark({ id: "run:pos", side: "BUY", status: "won" }), false);
   });
 
   it("builds a diamond around the wallet fill", () => {

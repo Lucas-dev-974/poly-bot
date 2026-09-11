@@ -20,7 +20,6 @@ export function ChartRulePanel(props: {
   rules: ChartRule[];
   selectedId: string | null;
   durationSec: number;
-  leadsWithEdge?: boolean;
   onChange: (rules: ChartRule[]) => void;
   onSelect: (id: string | null) => void;
   onApplyEdgeLead?: () => void;
@@ -339,9 +338,11 @@ export function ChartRulePanel(props: {
                   step={1}
                   placeholder="—"
                   value={rule().confirmTicks ?? ""}
-                  onInput={(e) =>
-                    patchSelected({ confirmTicks: optNum(e.currentTarget.value) })
-                  }
+                  onInput={(e) => {
+                    if (rule().bandMin == null && rule().bandMax == null) return;
+                    patchSelected({ confirmTicks: optNum(e.currentTarget.value) });
+                  }}
+                  disabled={rule().bandMin == null && rule().bandMax == null}
                 />
               </label>
               <label class="se-field">
@@ -372,20 +373,31 @@ export function ChartRulePanel(props: {
                   <option value="cheap">Cheap fillé</option>
                 </select>
               </label>
-              <label class="se-field">
-                Hors bande
-                <select
-                  value={rule().outOfBand ?? "keep"}
-                  onChange={(e) =>
-                    patchSelected({
-                      outOfBand: e.currentTarget.value as ChartRule["outOfBand"],
-                    })
-                  }
-                >
-                  <option value="keep">Garder</option>
-                  <option value="cancel-lock">Annuler (re-post)</option>
-                </select>
-              </label>
+              <Show
+                when={rule().token === "cheap" && rule().action === "buy"}
+                fallback={
+                  <Show when={rule().token === "favorite" && rule().action === "buy" && (rule().bandMin != null || rule().bandMax != null)}>
+                    <p class="se-hint">
+                      Favori avec bande : cancel-lock automatique hors bande (pas de réglage).
+                    </p>
+                  </Show>
+                }
+              >
+                <label class="se-field">
+                  Hors bande (cheap GTC)
+                  <select
+                    value={rule().outOfBand ?? "keep"}
+                    onChange={(e) =>
+                      patchSelected({
+                        outOfBand: e.currentTarget.value as ChartRule["outOfBand"],
+                      })
+                    }
+                  >
+                    <option value="keep">Garder</option>
+                    <option value="cancel-lock">Annuler (re-post)</option>
+                  </select>
+                </label>
+              </Show>
               <label class="se-field">
                 Âge min (s)
                 <input

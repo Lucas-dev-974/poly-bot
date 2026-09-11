@@ -121,7 +121,7 @@ export function StrategyEditorPage(): JSX.Element {
     const current = g();
     if (!current) return;
     setUndoStack((stack) => [...stack, current.chartRules ?? []]);
-    setGraph({ ...current, chartRules: rules });
+    setGraph(syncLeadsWithEdge({ ...current, chartRules: rules }, rules));
   };
 
   const undoZones = () => {
@@ -131,7 +131,7 @@ export function StrategyEditorPage(): JSX.Element {
     setUndoStack(stack.slice(0, -1));
     const current = g();
     if (!current) return;
-    setGraph({ ...current, chartRules: prev });
+    setGraph(syncLeadsWithEdge({ ...current, chartRules: prev }, prev));
     setSelectedRuleId(null);
     setStatus("Zone annulée");
   };
@@ -330,7 +330,7 @@ export function StrategyEditorPage(): JSX.Element {
         setSeriesDown([]);
         setFills([]);
         setPlaying(false);
-        setPlayheadSec(w.windowEnd - w.windowStart);
+        setPlayheadSec(0);
         setStatus("Marché sans ticks — axe seulement");
         return;
       }
@@ -342,7 +342,7 @@ export function StrategyEditorPage(): JSX.Element {
       setSeriesUp(s.up);
       setSeriesDown(s.down);
       setPlaying(false);
-      setPlayheadSec(w.windowEnd - w.windowStart);
+      setPlayheadSec(0);
       await loadFills(s.upTokenId, s.downTokenId);
       setStatus(
         w.live
@@ -400,6 +400,11 @@ export function StrategyEditorPage(): JSX.Element {
   async function activate() {
     const current = g();
     if (!current) return;
+    if ((current.chartRules?.length ?? 0) === 0) {
+      setStatus("Active impossible : ajoute au moins une zone chart (sinon squelette graph edge-lead).");
+      setErrors(["chartRules: at least one zone required to activate from the editor"]);
+      return;
+    }
     setBusy(true);
     try {
       const listed = await api.strategyList();
@@ -541,7 +546,6 @@ export function StrategyEditorPage(): JSX.Element {
               rules={chartRules()}
               selectedId={selectedRuleId()}
               durationSec={durationSec()}
-              leadsWithEdge={current().leadsWithEdge}
               onChange={setChartRules}
               onSelect={setSelectedRuleId}
               onApplyEdgeLead={applyEdgeLeadPreset}
@@ -552,6 +556,12 @@ export function StrategyEditorPage(): JSX.Element {
       </Show>
     </div>
   );
+}
+
+function syncLeadsWithEdge(graph: StrategyGraph, rules: ChartRule[]): StrategyGraph {
+  const wantsEdge = rules.some((r) => r.action === "buy" && r.token === "favorite");
+  if (wantsEdge === graph.leadsWithEdge) return graph;
+  return { ...graph, leadsWithEdge: wantsEdge };
 }
 
 function tokenIdsFromWatching(slug: string | null): { up: string | null; down: string | null } {

@@ -18,6 +18,8 @@ export type ReplaySignal = {
   direction: "up" | "down";
   price: number;
   outcomeIndex: number;
+  /** buy: post accepted (once locks here). sell: exit signal. */
+  phase?: "post" | "fill" | "sell";
 };
 
 export type ReplayQuote = {
@@ -176,9 +178,10 @@ function confirmPush(
 }
 
 /**
- * Rejoue les chartRules sur les séries Up/Down (preview, pas un POST/fill).
- * afterFill / dependsOn : un signal buy parent compte comme fill-approx.
- * sell lossPct : approx. vs le dernier buy favori ; live/backtest restent la source de vérité.
+ * Rejoue les chartRules (preview).
+ * A1 — aligné moteur :
+ * - buy : signal = POST (`once` se verrouille ici) ; fill = tick suivant (`dependsOn` / `afterFill`).
+ * - sell favorite tendance : samples **bid** (pas ask).
  */
 export function replayChartRules(opts: {
   rules: ChartRule[];
@@ -193,25 +196,48 @@ export function replayChartRules(opts: {
     const elapsed = t - opts.windowStart;
     return elapsed >= 0 && elapsed <= opts.durationSec;
   });
-  const samples = { cheap: [] as Sample[], favorite: [] as Sample[] };
+  const samplesAsk = { cheap: [] as Sample[], favorite: [] as Sample[] };
+  const samplesBid = { cheap: [] as Sample[], favorite: [] as Sample[] };
   const fired = new Set<string>();
+  const posted = new Set<string>();
   const satisfied = new Set<string>();
   const confirms = new Map<string, ConfirmState>();
   const lossStart = new Map<string, number>();
   const out: ReplaySignal[] = [];
   const maxAge = rules.reduce((m, r) => Math.max(m, r.lookbackMs), DEFAULT_LOOKBACK_MS);
+  const pendingFill = new Set<string>();
 
-  const push = (leg: "cheap" | "favorite", px: number | null, nowMs: number) => {
-    if (px == null) return;
-    samples[leg] = [...samples[leg], { ts: nowMs, px }].filter(
-      (s) => nowMs - s.ts <= maxAge * 2,
-    );
+  const push = (
+    leg: "cheap" | "favorite",
+    ask: number | null,
+    bid: number | null,
+    nowMs: number,
+  ) => {
+    if (ask != null) {
+      samplesAsk[leg] = [...samplesAsk[leg], { ts: nowMs, px: ask }].filter(
+        (s) => nowMs - s.ts <= maxAge * 2,
+      );
+    }
+    if (bid != null) {
+      samplesBid[leg] = [...samplesBid[leg], { ts: nowMs, px: bid }].filter(
+        (s) => nowMs - s.ts <= maxAge * 2,
+      );
+    }
   };
 
-  const sawBuy = (token: "cheap" | "favorite") =>
-    out.some((s) => s.action === "buy" && s.token === token);
+  const sawFill = (token: "cheap" | "favorite") =>
+    [...satisfied].some((id) => {
+      const rule = rules.find((r) => r.id === id);
+      return rule?.action === "buy" && rule.token === token;
+    });
 
-  const lastFavBuy = () => {
+  const lastFavBuyFill = () => {
+    for (let i = out.length - 1; i >= 0; i--) {
+      if (out[i].action === "buy" && out[i].token === "favorite" && out[i].phase === "fill") {
+        return out[i];
+      }
+    }
+    // fallback: post price if fill marker not separate
     for (let i = out.length - 1; i >= 0; i--) {
       if (out[i].action === "buy" && out[i].token === "favorite") return out[i];
     }
@@ -221,9 +247,32 @@ export function replayChartRules(opts: {
   for (const t of times) {
     const elapsed = t - opts.windowStart;
     const nowMs = t * 1000;
+
+    // Promote previous-tick posts → fills (dependsOn / afterFill wait for this).
+    for (const id of [...pendingFill]) {
+      if (!satisfied.has(id)) {
+        satisfied.add(id);
+        const rule = rules.find((r) => r.id === id);
+        const prev = out.filter((s) => s.ruleId === id && s.action === "buy").at(-1);
+        if (rule && prev) {
+          out.push({ ...prev, t, elapsedSec: elapsed, phase: "fill" });
+        }
+      }
+      pendingFill.delete(id);
+    }
+
     const q = quoteAt(opts.up, opts.down, opts.windowStart, elapsed);
-    push("cheap", q.cheapAsk, nowMs);
-    push("favorite", q.favoriteAsk, nowMs);
+    const upBid = lastPxAt(opts.up, t, "bid");
+    const downBid = lastPxAt(opts.down, t, "bid");
+    const cheapBid =
+      q.cheapOutcomeIndex === 0 ? upBid : q.cheapOutcomeIndex === 1 ? downBid : null;
+    const favOutcome = q.cheapOutcomeIndex === 0 ? 1 : q.cheapOutcomeIndex === 1 ? 0 : null;
+    const favoriteBid =
+      favOutcome === 0 ? upBid : favOutcome === 1 ? downBid : null;
+
+    push("cheap", q.cheapAsk, cheapBid, nowMs);
+    push("favorite", q.favoriteAsk, favoriteBid, nowMs);
+
     for (const rule of rules) {
       if (rule.once && fired.has(rule.id)) continue;
       if (elapsed < rule.startSec || elapsed > rule.endSec) {
@@ -232,23 +281,32 @@ export function replayChartRules(opts: {
       }
       if (rule.minElapsedSec != null && elapsed < rule.minElapsedSec) continue;
       if (uniqueDependsOn(rule).some((id) => !satisfied.has(id))) continue;
+
       if (rule.action === "sell") {
-        const need = rule.afterFill === "cheap" || rule.afterFill === "favorite"
-          ? rule.afterFill
-          : rule.token;
-        if (need === "favorite" && !sawBuy("favorite")) continue;
-        if (need === "cheap" && !sawBuy("cheap")) continue;
+        const need =
+          rule.afterFill === "cheap" || rule.afterFill === "favorite"
+            ? rule.afterFill
+            : rule.token;
+        if (need === "favorite" && !sawFill("favorite")) continue;
+        if (need === "cheap" && !sawFill("cheap")) continue;
       } else {
-        if (rule.afterFill === "favorite" && !sawBuy("favorite")) continue;
-        if (rule.afterFill === "cheap" && !sawBuy("cheap")) continue;
+        if (rule.afterFill === "favorite" && !sawFill("favorite")) continue;
+        if (rule.afterFill === "cheap" && !sawFill("cheap")) continue;
+        if (posted.has(rule.id) || satisfied.has(rule.id)) continue;
       }
 
-      const favBuy = lastFavBuy();
+      const favBuy = lastFavBuyFill();
       let price: number | null;
       let outcomeIndex: number;
       if (rule.token === "cheap" && favBuy && rule.afterFill === "favorite") {
         outcomeIndex = favBuy.outcomeIndex === 0 ? 1 : 0;
         price = outcomeIndex === 0 ? q.upAsk : q.downAsk;
+      } else if (rule.action === "sell" && rule.token === "favorite") {
+        const cheapIdx = q.cheapOutcomeIndex ?? 0;
+        outcomeIndex = cheapIdx === 0 ? 1 : 0;
+        price =
+          (outcomeIndex === 0 ? upBid : downBid) ??
+          q.favoriteAsk;
       } else {
         price = rule.token === "cheap" ? q.cheapAsk : q.favoriteAsk;
         const cheapIdx = q.cheapOutcomeIndex ?? 0;
@@ -279,24 +337,49 @@ export function replayChartRules(opts: {
         else confirms.delete(rule.id);
         ready = pushed.ready;
       } else if (hasPriceBand(rule)) {
-        ready = inBand(rule.token === "cheap" ? Math.round(price * 100) / 100 : price, rule);
+        ready = inBand(
+          rule.token === "cheap" ? Math.round(price * 100) / 100 : price,
+          rule,
+        );
       } else {
-        ready = trendMatches(samples[rule.token], nowMs, rule);
+        const series =
+          rule.action === "sell" && rule.token === "favorite"
+            ? samplesBid.favorite
+            : samplesAsk[rule.token];
+        ready = trendMatches(series, nowMs, rule);
       }
       if (!ready) continue;
 
-      out.push({
-        t,
-        elapsedSec: elapsed,
-        ruleId: rule.id,
-        token: rule.token,
-        action: rule.action,
-        direction: rule.direction,
-        price,
-        outcomeIndex,
-      });
-      satisfied.add(rule.id);
-      if (rule.once) fired.add(rule.id);
+      if (rule.action === "buy") {
+        posted.add(rule.id);
+        pendingFill.add(rule.id);
+        if (rule.once) fired.add(rule.id);
+        out.push({
+          t,
+          elapsedSec: elapsed,
+          ruleId: rule.id,
+          token: rule.token,
+          action: "buy",
+          direction: rule.direction,
+          price,
+          outcomeIndex,
+          phase: "post",
+        });
+      } else {
+        if (rule.once) fired.add(rule.id);
+        satisfied.add(rule.id);
+        out.push({
+          t,
+          elapsedSec: elapsed,
+          ruleId: rule.id,
+          token: rule.token,
+          action: "sell",
+          direction: rule.direction,
+          price,
+          outcomeIndex,
+          phase: "sell",
+        });
+      }
     }
   }
   return out;

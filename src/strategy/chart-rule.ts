@@ -4,6 +4,7 @@ import {
   orderChartRules,
   uniqueDependsOn,
 } from "./chart-rule-deps.js";
+import { edgeLeadChartRules as edgeLeadChartRulesPreset } from "./chart-rule-presets.js";
 
 export {
   chartRulesHaveCycle,
@@ -56,50 +57,7 @@ export function hasPriceBand(rule: ChartRule): boolean {
 
 /** Trois règles qui reproduisent le moteur edge-lead natif. */
 export function edgeLeadChartRules(durationSec = 900): ChartRule[] {
-  const end = Math.max(durationSec, 1);
-  return [
-    {
-      id: "el-buy-fav",
-      startSec: 0,
-      endSec: end,
-      token: "favorite",
-      direction: "up",
-      action: "buy",
-      bandMin: 0.85,
-      bandMax: 0.9,
-      confirmTicks: 5,
-      maxDownTick: 0.01,
-      once: true,
-    },
-    {
-      id: "el-buy-cheap",
-      startSec: 0,
-      endSec: end,
-      token: "cheap",
-      direction: "up",
-      action: "buy",
-      bandMin: 0.04,
-      bandMax: 0.14,
-      afterFill: "favorite",
-      outOfBand: "cancel-lock",
-      dependsOn: ["el-buy-fav"],
-      once: false,
-    },
-    {
-      id: "el-sell-fav",
-      startSec: 8 * 60,
-      endSec: end,
-      token: "favorite",
-      direction: "down",
-      action: "sell",
-      minElapsedSec: 8 * 60,
-      lossPct: 10,
-      lossWindowMs: 10_000,
-      afterFill: "favorite",
-      dependsOn: ["el-buy-fav"],
-      once: true,
-    },
-  ];
+  return edgeLeadChartRulesPreset(durationSec) as ChartRule[];
 }
 
 export function validateChartRules(

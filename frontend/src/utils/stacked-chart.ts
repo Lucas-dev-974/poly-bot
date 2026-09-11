@@ -239,6 +239,109 @@ export function isSellMark(row: { id: string; side?: string; status?: string }):
   return row.side === "SELL" || row.id.includes(":sold-");
 }
 
+export type PositionOverlayMark = {
+  id: string;
+  ts: number;
+  fillPrice: number;
+  outcomeIndex: number;
+  side: "BUY" | "SELL";
+  kind?: string;
+  status?: string;
+  size?: number;
+  outcome?: string;
+  pnl?: number | null;
+  /** Mid-market FOK vs resolution redeem. */
+  exitKind?: "sold" | "resolve";
+};
+
+/**
+ * Marks for the stacked chart: entry circles + exit crosses.
+ * - Explicit SELL / :sold- rows → exit (mid-market).
+ * - BUY won/lost with resolvedAt → synthetic exit at 1.0 / 0.0 (resolution).
+ * - BUY sold → entry only (companion SELL row carries the exit).
+ */
+export function expandPositionOverlayMarks(
+  rows: Array<{
+    id: string;
+    ts: number;
+    fillPrice: number;
+    outcomeIndex: number;
+    side?: string;
+    status?: string;
+    resolvedAt?: number | null;
+    kind?: string;
+    size?: number;
+    outcome?: string;
+    pnl?: number | null;
+  }>,
+  windowStart: number,
+  windowEnd: number,
+): PositionOverlayMark[] {
+  const marks: PositionOverlayMark[] = [];
+  const inWindow = (ts: number) => {
+    const t = toChartTimeSec(ts);
+    return t >= windowStart && t <= windowEnd;
+  };
+
+  for (const row of rows) {
+    if (!isOverlayPosition(row)) continue;
+    if (isSellMark(row)) {
+      if (!inWindow(row.ts)) continue;
+      marks.push({
+        id: row.id,
+        ts: row.ts,
+        fillPrice: row.fillPrice,
+        outcomeIndex: row.outcomeIndex,
+        side: "SELL",
+        kind: row.kind,
+        status: row.status,
+        size: row.size,
+        outcome: row.outcome,
+        pnl: row.pnl,
+        exitKind: "sold",
+      });
+      continue;
+    }
+
+    if (!inWindow(row.ts)) continue;
+    marks.push({
+      id: row.id,
+      ts: row.ts,
+      fillPrice: row.fillPrice,
+      outcomeIndex: row.outcomeIndex,
+      side: "BUY",
+      kind: row.kind,
+      status: row.status,
+      size: row.size,
+      outcome: row.outcome,
+      pnl: row.pnl,
+    });
+
+    if (
+      (row.status === "won" || row.status === "lost") &&
+      row.resolvedAt != null &&
+      Number.isFinite(row.resolvedAt) &&
+      row.resolvedAt > 0
+    ) {
+      if (!inWindow(row.resolvedAt)) continue;
+      marks.push({
+        id: `${row.id}:exit-resolve`,
+        ts: row.resolvedAt,
+        fillPrice: row.status === "won" ? 1 : 0,
+        outcomeIndex: row.outcomeIndex,
+        side: "SELL",
+        kind: row.kind,
+        status: row.status,
+        size: row.size,
+        outcome: row.outcome,
+        pnl: row.pnl,
+        exitKind: "resolve",
+      });
+    }
+  }
+  return marks;
+}
+
 /** Sum of realized leg PnL on a market. Null if no legs, or none have a PnL yet. */
 export function marketRealizedPnl(rows: { pnl: number | null }[]): number | null {
   if (rows.length === 0) return null;

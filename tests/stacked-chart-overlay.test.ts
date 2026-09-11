@@ -8,6 +8,7 @@ import {
   matchWalletTradesToWindows,
   metricScaleMax,
   overlayMarksForWindow,
+  expandPositionOverlayMarks,
   seriesPath,
   toChartTimeSec,
   markerRadiiWorld,
@@ -45,7 +46,51 @@ describe("stacked chart position overlay", () => {
   });
 
 
-  it("marks only SELL / :sold- rows as exits, not BUY with status sold", () => {
+
+  it("adds resolution exits for won/lost and keeps mid-market SELL", () => {
+    const start = 1_800_000_000;
+    const end = start + 900;
+    const rows = [
+      {
+        id: "buy-won",
+        ts: (start + 10) * 1000,
+        fillPrice: 0.6,
+        outcomeIndex: 0,
+        side: "BUY",
+        status: "won",
+        resolvedAt: end * 1000,
+      },
+      {
+        id: "buy-sold",
+        ts: (start + 20) * 1000,
+        fillPrice: 0.8,
+        outcomeIndex: 1,
+        side: "BUY",
+        status: "sold",
+        resolvedAt: (start + 50) * 1000,
+      },
+      {
+        id: "buy-sold:sold-1",
+        ts: (start + 50) * 1000,
+        fillPrice: 0.4,
+        outcomeIndex: 1,
+        side: "SELL",
+        status: "sold",
+      },
+    ];
+    const marks = expandPositionOverlayMarks(rows, start, end);
+    assert.deepEqual(
+      marks.map((m) => [m.id, m.side, m.fillPrice, m.exitKind ?? null]),
+      [
+        ["buy-won", "BUY", 0.6, null],
+        ["buy-won:exit-resolve", "SELL", 1, "resolve"],
+        ["buy-sold", "BUY", 0.8, null],
+        ["buy-sold:sold-1", "SELL", 0.4, "sold"],
+      ],
+    );
+  });
+
+    it("marks only SELL / :sold- rows as exits, not BUY with status sold", () => {
     assert.equal(isSellMark({ id: "run:pos:sold-1", side: "SELL", status: "sold" }), true);
     assert.equal(isSellMark({ id: "run:pos", side: "BUY", status: "sold" }), false);
     assert.equal(isSellMark({ id: "run:pos", side: "BUY", status: "won" }), false);

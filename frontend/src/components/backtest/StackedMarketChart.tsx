@@ -26,6 +26,7 @@ import {
   marketRealizedPnl,
   metricScaleMax,
   overlayMarksForWindow,
+  expandPositionOverlayMarks,
   markerRadiiWorld,
   isSellMark,
   nearestOverlayHit,
@@ -131,7 +132,14 @@ export function StackedMarketChart(props: {
   });
   const positionsBySlug = createMemo(() => groupPositionsBySlug(props.positions ?? []));
   const walletBySlug = createMemo(() => groupPositionsBySlug(props.walletMarks ?? []));
-  const overlayCount = createMemo(() => countMarks(props.windows, positionsBySlug()));
+  const overlayCount = createMemo(() => {
+    let n = 0;
+    const by = positionsBySlug();
+    for (const w of props.windows) {
+      n += expandPositionOverlayMarks(by.get(w.eventSlug) ?? [], w.windowStart, w.windowEnd).length;
+    }
+    return n;
+  });
   const walletCount = createMemo(() => countMarks(props.windows, walletBySlug()));
   const marker = createMemo(() => markerRadiiWorld(vb().w, vb().h, size().w, size().h));
 
@@ -218,9 +226,14 @@ export function StackedMarketChart(props: {
     const yOf = rowPriceY(index * CHART_ROW_H);
     const maxDx = (10 / Math.max(rect.width, 1)) * vb().w;
     const legs = positionsBySlug().get(window.eventSlug) ?? [];
+    const overlayLegs = expandPositionOverlayMarks(
+      legs,
+      window.windowStart,
+      window.windowEnd,
+    );
     const walletLegs = walletBySlug().get(window.eventSlug) ?? [];
     const runHit = nearestOverlayHit(
-      legs,
+      overlayLegs,
       world.x,
       window.windowStart,
       window.windowEnd,
@@ -275,13 +288,13 @@ export function StackedMarketChart(props: {
       marketPnl: marketRealizedPnl(legs),
       position: overlay
         ? {
-            outcome: overlay.outcome,
-            kind: overlay.kind,
+            outcome: ("outcome" in overlay && overlay.outcome) || "—",
+            kind: ("kind" in overlay && overlay.kind) || ("exitKind" in overlay && overlay.exitKind) || "—",
             side: overlay.side,
             fillPrice: overlay.fillPrice,
-            size: overlay.size,
-            status: overlay.status,
-            pnl: overlay.pnl,
+            size: ("size" in overlay && overlay.size) || 0,
+            status: ("status" in overlay && overlay.status) || ("exitKind" in overlay && overlay.exitKind) || "—",
+            pnl: ("pnl" in overlay ? overlay.pnl : null) ?? null,
           }
         : null,
       wallet: wallet
@@ -587,7 +600,7 @@ function MarketRow(props: {
   const noLast = () => lastMid(props.points, "downMid");
   const labelY = () => top() + CHART_ROW_H / 2 + 3;
   const marks = createMemo(() =>
-    overlayMarksForWindow(props.positions, props.window.windowStart, props.window.windowEnd),
+    expandPositionOverlayMarks(props.positions, props.window.windowStart, props.window.windowEnd),
   );
   const walletMarks = createMemo(() =>
     overlayMarksForWindow(props.walletMarks, props.window.windowStart, props.window.windowEnd),
@@ -699,37 +712,40 @@ function MarketRow(props: {
             const cx = x()(t);
             const cy = y()(p.fillPrice);
             const color = p.outcomeIndex === 1 ? NO_COLOR : YES_COLOR;
-            const sell = isSellMark(p);
+            const sell = p.side === "SELL" || isSellMark(p);
             if (sell) {
-              // Marqueur de vente : croix rouge au prix de revente.
-              const r = props.markerRx;
+              // Exit: cross sized with rx+ry so it stays visible under preserveAspectRatio=none.
+              const rx = Math.max(props.markerRx * 1.35, 1.2);
+              const ry = Math.max(props.markerRy * 1.35, 1.2);
+              const stroke = p.exitKind === "resolve" ? "#ff8f4a" : "#ff4444";
               return (
-                <g pointer-events="none">
+                <g class="bt-pos-exit" pointer-events="none">
                   <line
-                    x1={cx - r}
-                    y1={cy - r}
-                    x2={cx + r}
-                    y2={cy + r}
-                    stroke="#ff4444"
-                    stroke-width="2"
+                    x1={cx - rx}
+                    y1={cy - ry}
+                    x2={cx + rx}
+                    y2={cy + ry}
+                    stroke={stroke}
+                    stroke-width="2.25"
                     vector-effect="non-scaling-stroke"
                   />
                   <line
-                    x1={cx - r}
-                    y1={cy + r}
-                    x2={cx + r}
-                    y2={cy - r}
-                    stroke="#ff4444"
-                    stroke-width="2"
+                    x1={cx - rx}
+                    y1={cy + ry}
+                    x2={cx + rx}
+                    y2={cy - ry}
+                    stroke={stroke}
+                    stroke-width="2.25"
                     vector-effect="non-scaling-stroke"
                   />
-                  <circle
+                  <ellipse
                     cx={cx}
                     cy={cy}
-                    r={r * 0.4}
+                    rx={rx * 0.35}
+                    ry={ry * 0.35}
                     fill="none"
-                    stroke="#ff4444"
-                    stroke-width="1"
+                    stroke={stroke}
+                    stroke-width="1.25"
                     vector-effect="non-scaling-stroke"
                   />
                 </g>
@@ -737,6 +753,7 @@ function MarketRow(props: {
             }
             return (
               <ellipse
+                class="bt-pos-entry"
                 cx={cx}
                 cy={cy}
                 rx={props.markerRx}

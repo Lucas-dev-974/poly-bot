@@ -73,13 +73,13 @@ export function BacktestRunList(props: {
               >
                 <label
                   class={`bt-run-check${props.chartLoadingId === run.id ? " is-loading" : ""}`}
-                  title="Afficher les positions sur le graphique"
+                  title="Afficher entrées (cercles) et sorties (croix : vente mid-marché ou résolution)"
                 >
                   <input
                     type="checkbox"
                     checked={onChart()}
                     disabled={!canOpen()}
-                    aria-label="Afficher les positions sur le graphique"
+                    aria-label="Afficher entrées et sorties sur le graphique"
                     onChange={() => props.onToggleChart(run)}
                   />
                   <span class="bt-run-check-box" aria-hidden="true" />

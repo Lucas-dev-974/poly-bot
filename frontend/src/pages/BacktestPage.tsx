@@ -7,11 +7,12 @@ import { BacktestResultModal } from "../components/backtest/BacktestResultModal"
 import { BacktestRunList } from "../components/backtest/BacktestRunList";
 import { StackedMarketChart } from "../components/backtest/StackedMarketChart";
 import {
-  STRATEGY_PRESETS,
-  presetsForStrategy,
+  allPresetsForStrategy,
+  findPresetById,
+  type AnyPreset,
   type StrategyId,
 } from "../config/strategyPresets";
-import { navigate } from "../router";
+import { navigate, navigateWithQuery } from "../router";
 import { setConfig } from "../stores/botStore";
 import type {
   BacktestPositionRow,
@@ -28,10 +29,18 @@ import { settingsForRun } from "../utils/backtest-preset";
 import { matchWalletTradesToWindows, type WalletOverlayMark } from "../utils/stacked-chart";
 import {
   applySettingsToForm,
+  fieldErrors as computeFieldErrors,
   formToSettings,
+  formsEqual,
   validateConfigForm,
   type ConfigFormState,
 } from "../utils/configForm";
+import {
+  deleteUserPreset,
+  loadUserPresets,
+  saveUserPreset,
+  type UserPreset,
+} from "../utils/user-presets";
 
 export function BacktestPage(): JSX.Element {
   const [windows, setWindows] = createSignal<BacktestWindowMeta[]>([]);
@@ -85,6 +94,11 @@ export function BacktestPage(): JSX.Element {
   const [applying, setApplying] = createSignal(false);
   const [applyMsg, setApplyMsg] = createSignal<string | null>(null);
   const [applyErr, setApplyErr] = createSignal<string | null>(null);
+  const [userPresets, setUserPresets] = createSignal<UserPreset[]>([]);
+  const [presetFormSnapshot, setPresetFormSnapshot] = createSignal<ConfigFormState | null>(null);
+  const [showSavePresetDialog, setShowSavePresetDialog] = createSignal(false);
+  const [presetNameInput, setPresetNameInput] = createSignal("");
+  const [presetDescInput, setPresetDescInput] = createSignal("");
   let pollTimer: number | undefined;
   let windowsTimer: number | undefined;
   let pollGen = 0;
@@ -110,23 +124,108 @@ export function BacktestPage(): JSX.Element {
     });
   });
 
-  const presets = createMemo(() => presetsForStrategy(engine()));
+  const presets = createMemo(() => allPresetsForStrategy(engine(), userPresets()));
   const canApplySelected = createMemo(() => settingsForRun(selectedRun()) != null);
+
+  const currentPreset = createMemo((): AnyPreset | undefined => {
+    const id = presetId();
+    if (!id) return undefined;
+    return findPresetById(id, userPresets());
+  });
+
+  const isDirty = createMemo(() => {
+    const f = form();
+    const snap = presetFormSnapshot();
+    if (!f || !snap) return false;
+    return !formsEqual(f, snap);
+  });
+
+  const inlineErrors = createMemo(() => {
+    const f = form();
+    const base = liveConfig();
+    if (!f || !base) return {};
+    return computeFieldErrors(f, base.dryRun, {
+      leadsWithEdge: f.strategyId === "edge-lead" || f.strategyId.startsWith("custom:"),
+    });
+  });
+
+  const hasInlineErrors = createMemo(() => Object.keys(inlineErrors()).length > 0);
 
   function loadPresetIntoForm(id: string, strategyId: StrategyId): void {
     const base = liveConfig();
     if (!base) return;
-    const preset = STRATEGY_PRESETS.find((p) => p.id === id);
+    const preset = findPresetById(id, userPresets());
     if (!preset) {
-      setForm(applySettingsToForm(base, { strategyId }));
+      const f = applySettingsToForm(base, { strategyId });
+      setForm(f);
+      setPresetFormSnapshot(f);
       return;
     }
-    setForm(applySettingsToForm(base, { ...preset.settings, strategyId: preset.strategyId }));
+    const f = applySettingsToForm(base, { ...preset.settings, strategyId: preset.strategyId });
+    setForm(f);
+    setPresetFormSnapshot(f);
+  }
+
+  function resetPreset(): void {
+    const id = presetId();
+    if (!id) return;
+    loadPresetIntoForm(id, engine());
+    setSaveMsg("Preset rechargé");
+    setSaveErr(null);
+  }
+
+  function openSavePresetDialog(): void {
+    const preset = currentPreset();
+    if (preset?.isUser) {
+      setPresetNameInput(preset.name);
+      setPresetDescInput(preset.description);
+    } else {
+      setPresetNameInput(preset?.name ? `${preset.name} (copie)` : "Mon preset");
+      setPresetDescInput("");
+    }
+    setShowSavePresetDialog(true);
+  }
+
+  function confirmSavePreset(): void {
+    const f = form();
+    if (!f) return;
+    const name = presetNameInput().trim();
+    if (!name) return;
+    const existing = currentPreset();
+    const id = existing?.isUser ? existing.id : undefined;
+    try {
+      const settings = formToSettings(f);
+      const saved = saveUserPreset({
+        id,
+        name,
+        description: presetDescInput().trim(),
+        strategyId: f.strategyId,
+        settings,
+      });
+      setUserPresets(loadUserPresets());
+      setPresetId(saved.id);
+      setPresetFormSnapshot(f);
+      setShowSavePresetDialog(false);
+      setSaveMsg(`Preset « ${saved.name} » sauvegardé`);
+      setSaveErr(null);
+    } catch (err) {
+      setSaveErr(err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  function deleteCurrentPreset(): void {
+    const preset = currentPreset();
+    if (!preset?.isUser) return;
+    if (!confirm(`Supprimer le preset « ${preset.name} » ?`)) return;
+    deleteUserPreset(preset.id);
+    setUserPresets(loadUserPresets());
+    setPresetId("");
+    setSaveMsg("Preset supprimé");
+    setSaveErr(null);
   }
 
   function updateForm<K extends keyof ConfigFormState>(key: K, value: ConfigFormState[K]): void {
     setForm((prev) => (prev ? { ...prev, [key]: value } : prev));
-    setPresetId("");
     setSaveMsg(null);
     setSaveErr(null);
   }
@@ -163,7 +262,9 @@ export function BacktestPage(): JSX.Element {
   function loadLiveIntoForm(): void {
     const base = liveConfig();
     if (!base) return;
-    setForm(applySettingsToForm(base, { strategyId: base.strategyId ?? engine() }));
+    const f = applySettingsToForm(base, { strategyId: base.strategyId ?? engine() });
+    setForm(f);
+    setPresetFormSnapshot(f);
     setEngine(base.strategyId ?? "arb");
     setPresetId("");
     setSaveMsg("Config live chargée");
@@ -184,7 +285,9 @@ export function BacktestPage(): JSX.Element {
       if (res.config) {
         setLiveConfig(res.config);
         setConfig(res.config);
-        setForm(applySettingsToForm(res.config, patch));
+        const f = applySettingsToForm(res.config, patch);
+        setForm(f);
+        setPresetFormSnapshot(f);
         setEngine(patch.strategyId ?? res.config.strategyId ?? "arb");
         setPresetId("");
       }
@@ -444,6 +547,7 @@ export function BacktestPage(): JSX.Element {
   }
 
   onMount(() => {
+    setUserPresets(loadUserPresets());
     void (async () => {
       try {
         const cfg = await api.config();
@@ -452,10 +556,14 @@ export function BacktestPage(): JSX.Element {
         setWalletConfigured(Boolean((cfg.config as { funderAddress?: string }).funderAddress));
         const sid = cfg.config.strategyId ?? "arb";
         setEngine(sid);
-        const first = presetsForStrategy(sid)[0];
+        const first = allPresetsForStrategy(sid, userPresets())[0];
         setPresetId(first?.id ?? "");
         if (first) loadPresetIntoForm(first.id, sid);
-        else setForm(applySettingsToForm(cfg.config, { strategyId: sid }));
+        else {
+          const f = applySettingsToForm(cfg.config, { strategyId: sid });
+          setForm(f);
+          setPresetFormSnapshot(f);
+        }
       } catch {
         /* ignore */
       }
@@ -468,12 +576,37 @@ export function BacktestPage(): JSX.Element {
       await loadWindows();
       await loadRuns();
     })();
+
+    // Raccourcis clavier
+    const onKey = (e: KeyboardEvent): void => {
+      // Ctrl+Enter = lancer le backtest
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        if (progress()?.status !== "running" && form()) void launch();
+        return;
+      }
+      // Ctrl+Shift+S = sauvegarder comme preset utilisateur (avant Ctrl+S)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "S" || e.key === "s")) {
+        e.preventDefault();
+        if (form()) openSavePresetDialog();
+        return;
+      }
+      // Ctrl+S = enregistrer vers live
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === "s") {
+        e.preventDefault();
+        if (!saving() && form()) void savePresetLive();
+        return;
+      }
+    };
+    window.addEventListener("keydown", onKey);
+
     return () => {
       pollGen += 1;
       chartGen += 1;
       walletGen += 1;
       window.clearInterval(pollTimer);
       window.clearTimeout(windowsTimer);
+      window.removeEventListener("keydown", onKey);
     };
   });
 
@@ -649,7 +782,7 @@ export function BacktestPage(): JSX.Element {
             onChange={(e) => {
               const id = e.currentTarget.value as StrategyId;
               setEngine(id);
-              const first = presetsForStrategy(id)[0];
+              const first = allPresetsForStrategy(id, userPresets())[0];
               setPresetId(first?.id ?? "");
               loadPresetIntoForm(first?.id ?? "", id);
             }}
@@ -677,14 +810,21 @@ export function BacktestPage(): JSX.Element {
             }}
           >
             <option value="">Personnalisé</option>
-            <For each={presets()}>{(p) => <option value={p.id}>{p.name}</option>}</For>
+            <For each={presets()}>
+              {(p) => (
+                <option value={p.id}>
+                  {p.isUser ? "★ " : ""}{p.name}
+                </option>
+              )}
+            </For>
           </select>
         </label>
         <button
           class="btn"
           type="button"
-          disabled={progress()?.status === "running" || (completeOnly() && filtered().length === 0) || !form()}
+          disabled={progress()?.status === "running" || (completeOnly() && filtered().length === 0) || !form() || hasInlineErrors()}
           onClick={() => void launch()}
+          title={hasInlineErrors() ? "Corrigez les erreurs de validation avant de lancer" : "Ctrl+Enter"}
         >
           Lancer
         </button>
@@ -725,6 +865,33 @@ export function BacktestPage(): JSX.Element {
             saveErr={saveErr()}
             onSave={() => void savePresetLive()}
             onLoadLive={() => loadLiveIntoForm()}
+            onResetPreset={() => resetPreset()}
+            fieldErrors={inlineErrors()}
+            isDirty={isDirty()}
+            presetDescription={() => currentPreset()?.description ?? null}
+            presetName={() => currentPreset()?.name ?? null}
+            isUserPreset={currentPreset()?.isUser === true}
+            onSavePreset={() => openSavePresetDialog()}
+            onDeletePreset={() => deleteCurrentPreset()}
+            onOpenEditor={() => {
+              const sid = form()?.strategyId;
+              if (sid?.startsWith("custom:")) {
+                navigateWithQuery("/strategy-editor", { id: sid });
+              } else {
+                navigate("/strategy-editor");
+              }
+            }}
+            onStrategyActivated={(config) => {
+              setLiveConfig(config);
+              setConfig(config);
+              const f = applySettingsToForm(config, { strategyId: config.strategyId ?? engine() });
+              setForm(f);
+              setPresetFormSnapshot(f);
+              setEngine(config.strategyId ?? "arb");
+              setPresetId("");
+              setSaveMsg("Stratégie activée sur le live");
+              setSaveErr(null);
+            }}
           />
         </div>
         <BacktestRunList
@@ -755,6 +922,53 @@ export function BacktestPage(): JSX.Element {
         onApplyPreset={() => void applySelectedPreset()}
         onClose={() => setDialogOpen(false)}
       />
+
+      <Show when={showSavePresetDialog()}>
+        <div
+          class="modal-overlay"
+          onClick={() => setShowSavePresetDialog(false)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setShowSavePresetDialog(false);
+          }}
+          tabindex="-1"
+          ref={(el) => el.focus()}
+        >
+          <div class="modal bt-save-preset-dialog" onClick={(e) => e.stopPropagation()}>
+            <h3>Sauvegarder le preset</h3>
+            <label class="bt-pf">
+              <span>Nom</span>
+              <input
+                type="text"
+                value={presetNameInput()}
+                onInput={(e) => setPresetNameInput(e.currentTarget.value)}
+                placeholder="Mon preset"
+              />
+            </label>
+            <label class="bt-pf">
+              <span>Description</span>
+              <textarea
+                value={presetDescInput()}
+                onInput={(e) => setPresetDescInput(e.currentTarget.value)}
+                placeholder="Description optionnelle"
+                rows={3}
+              />
+            </label>
+            <div class="modal-actions">
+              <button class="btn" type="button" onClick={() => setShowSavePresetDialog(false)}>
+                Annuler
+              </button>
+              <button
+                class="btn btn-primary"
+                type="button"
+                disabled={!presetNameInput().trim()}
+                onClick={() => confirmSavePreset()}
+              >
+                Sauvegarder
+              </button>
+            </div>
+          </div>
+        </div>
+      </Show>
     </div>
   );
 }

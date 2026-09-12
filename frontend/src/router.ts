@@ -13,3 +13,24 @@ export function navigate(to: "/" | "/guide" | "/backtest" | "/strategy-editor"):
   history.pushState({}, "", to);
   window.dispatchEvent(new PopStateEvent("popstate"));
 }
+
+/**
+ * Navigate with a query string (e.g. /strategy-editor?id=custom:abc).
+ * The pathname must still match an AppRoute for routing to work.
+ */
+export function navigateWithQuery(
+  to: "/" | "/guide" | "/backtest" | "/strategy-editor",
+  query: Record<string, string>,
+): void {
+  const qs = new URLSearchParams(query).toString();
+  const url = qs ? `${to}?${qs}` : to;
+  if (window.location.pathname === to && window.location.search === (qs ? `?${qs}` : "")) return;
+  history.pushState({}, "", url);
+  window.dispatchEvent(new PopStateEvent("popstate"));
+}
+
+/** Read query params from the current URL. */
+export function queryParam(key: string): string | null {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(key);
+}

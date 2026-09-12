@@ -1,7 +1,7 @@
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import type { JSX } from "solid-js";
 import { api } from "../api/client";
-import { navigate } from "../router";
+import { navigate, queryParam } from "../router";
 import { setConfig } from "../stores/botStore";
 import { marketList, markets } from "../stores/marketStore";
 import {
@@ -226,6 +226,11 @@ export function StrategyEditorPage(): JSX.Element {
       try {
         setGraph(await skeletonGraph());
         await refreshMeta();
+        // Charger la stratégie depuis ?id= si présent
+        const id = queryParam("id");
+        if (id) {
+          await loadStrategy(id);
+        }
       } catch (error) {
         setStatus(error instanceof Error ? error.message : String(error));
       } finally {

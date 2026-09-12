@@ -355,3 +355,151 @@ export function formsEqual(a: ConfigFormState, b: ConfigFormState): boolean {
     return av === bv;
   });
 }
+
+/**
+ * Mappe les erreurs de validateConfigForm aux champs du formulaire concernés.
+ * Retourne un Record<key, message> pour affichage inline dans le panel.
+ */
+export function fieldErrors(
+  form: ConfigFormState,
+  dryRun: boolean,
+  opts?: { leadsWithEdge?: boolean },
+): Partial<Record<keyof ConfigFormState, string>> {
+  const result: Partial<Record<keyof ConfigFormState, string>> = {};
+  const edge = engineUsesEdge(form.strategyId, opts?.leadsWithEdge);
+
+  try {
+    const cheapBuyMin = Number(form.cheapBuyMin);
+    const cheapBuyMax = Number(form.cheapBuyMax);
+    const expensiveBuyMin = Number(form.expensiveBuyMin);
+    const expensiveBuyMax = Number(form.expensiveBuyMax);
+    const pairLockMax = Number(form.pairLockMax);
+    const barbellHedgeRatio = Number(form.barbellHedgeRatio);
+    const minutesBeforeCloseMin = Number(form.minutesBeforeCloseMin);
+    const minutesBeforeCloseMax = Number(form.minutesBeforeCloseMax);
+    const pollIntervalMs = Number(form.pollIntervalMs);
+    const maxOpenPositionsPerSide = Number(form.maxOpenPositionsPerSide);
+    const simFillProbability = Number(form.simFillProbabilityNonMarketable);
+    const simResolveRetryIntervalMs = Number(form.simResolveRetryIntervalMs);
+
+    // Parse errors (NaN)
+    if (!Number.isFinite(cheapBuyMin)) result.cheapBuyMin = "Nombre invalide";
+    if (!Number.isFinite(cheapBuyMax)) result.cheapBuyMax = "Nombre invalide";
+    if (!Number.isFinite(expensiveBuyMin)) result.expensiveBuyMin = "Nombre invalide";
+    if (!Number.isFinite(expensiveBuyMax)) result.expensiveBuyMax = "Nombre invalide";
+    if (!Number.isFinite(pairLockMax)) result.pairLockMax = "Nombre invalide";
+    if (!Number.isFinite(barbellHedgeRatio)) result.barbellHedgeRatio = "Nombre invalide";
+    if (!Number.isFinite(minutesBeforeCloseMin)) result.minutesBeforeCloseMin = "Nombre invalide";
+    if (!Number.isFinite(minutesBeforeCloseMax)) result.minutesBeforeCloseMax = "Nombre invalide";
+    if (!Number.isFinite(pollIntervalMs)) result.pollIntervalMs = "Nombre invalide";
+    if (!Number.isFinite(maxOpenPositionsPerSide)) result.maxOpenPositionsPerSide = "Nombre invalide";
+    if (!Number.isFinite(simFillProbability)) result.simFillProbabilityNonMarketable = "Nombre invalide";
+    if (!Number.isFinite(simResolveRetryIntervalMs)) result.simResolveRetryIntervalMs = "Nombre invalide";
+
+    // Range / relation errors
+    if (Number.isFinite(cheapBuyMin) && Number.isFinite(cheapBuyMax) && cheapBuyMin > cheapBuyMax) {
+      result.cheapBuyMax = "Cheap max doit être ≥ cheap min";
+    }
+    if (Number.isFinite(expensiveBuyMin) && Number.isFinite(expensiveBuyMax) && expensiveBuyMin > expensiveBuyMax) {
+      result.expensiveBuyMax = "Hedge max doit être ≥ hedge min";
+    }
+    if (!edge) {
+      if (Number.isFinite(cheapBuyMax) && Number.isFinite(expensiveBuyMin) && cheapBuyMax >= expensiveBuyMin) {
+        result.expensiveBuyMin = "Hedge min doit être > cheap max";
+      }
+      if (Number.isFinite(pairLockMax) && (pairLockMax < 0.9 || pairLockMax >= 1.0)) {
+        result.pairLockMax = "Entre 0.90 et 0.99";
+      }
+      if (Number.isFinite(barbellHedgeRatio) && !(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
+        result.barbellHedgeRatio = "Doit être dans (0, 1]";
+      }
+    }
+    if (Number.isFinite(minutesBeforeCloseMin) && Number.isFinite(minutesBeforeCloseMax) && minutesBeforeCloseMin > minutesBeforeCloseMax) {
+      result.minutesBeforeCloseMax = "Max doit être ≥ min";
+    }
+    if (Number.isFinite(pollIntervalMs) && pollIntervalMs < 500) {
+      result.pollIntervalMs = "≥ 500 ms";
+    }
+    if (Number.isFinite(maxOpenPositionsPerSide) && maxOpenPositionsPerSide < 1) {
+      result.maxOpenPositionsPerSide = "≥ 1";
+    }
+    if (Number.isFinite(simFillProbability) && (simFillProbability < 0 || simFillProbability > 1)) {
+      result.simFillProbabilityNonMarketable = "Entre 0 et 1";
+    }
+    if (Number.isFinite(simResolveRetryIntervalMs) && simResolveRetryIntervalMs < 500) {
+      result.simResolveRetryIntervalMs = "≥ 500 ms";
+    }
+
+    // Validation des champs sim exposés dans le panel
+    const simResolveDelaySeconds = Number(form.simResolveDelaySeconds);
+    const simResolveMaxRetries = Number(form.simResolveMaxRetries);
+    const simMaxRetryAttempts = Number(form.simMaxRetryAttempts);
+    const simulatedCapital = Number(form.simulatedCapital);
+    const maxExposureUsdc = Number(form.maxExposureUsdc);
+    const maxSharesPerOrder = Number(form.maxSharesPerOrder);
+
+    if (!Number.isFinite(simResolveDelaySeconds)) result.simResolveDelaySeconds = "Nombre invalide";
+    else if (simResolveDelaySeconds < 0) result.simResolveDelaySeconds = "≥ 0";
+    if (!Number.isFinite(simResolveMaxRetries)) result.simResolveMaxRetries = "Nombre invalide";
+    else if (simResolveMaxRetries < 0) result.simResolveMaxRetries = "≥ 0";
+    if (!Number.isFinite(simMaxRetryAttempts)) result.simMaxRetryAttempts = "Nombre invalide";
+    else if (simMaxRetryAttempts < 0) result.simMaxRetryAttempts = "≥ 0";
+    if (!Number.isFinite(simulatedCapital)) result.simulatedCapital = "Nombre invalide";
+    else if (simulatedCapital <= 0) result.simulatedCapital = "> 0";
+    if (!Number.isFinite(maxExposureUsdc)) result.maxExposureUsdc = "Nombre invalide";
+    else if (maxExposureUsdc <= 0) result.maxExposureUsdc = "> 0";
+    if (!Number.isFinite(maxSharesPerOrder)) result.maxSharesPerOrder = "Nombre invalide";
+    else if (maxSharesPerOrder < 1) result.maxSharesPerOrder = "≥ 1";
+    if (!dryRun && form.simResolveFallback === "probabilistic") {
+      result.simResolveFallback = "Interdit en live";
+    }
+    if (form.marketSlugPrefixes.split(",").map((s) => s.trim()).filter(Boolean).length === 0) {
+      result.marketSlugPrefixes = "Au moins un préfixe requis";
+    }
+
+    // Edge-lead validations
+    if (edge) {
+      const edgeBandMin = Number(form.edgeBandMin);
+      const edgeBandMax = Number(form.edgeBandMax);
+      const edgeConfirmSamples = Number(form.edgeConfirmSamples);
+      const edgeMaxDownTick = Number(form.edgeMaxDownTick);
+      const edgeOrderUsdc = Number(form.edgeOrderUsdc);
+      const maxShareEdge = Number(form.maxShareEdge);
+      const edgeCheapOrderUsdc = Number(form.edgeCheapOrderUsdc);
+      const edgeCheapBandMin = Number(form.edgeCheapBandMin);
+      const edgeCheapBandMax = Number(form.edgeCheapBandMax);
+
+      if (!Number.isFinite(edgeBandMin)) result.edgeBandMin = "Nombre invalide";
+      if (!Number.isFinite(edgeBandMax)) result.edgeBandMax = "Nombre invalide";
+      if (Number.isFinite(edgeBandMin) && Number.isFinite(edgeBandMax)) {
+        if (edgeBandMin >= edgeBandMax) result.edgeBandMax = "Max doit être > min";
+        if (edgeBandMin < 0.5 || edgeBandMax > 0.99) result.edgeBandMin = "Bande dans [0.50, 0.99]";
+      }
+      if (Number.isFinite(edgeConfirmSamples) && edgeConfirmSamples < 2) result.edgeConfirmSamples = "≥ 2";
+      if (Number.isFinite(edgeMaxDownTick) && edgeMaxDownTick <= 0) result.edgeMaxDownTick = "> 0";
+      if (Number.isFinite(edgeOrderUsdc) && edgeOrderUsdc <= 0) result.edgeOrderUsdc = "> 0";
+      if (Number.isFinite(maxShareEdge) && maxShareEdge < 1) result.maxShareEdge = "≥ 1";
+      if (Number.isFinite(edgeCheapOrderUsdc) && edgeCheapOrderUsdc <= 0) result.edgeCheapOrderUsdc = "> 0";
+      if (Number.isFinite(edgeCheapBandMin) && Number.isFinite(edgeCheapBandMax)) {
+        if (edgeCheapBandMin >= edgeCheapBandMax) result.edgeCheapBandMax = "Max doit être > min";
+        if (edgeCheapBandMin < 0.01 || edgeCheapBandMax > 0.49) result.edgeCheapBandMin = "Bande dans [0.01, 0.49]";
+      }
+      if (form.edgeSizingMode === "shares") {
+        const edgeSharesEdge = Number(form.edgeSharesEdge);
+        const edgeSharesCheap = Number(form.edgeSharesCheap);
+        if (Number.isFinite(edgeSharesEdge) && edgeSharesEdge < 5) result.edgeSharesEdge = "≥ 5 (min CLOB)";
+        if (Number.isFinite(edgeSharesCheap) && edgeSharesCheap < 5) result.edgeSharesCheap = "≥ 5 (min CLOB)";
+      }
+      const sellAfterMin = Number(form.edgeSellExpensiveAfterMin);
+      const sellLossPct = Number(form.edgeSellExpensiveLossPct);
+      const sellLossWindowMs = Number(form.edgeSellExpensiveLossWindowMs);
+      if (Number.isFinite(sellAfterMin) && sellAfterMin < 0) result.edgeSellExpensiveAfterMin = "≥ 0";
+      if (Number.isFinite(sellLossPct) && sellLossPct <= 0) result.edgeSellExpensiveLossPct = "> 0";
+      if (Number.isFinite(sellLossWindowMs) && sellLossWindowMs <= 0) result.edgeSellExpensiveLossWindowMs = "> 0";
+    }
+  } catch (error) {
+    // ignore — validateConfigForm handles this
+  }
+
+  return result;
+}

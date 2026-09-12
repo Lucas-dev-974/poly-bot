@@ -1,9 +1,9 @@
-# Stratégie — moteurs arb (B1), barbell et edge-lead
+# Stratégie — moteurs arb (B1), barbell, edge-lead et reverse
 
-> Aligné sur le code (`TradingStrategy`, `ArbStrategy`, `BarbellStrategy`, `EdgeLeadStrategy`, `bot.ts`).
+> Aligné sur le code (`TradingStrategy`, `ArbStrategy`, `BarbellStrategy`, `EdgeLeadStrategy`, `ReverseStrategy`, `createStrategy`, `bot/reverse-bot.ts`).
 > Live : deposit wallet V2 (`SIGNATURE_TYPE=3` par défaut). La stratégie se lit dans `data/bot-settings.json` (dashboard). `.env` ne contient que les secrets et l'infra.
 
-Le JSON actif choisit le **moteur** (`strategyId` : `arb` | `barbell` | `edge-lead`). Les **profils** (`config/presets/*.json`) sont des packs de paramètres **liés à un moteur** (champ top-level `strategyId` obligatoire). Les deux profils livrés sont `arb` ; `edge-lead.json` est le profil du moteur edge-lead. Barbell **n'est pas** un lock de profit : le leftover cheap est un pari volontaire, variance plus élevée. **Edge-lead** inverse l'ordre : on achète le favori d'abord, on attend le fill, puis on poste le cheap (budgets USDC indépendants, pas de 1:1 en shares).
+Le JSON actif choisit le **moteur** (`strategyId` : `arb` | `barbell` | `edge-lead` | `reverse`, ou `custom:<id>`). Les **profils** (`config/presets/*.json`) sont des packs de paramètres **liés à un moteur** (champ top-level `strategyId` obligatoire) : `conservative` / `coverage-max` (arb), `edge-lead`, `reverse`. Barbell **n'est pas** un lock de profit : le leftover cheap est un pari volontaire, variance plus élevée. **Edge-lead** inverse l'ordre : favori d'abord, puis cheap après fill (budgets USDC indépendants). **Reverse** (moteur) : grille maker cheap 7–10¢ + grille hedge favori 90–95¢ après fill cheap (`independentHedgeGrid`), sans lock 1:1 — à ne pas confondre avec le vocabulaire « reverse » historique du §2 (cheap nu si le hedge arb rate).
 
 ---
 
@@ -19,11 +19,13 @@ Ce n'est **pas** un ladder de limites ni une copie d'un carnet manuel. Sur **`ar
 
 ---
 
-## 2. La stratégie « reverse »
+## 2. Vocabulaire « reverse » (historique) vs moteur `reverse`
 
-### 2.1 Principe
+> **Attention** : ce § décrit le **comportement résiduel de `arb`** quand le hedge lock échoue (cheap underdog nu). Ce n'est **pas** le moteur `ReverseStrategy` / preset `config/presets/reverse.json` (grilles indépendantes, voir intro).
 
-Le chemin **voulu** est l'arbitrage binaire : acheter cheap + favori pour **≤ `PAIR_LOCK_MAX`**, lock `(1 − pairCost)` par share au redeem, **quel que soit** le gagnant.
+### 2.1 Principe (arb + leftover)
+
+Le chemin **voulu** de **`arb`** est l'arbitrage binaire : acheter cheap + favori pour **≤ `PAIR_LOCK_MAX`**, lock `(1 − pairCost)` par share au redeem, **quel que soit** le gagnant.
 
 Le cheap est l'underdog (best ask le plus bas). Le hedge est le favori, seulement si son ask est **déjà** dans `EXPENSIVE_BUY_MIN`–`MAX`. Si après fill le favori a bougé et que `fill + hedge > lock`, le bot **ne complète pas** la paire : le cheap devient un pari reverse jusqu'à résolution (ou FOK SELL si l'ask favori passe au-dessus du max).
 
@@ -73,7 +75,7 @@ src/
 ├── bot/               — reverse-bot (orchestration) + lifecycle / resting / executor / balance-guard / tick-snapshots
 ├── market-scanner.ts  — découverte des marchés + order books (API Gamma + CLOB)
 ├── strategy.ts        — barrel arb (tests) + réexport des prédicats
-├── strategy/          — TradingStrategy (arb, barbell), sizing, registry
+├── strategy/          — TradingStrategy (arb, barbell, edge-lead, reverse, chart-rules), sizing, registry
 ├── trader.ts          — soumission des ordres via ClobClient (Polymarket)
 ├── trade-tracker.ts   — déduplication des prix déjà postés par session
 ├── utils/market.ts    — parsing de slug, tick size, best bid/ask

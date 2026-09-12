@@ -346,7 +346,7 @@ export class EdgeLeadStrategy implements TradingStrategy {
       return false;
     }
 
-    const now = Date.now();
+    const now = ctx.nowMs ?? Date.now();
     const start = this.lossStart.get(pairId) ?? now;
     this.lossStart.set(pairId, start);
     return now - start >= config.edgeSellExpensiveLossWindowMs;

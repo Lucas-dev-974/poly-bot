@@ -76,6 +76,7 @@ export class RestingManager {
         favoriteAsk: favoriteBook?.bestAsk ?? null,
         pairId,
         tracker: this.deps.tracker,
+        nowMs: Date.now(),
       });
       if (action === "keep") {
         continue;
@@ -128,12 +129,15 @@ export class RestingManager {
       this.deps.tracker.removePostedOrder(order.key);
       this.deps.tracker.unmark(order.key);
       if (action === "cancel-lock") {
+        // reverse.cheapOrderAction always returns "keep" today — no reverse branch.
         const cancelWhy =
           this.strategy.id === "arb"
             ? "Cheap cancelled - pair lock no longer achievable"
             : this.strategy.id === "edge-lead"
               ? "Edge-lead cheap cancelled - ask left the cheap band"
-              : "Cheap cancelled - favorite left the hedge band";
+              : this.strategy.id.startsWith("custom:")
+                ? "Custom cheap cancelled - out of band"
+                : "Cheap cancelled - favorite left the hedge band";
         log(cancelWhy, {
             market: event.title,
             outcome: order.outcome,

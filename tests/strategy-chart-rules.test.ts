@@ -627,6 +627,56 @@ describe("chartRules strategy", () => {
     );
   });
 
+  it("rehydrates once/dependsOn from tracker after a fresh strategy instance", () => {
+    const graph = chartGraph([
+      rule({
+        id: "z1",
+        token: "favorite",
+        direction: "up",
+        action: "buy",
+        bandMin: 0.85,
+        bandMax: 0.9,
+        once: true,
+      }),
+      rule({
+        id: "z2",
+        token: "cheap",
+        direction: "up",
+        action: "buy",
+        bandMin: 0.04,
+        bandMax: 0.14,
+        dependsOn: ["z1"],
+        once: true,
+      }),
+    ]);
+    const tracker = new TradeTracker();
+    const t0 = windowT0();
+    const first = new ChartRulesStrategy(graph);
+    const parentOpps = first.findOpportunities(
+      findCtx(t0, { up: 0.88, down: 0.1 }, tracker),
+    );
+    assert.equal(parentOpps.length, 1);
+    assert.equal(parentOpps[0].kind, "expensive");
+    commitBuys(first, parentOpps);
+    addFill(tracker, testEvent(), "expensive", 10, 0.88);
+
+    // Simulate restart / hot-swap: new strategy instance, same durable tracker.
+    const restarted = new ChartRulesStrategy(graph);
+    const afterRestart = restarted.findOpportunities(
+      findCtx(t0, { up: 0.88, down: 0.1 }, tracker),
+    );
+    assert.equal(
+      afterRestart.filter((o) => o.kind === "expensive").length,
+      0,
+      "once parent must not re-buy after restart when fill exists",
+    );
+    assert.equal(
+      afterRestart.filter((o) => o.kind === "cheap").length,
+      1,
+      "dependsOn child must unlock from hydrated parent fill",
+    );
+  });
+
   it("blocks a child zone until its parent has filled", () => {
     const strategy = new ChartRulesStrategy(
       chartGraph([

@@ -399,18 +399,39 @@ export class ChartRulesStrategy implements TradingStrategy {
     if (rule) this.markSatisfied(pairId, rule);
   }
 
-  private promoteFills(pairId: string, tracker: TradeTracker | undefined): void {
-    if (!tracker) return;
+  /**
+   * Rebuild posted / fired / satisfied for buy rules from the tracker.
+   * Survives process restart / hot-swap: fills and resting posts are durable,
+   * in-memory Sets are not. Heuristic is per-token-kind (favorite→expensive,
+   * cheap→cheap): if several once-buys share a kind, a single fill marks all
+   * of them — fail-closed against double entry in live.
+   */
+  private hydrateBuyStateFromTracker(
+    pairId: string,
+    tracker: TradeTracker,
+  ): void {
     for (const rule of this.rules) {
       if (rule.action !== "buy") continue;
+      const kind = rule.token === "favorite" ? "expensive" : "cheap";
       const key = this.fireKey(pairId, rule.id);
-      if (!this.posted.has(key) || this.satisfied.has(key)) continue;
       const filled =
-        rule.token === "favorite"
+        kind === "expensive"
           ? tracker.getFilledExpensiveSizeForPair(pairId) > 0
           : tracker.getFilledCheapSizeForPair(pairId) > 0;
+      const resting =
+        tracker.getPostedOrdersForPair(pairId, kind).length > 0;
+      if (!filled && !resting) continue;
+      this.posted.add(key);
+      if (rule.once) this.fired.add(key);
       if (filled) this.satisfied.add(key);
     }
+  }
+
+  private promoteFills(pairId: string, tracker: TradeTracker | undefined): void {
+    // hydrateBuyStateFromTracker already marks posted / fired / satisfied
+    // from durable fills + resting posts (covers restart and same-process fills).
+    if (!tracker) return;
+    this.hydrateBuyStateFromTracker(pairId, tracker);
   }
 
   private favoriteOutOfBandRule(

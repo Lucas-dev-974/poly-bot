@@ -621,29 +621,71 @@ describe("EdgeLeadStrategy.shouldSellExpensiveEdge", () => {
   });
 
   it("returns false on the first tick of a sustained loss (window not elapsed)", () => {
-    assert.equal(strategy.shouldSellExpensiveEdge(base), false);
+    const s = new EdgeLeadStrategy();
+    const config = edgeConfig({ edgeSellExpensiveLossWindowMs: 1000 });
+    assert.equal(
+      s.shouldSellExpensiveEdge({ ...base, config, nowMs: 1_000_000 }),
+      false,
+    );
   });
 
-  it("returns true after the loss window elapses", async () => {
-    // First tick starts the timer.
-    strategy.shouldSellExpensiveEdge(base);
-    // Let the loss window elapse.
-    await new Promise((resolve) => setTimeout(resolve, 5));
-    const config = edgeConfig({ edgeSellExpensiveLossWindowMs: 1 });
+  it("returns true after the loss window elapses via nowMs", () => {
+    const s = new EdgeLeadStrategy();
+    const config = edgeConfig({ edgeSellExpensiveLossWindowMs: 1000 });
+    const t0 = 5_000_000;
     assert.equal(
-      strategy.shouldSellExpensiveEdge({ ...base, config }),
+      s.shouldSellExpensiveEdge({ ...base, config, nowMs: t0 }),
+      false,
+    );
+    assert.equal(
+      s.shouldSellExpensiveEdge({ ...base, config, nowMs: t0 + 999 }),
+      false,
+    );
+    assert.equal(
+      s.shouldSellExpensiveEdge({ ...base, config, nowMs: t0 + 1000 }),
       true,
     );
   });
 
-  it("resets the loss timer when the loss disappears", async () => {
-    strategy.shouldSellExpensiveEdge(base); // start timer
-    strategy.shouldSellExpensiveEdge({ ...base, expensiveBid: 0.85 }); // reset
-    // A fresh loss must re-accumulate the full window.
-    const config = edgeConfig({ edgeSellExpensiveLossWindowMs: 1 });
+  it("resets the loss timer when the loss disappears", () => {
+    const s = new EdgeLeadStrategy();
+    const config = edgeConfig({ edgeSellExpensiveLossWindowMs: 1000 });
+    const t0 = 9_000_000;
+    s.shouldSellExpensiveEdge({ ...base, config, nowMs: t0 }); // start timer
+    s.shouldSellExpensiveEdge({
+      ...base,
+      config,
+      expensiveBid: 0.85,
+      nowMs: t0 + 100,
+    }); // reset
+    // Fresh loss must re-accumulate the full window from the new start.
     assert.equal(
-      strategy.shouldSellExpensiveEdge({ ...base, config }),
+      s.shouldSellExpensiveEdge({ ...base, config, nowMs: t0 + 200 }),
       false,
+    );
+    assert.equal(
+      s.shouldSellExpensiveEdge({ ...base, config, nowMs: t0 + 200 + 1000 }),
+      true,
+    );
+  });
+
+  it("ignores wall clock when nowMs is injected (backtest-safe)", () => {
+    const s = new EdgeLeadStrategy();
+    const config = edgeConfig({ edgeSellExpensiveLossWindowMs: 60_000 });
+    const t0 = 100_000;
+    assert.equal(
+      s.shouldSellExpensiveEdge({ ...base, config, nowMs: t0 }),
+      false,
+    );
+    // Far below the 60s window in injected time — must stay false even if
+    // wall clock advanced during the test.
+    assert.equal(
+      s.shouldSellExpensiveEdge({ ...base, config, nowMs: t0 + 1_000 }),
+      false,
+    );
+    assert.equal(
+      s.shouldSellExpensiveEdge({ ...base, config, nowMs: t0 + 60_000 }),
+      true,
     );
   });
 

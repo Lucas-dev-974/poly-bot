@@ -790,6 +790,7 @@ export function BacktestPage(): JSX.Element {
             <option value="arb">Arb</option>
             <option value="barbell">Barbell</option>
             <option value="edge-lead">Edge-lead</option>
+            <option value="reverse">Reverse</option>
             <For each={customEngines()}>
               {(engine) => (
                 <option value={engine.id}>

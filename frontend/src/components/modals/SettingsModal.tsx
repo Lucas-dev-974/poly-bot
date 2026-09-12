@@ -420,10 +420,9 @@ export function SettingsModal(props: {
                 <div class="cfg-section">
                   <h4>Jambe cheap (underdog)</h4>
                   <p class="cfg-section__desc">
-                    Un seul bid GTC maker à min(bestAsk, cheapBuyMax, pairLockMax − hedge).
-                    Après fill, le hedge utilise le prix fillé (pas ce bid) : si
-                    fillPrice + hedge &gt; pairLockMax, pas de hedge — le cheap reste
-                    directionnel.
+                    {form().strategyId === "reverse"
+                      ? "Grille de limit BUY maker sur l'underdog, un niveau par tick dans [cheap min, cheap max]. Chaque niveau est indépendant du hedge."
+                      : "Un seul bid GTC maker à min(bestAsk, cheapBuyMax, pairLockMax − hedge). Après fill, le hedge utilise le prix fillé (pas ce bid) : si fillPrice + hedge > pairLockMax, pas de hedge — le cheap reste directionnel."}
                   </p>
                   <div class="cfg-grid">
                     <Field
@@ -458,6 +457,7 @@ export function SettingsModal(props: {
                         onInput={(v) => update("cheapOrderUsdc", v)}
                       />
                     </Field>
+                    <Show when={form().strategyId !== "reverse"}>
                     <Field
                       label="Pair lock max"
                       hint={
@@ -474,6 +474,7 @@ export function SettingsModal(props: {
                         onInput={(v) => update("pairLockMax", v)}
                       />
                     </Field>
+                    </Show>
                   </div>
                 </div>
               </Show>
@@ -483,7 +484,9 @@ export function SettingsModal(props: {
                 <div class="cfg-section">
                   <h4>Jambe hedge (favorite)</h4>
                   <p class="cfg-section__desc">
-                    {form().strategyId === "barbell"
+                    {form().strategyId === "reverse"
+                      ? "Grille de limit BUY maker sur le favori, posée en même temps que le cheap (pas après fill). Niveaux dans [hedge min, hedge max], budget par niveau."
+                      : form().strategyId === "barbell"
                       ? "Hedge au ratio cheap/hedge uniquement après un cheap rempli, si l'ask favori est dans [hedgeMin, hedgeMax]. Pas de verrou de profit — variance plus élevée."
                       : "Hedge 1:1 uniquement après un cheap rempli, si l'ask favori est dans [hedgeMin, hedgeMax] et si fillPrice + min(ask, hedgeMax) ≤ pairLockMax. La bande est nécessaire, pas suffisante."}
                   </p>
@@ -514,7 +517,11 @@ export function SettingsModal(props: {
                     </Field>
                     <Field
                       label="Plafond hedge (USDC)"
-                      hint="Cap secondaire. Taille = 1:1 du cheap rempli non couvert. Sous 5 parts au prix hedge (≈ 4.75 USDC à 0.95) : aucun hedge. Trop petit = paire partielle"
+                      hint={
+                        form().strategyId === "reverse"
+                          ? "Budget USDC par niveau de la grille favori (indépendant du cheap)."
+                          : "Cap secondaire. Taille = 1:1 du cheap rempli non couvert. Sous 5 parts au prix hedge (≈ 4.75 USDC à 0.95) : aucun hedge. Trop petit = paire partielle"
+                      }
                     >
                       <NumberInput
                         value={form().expensiveOrderUsdc}
@@ -525,7 +532,11 @@ export function SettingsModal(props: {
                     </Field>
                     <Field
                       label="Type d'ordre hedge"
-                      hint="FOK et GTC : seulement après fill cheap. FOK = taker immédiat ; GTC = restant au min(ask, hedgeMax)"
+                      hint={
+                        form().strategyId === "reverse"
+                          ? "GTC : grille maker posée avec le cheap, sans attendre un fill. FOK = taker immédiat (peu adapté au reverse)."
+                          : "FOK et GTC : seulement après fill cheap. FOK = taker immédiat ; GTC = restant au min(ask, hedgeMax)"
+                      }
                     >
                       <select
                         class="cfg-input"
@@ -538,6 +549,7 @@ export function SettingsModal(props: {
                         <option value="GTC">GTC — Good Till Cancelled</option>
                       </select>
                     </Field>
+                    <Show when={form().strategyId !== "reverse"}>
                     <Field
                       label="Ratio hedge"
                       hint={
@@ -554,6 +566,7 @@ export function SettingsModal(props: {
                         onInput={(v) => update("barbellHedgeRatio", v)}
                       />
                     </Field>
+                    </Show>
                   </div>
                   <div class="cfg-divider" />
                   <Toggle
@@ -562,6 +575,15 @@ export function SettingsModal(props: {
                     checked={form().enableExpensiveHedge}
                     onChange={(v) => update("enableExpensiveHedge", v)}
                   />
+                  <Show when={form().strategyId === "reverse"}>
+                    <Toggle
+                      label="Expensive après cheap fill"
+                      hint="N'émettre / placer un ordre expensive qu'après qu'au moins un cheap de la paire a été fillé."
+                      checked={form().requireCheapFillBeforeExpensive}
+                      onChange={(v) => update("requireCheapFillBeforeExpensive", v)}
+                    />
+                  </Show>
+
                 </div>
               </Show>
 

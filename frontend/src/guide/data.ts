@@ -1,9 +1,9 @@
 export type TabId = "story" | "arch" | "hedge" | "ui" | "ship";
-export type EngineId = "arb" | "barbell" | "edge-lead";
+export type EngineId = "arb" | "barbell" | "edge-lead" | "reverse";
 export type PhaseId = "mid" | "done";
 
 export const TABS: { id: TabId; label: string }[] = [
-  { id: "story", label: "Les 3 moteurs" },
+  { id: "story", label: "Les 4 moteurs" },
   { id: "arch", label: "Architecture" },
   { id: "hedge", label: "Hedge au POST" },
   { id: "ui", label: "Moteur & presets" },
@@ -33,6 +33,13 @@ export const ENGINE_META: Record<
     subtitle: "Confirmer le momentum du favori, puis hedger l'outsider si le prix le permet.",
     order: "Favori confirmé → fill edge → cheap si bande OK",
     risk: "Élevée — favori nu vendu si en perte soutenue",
+    tone: "warning",
+  },
+  reverse: {
+    label: "Reverse — pari contre la foule",
+    subtitle: "Grilles maker sur l'underdog (7-10¢) et sur le favori (90-95¢). Espérance positive par l'asymétrie.",
+    order: "Sous-cotée d'abord → hedge favori (grilles restantes simultanées)",
+    risk: "Élevée — la plupart des underdogs expirent ; les limites peuvent ne pas se remplir",
     tone: "warning",
   },
 };
@@ -73,13 +80,13 @@ export const COMPARE_ROWS: [string, string, string][] = [
   ["Après défense", "cancel GTC hedge", "cancel GTC hedge (toujours)"],
 ];
 
-export const STRATEGY_COMPARE_ROWS: [string, string, string, string][] = [
-  ["Ordre d'achat", "Outsider → favori", "Outsider → favori (ratio)", "Favori → cheap (après fill edge)"],
-  ["Signal d'entrée", "Bandes cheap + favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant"],
-  ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeSizingMode : shares / pUSD / dynamic (budgets indépendants)"],
-  ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés"],
-  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Vend l'edge nu si en perte soutenue (FOK SELL)"],
-  ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu (vendu si perte)"],
+export const STRATEGY_COMPARE_ROWS: [string, string, string, string, string][] = [
+  ["Ordre d'achat", "Outsider → favori", "Outsider → favori (ratio)", "Favori → cheap (après fill edge)", "Grilles simultanées underdog + favori"],
+  ["Signal d'entrée", "Bandes cheap/favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant", "Min (sous-coté) et l'autre token, niveaux grille"],
+  ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeSizingMode : shares / pUSD / dynamic", "Budget USDC par niveau de grille"],
+  ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés", "Pas de lock — asymétrie + amortissement"],
+  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Vend l'edge nu si en perte soutenue (FOK SELL)", "Aucune — grilles tenues jusqu'à la clôture"],
+  ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu (vendu si perte)", "La plupart des underdogs expirent à 0 ¢"],
 ];
 
 export const EDGE_LEAD_PARAM_ROWS: [string, string][] = [
@@ -113,6 +120,10 @@ export const RESOLUTION_ROWS: Record<EngineId, [string, string][]> = {
     ["L'outsider gagne, cheap fillé", "Cheap paie 1 $, edge perd — résultat selon tailles et prix."],
     ["L'outsider gagne, cheap absent", "Edge perd tout — pari directionnel raté."],
   ],
+  reverse: [
+    ["L'underdog se retourne et gagne", "Grille cheap paie ~10× (7-10¢) — gros plus qui absorbe les pertes."],
+    ["Le favori tient et gagne", "Grille cheap = 0, grille hedge encaisse +5% — amortisseur fréquent et léger."],
+  ],
 };
 
 export const BOT_STEPS: Record<EngineId, string[]> = {
@@ -134,6 +145,13 @@ export const BOT_STEPS: Record<EngineId, string[]> = {
     "Après fill edge : poster le cheap en GTC si ask ∈ [edgeCheapBandMin, edgeCheapBandMax].",
     "Cancel edge GTC si favori sort de bande avant fill ; cancel cheap GTC si ask cheap sort de bande cheap.",
     "Si le cheap ne remplit jamais et que l'edge est en perte soutenue après un délai : vendre l'edge (FOK SELL).",
+  ],
+  reverse: [
+    "Repérer l'underdog (min ask) et le favori (l'autre token) sur les 2 carnets.",
+    "Si l'ask underdog est ≥ cheapBuyMin : poser une grille de limit BUY maker, niveaux [cheapBuyMin, cheapBuyMax] (7-10¢), tronquée par maxOpenPositionsPerSide (y compris le même tick).",
+    "Poser une grille de limit BUY maker sur le favori, niveaux [expensiveBuyMin, expensiveBuyMax] (90-95¢), si hedge actif — sans attendre un fill cheap (C2 contourné).",
+    "Garder les GTC au carnet (pas de cancel bande) ; chaque niveau est dédupliqué par slug:outcome:kind-prix.",
+    "À la clôture : une jambe paie 1 $ — l'underdog remplit ~10× ; sinon le favori amortit +5%.",
   ],
 };
 
@@ -174,6 +192,7 @@ export const NEW_FILES: [string, string][] = [
   ["src/strategy/arb-strategy.ts", "Politique B1 + ArbSizing"],
   ["src/strategy/barbell-strategy.ts", "Politique ratio"],
   ["src/strategy/edge-lead-strategy.ts", "Politique favori d'abord + budgets USDC"],
+  ["src/strategy/reverse-strategy.ts", "Politique reverse bet — grilles maker underdog / hedge favori"],
   ["src/strategy/barbell-sizing.ts", "pairLockOk toujours true"],
   ["src/strategy/registry.ts", "createStrategy(id, repos) natif + custom"],
   ["src/strategy/graph/", "DSL + interpréteur GraphStrategy"],
@@ -272,6 +291,26 @@ export const EDGE_LEAD_LIFE_EDGES: LifeEdge[] = [
   { from: "covered", to: "resolved", label: "" },
   { from: "directional", to: "resolved", label: "" },
   { from: "edgeSold", to: "resolved", label: "" },
+  { from: "cancelled", to: "resolved", label: "" },
+];
+
+export const REVERSE_LIFE_NODES: LifeNode[] = [
+  { id: "scan", label: "Fenêtre 15m scannée", sub: "Gamma + 2 order books", tone: "neutral" },
+  { id: "cheapGrid", label: "Grille cheap GTC resting", sub: "l'underdog aux niveaux 7-10¢", tone: "accent" },
+  { id: "hedgeGrid", label: "Grille hedge GTC resting", sub: "le favori aux niveaux 90-95¢", tone: "accent" },
+  { id: "cancelled", label: "Grilles retirées", sub: "fin de fenêtre / stale", tone: "neutral" },
+  { id: "cheapFilled", label: "Underdog fillé", sub: "paris 7-10¢ payés ~10×", tone: "warning" },
+  { id: "hedgeFilled", label: "Favori fillé", sub: "amortisseur +5%", tone: "warning" },
+  { id: "resolved", label: "Résolue", sub: "redeem 1 $ / 0 $", tone: "neutral" },
+];
+
+export const REVERSE_LIFE_EDGES: LifeEdge[] = [
+  { from: "scan", to: "cheapGrid", label: "underdog min ask" },
+  { from: "scan", to: "hedgeGrid", label: "favori (si hedge actif)" },
+  { from: "cheapGrid", to: "cheapFilled", label: "ask ≤ 10¢ + matched" },
+  { from: "hedgeGrid", to: "hedgeFilled", label: "ask ≤ 95¢ + matched" },
+  { from: "cheapFilled", to: "resolved", label: "underdog gagne (10×)" },
+  { from: "hedgeFilled", to: "resolved", label: "favori tient (+5%)" },
   { from: "cancelled", to: "resolved", label: "" },
 ];
 

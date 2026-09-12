@@ -33,5 +33,6 @@
   "edgeSellExpensiveEnabled": true,
   "edgeSellExpensiveAfterMin": 8,
   "edgeSellExpensiveLossPct": 10,
-  "edgeSellExpensiveLossWindowMs": 10000
+  "edgeSellExpensiveLossWindowMs": 10000,
+  "requireCheapFillBeforeExpensive": true
 }

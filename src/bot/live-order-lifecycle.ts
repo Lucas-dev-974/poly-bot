@@ -152,7 +152,10 @@ export class LiveOrderLifecycle {
     // Edge-lead gère le GTC edge resting via manageRestingEdgeLead.
     // L'orphan-hedge arb (cheap disparu → cancel le favori) casserait un
     // edge qu'on veut garder in-bande.
+    // Reverse pose les deux grilles indépendamment : un cheap annulé
+    // (jamais fillé, cas normal) ne doit pas jeter la grille hedge.
     if (this.strategy.leadsWithEdge) return;
+    if (this.strategy.independentHedgeGrid) return;
     if (order.kind !== "cheap") return;
     if (this.deps.tracker.getFilledCheapSizeForPair(order.pairId) > 0) return;
     await this.cancelRestingHedgesForPair(order.pairId, "cheap leg vanished");

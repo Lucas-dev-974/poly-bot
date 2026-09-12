@@ -103,16 +103,20 @@ export class OpportunityExecutor {
     // never be posted without a filled cheap — a hedge on a resting cheap
     // is a naked favorite (C2). The hedge is posted only after the cheap
     // fill is detected by pollOrderFills, at the next tick.
-    // Edge-lead inverts this: the edge (expensive) is bought first, then
-    // the cheap. C2 is bypassed only for this engine.
+    // Edge-lead inverts this. Reverse can bypass via requireCheapFillBeforeExpensive=false
+    // while keeping independentHedgeGrid sizing / hedgeAtPostTime skip.
     const cheapCommitted =
       opportunity.kind === "expensive"
         ? this.deps.tracker.getFilledCheapSizeForPair(opportunity.pairId)
         : this.deps.tracker.getCheapSizeForPair(opportunity.pairId);
+    const bypassCheapFillGate =
+      this.strategy.leadsWithEdge ||
+      (this.strategy.independentHedgeGrid === true &&
+        this.deps.config.requireCheapFillBeforeExpensive === false);
     if (
       opportunity.kind === "expensive" &&
       cheapCommitted === 0 &&
-      !this.strategy.leadsWithEdge
+      !bypassCheapFillGate
     ) {
       // No filled cheap leg: do not post a naked hedge.
       log("Hedge skipped - no committed cheap leg", {
@@ -126,7 +130,8 @@ export class OpportunityExecutor {
     if (
       opportunity.kind === "expensive" &&
       !this.deps.config.dryRun &&
-      !this.strategy.leadsWithEdge
+      !this.strategy.leadsWithEdge &&
+      !this.strategy.independentHedgeGrid
     ) {
       const cheapHeld = await this.deps.lifecycle.confirmCheapTokensForHedge(opportunity.pairId);
       if (cheapHeld === null) {
@@ -215,7 +220,12 @@ export class OpportunityExecutor {
       return;
     }
 
-    if (opportunity.kind === "expensive" && !this.deps.config.dryRun && !this.strategy.leadsWithEdge) {
+    if (
+      opportunity.kind === "expensive" &&
+      !this.deps.config.dryRun &&
+      !this.strategy.leadsWithEdge &&
+      !this.strategy.independentHedgeGrid
+    ) {
       const freshBook = await this.deps.scanner.getTokenBook(opportunity.token.tokenId);
       const freshAsk = freshBook?.bestAsk ?? null;
       const decision = this.strategy.hedgeAtPostTime({

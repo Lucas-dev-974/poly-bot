@@ -1,0 +1,30 @@
+{
+  "id": "reverse",
+  "strategyId": "reverse",
+  "name": "Reverse bet",
+  "description": "Parie contre la foule : grille de limit BUY maker sur l'underdog (7-10¢, fort multiple) couverte par une grille de limit BUY maker sur le favori (90-95¢, petit profit fréquent). Espérance positive via l'asymétrie, pas un arb verrouillé.",
+  "settings": {
+    "pollIntervalMs": 1000,
+    "marketSlugPrefixes": [
+      "btc-updown-15m"
+    ],
+    "cheapBuyMin": 0.07,
+    "cheapBuyMax": 0.1,
+    "expensiveBuyMin": 0.9,
+    "expensiveBuyMax": 0.95,
+    "enableExpensiveHedge": true,
+    "cheapOrderUsdc": 10,
+    "expensiveOrderUsdc": 50,
+    "expensiveOrderType": "GTC",
+    "maxSharesPerOrder": 90,
+    "maxOpenPositionsPerSide": 6,
+    "maxExposureUsdc": 340,
+    "minutesBeforeCloseMin": 3,
+    "minutesBeforeCloseMax": 12,
+    "minMinutesBeforeCloseToBuy": null,
+    "simulatedCapital": 1000,
+    "simFillProbabilityNonMarketable": 0.3,
+    "simRequireCoveredPair": false,
+    "requireCheapFillBeforeExpensive": true
+  }
+}

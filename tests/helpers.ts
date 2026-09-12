@@ -10,6 +10,7 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     expensiveBuyMin: 0.85,
     expensiveBuyMax: 0.95,
     enableExpensiveHedge: true,
+    requireCheapFillBeforeExpensive: true,
     cheapOrderUsdc: 1,
     strategyId: "arb",
     barbellHedgeRatio: 0.5,

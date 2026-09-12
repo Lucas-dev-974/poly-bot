@@ -2,7 +2,7 @@
 // Garder synchronisÃ© avec le backend lors des changements.
 
 export type TradeSide = "BUY" | "SELL";
-export type NativeStrategyId = "arb" | "barbell" | "edge-lead";
+export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse";
 export type StrategyId = NativeStrategyId | `custom:${string}`;
 
 export interface GammaMarket {
@@ -148,6 +148,7 @@ export interface BotConfig {
   expensiveBuyMin: number;
   expensiveBuyMax: number;
   enableExpensiveHedge: boolean;
+  requireCheapFillBeforeExpensive: boolean;
   cheapOrderUsdc: number;
   /** Trading engine: arb = 1:1 + lock; barbell = cheap/hedge ratio, no lock. */
   strategyId: StrategyId;

@@ -1,4 +1,4 @@
-export const STRATEGY_IDS = ["arb", "barbell", "edge-lead"] as const;
+export const STRATEGY_IDS = ["arb", "barbell", "edge-lead", "reverse"] as const;
 export type NativeStrategyId = (typeof STRATEGY_IDS)[number];
 export type StrategyId = NativeStrategyId | `custom:${string}`;
 

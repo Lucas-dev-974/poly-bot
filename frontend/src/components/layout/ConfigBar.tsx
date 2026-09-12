@@ -26,9 +26,11 @@ export function ConfigBar(props: { onConfigure?: () => void }): JSX.Element {
               ? ` · edge ${c().edgeBandMin}–${c().edgeBandMax}`
               : c().strategyId === "barbell"
                 ? ` · ratio ${c().barbellHedgeRatio ?? 0.5}`
-                : c().strategyId.startsWith("custom:")
-                  ? ""
-                  : ` · lock ${c().pairLockMax}`}
+                : c().strategyId === "reverse"
+                  ? " · grilles maker"
+                  : c().strategyId.startsWith("custom:")
+                    ? ""
+                    : ` · lock ${c().pairLockMax}`}
           </span>
           <Show when={c().strategyId !== "edge-lead"}>
             <span>

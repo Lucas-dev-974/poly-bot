@@ -9,6 +9,7 @@ const ENGINE_SHORT: Partial<Record<string, string>> = {
   arb: "Arb",
   barbell: "Barbell",
   "edge-lead": "Edge",
+  reverse: "Rev",
 };
 
 function engineLabel(id: string | undefined): string {

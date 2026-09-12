@@ -115,14 +115,24 @@ export function appendOpportunity(
   maxOpenPerSide: number,
 ): void {
   const pairId = `${event.slug}:${event.windowEnd}`;
+  // Same-tick queue: reverse (and graph loops) emit a whole grid before any
+  // order is posted. Open/pending counters are still 0, so we also count
+  // opportunities already pushed this call — otherwise maxOpenPerSide is a no-op.
+  const pendingSameSide = opportunities.filter(
+    (o) => o.event.slug === event.slug && o.token.outcome === token.outcome,
+  ).length;
+  const pendingSameKind = opportunities.filter(
+    (o) => o.pairId === pairId && o.kind === kind,
+  ).length;
   if (
     tracker.countOpenPositionsForSide(event.slug, token.outcome) +
-      tracker.countPendingOrdersForSide(event.slug, token.outcome) >=
+      tracker.countPendingOrdersForSide(event.slug, token.outcome) +
+      pendingSameSide >=
     maxOpenPerSide
   ) {
     return;
   }
-  if (tracker.countLegsByKind(pairId, kind) >= maxOpenPerSide) {
+  if (tracker.countLegsByKind(pairId, kind) + pendingSameKind >= maxOpenPerSide) {
     return;
   }
   const tradeKey = tracker.makeKey(event.slug, token.outcome, kind, price);

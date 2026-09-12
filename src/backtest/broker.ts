@@ -38,7 +38,10 @@ export function buyFillAgainstBook(
     return { filled: false, reason: "insufficient-depth" };
   }
 
-  const fillPrice = Math.min(limitPrice, bestAsk);
+  // Maker GTC: fill at the bid (limit). Taking the crashed ask made backtest
+  // look like 4¢ cheap fills; live resting fills at the posted limit.
+  // Taker / marketable: lift the ask, never pay more than the limit.
+  const fillPrice = mode === "resting" ? limitPrice : Math.min(limitPrice, bestAsk);
   return {
     filled: true,
     fillPrice,

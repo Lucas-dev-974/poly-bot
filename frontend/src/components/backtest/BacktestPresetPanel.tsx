@@ -61,7 +61,7 @@ export function BacktestPresetPanel(props: {
     const fe = props.fieldErrors;
     const counts: Record<PresetTab, number> = { cheap: 0, hedge: 0, edge: 0, risk: 0, window: 0, zones: 0 };
     const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax"];
-    const hedgeKeys: Array<keyof ConfigFormState> = ["expensiveBuyMin", "expensiveBuyMax", "expensiveOrderUsdc", "expensiveOrderType", "barbellHedgeRatio", "enableExpensiveHedge"];
+    const hedgeKeys: Array<keyof ConfigFormState> = ["expensiveBuyMin", "expensiveBuyMax", "expensiveOrderUsdc", "expensiveOrderType", "barbellHedgeRatio", "enableExpensiveHedge", "requireCheapFillBeforeExpensive"];
     const edgeKeys: Array<keyof ConfigFormState> = ["edgeBandMin", "edgeBandMax", "edgeConfirmSamples", "edgeMaxDownTick", "edgeCheapBandMin", "edgeCheapBandMax", "edgeSizingMode", "edgeSharesEdge", "edgeSharesCheap", "edgeOrderUsdc", "maxShareEdge", "edgeCheapOrderUsdc", "edgeSellExpensiveEnabled", "edgeSellExpensiveAfterMin", "edgeSellExpensiveLossPct", "edgeSellExpensiveLossWindowMs"];
     const riskKeys: Array<keyof ConfigFormState> = ["maxSharesPerOrder", "maxShareEdge", "maxOpenPositionsPerSide", "maxExposureUsdc", "simulatedCapital", "marketSlugPrefixes", "pollIntervalMs"];
     const windowKeys: Array<keyof ConfigFormState> = ["minutesBeforeCloseMin", "minutesBeforeCloseMax", "minMinutesBeforeCloseToBuy"];
@@ -177,7 +177,9 @@ export function BacktestPresetPanel(props: {
                 <Num label="Cheap min" value={form().cheapBuyMin} step={0.01} err={props.fieldErrors.cheapBuyMin} onInput={(v) => props.onUpdate("cheapBuyMin", v)} />
                 <Num label="Cheap max" value={form().cheapBuyMax} step={0.01} err={props.fieldErrors.cheapBuyMax} onInput={(v) => props.onUpdate("cheapBuyMax", v)} />
                 <Num label="Cheap USDC" value={form().cheapOrderUsdc} step={0.1} err={props.fieldErrors.cheapOrderUsdc} onInput={(v) => props.onUpdate("cheapOrderUsdc", v)} />
-                <Num label="Pair lock" value={form().pairLockMax} step={0.01} err={props.fieldErrors.pairLockMax} onInput={(v) => props.onUpdate("pairLockMax", v)} />
+                <Show when={sid() !== "reverse"}>
+                  <Num label="Pair lock" value={form().pairLockMax} step={0.01} err={props.fieldErrors.pairLockMax} onInput={(v) => props.onUpdate("pairLockMax", v)} />
+                </Show>
               </div>
             </Show>
             <Show when={active() === "hedge"}>
@@ -195,7 +197,9 @@ export function BacktestPresetPanel(props: {
                     <option value="GTC">GTC</option>
                   </select>
                 </label>
-                <Num label="Ratio hedge" value={form().barbellHedgeRatio} step={0.05} err={props.fieldErrors.barbellHedgeRatio} onInput={(v) => props.onUpdate("barbellHedgeRatio", v)} />
+                <Show when={sid() !== "reverse"}>
+                  <Num label="Ratio hedge" value={form().barbellHedgeRatio} step={0.05} err={props.fieldErrors.barbellHedgeRatio} onInput={(v) => props.onUpdate("barbellHedgeRatio", v)} />
+                </Show>
                 <label class="bt-pf bt-pf-check">
                   <input
                     type="checkbox"
@@ -204,6 +208,16 @@ export function BacktestPresetPanel(props: {
                   />
                   Hedge on
                 </label>
+                <Show when={sid() === "reverse"}>
+                  <label class="bt-pf bt-pf-check">
+                    <input
+                      type="checkbox"
+                      checked={form().requireCheapFillBeforeExpensive}
+                      onChange={(e) => props.onUpdate("requireCheapFillBeforeExpensive", e.currentTarget.checked)}
+                    />
+                    Expensive après cheap fill
+                  </label>
+                </Show>
               </div>
             </Show>
             <Show when={active() === "edge"}>

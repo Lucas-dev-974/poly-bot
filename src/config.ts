@@ -60,6 +60,8 @@ export interface BotConfig {
   expensiveBuyMin: number;
   expensiveBuyMax: number;
   enableExpensiveHedge: boolean;
+  /** Reverse: n'émettre l'expensive qu'après un cheap fillé sur la paire. */
+  requireCheapFillBeforeExpensive: boolean;
   cheapOrderUsdc: number;
   /** Trading engine: arb = 1:1 + lock; barbell = cheap/hedge ratio, no lock. */
   strategyId: StrategyId;
@@ -178,6 +180,7 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     expensiveBuyMin: 0.85,
     expensiveBuyMax: 0.95,
     enableExpensiveHedge: true,
+    requireCheapFillBeforeExpensive: true,
     cheapOrderUsdc: 1,
     strategyId: "arb",
     barbellHedgeRatio: 0.5,
@@ -357,11 +360,13 @@ export function validateConfigCoherence(
   if (config.cheapBuyMax >= config.expensiveBuyMin) {
     throw new Error("CHEAP_BUY_MAX must be < EXPENSIVE_BUY_MIN");
   }
-  if (config.pairLockMax < 0.90 || config.pairLockMax >= 1.00) {
-    throw new Error("PAIR_LOCK_MAX must be between 0.90 and 0.99 (profit lock < 1.00)");
-  }
-  if (!(config.barbellHedgeRatio > 0 && config.barbellHedgeRatio <= 1)) {
-    throw new Error("BARBELL_HEDGE_RATIO must be in (0, 1]");
+  if (config.strategyId !== "reverse") {
+    if (config.pairLockMax < 0.90 || config.pairLockMax >= 1.00) {
+      throw new Error("PAIR_LOCK_MAX must be between 0.90 and 0.99 (profit lock < 1.00)");
+    }
+    if (!(config.barbellHedgeRatio > 0 && config.barbellHedgeRatio <= 1)) {
+      throw new Error("BARBELL_HEDGE_RATIO must be in (0, 1]");
+    }
   }
   if (config.minutesBeforeCloseMin > config.minutesBeforeCloseMax) {
     throw new Error("MINUTES_BEFORE_CLOSE_MIN must be <= MINUTES_BEFORE_CLOSE_MAX");

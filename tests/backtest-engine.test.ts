@@ -423,4 +423,75 @@ describe("backtest engine", () => {
     const totalSize = Math.round(cheapFills.reduce((sum, t) => sum + t.size, 0) * 100) / 100;
     assert.equal(totalSize, 5);
   });
+
+  it("reverse posts the hedge grid without a filled cheap leg", async () => {
+    // Down ask stays above the cheap band → cheap GTC rest, never fill.
+    // Up ask 0.95 sits on the hedge grid → expensive must still POST.
+    const rows = ticks(5, () => 0.5);
+    const persisted: Array<{ filled: number; kind: string; reason: string | null }> = [];
+    const repos = {
+      bookSnapshots: {
+        bySlugAndRange: () => rows,
+      },
+      backtestTrades: {
+        insert: (row: { filled: number; kind: string; reason: string | null }) => {
+          persisted.push(row);
+        },
+      },
+      backtestPositions: { upsert: () => undefined },
+      marketResolutions: { get: () => undefined, upsert: () => undefined },
+    } as unknown as Repositories;
+
+    const result = await runBacktest({
+      runId: "test-reverse-independent-hedge",
+      config: testConfig({
+        strategyId: "reverse",
+        cheapBuyMin: 0.07,
+        cheapBuyMax: 0.1,
+        expensiveBuyMin: 0.9,
+        expensiveBuyMax: 0.95,
+        enableExpensiveHedge: true,
+        cheapOrderUsdc: 10,
+        expensiveOrderUsdc: 50,
+        expensiveOrderType: "GTC",
+        maxSharesPerOrder: 90,
+        maxOpenPositionsPerSide: 6,
+        maxExposureUsdc: 340,
+        simulatedCapital: 1000,
+        simRequireCoveredPair: false,
+      }),
+      windows: [
+        {
+          eventSlug: SLUG,
+          eventTitle: "BTC",
+          windowStart: START,
+          windowEnd: END,
+          complete: true,
+          tickCount: 5,
+          expectedTicks: 900,
+          maxGapMs: 1000,
+          coveragePct: 5 / 900,
+          gapCount: 0,
+          upTokenId: "t-up",
+          downTokenId: "t-down",
+          conditionId: "0xcond",
+        },
+      ],
+      repos,
+      hooks: {
+        shouldCancel: () => false,
+        onProgress: () => undefined,
+      },
+      resolveWinner: async () => ({ winnerOutcomeIndex: 0 }),
+    });
+
+    const cheapFills = persisted.filter((t) => t.kind === "cheap" && t.filled === 1);
+    const expensivePosted = persisted.filter((t) => t.kind === "expensive");
+    assert.equal(cheapFills.length, 0, "cheap must stay unfilled so C2 would have blocked hedge");
+    assert.ok(
+      expensivePosted.length > 0,
+      `expected reverse hedge posts without cheap fill, got ${expensivePosted.length}`,
+    );
+    assert.ok(result.rejectCount < 50, `reject storm? ${result.rejectCount}`);
+  });
 });

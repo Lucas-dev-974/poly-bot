@@ -14,14 +14,21 @@ describe("strategy presets", () => {
   it("loads Couverture max, Conservateur and Edge-lead from config/presets", () => {
     const presets = listStrategyPresets();
     const ids = presets.map((preset) => preset.id).sort();
-    assert.deepEqual(ids, ["conservative", "coverage-max", "edge-lead"]);
+    assert.deepEqual(ids, [
+      "conservative",
+      "coverage-max",
+      "edge-lead",
+      "reverse",
+    ]);
 
     const coverage = presets.find((preset) => preset.id === "coverage-max");
     const conservative = presets.find((preset) => preset.id === "conservative");
     const edgeLead = presets.find((preset) => preset.id === "edge-lead");
+    const reverse = presets.find((preset) => preset.id === "reverse");
     assert.ok(coverage);
     assert.ok(conservative);
     assert.ok(edgeLead);
+    assert.ok(reverse);
     assert.equal(coverage.settings.expensiveOrderType, "FOK");
     assert.equal(coverage.settings.expensiveOrderUsdc, 15);
     assert.equal(conservative.settings.expensiveOrderType, "GTC");
@@ -34,6 +41,18 @@ describe("strategy presets", () => {
     assert.equal(edgeLead.settings.strategyId, "edge-lead");
     assert.equal(edgeLead.settings.pollIntervalMs, 1000);
     assert.equal(edgeLead.settings.maxShareEdge, 40);
+    assert.equal(reverse.strategyId, "reverse");
+    assert.equal(reverse.settings.strategyId, "reverse");
+    assert.equal(reverse.settings.cheapBuyMin, 0.07);
+    assert.equal(reverse.settings.cheapBuyMax, 0.1);
+    assert.equal(reverse.settings.expensiveBuyMin, 0.9);
+    assert.equal(reverse.settings.expensiveBuyMax, 0.95);
+    assert.equal(reverse.settings.cheapOrderUsdc, 10);
+    assert.equal(reverse.settings.expensiveOrderUsdc, 50);
+    assert.equal(reverse.settings.maxSharesPerOrder, 90);
+    assert.equal(reverse.settings.maxOpenPositionsPerSide, 6);
+    assert.equal(reverse.settings.maxExposureUsdc, 340);
+    assert.equal(reverse.settings.simulatedCapital, 1000);
   });
 
   it("filters bundled presets by engine", () => {
@@ -45,6 +64,10 @@ describe("strategy presets", () => {
     assert.deepEqual(
       presetsForStrategy("edge-lead").map((preset) => preset.id),
       ["edge-lead"],
+    );
+    assert.deepEqual(
+      presetsForStrategy("reverse").map((preset) => preset.id),
+      ["reverse"],
     );
   });
 

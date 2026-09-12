@@ -2,6 +2,7 @@ import type { BotConfig, NativeStrategyId, StrategyId } from "../types";
 import coverageMax from "../../../config/presets/coverage-max.json";
 import conservative from "../../../config/presets/conservative.json";
 import edgeLead from "../../../config/presets/edge-lead.json";
+import reverse from "../../../config/presets/reverse.json";
 
 export type { NativeStrategyId, StrategyId };
 
@@ -19,12 +20,14 @@ export const STRATEGY_ENGINE_OPTIONS: Array<{ id: NativeStrategyId; label: strin
   { id: "arb", label: "B1 arbitrage 1:1 + lock" },
   { id: "barbell", label: "Ratio cheap/hedge (sans lock)" },
   { id: "edge-lead", label: "Edge-lead (edge d'abord, puis cheap)" },
+  { id: "reverse", label: "Reverse bet (underdog 7-10¢ + hedge favori)" },
 ];
 
 export const STRATEGY_PRESETS: StrategyPreset[] = [
   coverageMax as StrategyPreset,
   conservative as StrategyPreset,
   edgeLead as StrategyPreset,
+  reverse as StrategyPreset,
 ];
 
 export function presetsForStrategy(id: string): StrategyPreset[] {

@@ -30,11 +30,17 @@ describe("backtest next-tick fill", () => {
     assert.equal(fill.reason, "no-fill");
   });
 
-  it("fills on a later tick when ask crosses the limit", () => {
+  it("fills a resting GTC at the limit when ask later crosses", () => {
     const fill = buyFillAgainstBook(0.4, 10, book(0.39), "resting");
     assert.equal(fill.filled, true);
-    assert.equal(fill.fillPrice, 0.39);
+    assert.equal(fill.fillPrice, 0.4);
     assert.equal(fill.reason, "resting");
+  });
+
+  it("fills a marketable buy at the ask (price improvement)", () => {
+    const fill = buyFillAgainstBook(0.4, 10, book(0.39), "marketable");
+    assert.equal(fill.filled, true);
+    assert.equal(fill.fillPrice, 0.39);
   });
 
   it("FOK / marketable rejects when not crossing", () => {
@@ -63,6 +69,7 @@ describe("backtest next-tick fill", () => {
     const fill = buyFillAgainstBook(0.4, 10, book(0.39, 3), "marketable", false);
     assert.equal(fill.filled, true);
     assert.equal(fill.size, 3);
+    assert.equal(fill.fillPrice, 0.39);
   });
 
   it("is independent of Date.now", () => {

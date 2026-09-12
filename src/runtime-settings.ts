@@ -15,6 +15,7 @@ export const EDITABLE_CONFIG_KEYS = [
   "expensiveBuyMin",
   "expensiveBuyMax",
   "enableExpensiveHedge",
+  "requireCheapFillBeforeExpensive",
   "cheapOrderUsdc",
   "strategyId",
   "barbellHedgeRatio",
@@ -66,6 +67,7 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   expensiveBuyMin: "EXPENSIVE_BUY_MIN",
   expensiveBuyMax: "EXPENSIVE_BUY_MAX",
   enableExpensiveHedge: "ENABLE_EXPENSIVE_HEDGE",
+  requireCheapFillBeforeExpensive: "REQUIRE_CHEAP_FILL_BEFORE_EXPENSIVE",
   cheapOrderUsdc: "CHEAP_ORDER_USDC",
   strategyId: "STRATEGY_ID",
   barbellHedgeRatio: "BARBELL_HEDGE_RATIO",
@@ -231,6 +233,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "minMinutesBeforeCloseToBuy":
       return parseNullableNumber(value, key);
     case "enableExpensiveHedge":
+    case "requireCheapFillBeforeExpensive":
     case "simRequireCoveredPair":
     case "edgeSellExpensiveEnabled":
       return parseBoolean(value, key);
@@ -313,6 +316,20 @@ const ARB_BARBELL_KEYS: readonly EditableConfigKey[] = [
   "simRequireCoveredPair",
 ];
 
+/** Reverse : mêmes bandes / budgets, sans lock ni ratio barbell. */
+const REVERSE_KEYS: readonly EditableConfigKey[] = [
+  "cheapBuyMin",
+  "cheapBuyMax",
+  "expensiveBuyMin",
+  "expensiveBuyMax",
+  "enableExpensiveHedge",
+  "requireCheapFillBeforeExpensive",
+  "cheapOrderUsdc",
+  "expensiveOrderUsdc",
+  "expensiveOrderType",
+  "simRequireCoveredPair",
+];
+
 /**
  * Clés propres à edge-lead (bandes edge/cheap, confirmation, sizing edge).
  */
@@ -351,7 +368,9 @@ export function keysForStrategy(
   const strategyKeys =
     leadsWithEdge === true || strategyId === "edge-lead"
       ? EDGE_LEAD_KEYS
-      : ARB_BARBELL_KEYS;
+      : strategyId === "reverse"
+        ? REVERSE_KEYS
+        : ARB_BARBELL_KEYS;
   return [...SHARED_KEYS, ...strategyKeys, ...SIM_DRYRUN_KEYS];
 }
 

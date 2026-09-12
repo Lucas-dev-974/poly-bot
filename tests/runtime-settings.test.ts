@@ -175,4 +175,11 @@ describe("keysForStrategy", () => {
     assert.ok(!keysForStrategy("custom:foo").includes("edgeBandMin"));
     assert.ok(keysForStrategy("custom:foo", true).includes("edgeBandMin"));
   });
+
+  it("omits pair lock and barbell ratio for reverse", () => {
+    assert.ok(keysForStrategy("reverse").includes("expensiveBuyMin"));
+    assert.ok(!keysForStrategy("reverse").includes("pairLockMax"));
+    assert.ok(!keysForStrategy("reverse").includes("barbellHedgeRatio"));
+    assert.ok(keysForStrategy("arb").includes("pairLockMax"));
+  });
 });

@@ -599,10 +599,14 @@ function executeOpp(
     }
   }
 
+  const bypassCheapFillGate =
+    ctx.strategy.leadsWithEdge ||
+    (ctx.strategy.independentHedgeGrid === true &&
+      ctx.config.requireCheapFillBeforeExpensive === false);
   if (
     opportunity.kind === "expensive" &&
     ctx.tracker.getFilledCheapSizeForPair(opportunity.pairId) === 0 &&
-    !ctx.strategy.leadsWithEdge
+    !bypassCheapFillGate
   ) {
     ctx.trades.push(tradeFromOpp(opportunity, ctx.nowMs, false, "no-committed-cheap", null));
     return;
@@ -614,7 +618,11 @@ function executeOpp(
     !ctx.strategy.leadsWithEdge;
 
   let limit = opportunity.price;
-  if (opportunity.kind === "expensive" && !ctx.strategy.leadsWithEdge) {
+  if (
+    opportunity.kind === "expensive" &&
+    !ctx.strategy.leadsWithEdge &&
+    !ctx.strategy.independentHedgeGrid
+  ) {
     const freshAsk =
       ctx.books.find((b) => b.tokenId === opportunity.token.tokenId)?.bestAsk ??
       opportunity.token.bestAsk;

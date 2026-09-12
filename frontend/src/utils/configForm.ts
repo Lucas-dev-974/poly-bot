@@ -8,6 +8,7 @@ export type ConfigFormState = {
   expensiveBuyMin: string;
   expensiveBuyMax: string;
   enableExpensiveHedge: boolean;
+  requireCheapFillBeforeExpensive: boolean;
   cheapOrderUsdc: string;
   strategyId: StrategyId;
   barbellHedgeRatio: string;
@@ -56,6 +57,7 @@ export function configToForm(config: BotConfig): ConfigFormState {
     expensiveBuyMin: String(config.expensiveBuyMin),
     expensiveBuyMax: String(config.expensiveBuyMax),
     enableExpensiveHedge: config.enableExpensiveHedge,
+    requireCheapFillBeforeExpensive: config.requireCheapFillBeforeExpensive !== false,
     cheapOrderUsdc: String(config.cheapOrderUsdc),
     strategyId: config.strategyId ?? "arb",
     barbellHedgeRatio: String(config.barbellHedgeRatio ?? 0.5),
@@ -119,6 +121,7 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     expensiveBuyMin: parseNum(form.expensiveBuyMin, "Hedge min"),
     expensiveBuyMax: parseNum(form.expensiveBuyMax, "Hedge max"),
     enableExpensiveHedge: form.enableExpensiveHedge,
+    requireCheapFillBeforeExpensive: form.requireCheapFillBeforeExpensive,
     cheapOrderUsdc: parseNum(form.cheapOrderUsdc, "Cheap order USDC"),
     strategyId: form.strategyId,
     barbellHedgeRatio: parseNum(form.barbellHedgeRatio, "Ratio hedge"),
@@ -240,15 +243,18 @@ export function validateConfigForm(
     }
     // Les validations arb/barbell (bandes cheap/hedge, lock, ratio) ne
     // s'appliquent pas à edge-lead : ces champs ne sont pas utilisés.
+    // Reverse réutilise les bandes cheap/hedge mais ignore lock et ratio.
     if (!edge) {
       if (cheapBuyMax >= expensiveBuyMin) {
         errors.push("Cheap max doit être < hedge min");
       }
-      if (pairLockMax < 0.90 || pairLockMax >= 1.00) {
-        errors.push("Pair lock max doit être entre 0.90 et 0.99");
-      }
-      if (!(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
-        errors.push("Ratio hedge doit être dans (0, 1]");
+      if (form.strategyId !== "reverse") {
+        if (pairLockMax < 0.90 || pairLockMax >= 1.00) {
+          errors.push("Pair lock max doit être entre 0.90 et 0.99");
+        }
+        if (!(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
+          errors.push("Ratio hedge doit être dans (0, 1]");
+        }
       }
     }
     if (minutesBeforeCloseMin > minutesBeforeCloseMax) {
@@ -407,11 +413,13 @@ export function fieldErrors(
       if (Number.isFinite(cheapBuyMax) && Number.isFinite(expensiveBuyMin) && cheapBuyMax >= expensiveBuyMin) {
         result.expensiveBuyMin = "Hedge min doit être > cheap max";
       }
-      if (Number.isFinite(pairLockMax) && (pairLockMax < 0.9 || pairLockMax >= 1.0)) {
-        result.pairLockMax = "Entre 0.90 et 0.99";
-      }
-      if (Number.isFinite(barbellHedgeRatio) && !(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
-        result.barbellHedgeRatio = "Doit être dans (0, 1]";
+      if (form.strategyId !== "reverse") {
+        if (Number.isFinite(pairLockMax) && (pairLockMax < 0.9 || pairLockMax >= 1.0)) {
+          result.pairLockMax = "Entre 0.90 et 0.99";
+        }
+        if (Number.isFinite(barbellHedgeRatio) && !(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
+          result.barbellHedgeRatio = "Doit être dans (0, 1]";
+        }
       }
     }
     if (Number.isFinite(minutesBeforeCloseMin) && Number.isFinite(minutesBeforeCloseMax) && minutesBeforeCloseMin > minutesBeforeCloseMax) {

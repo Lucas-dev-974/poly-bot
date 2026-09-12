@@ -30,6 +30,8 @@ import {
   HEDGE_TREE,
   NEW_FILES,
   CHART_ZONE_SEMANTICS,
+  REVERSE_LIFE_EDGES,
+  REVERSE_LIFE_NODES,
   RESOLUTION_ROWS,
   STRATEGY_COMPARE_ROWS,
   TODOS,
@@ -53,13 +55,22 @@ function EngineSelector(props: {
       <GuidePill active={props.engine() === "edge-lead"} onClick={() => props.setEngine("edge-lead")}>
         Edge-lead — favori d'abord
       </GuidePill>
+      <GuidePill active={props.engine() === "reverse"} onClick={() => props.setEngine("reverse")}>
+        Reverse — contre la foule
+      </GuidePill>
     </GuideRow>
   );
 }
 
 function LifecycleCard(props: { engine: EngineId }): JSX.Element {
   const title = () =>
-    props.engine === "arb" ? "Arb" : props.engine === "barbell" ? "Barbell" : "Edge-lead";
+    props.engine === "arb"
+      ? "Arb"
+      : props.engine === "barbell"
+        ? "Barbell"
+        : props.engine === "edge-lead"
+          ? "Edge-lead"
+          : "Reverse";
 
   return (
     <GuideCard title={`Cycle de vie — ${title()}`}>
@@ -104,6 +115,23 @@ function LifecycleCard(props: { engine: EngineId }): JSX.Element {
             qu'après fill de l'edge, si l'ask cheap est dans sa bande, avec un budget USDC
             indépendant. Un GTC cheap hors bande cheap est annulé et re-posté si l'ask rentre.
             Si l'edge sort de la bande avant fill, son GTC est annulé.
+          </p>
+        </Show>
+        <Show when={props.engine === "reverse"}>
+          <LifecycleDiagram
+            nodes={REVERSE_LIFE_NODES}
+            edges={REVERSE_LIFE_EDGES}
+            markerId="life-arrow-reverse"
+            ariaLabel="Cycle de vie d'une paire reverse bot"
+          />
+          <p class="guide-muted guide-small">
+            Deux grilles de limites maker GTC au carnet dès qu'un underdog et un favori sont
+            visibles, et seulement si l'ask underdog est encore <code>≥ cheapBuyMin</code>
+            (sinon un bid 7-10¢ prendrait tout de suite un token déjà mort). Remplie, la jambe
+            sous l'underdog paie ~10× ; celle sous le favori encaisse ~+5%. Chaque niveau est
+            dédupliqué par <code>slug:outcome:kind-prix</code>. Cap <code>maxOpenPositionsPerSide</code>
+            y compris les niveaux émis dans le même tick. Pas de cancel de bande, pas de
+            défense : les grilles tiennent jusqu'à la clôture.
           </p>
         </Show>
       </GuideStack>
@@ -325,6 +353,78 @@ function EdgeLeadStory(): JSX.Element {
   );
 }
 
+function ReverseStory(): JSX.Element {
+  return (
+    <GuideStack>
+      <GuideCallout tone={ENGINE_META["reverse"].tone} title={ENGINE_META["reverse"].label}>
+        <p>{ENGINE_META["reverse"].subtitle}</p>
+        <p class="guide-muted guide-small" style={{ "margin-top": "8px" }}>
+          <strong>Ordre :</strong> {ENGINE_META["reverse"].order} ·{" "}
+          <strong>Risque :</strong> {ENGINE_META["reverse"].risk}
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">Parie contre la foule, couvert</h3>
+      <p>
+        En début de fenêtre la foule sur-cote la tendance initiale : l'underdog soldé (2-10¢)
+        est traité comme quasi-mort. Le reverse pari que <strong>l'underdog se retourne</strong>{" "}
+        avant la clôture — l'inverse du comportement grégaire — et dépose deux grilles de
+        limites maker qui restent au carnet.
+      </p>
+
+      <GuideGrid columns={2}>
+        <GuideCard title="Jambe cheap — sous l'underdog">
+          <p>
+            Grille de limit BUY maker sur l'outcome dont le <strong>best ask est le plus bas</strong>,
+            aux niveaux <code>[cheapBuyMin, cheapBuyMax]</code> (défaut 7-10¢), uniquement si
+            l'ask underdog est encore dans ou au-dessus de la bande. Remplissage rare,
+            mais <strong>~10×</strong> (0,10$ → 1,00$) si l'underdog gagne.
+          </p>
+        </GuideCard>
+        <GuideCard title="Jambe hedge — sous le favori">
+          <p>
+            Grille de limit BUY maker sur l'autre outcome, aux niveaux{" "}
+            <code>[expensiveBuyMin, expensiveBuyMax]</code> (défaut 90-95¢). Remplissage fréquent,
+            petit profit <strong>+5%</strong> — l'amortisseur de variance.
+          </p>
+        </GuideCard>
+      </GuideGrid>
+
+      <LifecycleCard engine="reverse" />
+
+      <GuideGrid columns={3}>
+        <GuideStat value="~10×" label="Multiple si l'underdog se retourne" />
+        <GuideStat value="+5%" label="Marge hedge si le favori tient" />
+        <GuideStat value="Grille" label="Plusieurs niveaux GTC par jambe" />
+      </GuideGrid>
+
+      <h3 class="guide-h3">À la fin des 15 minutes</h3>
+      <GuideTable
+        headers={["Scénario", "Résultat"]}
+        rows={RESOLUTION_ROWS["reverse"]}
+        rowTone={RESOLUTION_ROWS["reverse"].map((_, i) => (i === 0 ? "success" : "neutral"))}
+      />
+
+      <GuideDetails title="Les 5 étapes — Reverse" defaultOpen>
+        <GuideStack gap={8}>
+          <For each={BOT_STEPS["reverse"]}>
+            {(step, i) => <p>{i() + 1}. {step}</p>}
+          </For>
+        </GuideStack>
+      </GuideDetails>
+
+      <GuideCallout tone="warning" title="Ce n'est pas un arbitrage lock">
+        <p>
+          Une jambe part toujours à 0 $. Sur des centaines de fenêtres, quelques gros revers
+          (fort multiple) suffisent à absorber la perte des nombreux petits paris cheap perdants,
+          tandis que la grille hedge amortit la variance. Espérance positive <em>via l'asymétrie</em>,
+          pas un verrou de profit sous 1,00 $.
+        </p>
+      </GuideCallout>
+    </GuideStack>
+  );
+}
+
 export function StoryTab(): JSX.Element {
   const [engine, setEngine] = createSignal<EngineId>("arb");
   const [phase, setPhase] = createSignal<PhaseId>("mid");
@@ -333,7 +433,7 @@ export function StoryTab(): JSX.Element {
     <GuideStack>
       <p>
         Toutes les 15 minutes, Polymarket pose une question : le Bitcoin va-t-il monter ou
-        descendre ? Deux billets, un seul paie 1 $ à la fin. Trois moteurs jouent ce marché
+        descendre ?         Deux billets, un seul paie 1 $ à la fin. Quatre moteurs jouent ce marché
         différemment — choisis-en un pour voir sa logique.
       </p>
 
@@ -364,10 +464,13 @@ export function StoryTab(): JSX.Element {
       <Show when={engine() === "edge-lead"}>
         <EdgeLeadStory />
       </Show>
+      <Show when={engine() === "reverse"}>
+        <ReverseStory />
+      </Show>
 
-      <GuideDetails title="Comparer les trois moteurs">
+      <GuideDetails title="Comparer les quatre moteurs">
         <GuideTable
-          headers={["Règle", "Arb", "Barbell", "Edge-lead"]}
+          headers={["Règle", "Arb", "Barbell", "Edge-lead", "Reverse"]}
           rows={STRATEGY_COMPARE_ROWS}
           rowTone={STRATEGY_COMPARE_ROWS.map((_, i) =>
             i === 0 || i === 2 ? "info" : "neutral",
@@ -393,13 +496,14 @@ export function ArchTab(): JSX.Element {
           <FlowDag />
           <p class="guide-muted guide-small">
             Production : <code>this.strategy</code> via <code>createStrategy(config.strategyId)</code>
-            . Trois moteurs : <code>arb</code>, <code>barbell</code>, <code>edge-lead</code>. Le
+            . Quatre moteurs : <code>arb</code>, <code>barbell</code>, <code>edge-lead</code>,{" "}
+            <code>reverse</code>. Le
             barrel <code>findOpportunities()</code> reste <strong>arb-only</strong> pour les tests
             existants.
           </p>
         </GuideStack>
       </GuideCard>
-      <GuideGrid columns={3}>
+      <GuideGrid columns={4}>
         <GuideCard title="Arb / Barbell" trailing={<span class="guide-tag">cheap-first</span>}>
           <GuideStack gap={6}>
             <p>Picks cheap / favori via orchestrate</p>
@@ -414,6 +518,13 @@ export function ArchTab(): JSX.Element {
             <p>Pas de hedgeAtPostTime ni défense</p>
           </GuideStack>
         </GuideCard>
+        <GuideCard title="Reverse" trailing={<span class="guide-tag">contre-foule</span>}>
+          <GuideStack gap={6}>
+            <p>Grilles maker underdog + favori (simultanées)</p>
+            <p>Sizing budget USDC par niveau</p>
+            <p>Pas de C2 / lock / défense — espérance</p>
+          </GuideStack>
+        </GuideCard>
         <GuideCard title="Exécution" trailing={<span class="guide-tag">bot</span>}>
           <GuideStack gap={6}>
             <p>Scan, tick, pause, READONLY_LIVE</p>
@@ -425,7 +536,8 @@ export function ArchTab(): JSX.Element {
       <GuideCallout tone="warning" title="Cycle d'imports">
         <p>
           <code>arb-strategy.ts</code> / <code>barbell-strategy.ts</code> /{" "}
-          <code>edge-lead-strategy.ts</code> / <code>orchestrate.ts</code> n'importent pas{" "}
+          <code>edge-lead-strategy.ts</code> / <code>reverse-strategy.ts</code> /{" "}
+          <code>orchestrate.ts</code> n'importent pas{" "}
           <code>src/strategy.ts</code>. Pas de <code>src/strategy/index.ts</code> (le dossier
           existe déjà).
         </p>
@@ -447,7 +559,8 @@ export function HedgeTab(): JSX.Element {
         <p>
           Cet onglet décrit <code>hedgeAtPostTime</code> — le hedge immédiat après fill cheap.
           <strong> Edge-lead</strong> n'utilise pas ce flux : le cheap est posté après fill edge,
-          sans revalidation hedge live.
+          sans revalidation hedge live. <strong>Reverse</strong> non plus : ses deux grilles sont
+          déposées par <code>findOpportunities</code>, sans revalidation hedge au POST.
         </p>
       </GuideCallout>
       <p>
@@ -503,7 +616,7 @@ export function UiTab(): JSX.Element {
         headers={["Étape", "Effet"]}
         rows={[
           [
-            "Select Moteur (arb / barbell / edge-lead / custom:…)",
+            "Select Moteur (arb / barbell / edge-lead / reverse / custom:…)",
             "Filtre les profils ; un custom n'a pas de presets — règles chart dans /strategy-editor",
           ],
           ["Ratio hedge", "Onglet hedge ; hint « ignoré par B1 » si arb ; N/A edge-lead"],
@@ -528,7 +641,7 @@ export function UiTab(): JSX.Element {
         rowTone={["info", "neutral", "neutral", "info", "success", "neutral", "info"]}
       />
       <h3 class="guide-h3">Presets = packs d'un moteur</h3>
-      <GuideGrid columns={3}>
+      <GuideGrid columns={2}>
         <GuideCard title="coverage-max / conservative">
           <p>
             <code>"strategyId": "arb"</code>. Profils lock conservateur ou agressif.
@@ -537,6 +650,12 @@ export function UiTab(): JSX.Element {
         <GuideCard title="edge-lead.json">
           <p>
             <code>"strategyId": "edge-lead"</code>. Bandes edge/cheap et budgets USDC pré-configurés.
+          </p>
+        </GuideCard>
+        <GuideCard title="reverse.json">
+          <p>
+            <code>"strategyId": "reverse"</code>. Grilles maker underdog (7-10¢) et hedge favori
+            (90-95¢), 6 niveaux max, expo 340 USDC, capital sim 1000 USDC.
           </p>
         </GuideCard>
         <GuideCard title="Éditeur /strategy-editor">
@@ -555,7 +674,8 @@ export function UiTab(): JSX.Element {
         <p>
           Pas de migration des paires ouvertes. Le tick suivant applique la nouvelle politique. Un
           switch barbell → arb peut cancel-lock un cheap déjà hors lock ; vers edge-lead change
-          complètement l'ordre d'achat.
+          complètement l'ordre d'achat ; vers reverse (dé)pose des grilles maker et cesse les
+          verrous/défenses.
         </p>
       </GuideCallout>
     </GuideStack>
@@ -567,8 +687,7 @@ export function ShipTab(): JSX.Element {
     <GuideStack>
       <GuideTodoList items={TODOS} />
       <h3 class="guide-h3">Fichiers nouveaux</h3>
-            <GuideTable
-        caption="Zones chart — once vs dependsOn"
+      <GuideTable
         headers={["Concept", "Comportement"]}
         rows={CHART_ZONE_SEMANTICS}
         rowTone={CHART_ZONE_SEMANTICS.map(() => "neutral")}

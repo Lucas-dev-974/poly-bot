@@ -506,6 +506,7 @@ export class DashboardServer {
       { id: "arb", name: "Arb", leadsWithEdge: false, native: true },
       { id: "barbell", name: "Barbell", leadsWithEdge: false, native: true },
       { id: "edge-lead", name: "Edge-lead", leadsWithEdge: true, native: true },
+      { id: "reverse", name: "Reverse", leadsWithEdge: false, native: true },
     ];
     const custom = (this.repos?.strategyGraphs.list() ?? []).map((row) => ({
       ...row,

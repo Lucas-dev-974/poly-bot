@@ -91,6 +91,13 @@ export interface TradingStrategy {
    * bande cheap (re-post au tick suivant si l'ask cheap rentre).
    */
   readonly leadsWithEdge: boolean;
+  /**
+   * Reverse : la grille hedge est pricée dans findOpportunities (pas via
+   * `hedgeAtPostTime`) et n'est pas retaillée sur le cheap détenu. Le C2
+   * (cheap fillé avant expensive) reste obligatoire — seuls edge-lead
+   * contourne ce garde-fou. Arb / barbell laissent ce flag unset.
+   */
+  readonly independentHedgeGrid?: boolean;
   findOpportunities(ctx: StrategyContext): TradeOpportunity[];
   cheapOrderAction(ctx: RestingCheapContext): CheapOrderAction;
   /** Resting GTC edge (favori). Edge-lead / chart : cancel si hors bande. */

@@ -72,7 +72,7 @@ const SETTING_GROUPS: Array<{
   {
     id: "cheap",
     label: "Cheap",
-    engines: ["arb", "barbell"],
+    engines: ["arb", "barbell", "reverse"],
     keys: [
       ["cheapBuyMin", "Cheap min"],
       ["cheapBuyMax", "Cheap max"],
@@ -83,7 +83,7 @@ const SETTING_GROUPS: Array<{
   {
     id: "hedge",
     label: "Hedge",
-    engines: ["arb", "barbell"],
+    engines: ["arb", "barbell", "reverse"],
     keys: [
       ["expensiveBuyMin", "Hedge min"],
       ["expensiveBuyMax", "Hedge max"],
@@ -91,6 +91,7 @@ const SETTING_GROUPS: Array<{
       ["expensiveOrderType", "Type hedge"],
       ["barbellHedgeRatio", "Ratio hedge"],
       ["enableExpensiveHedge", "Hedge on"],
+      ["requireCheapFillBeforeExpensive", "Expensive après cheap fill"],
     ],
   },
   {
@@ -149,6 +150,7 @@ export function groupedSettings(
     if (group.engines && sid && !group.engines.includes(sid)) continue;
     const rows: SettingRow[] = [];
     for (const [key, label] of group.keys) {
+      if (sid === "reverse" && (key === "pairLockMax" || key === "barbellHedgeRatio")) continue;
       if (!(key in settings)) continue;
       const raw = settings[key];
       if (raw === undefined) continue;

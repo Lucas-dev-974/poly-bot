@@ -566,6 +566,9 @@ body:has(.bt-page) {
   pointer-events: none;
   z-index: 4;
   min-width: 148px;
+  max-width: min(240px, calc(100% - 16px));
+  max-height: calc(100% - 16px);
+  overflow: auto;
   padding: 7px 9px;
   background: rgba(12, 14, 20, 0.94);
   border: 1px solid var(--border);
@@ -573,6 +576,25 @@ body:has(.bt-page) {
   font-size: 11px;
   line-height: 1.35;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.bt-tip.is-pinned {
+  z-index: 20;
+  border-color: rgba(79, 140, 255, 0.85);
+  box-shadow:
+    0 0 0 1px rgba(79, 140, 255, 0.35),
+    0 8px 24px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+.bt-tip-pin {
+  margin: 0 0 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(79, 140, 255, 0.35);
+  color: #8eb6ff;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
 }
 
 .bt-tip-mkt {

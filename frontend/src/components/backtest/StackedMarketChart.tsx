@@ -63,10 +63,32 @@ interface HoverInfo {
   title: string;
   left: number;
   top: number;
+  /** Overlay mark id when hovering an entry/exit indicator; used to pin the tip. */
+  pinKey: string | null;
   position: HoverPosition | null;
   wallet: HoverWallet | null;
   hasMarketLegs: boolean;
   marketPnl: number | null;
+}
+
+function clampTipPos(
+  cursorLeft: number,
+  cursorTop: number,
+  wrapW: number,
+  wrapH: number,
+  tipW: number,
+  tipH: number,
+): { left: number; top: number } {
+  const pad = 8;
+  let left = cursorLeft + 12;
+  if (left + tipW > wrapW - pad) left = cursorLeft - tipW - 8;
+  left = Math.max(pad, Math.min(left, Math.max(pad, wrapW - tipW - pad)));
+
+  let top = cursorTop - 8;
+  // Flip above the cursor when it would overflow the bottom edge.
+  if (top + tipH > wrapH - pad) top = cursorTop - tipH - 8;
+  top = Math.max(pad, Math.min(top, Math.max(pad, wrapH - tipH - pad)));
+  return { left, top };
 }
 
 interface HoverPosition {
@@ -123,7 +145,15 @@ export function StackedMarketChart(props: {
   const [dragging, setDragging] = createSignal(false);
   const [edgeScroll, setEdgeScroll] = createSignal(false);
   const [hover, setHover] = createSignal<HoverInfo | null>(null);
+  const [pinned, setPinned] = createSignal<HoverInfo | null>(null);
+  const [pressing, setPressing] = createSignal(false);
+  const [tipEl, setTipEl] = createSignal<HTMLDivElement | undefined>();
+  const [tipSize, setTipSize] = createSignal({ w: 168, h: 160 });
   const [showMetrics, setShowMetrics] = createSignal(true);
+  /** Last non-null tip from hover — survives pointerleave/capture races. */
+  let lastTip: HoverInfo | null = null;
+  const activeTip = createMemo(() => pinned() ?? hover());
+  const PAN_THRESHOLD_PX = 8;
   const contentH = createMemo(() => chartContentHeight(props.windows.length));
   const range = createMemo(() => visibleRowRange(vb(), props.windows.length));
   const visibleWindows = createMemo(() => {
@@ -207,15 +237,14 @@ export function StackedMarketChart(props: {
 
   function updateHover(clientX: number, clientY: number): void {
     const el = svgEl();
-    if (!el || dragging()) {
-      setHover(null);
-      return;
-    }
+    if (!el) return;
+    if (dragging()) return;
     const rect = el.getBoundingClientRect();
     const world = clientToWorld(clientX, clientY, rect, vb());
     const index = rowIndexAtY(world.y, props.windows.length);
     if (index === null || isLabelOrPriceGutter(world.x)) {
       setHover(null);
+      // Keep lastTip so a click can still pin what was just shown.
       return;
     }
     const window = props.windows[index];
@@ -265,7 +294,7 @@ export function StackedMarketChart(props: {
     const wrapRect = wrap?.getBoundingClientRect();
     const left = wrapRect ? clientX - wrapRect.left : clientX - rect.left;
     const top = wrapRect ? clientY - wrapRect.top : clientY - rect.top;
-    setHover({
+    const next: HoverInfo = {
       index,
       x,
       yesY: yes != null ? yOf(yes) : null,
@@ -284,6 +313,7 @@ export function StackedMarketChart(props: {
       title: window.eventTitle || `${rowAsset(window.eventSlug)} · ${fmtClock(window.windowStart)}`,
       left,
       top,
+      pinKey: overlay?.id ?? null,
       hasMarketLegs: legs.length > 0,
       marketPnl: marketRealizedPnl(legs),
       position: overlay
@@ -305,7 +335,25 @@ export function StackedMarketChart(props: {
             size: wallet.size,
           }
         : null,
-    });
+    };
+    lastTip = next;
+    setHover(next);
+  }
+
+  function tipIdentity(info: HoverInfo): string {
+    if (info.pinKey) return `mark:${info.pinKey}`;
+    return `row:${info.index}:t:${Math.round(info.t * 1000)}`;
+  }
+
+  function withClickPos(info: HoverInfo, clientX: number, clientY: number): HoverInfo {
+    const wrapRect = wrap?.getBoundingClientRect();
+    const left = wrapRect ? clientX - wrapRect.left : info.left;
+    const top = wrapRect ? clientY - wrapRect.top : info.top;
+    return { ...info, left, top };
+  }
+
+  function freezeTip(info: HoverInfo, clientX: number, clientY: number): void {
+    setPinned(withClickPos(info, clientX, clientY));
   }
 
   function onPointerMoveCursor(e: PointerEvent): void {
@@ -313,18 +361,29 @@ export function StackedMarketChart(props: {
     if (!el) return;
     const rect = el.getBoundingClientRect();
     setEdgeScroll(wheelScrolls(e.clientX, e.clientY, rect));
+    if (pressing() || dragging()) return;
     updateHover(e.clientX, e.clientY);
   }
 
   function onPointerDown(e: PointerEvent): void {
     if (e.button !== 0 || !svgEl()) return;
-    setHover(null);
+    // Freeze whatever tip was last shown — do this BEFORE capture/leave races.
+    const tip = lastTip ?? hover();
+    const prior = pinned();
+    const same = !!(tip && prior && tipIdentity(tip) === tipIdentity(prior));
+    setPressing(true);
+    if (tip && !same) freezeTip(tip, e.clientX, e.clientY);
+
     svgEl()!.setPointerCapture(e.pointerId);
-    setDragging(true);
     const origin = { x: e.clientX, y: e.clientY, vb: vb() };
     const rect0 = svgEl()!.getBoundingClientRect();
+    let moved = false;
 
     const move = (ev: PointerEvent) => {
+      const dist = Math.hypot(ev.clientX - origin.x, ev.clientY - origin.y);
+      if (dist <= PAN_THRESHOLD_PX) return;
+      moved = true;
+      if (!dragging()) setDragging(true);
       const dx = ((ev.clientX - origin.x) / Math.max(rect0.width, 1)) * origin.vb.w;
       const dy = ((ev.clientY - origin.y) / Math.max(rect0.height, 1)) * origin.vb.h;
       applyVb({
@@ -333,14 +392,32 @@ export function StackedMarketChart(props: {
         y: origin.vb.y - dy,
       });
     };
-    const up = (ev: PointerEvent) => {
-      svgEl()?.releasePointerCapture(ev.pointerId);
+
+    const finish = () => {
+      try {
+        svgEl()?.releasePointerCapture(e.pointerId);
+      } catch {
+        /* ignore */
+      }
       setDragging(false);
       window.removeEventListener("pointermove", move);
-      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointerup", finish);
+      window.removeEventListener("pointercancel", finish);
+      window.setTimeout(() => setPressing(false), 50);
+      if (moved) {
+        // Pan gesture: keep frozen tip if we froze one.
+        if (tip && !same) freezeTip(tip, origin.x, origin.y);
+        return;
+      }
+      // Pure click: toggle off if it was already the same frozen tip.
+      if (same) setPinned(null);
+      else if (!tip) setPinned(null);
+      else freezeTip(tip, origin.x, origin.y);
     };
+
     window.addEventListener("pointermove", move);
-    window.addEventListener("pointerup", up);
+    window.addEventListener("pointerup", finish);
+    window.addEventListener("pointercancel", finish);
   }
 
   function zoomBy(factor: number): void {
@@ -357,6 +434,33 @@ export function StackedMarketChart(props: {
     if (!el) return;
     el.addEventListener("wheel", onWheel, { passive: false });
     onCleanup(() => el.removeEventListener("wheel", onWheel));
+  });
+
+  createEffect(() => {
+    if (!pinned()) return;
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.key === "Escape") setPinned(null);
+    };
+    window.addEventListener("keydown", onKey);
+    onCleanup(() => window.removeEventListener("keydown", onKey));
+  });
+
+  createEffect(() => {
+    const el = tipEl();
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      setTipSize({ w: Math.max(el.offsetWidth, 1), h: Math.max(el.offsetHeight, 1) });
+    });
+    ro.observe(el);
+    setTipSize({ w: Math.max(el.offsetWidth, 1), h: Math.max(el.offsetHeight, 1) });
+    onCleanup(() => ro.disconnect());
+  });
+
+  const tipStyle = createMemo(() => {
+    const h = activeTip();
+    if (!h) return undefined;
+    const pos = clampTipPos(h.left, h.top, size().w, size().h, tipSize().w, tipSize().h);
+    return { left: `${pos.left}px`, top: `${pos.top}px` };
   });
 
   return (
@@ -418,13 +522,14 @@ export function StackedMarketChart(props: {
         <Show when={props.windows.length > 0}>
           <svg
             ref={setSvgEl}
-            class={`bt-svg${dragging() ? " is-panning" : ""}${edgeScroll() ? " is-edge-scroll" : ""}${hover() && !edgeScroll() ? " is-reading" : ""}`}
+            class={`bt-svg${dragging() ? " is-panning" : ""}${edgeScroll() ? " is-edge-scroll" : ""}${activeTip() && !edgeScroll() ? " is-reading" : ""}`}
             viewBox={`${vb().x} ${vb().y} ${vb().w} ${vb().h}`}
             preserveAspectRatio="none"
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMoveCursor}
             onPointerLeave={() => {
               setEdgeScroll(false);
+              if (pressing() || dragging() || pinned()) return;
               setHover(null);
             }}
           >
@@ -443,7 +548,7 @@ export function StackedMarketChart(props: {
                 />
               )}
             </For>
-            <Show when={hover()}>
+            <Show when={activeTip()}>
               {(h) => (
                 <g class="bt-cursor" pointer-events="none">
                   <rect
@@ -472,15 +577,16 @@ export function StackedMarketChart(props: {
               )}
             </Show>
           </svg>
-          <Show when={hover()}>
+          <Show when={activeTip()}>
             {(h) => (
               <div
-                class="bt-tip"
-                style={{
-                  left: `${h().left > size().w - 180 ? h().left - 168 : h().left + 12}px`,
-                  top: `${Math.max(8, h().top - 8)}px`,
-                }}
+                class={`bt-tip${pinned() ? " is-pinned" : ""}`}
+                ref={setTipEl}
+                style={tipStyle()}
               >
+                <Show when={pinned()}>
+                  <div class="bt-tip-pin">Épinglé · Échap pour fermer</div>
+                </Show>
                 <div class="bt-tip-mkt">{h().title}</div>
                 <div class="bt-tip-t">{fmtClockSec(h().t)}</div>
                 <div class="bt-tip-row yes">

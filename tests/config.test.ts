@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { writeFileSync, unlinkSync, existsSync, readFileSync } from "node:fs";
+import { writeFileSync, unlinkSync, existsSync, readFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, it } from "node:test";
 import {
@@ -32,7 +32,7 @@ describe("validateTradingConfig", () => {
     assert.throws(
       () =>
         validateTradingConfig(
-          testConfig({ dryRun: false, simResolveFallback: "probabilistic", funderAddress: "0x1", privateKey: "0x2" }),
+          testConfig({ simResolveFallback: "probabilistic", funderAddress: "0x1", privateKey: "0x2" }),
         ),
       /must be none/,
     );
@@ -129,8 +129,8 @@ describe("validateTradingConfig", () => {
  *
  * These tests manipulate the real data/bot-settings.json file (backed up
  * and restored). They verify that:
- *  - Live (DRY_RUN=false) requires a valid JSON file.
- *  - Dry-run warns + falls back to code defaults if the JSON is invalid.
+ *  - A valid JSON file is required.
+ *  - Invalid JSON refuses to start.
  *  - A valid JSON is applied; leftover strategy env vars are ignored.
  */
 describe("loadConfig strategy JSON", () => {
@@ -148,42 +148,29 @@ describe("loadConfig strategy JSON", () => {
   });
 
   function stashJson(): void {
+    mkdirSync(join(process.cwd(), "data"), { recursive: true });
     backup = existsSync(realPath) ? readFileSync(realPath, "utf8") : null;
   }
 
-  it("throws on invalid JSON in live mode (DRY_RUN=false)", () => {
+  it("throws on invalid JSON", () => {
     stashJson();
     writeFileSync(realPath, "{ invalid json }", "utf8");
-    process.env.DRY_RUN = "false";
     process.env.PRIVATE_KEY = "0x0000000000000000000000000000000000000000000000000000000000000001";
     process.env.FUNDER_ADDRESS = "0x0000000000000000000000000000000000000001";
     assert.throws(() => loadConfig(), /Runtime settings file is invalid/);
   });
 
-  it("throws when the JSON is missing in live mode", () => {
+  it("throws when the JSON is missing", () => {
     stashJson();
     if (existsSync(realPath)) unlinkSync(realPath);
-    process.env.DRY_RUN = "false";
     process.env.PRIVATE_KEY = "0x0000000000000000000000000000000000000000000000000000000000000001";
     process.env.FUNDER_ADDRESS = "0x0000000000000000000000000000000000000001";
-    assert.throws(() => loadConfig(), /is required when DRY_RUN=false/);
-  });
-
-  it("warns + falls back on invalid JSON in dry-run mode", () => {
-    stashJson();
-    writeFileSync(realPath, "{ invalid json }", "utf8");
-    process.env.DRY_RUN = "true";
-    delete process.env.PRIVATE_KEY;
-    delete process.env.FUNDER_ADDRESS;
-    const config = loadConfig();
-    assert.equal(config.dryRun, true);
-    assert.equal(config.cheapOrderUsdc, 1);
+    assert.throws(() => loadConfig(), /is required/);
   });
 
   it("applies the JSON and ignores leftover strategy env vars", () => {
     stashJson();
     writeFileSync(realPath, JSON.stringify({ cheapOrderUsdc: 42 }), "utf8");
-    process.env.DRY_RUN = "true";
     process.env.CHEAP_ORDER_USDC = "99";
     process.env.POLL_INTERVAL_MS = "250";
     delete process.env.PRIVATE_KEY;

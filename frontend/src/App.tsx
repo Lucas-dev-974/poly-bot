@@ -16,13 +16,10 @@ import { useInterval } from "./hooks/useInterval";
 import { api } from "./api/client";
 import { dispatchEvent } from "./stores/dispatcher";
 import { setConfig, config, setBotEnabled } from "./stores/botStore";
-import { clearMarkets } from "./stores/marketStore";
-import { clearPositions, replaceOpen, replaceResolved } from "./stores/positionStore";
-import { clearOrders, replaceOrders } from "./stores/orderStore";
-import { setSimStats } from "./stores/statsStore";
+import { replaceOpen, replaceResolved } from "./stores/positionStore";
+import { replaceOrders } from "./stores/orderStore";
 import { updateRelayerQuota } from "./stores/quotaStore";
 import {
-  clearPoly,
   failRedeem,
   finishRedeem,
   polyPositions,
@@ -34,10 +31,7 @@ import type { BalanceSnapshot, BotEvent } from "./types";
 
 export function App(): JSX.Element {
   const [now, setNow] = createSignal(Date.now());
-  const [simulatedCash, setSimulatedCash] = createSignal<number | null>(null);
   const [liveBalance, setLiveBalance] = createSignal<BalanceSnapshot | null>(null);
-  const [resetting, setResetting] = createSignal(false);
-  const [confirmReset, setConfirmReset] = createSignal(false);
   const [redeemTarget, setRedeemTarget] = createSignal<string | null>(null);
   const [settingsOpen, setSettingsOpen] = createSignal(false);
   const [confirmDiscardSettings, setConfirmDiscardSettings] = createSignal(false);
@@ -46,10 +40,6 @@ export function App(): JSX.Element {
   useEventSource((event: BotEvent) => {
     if (event.type === "balance") {
       setLiveBalance(event.balance);
-      return;
-    }
-    if (event.type === "simulatedBalance") {
-      setSimulatedCash(event.balance);
       return;
     }
     dispatchEvent(event);
@@ -92,9 +82,6 @@ export function App(): JSX.Element {
         .catch(() => {});
       if (state.config) {
         setConfig(state.config);
-        if (state.config.dryRun && simulatedCash() === null) {
-          setSimulatedCash(state.config.simulatedCapital);
-        }
       }
       const hydrated = recentOrders.orders.length > 0;
       if (hydrated) replaceOrders(recentOrders.orders);
@@ -102,8 +89,6 @@ export function App(): JSX.Element {
         if (event.type === "order" && hydrated) continue;
         if (event.type === "balance") {
           setLiveBalance(event.balance);
-        } else if (event.type === "simulatedBalance") {
-          setSimulatedCash(event.balance);
         } else {
           dispatchEvent(event);
         }
@@ -112,33 +97,6 @@ export function App(): JSX.Element {
       addLog("Impossible de charger l'état initial", undefined, true);
     }
     await syncPositions();
-  }
-
-  async function handleReset(): Promise<void> {
-    setConfirmReset(false);
-    setResetting(true);
-    try {
-      const data = await api.reset();
-      if (!data.ok) throw new Error(data.error || "Échec de la réinitialisation");
-      // Reset local UI state
-      clearMarkets();
-      clearOrders();
-      clearPositions();
-      setSimStats(null);
-      setSimulatedCash(null);
-      setLiveBalance(null);
-      clearPoly();
-      addLog("Base de données réinitialisée");
-    } catch (e) {
-      addLog(
-        "Erreur lors de la réinitialisation : " +
-          (e instanceof Error ? e.message : String(e)),
-        undefined,
-        true,
-      );
-    } finally {
-      setResetting(false);
-    }
   }
 
   function handleRedeem(conditionId: string): void {
@@ -190,12 +148,7 @@ export function App(): JSX.Element {
 
   return (
     <>
-      <Header
-        simulatedCash={simulatedCash}
-        liveBalance={liveBalance}
-        onReset={() => setConfirmReset(true)}
-        resetting={resetting()}
-      />
+      <Header liveBalance={liveBalance} />
       <ConfigBar onConfigure={() => setSettingsOpen(true)} />
       <div class="grid">
         <PolymarketPositions onRedeem={handleRedeem} />
@@ -206,14 +159,6 @@ export function App(): JSX.Element {
         <ResolvedPositions />
         <Logs />
       </div>
-      <ConfirmModal
-        open={confirmReset()}
-        title="Réinitialiser la base de données ?"
-        message="Cette action efface définitivement l'historique des positions, paires, capital, événements et stats. Le capital simulé revient à sa valeur initiale."
-        confirmLabel="Réinitialiser"
-        onConfirm={() => void handleReset()}
-        onCancel={() => setConfirmReset(false)}
-      />
       <ConfirmModal
         open={redeemTarget() !== null}
         title={`Clôturer la position "${redeemPosition()?.title ?? ""}" ?`}

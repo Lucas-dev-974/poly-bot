@@ -1017,20 +1017,9 @@ export class DashboardServer {
     this.backtestJob.cancelCurrent();
     await this.backtestJob.waitUntilIdle();
     invalidateWindowsCache();
-    if (!this.config.dryRun) {
-      res.writeHead(403, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: "Reset désactivé en mode live" }));
-      return;
-    }
-    try {
-      this.resetFn?.();
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: true }));
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      res.writeHead(500, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: message }));
-    }
+    // Live-only bot: DB reset is never allowed (was dry-run only).
+    res.writeHead(403, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ ok: false, error: "Reset désactivé en mode live" }));
   }
 
   private async handleRedeem(

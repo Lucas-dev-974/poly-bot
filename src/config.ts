@@ -76,7 +76,6 @@ export interface BotConfig {
   maxExposureUsdc: number;
   minutesBeforeCloseMin: number;
   minutesBeforeCloseMax: number;
-  dryRun: boolean;
   readonlyLive: boolean;
   privateKey?: `0x${string}`;
   funderAddress?: `0x${string}`;
@@ -189,8 +188,8 @@ export interface BotConfig {
 }
 
 /**
- * Code defaults for strategy keys. Used when `data/bot-settings.json` is
- * missing (dry-run / tests). Live trading requires that file.
+ * Code defaults for strategy keys. Used as baseline before overlaying
+ * `data/bot-settings.json` (required at startup) and in tests.
  */
 export function strategyDefaults(): RuntimeSettingsPatch &
   Pick<BotConfig, EditableConfigKey> {
@@ -264,13 +263,21 @@ function warnIgnoredStrategyEnv(): void {
 }
 
 export function loadConfig(): BotConfig {
-  const dryRun = envBoolean("DRY_RUN", true);
   const readonlyLive = envBoolean("READONLY_LIVE", false);
   const defaults = strategyDefaults();
 
+  // DB path: DB_PATH, else DB_PATH_LIVE, else data/bot-live.db (live-only bot).
+  const dbPath =
+    (process.env.DB_PATH && process.env.DB_PATH !== ""
+      ? process.env.DB_PATH
+      : undefined) ??
+    (process.env.DB_PATH_LIVE && process.env.DB_PATH_LIVE !== ""
+      ? process.env.DB_PATH_LIVE
+      : undefined) ??
+    "data/bot-live.db";
+
   const config: BotConfig = {
     ...defaults,
-    dryRun,
     readonlyLive,
     privateKey: process.env.PRIVATE_KEY as `0x${string}` | undefined,
     funderAddress: process.env.FUNDER_ADDRESS as `0x${string}` | undefined,
@@ -284,9 +291,7 @@ export function loadConfig(): BotConfig {
     dataApiHost: envString("DATA_API_HOST", "https://data-api.polymarket.com"),
     enableDashboard: envBoolean("ENABLE_DASHBOARD", true),
     dashboardPort: envNumber("DASHBOARD_PORT", 3105),
-    dbPath: dryRun
-      ? envString("DB_PATH", "data/bot.db")
-      : envString("DB_PATH_LIVE", "data/bot-live.db"),
+    dbPath,
     persistenceEnabled: envBoolean("PERSISTENCE_ENABLED", true),
     builderApiKey: process.env.BUILDER_API_KEY,
     builderSecret: process.env.BUILDER_SECRET,
@@ -303,9 +308,9 @@ export function loadConfig(): BotConfig {
   warnIgnoredStrategyEnv();
 
   const settingsPath = RUNTIME_SETTINGS_PATH;
-  if (!dryRun && !existsSync(settingsPath)) {
+  if (!existsSync(settingsPath)) {
     throw new Error(
-      `[config] ${settingsPath} is required when DRY_RUN=false.\n` +
+      `[config] ${settingsPath} is required.\n` +
         `  Copy bot-settings.example.json to data/bot-settings.json, or save once from the dashboard.\n` +
         `  Secrets stay in .env; strategy parameters live only in that JSON.`,
     );
@@ -327,17 +332,12 @@ export function loadConfig(): BotConfig {
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (!config.dryRun) {
-      throw new Error(
-        `[config] Runtime settings file is invalid and DRY_RUN=false.\n` +
-          `  File: ${settingsPath}\n` +
-          `  Error: ${message}\n` +
-          `Refusing to start with potentially wrong settings.\n` +
-          `Fix data/bot-settings.json, or set DRY_RUN=true to bypass.`,
-      );
-    }
-    console.warn(
-      `[config] Ignoring runtime settings (${settingsPath}): ${message}`,
+    throw new Error(
+      `[config] Runtime settings file is invalid.\n` +
+        `  File: ${settingsPath}\n` +
+        `  Error: ${message}\n` +
+        `Refusing to start with potentially wrong settings.\n` +
+        `Fix data/bot-settings.json.`,
     );
   }
 
@@ -483,11 +483,10 @@ export function validateTradingConfig(
   opts?: { leadsWithEdge?: boolean },
 ): void {
   validateConfigCoherence(config, opts);
-  if (config.dryRun) return;
 
   if (config.simResolveFallback !== "none") {
     throw new Error(
-      "SIM_RESOLVE_FALLBACK must be none when DRY_RUN=false so live positions are never resolved by RNG.",
+      "SIM_RESOLVE_FALLBACK must be none in live mode so positions are never resolved by RNG.",
     );
   }
 
@@ -499,9 +498,9 @@ export function validateTradingConfig(
   }
 
   if (!config.privateKey) {
-    throw new Error("PRIVATE_KEY is required when DRY_RUN=false");
+    throw new Error("PRIVATE_KEY is required for live trading");
   }
   if (!config.funderAddress) {
-    throw new Error("FUNDER_ADDRESS is required when DRY_RUN=false");
+    throw new Error("FUNDER_ADDRESS is required for live trading");
   }
 }

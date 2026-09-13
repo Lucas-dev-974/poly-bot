@@ -3,8 +3,6 @@ import { bus } from "../dashboard/events.js";
 import type { Repositories } from "../db/index.js";
 import { log } from "../logger.js";
 import type { MarketScanner } from "../market-scanner.js";
-import type { SimulatedBroker } from "../simulated-broker.js";
-import type { SimulatedLedger } from "../simulated-ledger.js";
 import type { TradingStrategy } from "../strategy/trading-strategy.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { Trader } from "../trader.js";
@@ -21,8 +19,6 @@ export type OpportunityExecutorDeps = {
   tracker: TradeTracker;
   scanner: MarketScanner;
   repos?: Repositories;
-  broker: SimulatedBroker | null;
-  ledger: SimulatedLedger | null;
   lifecycle: LiveOrderLifecycle;
   balance: BalanceGuard;
   defendPair: (pairId: string) => Promise<void>;
@@ -60,7 +56,7 @@ export class OpportunityExecutor {
       const minutesLeft = (opportunity.event.windowEnd - nowSec) / 60;
       if (minutesLeft < this.deps.config.minMinutesBeforeCloseToBuy) {
         bus.emit({ type: "order", result: {
-          dryRun: this.deps.config.dryRun, tokenId: opportunity.token.tokenId, side: "BUY",
+          dryRun: false, tokenId: opportunity.token.tokenId, side: "BUY",
           price: opportunity.price, size: opportunity.size, filled: false,
           reason: "too-close-to-close",
           orderType: orderTypeFor(opportunity, this.deps.config, this.strategy),
@@ -134,7 +130,6 @@ export class OpportunityExecutor {
     // to cheapHeld — only fail-closed on missing/zero balance.
     if (
       opportunity.kind === "expensive" &&
-      !this.deps.config.dryRun &&
       !this.strategy.leadsWithEdge &&
       (this.strategy.independentHedgeGrid !== true ||
         this.deps.config.requireCheapFillBeforeExpensive)
@@ -170,19 +165,15 @@ export class OpportunityExecutor {
       }
     }
 
-    // Post-time hedge gate (arb/barbell) BEFORE sim fill and buy-side
-    // balance/exposure checks. Policy A stubs must FOK-sell the cheap, not be
-    // rejected as an expensive BUY or filled as a locked-loss hedge in dry-run.
+    // Post-time hedge gate (arb/barbell) BEFORE buy-side balance/exposure checks.
     if (
       opportunity.kind === "expensive" &&
       !this.strategy.leadsWithEdge &&
       !this.strategy.independentHedgeGrid
     ) {
-      const isSim = Boolean(this.deps.broker && this.deps.ledger);
-      const freshAsk = isSim
-        ? (opportunity.token.bestAsk ?? opportunity.price)
-        : ((await this.deps.scanner.getTokenBook(opportunity.token.tokenId))?.bestAsk ??
-          null);
+      const freshAsk =
+        (await this.deps.scanner.getTokenBook(opportunity.token.tokenId))?.bestAsk ??
+        null;
       const decision = this.strategy.hedgeAtPostTime({
         config: this.deps.config,
         tracker: this.deps.tracker,
@@ -220,11 +211,6 @@ export class OpportunityExecutor {
       };
     }
 
-    if (this.deps.broker && this.deps.ledger) {
-      this.executeSimulated(opportunity);
-      return;
-    }
-
     const useFOK = orderTypeFor(opportunity, this.deps.config, this.strategy) === "FOK";
     let estimatedCost = Math.round(
       (useFOK
@@ -240,21 +226,17 @@ export class OpportunityExecutor {
     // Garde-fou balance : ne pas poster si le solde CLOB disponible est
     // insuffisant pour couvrir le coût estimé. Le solde est caché 30s pour
     // éviter un appel réseau par opportunity (getAvailableCollateral est async).
-    // Fail-closed : en mode live, si le solde est inconnu (null = fetch échoué
-    // ou jamais réussi), on rejette l'ordre au lieu de poster à l'aveugle.
-    // En dry-run, available est toujours null (pas de client CLOB) → on passe.
+    // Fail-closed : si le solde est inconnu (null = fetch échoué ou jamais
+    // réussi), on rejette l'ordre au lieu de poster à l'aveugle.
     const available = await this.deps.balance.getCachedAvailableCollateral();
     if (available === null) {
-      if (!this.deps.config.dryRun) {
-        log("Live order skipped - balance unknown (fail-closed)", {
-          kind: opportunity.kind,
-          market: opportunity.event.title,
-          outcome: opportunity.token.outcome,
-        });
-        this.rejectLiveWithRetry(opportunity, "balance-unknown", {});
-        return;
-      }
-      // Dry-run: pas de client CLOB, available est toujours null — autoriser.
+      log("Live order skipped - balance unknown (fail-closed)", {
+        kind: opportunity.kind,
+        market: opportunity.event.title,
+        outcome: opportunity.token.outcome,
+      });
+      this.rejectLiveWithRetry(opportunity, "balance-unknown", {});
+      return;
     } else if (estimatedCost > available) {
       this.rejectLiveWithRetry(opportunity, "insufficient-balance", {
         estimatedCost,
@@ -285,7 +267,6 @@ export class OpportunityExecutor {
 
     if (
       opportunity.kind === "expensive" &&
-      !this.deps.config.dryRun &&
       !this.strategy.leadsWithEdge &&
       this.strategy.independentHedgeGrid === true
     ) {
@@ -543,122 +524,4 @@ export class OpportunityExecutor {
     });
   }
 
-  executeSimulated(opportunity: TradeOpportunity): void {
-    if (!this.deps.broker || !this.deps.ledger) return;
-
-    this.deps.onAttempt();
-    const openExposure = this.deps.tracker.getOpenExposure();
-    const result = this.deps.broker.attemptFill(opportunity, openExposure);
-
-    if (result.filled && result.position) {
-      this.deps.tracker.mark(opportunity.tradeKey);
-      this.deps.tracker.addOpenPosition(result.position);
-      this.deps.tracker.attachLeg(result.position);
-      this.strategy.onBuyCommitted?.(opportunity);
-      bus.emit({ type: "openedPosition", position: result.position });
-
-      const orderResult = {
-        dryRun: true,
-        tokenId: opportunity.token.tokenId,
-        side: "BUY" as const,
-        price: opportunity.price,
-        fillPrice: result.position.fillPrice,
-        size: opportunity.size,
-        filled: true,
-        orderType: "SIM" as const,
-      };
-
-      bus.emit({ type: "opportunity", opportunity });
-      bus.emit({ type: "order", result: orderResult, opportunity });
-
-      log("Dry-run order filled", {
-        kind: opportunity.kind,
-        market: opportunity.event.title,
-        outcome: opportunity.token.outcome,
-        limitPrice: opportunity.price,
-        fillPrice: result.position.fillPrice,
-        bestAskAtFill: result.position.bestAskAtFill,
-        size: opportunity.size,
-        reason: result.reason,
-      });
-      return;
-    }
-
-    const rejectedResult: OrderResult = {
-      dryRun: true,
-      tokenId: opportunity.token.tokenId,
-      side: "BUY",
-      price: opportunity.price,
-      size: opportunity.size,
-      filled: false,
-      reason: result.reason,
-      orderType: "SIM",
-    };
-    bus.emit({ type: "opportunity", opportunity });
-    bus.emit({ type: "order", result: rejectedResult, opportunity });
-
-    if (result.reason === "insufficient-capital") {
-      log("Simulated order rejected - insufficient capital", {
-        kind: opportunity.kind,
-        market: opportunity.event.title,
-        outcome: opportunity.token.outcome,
-        price: opportunity.price,
-        size: opportunity.size,
-        balance: this.deps.ledger.getBalance(),
-      });
-      return;
-    }
-
-    if (result.reason === "exposure-cap") {
-      log("Simulated order rejected - exposure cap reached", {
-        kind: opportunity.kind,
-        market: opportunity.event.title,
-        outcome: opportunity.token.outcome,
-        price: opportunity.price,
-        size: opportunity.size,
-        openExposure: this.deps.tracker.getOpenExposure(),
-        cap: this.deps.config.maxExposureUsdc,
-      });
-      return;
-    }
-
-    if (result.reason === "not-a-favorite") {
-      // Structural rejection: the "expensive" token is not a real favorite.
-      // The favorite may come back above expensiveBuyMin, so count a retry
-      // instead of permanently skipping this level every tick.
-      this.deps.tracker.incrementRetry(opportunity.tradeKey);
-      if (this.deps.tracker.getRetryCount(opportunity.tradeKey) >= this.deps.config.simMaxRetryAttempts) {
-        this.deps.tracker.mark(opportunity.tradeKey);
-        log("Simulated hedge abandoned after max retries (not a favorite)", {
-          kind: opportunity.kind,
-          market: opportunity.event.title,
-          outcome: opportunity.token.outcome,
-          bestAsk: opportunity.token.bestAsk,
-          expensiveBuyMin: this.deps.config.expensiveBuyMin,
-        });
-      } else {
-        log("Simulated hedge rejected - not a favorite", {
-          kind: opportunity.kind,
-          market: opportunity.event.title,
-          outcome: opportunity.token.outcome,
-          limitPrice: opportunity.price,
-          bestAsk: opportunity.token.bestAsk,
-          expensiveBuyMin: this.deps.config.expensiveBuyMin,
-          retry: this.deps.tracker.getRetryCount(opportunity.tradeKey),
-        });
-      }
-      return;
-    }
-
-    this.deps.tracker.incrementRetry(opportunity.tradeKey);
-    if (this.deps.tracker.getRetryCount(opportunity.tradeKey) >= this.deps.config.simMaxRetryAttempts) {
-      this.deps.tracker.mark(opportunity.tradeKey);
-      log("Simulated order abandoned after max retries", {
-        kind: opportunity.kind,
-        market: opportunity.event.title,
-        outcome: opportunity.token.outcome,
-        price: opportunity.price,
-      });
-    }
-  }
 }

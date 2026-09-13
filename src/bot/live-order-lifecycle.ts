@@ -223,7 +223,7 @@ export class LiveOrderLifecycle {
     bus.emit({
       type: "order",
       result: {
-        dryRun: this.deps.config.dryRun,
+        dryRun: false,
         tokenId: order.tokenId,
         side: "BUY",
         price: order.limitPrice,

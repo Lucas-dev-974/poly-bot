@@ -144,7 +144,7 @@ export function BacktestPage(): JSX.Element {
     const f = form();
     const base = liveConfig();
     if (!f || !base) return {};
-    return computeFieldErrors(f, base.dryRun, {
+    return computeFieldErrors(f, true, {
       leadsWithEdge: f.strategyId === "edge-lead" || f.strategyId.startsWith("custom:"),
     });
   });
@@ -234,7 +234,7 @@ export function BacktestPage(): JSX.Element {
     const f = form();
     const base = liveConfig();
     if (!f || !base) return;
-    const errors = validateConfigForm(f, base.dryRun, {
+    const errors = validateConfigForm(f, true, {
       leadsWithEdge: f.strategyId === "edge-lead" || f.strategyId.startsWith("custom:"),
     });
     if (errors.length > 0) {

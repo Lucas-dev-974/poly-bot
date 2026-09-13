@@ -104,7 +104,6 @@ describe("strategy presets", () => {
     for (const preset of listStrategyPresets()) {
       const config = testConfig({
         ...preset.settings,
-        dryRun: false,
         funderAddress: "0x1234567890123456789012345678901234567890",
         privateKey: "0x1234567890123456789012345678901234567890123456789012345678901234",
       });

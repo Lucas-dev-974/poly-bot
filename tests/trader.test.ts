@@ -7,10 +7,10 @@ import { testConfig, testEvent } from "./helpers.js";
 
 /**
  * Trader wraps a real ClobClient; for tests we inject the mock through the
- * private `client` field (live config so the dry-run short-circuits are off).
+ * private `client` field.
  */
 function liveTrader(client: MockClobClient): Trader {
-  const trader = new Trader(testConfig({ dryRun: false, expensiveBuyMax: 0.9 }));
+  const trader = new Trader(testConfig({ expensiveBuyMax: 0.9 }));
   (trader as unknown as { client: MockClobClient }).client = client;
   return trader;
 }
@@ -58,16 +58,6 @@ function hedgeOpportunity(size: number, bestAsk: number): TradeOpportunity {
 }
 
 describe("Trader.placeSell", () => {
-  it("simulates a full FOK sell in dry-run without a CLOB client", async () => {
-    const trader = new Trader(testConfig({ dryRun: true }));
-    const result = await trader.placeSell(sellOpportunity(7, 0.11));
-    assert.equal(result.filled, true);
-    assert.equal(result.filledSize, 7);
-    assert.equal(result.fillPrice, 0.11);
-    assert.equal(result.reason, "dry-run-fok-sell");
-    assert.equal(result.dryRun, true);
-  });
-
   it("sends SHARES as the market-order amount (not USDC) and confirms via balance drop", async () => {
     const client = new MockClobClient();
     client.balances.set("t-down", 10);
@@ -194,8 +184,8 @@ describe("Trader.getConditionalTokenBalance", () => {
     assert.equal(await trader.getConditionalTokenBalance("t-down"), null);
   });
 
-  it("returns null in dry-run (no client)", async () => {
-    const trader = new Trader(testConfig({ dryRun: true }));
+  it("returns null when no CLOB client is initialized", async () => {
+    const trader = new Trader(testConfig());
     assert.equal(await trader.getConditionalTokenBalance("t-down"), null);
   });
 });

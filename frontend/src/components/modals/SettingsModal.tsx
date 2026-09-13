@@ -81,7 +81,7 @@ function NumberInput(props: {
 
 /* ---------- définition des sections ---------- */
 
-type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "risk" | "window" | "sim";
+type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "risk" | "window";
 
 interface SectionDef {
   id: SectionId;
@@ -98,7 +98,6 @@ const SECTIONS: SectionDef[] = [
   { id: "edge", label: "Jambe edge", icon: "▴", desc: "Bande de confirmation edge-lead" },
   { id: "risk", label: "Risque", icon: "◆", desc: "Limites de taille, positions et exposition" },
   { id: "window", label: "Fenêtre", icon: "◷", desc: "Plage de trading avant clôture" },
-  { id: "sim", label: "Simulation", icon: "▦", desc: "Paramètres du dry-run" },
 ];
 
 /* ---------- composant principal ---------- */
@@ -139,7 +138,7 @@ export function SettingsModal(props: {
     engineUsesEdge(form().strategyId, selectedCustom()?.leadsWithEdge),
   );
   const errors = createMemo(() =>
-    validateConfigForm(form(), props.config.dryRun, {
+    validateConfigForm(form(), false, {
       leadsWithEdge: selectedCustom()?.leadsWithEdge,
     }),
   );
@@ -291,7 +290,6 @@ export function SettingsModal(props: {
                 {(s) => (
                   <Show
                     when={
-                      !(s.id === "sim" && !props.config.dryRun) &&
                       !(
                         usesEdge() &&
                         (s.id === "cheap" || s.id === "hedge")
@@ -866,92 +864,7 @@ export function SettingsModal(props: {
               </Show>
 
               {/* ---- Simulation ---- */}
-              <Show when={activeSection() === "sim" && props.config.dryRun}>
-                <div class="cfg-section">
-                  <h4>Simulation (dry-run)</h4>
-                  <p class="cfg-section__desc">
-                    Paramètres du broker simulé. Ignorés en mode live.
-                  </p>
-                  <div class="cfg-grid">
-                    <Field
-                      label="Capital simulé (USDC)"
-                      hint="Appliqué au prochain reset DB"
-                    >
-                      <NumberInput
-                        value={form().simulatedCapital}
-                        min={1}
-                        step={1}
-                        onInput={(v) => update("simulatedCapital", v)}
-                      />
-                    </Field>
-                    <Field label="Probabilité de fill (non marketable)">
-                      <NumberInput
-                        value={form().simFillProbabilityNonMarketable}
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        onInput={(v) => update("simFillProbabilityNonMarketable", v)}
-                      />
-                    </Field>
-                    <Field label="Délai résolution (s)">
-                      <NumberInput
-                        value={form().simResolveDelaySeconds}
-                        min={0}
-                        step={1}
-                        onInput={(v) => update("simResolveDelaySeconds", v)}
-                      />
-                    </Field>
-                    <Field label="Intervalle retry résolution (ms)">
-                      <NumberInput
-                        value={form().simResolveRetryIntervalMs}
-                        min={500}
-                        step={100}
-                        onInput={(v) => update("simResolveRetryIntervalMs", v)}
-                      />
-                    </Field>
-                    <Field label="Max retries résolution">
-                      <NumberInput
-                        value={form().simResolveMaxRetries}
-                        min={0}
-                        step={1}
-                        onInput={(v) => update("simResolveMaxRetries", v)}
-                      />
-                    </Field>
-                    <Field label="Max retry attempts">
-                      <NumberInput
-                        value={form().simMaxRetryAttempts}
-                        min={1}
-                        step={1}
-                        onInput={(v) => update("simMaxRetryAttempts", v)}
-                      />
-                    </Field>
-                    <Field label="Fallback résolution">
-                      <select
-                        class="cfg-input"
-                        value={form().simResolveFallback}
-                        onChange={(e) =>
-                          update(
-                            "simResolveFallback",
-                            e.currentTarget.value as "none" | "probabilistic",
-                          )
-                        }
-                      >
-                        <option value="none">none</option>
-                        <option value="probabilistic">probabilistic</option>
-                      </select>
-                    </Field>
-                    <Field label="Random seed" hint="Vide = aléatoire">
-                      <input
-                        class="cfg-input"
-                        type="text"
-                        value={form().simRandomSeed}
-                        onInput={(e) => update("simRandomSeed", e.currentTarget.value)}
-                      />
-                    </Field>
-                  </div>
-                  {/* simRequireCoveredPair retiré : flag mort dans orchestrate */}
-                </div>
-              </Show>
+
 
               {/* Erreurs */}
               <Show when={errors().length > 0}>

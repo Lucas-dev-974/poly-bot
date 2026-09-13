@@ -2,41 +2,23 @@ import { Show, createMemo, createSignal, onMount } from "solid-js";
 import type { JSX } from "solid-js";
 import { Badge } from "../ui/Badge";
 import { config, mode, botEnabled, setBotEnabled } from "../../stores/botStore";
-import { openPositionList } from "../../stores/positionStore";
 import { relayerQuota } from "../../stores/quotaStore";
 import { api } from "../../api/client";
 import { addLog } from "../../stores/logStore";
 import { fmtUsd } from "../../utils/format";
 
 export function Header(props: {
-  simulatedCash: () => number | null;
   liveBalance: () => { availableCollateral: number; positionsValue: number } | null;
-  onReset: () => void;
-  resetting: boolean;
 }): JSX.Element {
   const m = createMemo(() => mode());
 
   const badge = createMemo(() => {
     const modeVal = m();
-    if (modeVal === "dry") return <Badge variant="dry">DRY RUN</Badge>;
     if (modeVal === "readonly") return <Badge variant="dry">LIVE (READONLY)</Badge>;
     return <Badge variant="live">LIVE</Badge>;
   });
 
   const capital = createMemo(() => {
-    const cash = props.simulatedCash();
-    if (cash !== null) {
-      const positionsValue = openPositionList().reduce((s, p) => s + (p.cost || 0), 0);
-      const total = cash + positionsValue;
-      return (
-        <div class="capital-badge">
-          {fmtUsd(total)}
-          <span class="sub">
-            cash {fmtUsd(cash)} · positions {fmtUsd(positionsValue)}
-          </span>
-        </div>
-      );
-    }
     const live = props.liveBalance();
     if (live) {
       return (
@@ -68,16 +50,7 @@ export function Header(props: {
       </a>
       {badge()}
       <BotToggle />
-      <Show when={config() !== null && mode() === "dry"}>
-        <button
-          class="reset-btn"
-          onClick={props.onReset}
-          disabled={props.resetting}
-          title="Réinitialiser toute la base de données"
-        >
-          {props.resetting ? "Réinitialisation…" : "Réinitialiser la DB"}
-        </button>
-      </Show>
+      
       <QuotaBadge />
       {capital()}
     </header>

@@ -223,7 +223,7 @@ export function formToPatch(
 
 export function validateConfigForm(
   form: ConfigFormState,
-  dryRun: boolean,
+  isBacktest: boolean,
   opts?: { leadsWithEdge?: boolean },
 ): string[] {
   const errors: string[] = [];
@@ -293,7 +293,7 @@ export function validateConfigForm(
     if (simResolveRetryIntervalMs < 500) {
       errors.push("Resolve retry interval doit être ≥ 500 ms");
     }
-    if (!dryRun && form.simResolveFallback === "probabilistic") {
+    if (!isBacktest && form.simResolveFallback === "probabilistic") {
       errors.push("Resolve fallback probabilistic interdit en mode live");
     }
     if (form.marketSlugPrefixes.split(",").map((s) => s.trim()).filter(Boolean).length === 0) {
@@ -389,7 +389,7 @@ export function formsEqual(a: ConfigFormState, b: ConfigFormState): boolean {
  */
 export function fieldErrors(
   form: ConfigFormState,
-  dryRun: boolean,
+  isBacktest: boolean,
   opts?: { leadsWithEdge?: boolean },
 ): Partial<Record<keyof ConfigFormState, string>> {
   const result: Partial<Record<keyof ConfigFormState, string>> = {};
@@ -484,7 +484,7 @@ export function fieldErrors(
     else if (maxExposureUsdc <= 0) result.maxExposureUsdc = "> 0";
     if (!Number.isFinite(maxSharesPerOrder)) result.maxSharesPerOrder = "Nombre invalide";
     else if (maxSharesPerOrder < 1) result.maxSharesPerOrder = "≥ 1";
-    if (!dryRun && form.simResolveFallback === "probabilistic") {
+    if (!isBacktest && form.simResolveFallback === "probabilistic") {
       result.simResolveFallback = "Interdit en live";
     }
     if (form.marketSlugPrefixes.split(",").map((s) => s.trim()).filter(Boolean).length === 0) {

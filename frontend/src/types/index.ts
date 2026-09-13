@@ -203,7 +203,6 @@ export interface BotConfig {
   reverseMaxGridLevels: number | null;
   /** Reverse Phase 2: cap hedge size to filledCheap − filledExpensive. */
   reverseHedgeCapToFilledCheap: boolean;
-  dryRun: boolean;
   readonlyLive: boolean;
   clobHost: string;
   gammaApiHost: string;
@@ -347,7 +346,7 @@ export interface LogEntry {
   isError: boolean;
 }
 
-export type BotMode = "dry" | "readonly" | "live";
+export type BotMode = "readonly" | "live";
 
 // --- Historique de marché (graphique position) ---
 

@@ -1,7 +1,6 @@
 import type { BotConfig } from "./config.js";
 import { bus } from "./dashboard/events.js";
 import { log } from "./logger.js";
-import type { SimulatedLedger } from "./simulated-ledger.js";
 import type { TradeTracker } from "./trade-tracker.js";
 import type { SimulatedPosition } from "./types.js";
 import { SeededRng } from "./utils/random.js";
@@ -23,7 +22,6 @@ export class PositionResolver {
   constructor(
     private readonly config: BotConfig,
     private readonly tracker: TradeTracker,
-    private readonly ledger: SimulatedLedger | null,
   ) {
     this.rng = new SeededRng(
       config.simRandomSeed ? `${config.simRandomSeed}:resolver` : undefined,
@@ -96,9 +94,6 @@ export class PositionResolver {
     }
 
     const credit = won ? position.size : 0;
-    if (this.ledger) {
-      this.ledger.credit(credit);
-    }
 
     position.status = won ? "won" : "lost";
     position.resolvedAt = Date.now();

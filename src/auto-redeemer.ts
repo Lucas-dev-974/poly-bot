@@ -54,8 +54,8 @@ export class AutoRedeemer {
 
   start(): void {
     if (!this.config.autoRedeemWinners) return;
-    if (this.config.dryRun || this.config.readonlyLive) {
-      log("AutoRedeemer disabled (dry-run or readonly-live mode)");
+    if (this.config.readonlyLive) {
+      log("AutoRedeemer disabled (readonly-live mode)");
       return;
     }
     if (!this.config.funderAddress) {

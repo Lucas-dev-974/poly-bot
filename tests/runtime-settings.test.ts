@@ -83,7 +83,11 @@ describe("sanitizePatch", () => {
 describe("applyRuntimeSettings", () => {
   it("updates config and writes full snapshot", async () => {
     const path = tempSettingsPath();
-    const config = testConfig({ cheapBuyMin: 0.07 });
+    const config = testConfig({
+      cheapBuyMin: 0.07,
+      funderAddress: "0x1234567890123456789012345678901234567890",
+      privateKey: "0x1234567890123456789012345678901234567890123456789012345678901234",
+    });
     const changed = await applyRuntimeSettings(config, { cheapBuyMin: 0.08 }, path);
     assert.ok(changed.has("cheapBuyMin"));
     assert.equal(config.cheapBuyMin, 0.08);
@@ -95,7 +99,12 @@ describe("applyRuntimeSettings", () => {
 
   it("rolls back on validation failure", async () => {
     const path = tempSettingsPath();
-    const config = testConfig({ cheapBuyMin: 0.07, cheapBuyMax: 0.1 });
+    const config = testConfig({
+      cheapBuyMin: 0.07,
+      cheapBuyMax: 0.1,
+      funderAddress: "0x1234567890123456789012345678901234567890",
+      privateKey: "0x1234567890123456789012345678901234567890123456789012345678901234",
+    });
     await assert.rejects(
       () => applyRuntimeSettings(config, { cheapBuyMin: 0.2 }, path),
       /CHEAP_BUY_MIN/,
@@ -106,7 +115,6 @@ describe("applyRuntimeSettings", () => {
   it("rejects probabilistic fallback in live mode", async () => {
     const path = tempSettingsPath();
     const config = testConfig({
-      dryRun: false,
       simResolveFallback: "none",
       funderAddress: "0x1234567890123456789012345678901234567890",
       privateKey: "0x1234567890123456789012345678901234567890123456789012345678901234",
@@ -163,12 +171,23 @@ describe("loadConfig JSON merge", () => {
 
 describe("validateTradingConfig with JSON settings", () => {
   it("accepts coherent merged config", () => {
-    const config = testConfig({ cheapBuyMin: 0.08 });
+    const config = testConfig({
+      cheapBuyMin: 0.08,
+      funderAddress: "0x1234567890123456789012345678901234567890",
+      privateKey: "0x1234567890123456789012345678901234567890123456789012345678901234",
+    });
     assert.doesNotThrow(() => validateTradingConfig(config));
   });
 });
 
 describe("keysForStrategy", () => {
+  it("omits SIM/backtest-only keys from live editable set", () => {
+    const keys = keysForStrategy("arb");
+    assert.ok(!keys.includes("simulatedCapital"));
+    assert.ok(!keys.includes("simFillProbabilityNonMarketable"));
+    assert.ok(!keys.includes("simRandomSeed"));
+  });
+
   it("keeps edge keys for edge-lead and for custom when leadsWithEdge is true", () => {
     assert.ok(keysForStrategy("edge-lead").includes("edgeBandMin"));
     assert.ok(!keysForStrategy("arb").includes("edgeBandMin"));

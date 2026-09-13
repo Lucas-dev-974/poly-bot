@@ -11,7 +11,7 @@ const CLOSED_MAX_PAGES = 200;
 /**
  * Fetches total portfolio value periodically:
  * - available collateral (pUSD) via the authenticated CLOB client (live only)
- * - open positions value via the public Polymarket data API (works in DRY_RUN too)
+ * - open positions value via the public Polymarket data API
  */
 export class BalanceTracker {
   private timer: ReturnType<typeof setInterval> | null = null;
@@ -42,7 +42,6 @@ export class BalanceTracker {
         0,
       );
       bus.emit({ type: "polymarketPositions", positions });
-      if (this.config.dryRun) return;
       if (available === null) return;
 
       const snapshot: BalanceSnapshot = {

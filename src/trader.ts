@@ -48,7 +48,6 @@ export class Trader {
   }
 
   async init(): Promise<void> {
-    if (this.config.dryRun) return;
     // Readonly without a key: skip the CLOB client. BalanceTracker falls
     // back to 0 collateral + the public data-api positions.
     if (this.config.readonlyLive && !this.config.privateKey) return;
@@ -56,7 +55,7 @@ export class Trader {
   }
 
   async getAvailableCollateral(): Promise<number | null> {
-    if (this.config.dryRun || !this.client) return null;
+    if (!this.client) return null;
     const params: BalanceAllowanceParams = { asset_type: AssetType.COLLATERAL };
     const response = await this.withTimeout(
       "getAvailableCollateral",
@@ -205,7 +204,7 @@ export class Trader {
   }
 
   async cancelOrder(orderId: string): Promise<void> {
-    if (this.config.dryRun || !this.client) return;
+    if (!this.client) return;
     await this.withTimeout(
       "cancelOrder",
       this.client.cancelOrder({ orderID: orderId }),
@@ -226,23 +225,10 @@ export class Trader {
    * constructing the opportunity — placeSell does not fetch the book itself.
    */
   async placeSell(opportunity: TradeOpportunity): Promise<OrderResult> {
-    const fokPrice = Math.max(opportunity.token.bestBid ?? 0, 0.01);
-    // Dry-run / no CLOB client: simulate a full FOK fill at the bid so
-    // Policy A / edge-lead defense can close tracker legs without throwing.
-    if (this.config.dryRun || !this.client) {
-      return {
-        dryRun: true,
-        tokenId: opportunity.token.tokenId,
-        side: "SELL",
-        price: fokPrice,
-        fillPrice: fokPrice,
-        size: opportunity.size,
-        filledSize: opportunity.size,
-        filled: true,
-        reason: "dry-run-fok-sell",
-        orderType: "FOK",
-      };
+    if (!this.client) {
+      throw new Error("Trading client not initialized");
     }
+    const fokPrice = Math.max(opportunity.token.bestBid ?? 0, 0.01);
 
     // CLOB market SELL semantics: `amount` is the number of SHARES to sell
     // (UserMarketOrderV2: "SELL orders: Shares to sell"), NOT USDC. Passing
@@ -345,7 +331,7 @@ export class Trader {
   }
 
   async getOrderStatus(orderId: string): Promise<ParsedOrderStatus> {
-    if (this.config.dryRun || !this.client) {
+    if (!this.client) {
       return { filled: false, cancelled: false, sizeMatched: 0, status: "unknown" };
     }
     const order = await this.withTimeout(
@@ -361,7 +347,7 @@ export class Trader {
    * (caller must fail-closed — do not invent a fill).
    */
   async getConditionalTokenBalance(tokenId: string): Promise<number | null> {
-    if (this.config.dryRun || !this.client) return null;
+    if (!this.client) return null;
     const params: BalanceAllowanceParams = {
       asset_type: AssetType.CONDITIONAL,
       token_id: tokenId,
@@ -402,9 +388,6 @@ export class Trader {
     outcomeIndex: number,
     negRisk: boolean,
   ): Promise<{ txHash: string; transactionId: string }> {
-    if (this.config.dryRun) {
-      throw new Error("Cannot redeem in dry-run mode");
-    }
     if (!this.config.funderAddress) {
       throw new Error("FUNDER_ADDRESS (deposit wallet) is required for redemption");
     }

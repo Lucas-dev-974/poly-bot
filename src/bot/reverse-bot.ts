@@ -6,8 +6,6 @@ import { log } from "../logger.js";
 import { MarketScanner } from "../market-scanner.js";
 import { PositionResolver } from "../position-resolver.js";
 import type { EditableConfigKey } from "../runtime-settings.js";
-import { SimulatedBroker } from "../simulated-broker.js";
-import { SimulatedLedger } from "../simulated-ledger.js";
 import { createStrategy } from "../strategy/registry.js";
 import type { TradingStrategy } from "../strategy/trading-strategy.js";
 import { TradeTracker } from "../trade-tracker.js";
@@ -37,8 +35,6 @@ class TickSupersededError extends Error {
 export class ReverseBot {
   private readonly scanner: MarketScanner;
   readonly tracker: TradeTracker;
-  private readonly ledger: SimulatedLedger | null;
-  private readonly broker: SimulatedBroker | null;
   private readonly resolver: PositionResolver | null;
   private totalAttempts = 0;
   private paused = false;
@@ -68,11 +64,7 @@ export class ReverseBot {
       repos?.postedOrders,
     );
     this.scanner = new MarketScanner(config);
-    this.ledger = config.dryRun
-      ? new SimulatedLedger(config.simulatedCapital, repos?.ledger)
-      : null;
-    this.broker = this.ledger ? new SimulatedBroker(config, this.ledger) : null;
-    this.resolver = new PositionResolver(config, this.tracker, this.ledger);
+    this.resolver = new PositionResolver(config, this.tracker);
     this.strategy = createStrategy(config.strategyId, repos);
     this.lifecycle = new LiveOrderLifecycle({ config, trader, tracker: this.tracker }, this.strategy);
     this.resting = new RestingManager(
@@ -93,8 +85,6 @@ export class ReverseBot {
         tracker: this.tracker,
         scanner: this.scanner,
         repos: this.repos,
-        broker: this.broker,
-        ledger: this.ledger,
         lifecycle: this.lifecycle,
         balance: this.balance,
         defendPair: (pairId) => this.resting.defendPair(pairId),
@@ -109,7 +99,6 @@ export class ReverseBot {
       config,
       repos: this.repos,
       tracker: this.tracker,
-      ledger: this.ledger,
     });
   }
 
@@ -127,9 +116,6 @@ export class ReverseBot {
     this.repos?.botState.set(TOTAL_ATTEMPTS_KEY, 0);
     this.repos?.botState.set(PAUSED_KEY, 0);
     bus.emit({ type: "botControl", enabled: true });
-    if (this.ledger) {
-      this.ledger.reset(this.config.simulatedCapital);
-    }
   }
 
   setPaused(paused: boolean): void {
@@ -154,7 +140,6 @@ export class ReverseBot {
         ? `${this.config.expensiveBuyMin}-${this.config.expensiveBuyMax}`
         : "disabled",
       markets: this.config.marketSlugPrefixes,
-      dryRun: this.config.dryRun,
       pollMs: this.config.pollIntervalMs,
       resolveFallback: this.config.simResolveFallback,
     });
@@ -252,7 +237,6 @@ export class ReverseBot {
       this.scheduleTick();
     }
     if (changed.has("simRandomSeed")) {
-      this.broker?.reseed(this.config.simRandomSeed);
       this.resolver?.reseed(this.config.simRandomSeed);
     }
     if (changed.has("strategyId")) {
@@ -283,12 +267,10 @@ export class ReverseBot {
       const nowSeconds = Date.now() / 1000;
       this.tracker.prunePostedOrders(nowSeconds);
       this.tracker.pruneWindowClaims(nowSeconds);
-      if (!this.config.dryRun) {
-        await this.lifecycle.cancelStaleOrders(nowSeconds);
-        this.assertTickActive(session);
-        await this.lifecycle.pollOrderFills();
-        this.assertTickActive(session);
-      }
+      await this.lifecycle.cancelStaleOrders(nowSeconds);
+      this.assertTickActive(session);
+      await this.lifecycle.pollOrderFills();
+      this.assertTickActive(session);
       // Keep scanning + market data persistence even while paused; only trading is gated.
       const events = await this.scanner.scan();
       this.assertTickActive(session);
@@ -344,7 +326,7 @@ export class ReverseBot {
     this.assertTickActive(session);
     this.snapshots.insertBooks(event, books, tickTs);
     // Resting management continues outside the entry window (open GTCs still need care).
-    if (!this.config.dryRun && !this.paused) {
+    if (!this.paused) {
       await this.resting.manageLiveResting(event, books);
       this.assertTickActive(session);
     }

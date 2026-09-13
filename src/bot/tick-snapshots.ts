@@ -1,7 +1,6 @@
 import type { BotConfig } from "../config.js";
 import { bus } from "../dashboard/events.js";
 import type { Repositories } from "../db/index.js";
-import type { SimulatedLedger } from "../simulated-ledger.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { TokenBook, TradeOpportunity, UpDownEvent } from "../types.js";
 import { gammaMarketStats } from "../utils/market.js";
@@ -10,7 +9,6 @@ export type TickSnapshotsDeps = {
   config: BotConfig; // shared mutable ref
   repos?: Repositories;
   tracker: TradeTracker;
-  ledger: SimulatedLedger | null;
 };
 
 export class TickSnapshots {
@@ -104,24 +102,11 @@ export class TickSnapshots {
 
   emitStats(totalAttempts: number): void {
     const stats = this.computeStats(totalAttempts);
-    const statsType = this.deps.config.dryRun ? "simulatedStats" : "stats";
-    bus.emit({ type: statsType, stats });
+    bus.emit({ type: "stats", stats });
     const now = Date.now();
     if (now - this.lastStatsSnapshotAt >= TickSnapshots.STATS_SNAPSHOT_MS) {
       this.deps.repos?.statsSnapshots.insert(stats);
       this.lastStatsSnapshotAt = now;
-    }
-    if (this.deps.ledger) {
-      const availableCollateral = this.deps.ledger.getBalance();
-      const positionsValue = this.deps.tracker.getOpenExposure();
-      const totalValue = availableCollateral + positionsValue;
-      this.deps.repos?.balanceSnapshots.insert({
-        availableCollateral,
-        positionsValue,
-        totalValue,
-        source: "simulated",
-      });
-      bus.emit({ type: "balance", balance: { availableCollateral, positionsValue, totalValue } });
     }
   }
 

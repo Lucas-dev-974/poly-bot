@@ -384,14 +384,9 @@ const EDGE_LEAD_KEYS: readonly EditableConfigKey[] = [
 ];
 
 /**
- * Clés utilisées uniquement en dry-run (simulatedCapital, fill probability).
+ * SIM keys (simulatedCapital, fill probability, seed) stay in EDITABLE_CONFIG_KEYS
+ * for backtest presets/sanitizePatch, but are omitted from live keysForStrategy.
  */
-const SIM_DRYRUN_KEYS: readonly EditableConfigKey[] = [
-  "simulatedCapital",
-  "simFillProbabilityNonMarketable",
-  "simRandomSeed",
-];
-
 export function keysForStrategy(
   strategyId: BotConfig["strategyId"],
   leadsWithEdge?: boolean,
@@ -404,7 +399,7 @@ export function keysForStrategy(
         : strategyId === "barbell"
           ? BARBELL_KEYS
           : ARB_KEYS; // arb + custom sans leadsWithEdge
-  return [...SHARED_KEYS, ...strategyKeys, ...SIM_DRYRUN_KEYS];
+  return [...SHARED_KEYS, ...strategyKeys];
 }
 
 export function snapshotEditableSettings(

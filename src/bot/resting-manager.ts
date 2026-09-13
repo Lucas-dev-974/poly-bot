@@ -128,16 +128,20 @@ export class RestingManager {
       this.deps.lifecycle.emitOrderCancelled(order);
       this.deps.tracker.removePostedOrder(order.key);
       this.deps.tracker.unmark(order.key);
+      // Same orphan policy as live-order-lifecycle (stale/cancel paths): when
+      // the last unfilled cheap vanishes, drop independent-grid / arb hedges.
+      await this.deps.lifecycle.cancelOrphanHedgesIfNeeded(order);
       if (action === "cancel-lock") {
-        // reverse.cheapOrderAction always returns "keep" today — no reverse branch.
         const cancelWhy =
           this.strategy.id === "arb"
             ? "Cheap cancelled - pair lock no longer achievable"
             : this.strategy.id === "edge-lead"
               ? "Edge-lead cheap cancelled - ask left the cheap band"
-              : this.strategy.id.startsWith("custom:")
-                ? "Custom cheap cancelled - out of band"
-                : "Cheap cancelled - favorite left the hedge band";
+              : this.strategy.id === "reverse"
+                ? "Reverse cheap cancelled - ask left the cheap band"
+                : this.strategy.id.startsWith("custom:")
+                  ? "Custom cheap cancelled - out of band"
+                  : "Cheap cancelled - favorite left the hedge band";
         log(cancelWhy, {
             market: event.title,
             outcome: order.outcome,

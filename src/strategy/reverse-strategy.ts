@@ -2,7 +2,13 @@ import { log } from "../logger.js";
 import type { TradeOpportunity } from "../types.js";
 import { computeSize, MIN_CLOB_SHARES, priceLevels } from "../utils/prices.js";
 import { appendOpportunity } from "./edge-lead-strategy.js";
-import { pickFavoriteToken, pickReverseToken } from "./predicates.js";
+import {
+  isAskInExpensiveBand,
+  pickFavoriteToken,
+  pickReverseToken,
+  round2,
+  shouldDefendUncoveredPair,
+} from "./predicates.js";
 import type {
   CheapOrderAction,
   DefendContext,
@@ -16,7 +22,7 @@ import type {
 } from "./trading-strategy.js";
 
 /**
- * Reverse bot — la stratégie documentée dans STRATEGY.md (§2-§4).
+ * Reverse bot — la stratégie documentée dans STRATEGY.md (§2bis).
  *
  * En début de fenêtre 15m, la foule sur-cote la tendance initiale et
  * sous-cote l'underdog. Le moteur « reverse » parie à contre-courant :
@@ -26,12 +32,22 @@ import type {
  *    rare, mais rendement massif (> 10×) si l'underdog se retourne.
  *  - Leg hedge : grille de limit BUY maker sur le FAVORI (l'autre token),
  *    sur les niveaux [expensiveBuyMin, expensiveBuyMax] (défaut 90¢-95¢).
- *    Émise seulement après qu'au moins un cheap de la paire a été fillé.
+ *    Par défaut après un cheap fillé (`requireCheapFillBeforeExpensive`);
+ *    sinon grille indépendante (naked hedge intentionnel).
  *
  * Chaque niveau est un ordre indépendant, dédupliqué via le tracker
  * (`makeKey`: slug:outcome:{cheap|expensive}-price). Ce n'est pas un arb
  * verrouillé : c'est une stratégie d'espérance positive via l'asymétrie.
+ *
+ * Phase 2 flags (all default off): reverseCancelCheapOffBand,
+ * reverseDefendEnabled, reverseMaxGridLevels, reverseHedgeCapToFilledCheap.
  */
+
+function takeGridLevels(levels: number[], max: number | null): number[] {
+  if (max == null || max <= 0) return levels;
+  return levels.slice(0, max);
+}
+
 export class ReverseStrategy implements TradingStrategy {
   readonly id = "reverse" as const;
   readonly label =
@@ -66,10 +82,11 @@ export class ReverseStrategy implements TradingStrategy {
     // et prend le token mort (4¢, 1¢…). Arb/barbell ont askAlive ; sans
     // cette garde le GTC live ferait la même chose que le backtest.
     if (cheapToken.bestAsk >= config.cheapBuyMin) {
-      for (const price of priceLevels(
-        config.cheapBuyMin,
-        config.cheapBuyMax,
-      )) {
+      const cheapLevels = takeGridLevels(
+        priceLevels(config.cheapBuyMin, config.cheapBuyMax),
+        config.reverseMaxGridLevels,
+      );
+      for (const price of cheapLevels) {
         const size = computeSize(
           config.cheapOrderUsdc,
           price,
@@ -98,26 +115,51 @@ export class ReverseStrategy implements TradingStrategy {
       config.enableExpensiveHedge &&
       allowExpensive &&
       expensiveToken &&
-      expensiveToken.bestAsk !== null
+      expensiveToken.bestAsk !== null &&
+      isAskInExpensiveBand(
+        expensiveToken.bestAsk,
+        config.expensiveBuyMin,
+        config.expensiveBuyMax,
+      )
     ) {
       const maxPrice = Math.min(
         expensiveToken.bestAsk,
         config.expensiveBuyMax,
       );
       const gridMax = Math.max(maxPrice, config.expensiveBuyMin);
-      for (const price of priceLevels(
-        config.expensiveBuyMin,
-        gridMax,
-      )) {
+      const expensiveLevels = takeGridLevels(
+        priceLevels(config.expensiveBuyMin, gridMax),
+        config.reverseMaxGridLevels,
+      );
+
+      // Cap only once cheap is actually filled. With requireCheapFill=false and
+      // no fill yet, leave uncapped so intentional naked hedges still emit.
+      // Subtract filled + resting expensive so the cap holds across ticks
+      // (same-price keys are deduped; other levels must still consume budget).
+      let remainingCap = Number.POSITIVE_INFINITY;
+      if (config.reverseHedgeCapToFilledCheap) {
+        const filledCheap = tracker.getFilledCheapSizeForPair(pairId);
+        if (filledCheap > 0) {
+          const committedExpensive = tracker.getExpensiveSizeForPair(pairId);
+          remainingCap = Math.max(0, round2(filledCheap - committedExpensive));
+        }
+      }
+
+      for (const price of expensiveLevels) {
         // Ne pas enchérir au-dessus de l'ask du favori (une limite qui
         // paierait plus que l'offre n'a aucun sens économique ici).
         if (price > expensiveToken.bestAsk) break;
-        const size = computeSize(
+        let size = computeSize(
           config.expensiveOrderUsdc,
           price,
           config.maxSharesPerOrder,
         );
         if (size === null) continue;
+        if (Number.isFinite(remainingCap)) {
+          size = round2(Math.min(size, remainingCap));
+          if (size < MIN_CLOB_SHARES) continue;
+        }
+        const before = opportunities.length;
         appendOpportunity(
           tracker,
           opportunities,
@@ -128,6 +170,14 @@ export class ReverseStrategy implements TradingStrategy {
           size,
           config.maxOpenPositionsPerSide,
         );
+        // appendOpportunity may no-op (dedupe / maxOpen) — only consume cap
+        // when a level was actually queued.
+        if (
+          Number.isFinite(remainingCap) &&
+          opportunities.length > before
+        ) {
+          remainingCap = round2(remainingCap - size);
+        }
       }
     }
 
@@ -149,8 +199,17 @@ export class ReverseStrategy implements TradingStrategy {
     return opportunities;
   }
 
-  /** Une grille maker GTC reste au carnet : on ne le prend ni l'annule. */
-  cheapOrderAction(_ctx: RestingCheapContext): CheapOrderAction {
+  /**
+   * Default keep. With reverseCancelCheapOffBand: cancel resting cheap if
+   * the live underdog ask left [cheapBuyMin, cheapBuyMax].
+   */
+  cheapOrderAction(ctx: RestingCheapContext): CheapOrderAction {
+    if (!ctx.config.reverseCancelCheapOffBand) return "keep";
+    const ask = ctx.cheapBook?.bestAsk;
+    if (ask === null || ask === undefined) return "keep";
+    if (ask < ctx.config.cheapBuyMin || ask > ctx.config.cheapBuyMax) {
+      return "cancel-lock";
+    }
     return "keep";
   }
 
@@ -159,22 +218,30 @@ export class ReverseStrategy implements TradingStrategy {
     return "keep";
   }
 
-  /** Le reverse n'est pas un arb verrouillé : pas de défense FOK du cheap. */
-  shouldDefend(_ctx: DefendContext): boolean {
-    return false;
+  /**
+   * Default off. With reverseDefendEnabled: same trigger as arb — favorite
+   * ask above expensiveBuyMax and uncovered cheap remains.
+   */
+  shouldDefend(ctx: DefendContext): boolean {
+    if (!ctx.config.reverseDefendEnabled) return false;
+    return (
+      shouldDefendUncoveredPair(ctx.favoriteAsk, ctx.config.expensiveBuyMax) &&
+      ctx.filledCheap > ctx.filledExpensive
+    );
   }
 
-  defendShares(_ctx: DefendContext): number {
-    return 0;
+  defendShares(ctx: DefendContext): number {
+    if (!ctx.config.reverseDefendEnabled) return 0;
+    return round2(Math.max(0, ctx.filledCheap - ctx.filledExpensive));
   }
 
   /**
-   * Inutilisé : l'exécuteur / runner n'appellent pas hedgeAtPostTime
-   * quand `independentHedgeGrid` est true (la grille est déjà pricée
-   * dans findOpportunities). Skip conservé comme filet si un appel survit.
+   * Band revalidation for reverse lives in the executor via
+   * `shouldPostIndependentHedge` (keeps grid limit prices). This method
+   * stays a conservative skip if anything still calls it directly.
    */
   hedgeAtPostTime(_ctx: HedgePostContext): HedgePostDecision {
-    return { action: "skip", reason: "reverse-grid-managed-in-find" };
+    return { action: "skip", reason: "reverse-grid-band-checked-in-executor" };
   }
 
   /** Le reverse ne vend jamais l'edge nu (pas de suivi de tendance). */

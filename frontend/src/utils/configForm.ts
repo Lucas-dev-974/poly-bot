@@ -47,6 +47,10 @@ export type ConfigFormState = {
   edgeSellExpensiveAfterMin: string;
   edgeSellExpensiveLossPct: string;
   edgeSellExpensiveLossWindowMs: string;
+  reverseCancelCheapOffBand: boolean;
+  reverseDefendEnabled: boolean;
+  reverseMaxGridLevels: string;
+  reverseHedgeCapToFilledCheap: boolean;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -99,6 +103,11 @@ export function configToForm(config: BotConfig): ConfigFormState {
     edgeSellExpensiveAfterMin: String(config.edgeSellExpensiveAfterMin ?? 8),
     edgeSellExpensiveLossPct: String(config.edgeSellExpensiveLossPct ?? 10),
     edgeSellExpensiveLossWindowMs: String(config.edgeSellExpensiveLossWindowMs ?? 10000),
+    reverseCancelCheapOffBand: config.reverseCancelCheapOffBand === true,
+    reverseDefendEnabled: config.reverseDefendEnabled === true,
+    reverseMaxGridLevels:
+      config.reverseMaxGridLevels == null ? "" : String(config.reverseMaxGridLevels),
+    reverseHedgeCapToFilledCheap: config.reverseHedgeCapToFilledCheap === true,
   };
 }
 
@@ -169,6 +178,13 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     edgeSellExpensiveAfterMin: parseNum(form.edgeSellExpensiveAfterMin, "Vente edge après (min)"),
     edgeSellExpensiveLossPct: parseNum(form.edgeSellExpensiveLossPct, "Perte edge %"),
     edgeSellExpensiveLossWindowMs: parseNum(form.edgeSellExpensiveLossWindowMs, "Fenêtre perte edge (ms)"),
+    reverseCancelCheapOffBand: form.reverseCancelCheapOffBand,
+    reverseDefendEnabled: form.reverseDefendEnabled,
+    reverseMaxGridLevels:
+      form.reverseMaxGridLevels.trim() === ""
+        ? null
+        : parseNum(form.reverseMaxGridLevels, "Max niveaux grille reverse"),
+    reverseHedgeCapToFilledCheap: form.reverseHedgeCapToFilledCheap,
   };
 
   if ((next.marketSlugPrefixes?.length ?? 0) === 0) {
@@ -504,6 +520,12 @@ export function fieldErrors(
       if (Number.isFinite(sellAfterMin) && sellAfterMin < 0) result.edgeSellExpensiveAfterMin = "≥ 0";
       if (Number.isFinite(sellLossPct) && sellLossPct <= 0) result.edgeSellExpensiveLossPct = "> 0";
       if (Number.isFinite(sellLossWindowMs) && sellLossWindowMs <= 0) result.edgeSellExpensiveLossWindowMs = "> 0";
+    if (form.strategyId === "reverse" && form.reverseMaxGridLevels.trim() !== "") {
+      const maxLevels = Number(form.reverseMaxGridLevels);
+      if (!Number.isFinite(maxLevels) || maxLevels < 1) {
+        result.reverseMaxGridLevels = "vide ou ≥ 1";
+      }
+    }
     }
   } catch (error) {
     // ignore — validateConfigForm handles this

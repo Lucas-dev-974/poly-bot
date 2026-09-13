@@ -1,7 +1,7 @@
 import type { BotConfig } from "./config.js";
 import type { TradeTracker } from "./trade-tracker.js";
 import type { TokenBook, TradeOpportunity, UpDownEvent } from "./types.js";
-import { ArbStrategy } from "./strategy/arb-strategy.js";
+import { createStrategy } from "./strategy/registry.js";
 
 export {
   isAskInExpensiveBand,
@@ -12,9 +12,9 @@ export {
 } from "./strategy/predicates.js";
 
 /**
- * Barrel findOpportunities always uses ArbStrategy. Production trading goes
- * through ReverseBot → createStrategy(config.strategyId). Tests that need
- * barbell must call createStrategy("barbell") / new BarbellStrategy().
+ * Test/helper barrel: delegates to `createStrategy(config.strategyId)`.
+ * Production trading goes through ReverseBot → createStrategy(config.strategyId, repos).
+ * Custom strategies (`custom:<id>`) still require repos — call createStrategy directly.
  */
 export function findOpportunities(
   config: BotConfig,
@@ -22,7 +22,7 @@ export function findOpportunities(
   event: UpDownEvent,
   books: TokenBook[],
 ): TradeOpportunity[] {
-  return new ArbStrategy().findOpportunities({
+  return createStrategy(config.strategyId).findOpportunities({
     config,
     tracker,
     event,

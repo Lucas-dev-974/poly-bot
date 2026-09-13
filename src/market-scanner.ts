@@ -4,6 +4,7 @@ import type { GammaMarket, OrderBook, TokenBook, UpDownEvent } from "./types.js"
 import {
   bestPrice,
   bestSize,
+  isWithinMinutesBeforeClose,
   matchesSlugPrefixes,
   parseWindowStart,
   rankedLevels,
@@ -65,14 +66,7 @@ export class MarketScanner {
       const windowEnd = windowStart + WINDOW_SECONDS;
       if (now < windowStart || now > windowEnd) continue;
 
-      const minutesLeft = (windowEnd - now) / 60;
-      if (
-        minutesLeft < this.config.minutesBeforeCloseMin ||
-        minutesLeft > this.config.minutesBeforeCloseMax
-      ) {
-        continue;
-      }
-
+      // Recording covers the full active window. Trading window is applied later.
       results.push({
         title: event.title,
         slug: event.slug,
@@ -83,6 +77,16 @@ export class MarketScanner {
     }
 
     return results;
+  }
+
+  /** True when minutes-left is inside the configured trading entry window. */
+  inTradingWindow(event: UpDownEvent, nowSec: number = Date.now() / 1000): boolean {
+    const minutesLeft = (event.windowEnd - nowSec) / 60;
+    return isWithinMinutesBeforeClose(
+      minutesLeft,
+      this.config.minutesBeforeCloseMin,
+      this.config.minutesBeforeCloseMax,
+    );
   }
 
   async getTokenBooks(event: UpDownEvent): Promise<TokenBook[]> {

@@ -582,6 +582,39 @@ export function SettingsModal(props: {
                       checked={form().requireCheapFillBeforeExpensive}
                       onChange={(v) => update("requireCheapFillBeforeExpensive", v)}
                     />
+                    <div class="cfg-divider" />
+                    <p class="cfg-section__desc">
+                      Phase 2 — contrôles de risque reverse (désactivés par défaut).
+                    </p>
+                    <Toggle
+                      label="Cancel cheap hors bande"
+                      hint="Annule les GTC cheap resting si l'ask underdog sort de [cheapBuyMin, cheapBuyMax]."
+                      checked={form().reverseCancelCheapOffBand}
+                      onChange={(v) => update("reverseCancelCheapOffBand", v)}
+                    />
+                    <Toggle
+                      label="Défense cheap si favori hors max"
+                      hint="FOK SELL du cheap non couvert quand l'ask favori dépasse expensiveBuyMax."
+                      checked={form().reverseDefendEnabled}
+                      onChange={(v) => update("reverseDefendEnabled", v)}
+                    />
+                    <Toggle
+                      label="Cap hedge ≤ cheap fillé"
+                      hint="Le cumul des tailles hedge ne dépasse pas filledCheap − filledExpensive."
+                      checked={form().reverseHedgeCapToFilledCheap}
+                      onChange={(v) => update("reverseHedgeCapToFilledCheap", v)}
+                    />
+                    <Field
+                      label="Max niveaux grille"
+                      hint="Nombre max de niveaux maker par jambe. Vide = illimité."
+                    >
+                      <NumberInput
+                        value={form().reverseMaxGridLevels}
+                        min={1}
+                        step={1}
+                        onInput={(v) => update("reverseMaxGridLevels", v)}
+                      />
+                    </Field>
                   </Show>
 
                 </div>

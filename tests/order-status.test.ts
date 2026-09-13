@@ -139,6 +139,11 @@ describe("isAskInExpensiveBand", () => {
     assert.equal(isAskInExpensiveBand(0.81, 0.76, 0.85), true);
     assert.equal(isAskInExpensiveBand(0.85, 0.76, 0.85), true);
   });
+
+  it("round2 float noise near band edges", () => {
+    assert.equal(isAskInExpensiveBand(0.8500000002, 0.76, 0.85), true);
+    assert.equal(isAskInExpensiveBand(0.7599999998, 0.76, 0.85), true);
+  });
 });
 
 describe("shouldDefendUncoveredPair", () => {

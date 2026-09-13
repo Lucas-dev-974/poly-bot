@@ -353,6 +353,21 @@ export class TradeTracker {
     return total;
   }
 
+  /**
+   * Shares already committed on the expensive/hedge leg (open fills + GTC
+   * working remainder). Used by reverseHedgeCapToFilledCheap so resting
+   * hedges consume the cap across ticks, not only filled size.
+   */
+  getExpensiveSizeForPair(pairId: string): number {
+    let total = this.getFilledExpensiveSizeForPair(pairId);
+    for (const order of this.postedOrders.values()) {
+      if (order.pairId === pairId && order.kind === "expensive") {
+        total += this.postedWorkingRemainder(order).size;
+      }
+    }
+    return total;
+  }
+
   getResolvedPositions(): SimulatedPosition[] {
     return [...this.resolvedPositions].sort(
       (a, b) => (b.resolvedAt ?? 0) - (a.resolvedAt ?? 0),

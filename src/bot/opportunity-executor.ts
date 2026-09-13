@@ -9,6 +9,7 @@ import type { TradingStrategy } from "../strategy/trading-strategy.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { Trader } from "../trader.js";
 import type { OrderResult, TradeOpportunity, SimulatedPosition } from "../types.js";
+import { shouldPostIndependentHedge } from "../strategy/hedge-post.js";
 import { formatReturnPct, MIN_CLOB_SHARES } from "../utils/prices.js";
 import type { BalanceGuard } from "./balance-guard.js";
 import type { LiveOrderLifecycle } from "./live-order-lifecycle.js";
@@ -103,8 +104,8 @@ export class OpportunityExecutor {
     // never be posted without a filled cheap — a hedge on a resting cheap
     // is a naked favorite (C2). The hedge is posted only after the cheap
     // fill is detected by pollOrderFills, at the next tick.
-    // Edge-lead inverts this. Reverse can bypass via requireCheapFillBeforeExpensive=false
-    // while keeping independentHedgeGrid sizing / hedgeAtPostTime skip.
+    // Edge-lead inverts this. Reverse can bypass via requireCheapFillBeforeExpensive=false.
+    // Independent grids still get a live band check (shouldPostIndependentHedge).
     const cheapCommitted =
       opportunity.kind === "expensive"
         ? this.deps.tracker.getFilledCheapSizeForPair(opportunity.pairId)
@@ -127,11 +128,16 @@ export class OpportunityExecutor {
       return;
     }
 
+    // Live wallet gate: arb/barbell always; independentHedgeGrid when cheap-fill
+    // is required (default reverse). Skip only when requireCheapFillBeforeExpensive
+    // is false (intentional naked-hedge bypass). Never downsize reverse grid levels
+    // to cheapHeld — only fail-closed on missing/zero balance.
     if (
       opportunity.kind === "expensive" &&
       !this.deps.config.dryRun &&
       !this.strategy.leadsWithEdge &&
-      !this.strategy.independentHedgeGrid
+      (this.strategy.independentHedgeGrid !== true ||
+        this.deps.config.requireCheapFillBeforeExpensive)
     ) {
       const cheapHeld = await this.deps.lifecycle.confirmCheapTokensForHedge(opportunity.pairId);
       if (cheapHeld === null) {
@@ -142,9 +148,16 @@ export class OpportunityExecutor {
         return;
       }
       if (cheapHeld <= 0) {
+        log("Hedge skipped - no cheap tokens held", {
+          market: opportunity.event.title,
+          pairId: opportunity.pairId,
+        });
         return;
       }
-      if (cheapHeld < opportunity.size) {
+      if (
+        this.strategy.independentHedgeGrid !== true &&
+        cheapHeld < opportunity.size
+      ) {
         if (cheapHeld < MIN_CLOB_SHARES) {
           log("Hedge skipped - remaining cheap shares below CLOB minimum", {
             market: opportunity.event.title,
@@ -221,6 +234,34 @@ export class OpportunityExecutor {
     }
 
     if (
+      opportunity.kind === "expensive" &&
+      !this.deps.config.dryRun &&
+      !this.strategy.leadsWithEdge &&
+      this.strategy.independentHedgeGrid === true
+    ) {
+      const freshBook = await this.deps.scanner.getTokenBook(opportunity.token.tokenId);
+      const freshAsk = freshBook?.bestAsk ?? null;
+      const band = shouldPostIndependentHedge(
+        freshAsk,
+        opportunity.price,
+        this.deps.config.expensiveBuyMin,
+        this.deps.config.expensiveBuyMax,
+      );
+      if (!band.ok) {
+        log("Hedge skipped at post time (independent grid band)", {
+          market: opportunity.event.title,
+          outcome: opportunity.token.outcome,
+          reason: band.reason,
+          freshAsk,
+          limitPrice: opportunity.price,
+        });
+        return;
+      }
+      opportunity = {
+        ...opportunity,
+        token: { ...opportunity.token, bestAsk: freshAsk },
+      };
+    } else if (
       opportunity.kind === "expensive" &&
       !this.deps.config.dryRun &&
       !this.strategy.leadsWithEdge &&

@@ -19,9 +19,11 @@ Ce n'est **pas** un ladder de limites ni une copie d'un carnet manuel. Sur **`ar
 
 ---
 
-## 2. Vocabulaire « reverse » (historique) vs moteur `reverse`
+## 2. Leftover directionnel arb (ex-vocabulaire « reverse »)
 
-> **Attention** : ce § décrit le **comportement résiduel de `arb`** quand le hedge lock échoue (cheap underdog nu). Ce n'est **pas** le moteur `ReverseStrategy` / preset `config/presets/reverse.json` (grilles indépendantes, voir intro).
+> **Attention — ne pas confondre avec le moteur `reverse`.**  
+> Ce § décrit uniquement le **comportement résiduel de `arb`** quand le hedge lock échoue (cheap underdog nu).  
+> Le moteur `ReverseStrategy` / preset `config/presets/reverse.json` (grilles maker indépendantes) est documenté en **§2bis**.
 
 ### 2.1 Principe (arb + leftover)
 
@@ -42,7 +44,7 @@ Le payoff reverse d'un cheap **nu** reste asymétrique :
 
 Le bot poste un **BUY limit maker** sur le cheap, puis un hedge **seulement si** le cheap est **fillé** et que le verrou tient :
 
-1. **Jambe « cheap » (reverse)** — UNDERDOG dans `CHEAP_BUY_MIN`–`MAX`. Un seul bid GTC à `min(bestAsk, CHEAP_BUY_MAX, PAIR_LOCK_MAX − hedge)`.
+1. **Jambe « cheap » (underdog / leftover)** — UNDERDOG dans `CHEAP_BUY_MIN`–`MAX`. Un seul bid GTC à `min(bestAsk, CHEAP_BUY_MAX, PAIR_LOCK_MAX − hedge)`.
 2. **Jambe « expensive » (hedge)** — FAVORI dont l'ask est **déjà** dans `EXPENSIVE_BUY_MIN`–`MAX`. Taille **1:1** avec le cheap **rempli**, au prix `min(ask, EXPENSIVE_BUY_MAX)`, **uniquement si** `fillPrice + hedge ≤ PAIR_LOCK_MAX`.
 
 Ce n'est plus un ladder de limites ni un « completeur de paire ». Si le cheap fill à 0.20 et que le favori a bougé à 0.83 (`1.03 > lock`), **pas de hedge** : le cheap reste directionnel. Un hedge n'est jamais posté contre un cheap seulement *resting* (anti favori-nu).
@@ -60,6 +62,25 @@ BTC pumps dans les 10 premières minutes
 ```
 
 Le pari reverse : **il se retourne avant la clôture**. Sur des fenêtres de 15 min, l'extrême volatilité du BTC/ETH rend les retournements statistiquement plausibles, et le pricing de l'underdog à un chiffre sous-évalue cette probabilité.
+
+---
+
+## 2bis. Moteur `reverse` (`ReverseStrategy`)
+
+`strategyId: "reverse"` — stratégie d'espérance via asymétrie de pricing, **pas** un arb verrouillé.
+
+- **Leg cheap** : grille de limit BUY maker sur l'underdog (`priceLevels(cheapBuyMin, cheapBuyMax)`), seulement si `bestAsk >= cheapBuyMin`.
+- **Leg hedge** : grille maker sur le favori (`expensiveBuyMin`–`expensiveBuyMax`), émise seulement après fill cheap si `requireCheapFillBeforeExpensive` (défaut `true`).
+- Flags : `independentHedgeGrid = true`, `leadsWithEdge = false`, **pas** de défense FOK (`shouldDefend` = false), GTC cheap/edge restent au carnet (pas de cancel-band).
+- Live / find (Phase 1) : (0) pas de grille hedge si l'ask favori est hors `[expensiveBuyMin, expensiveBuyMax]` ; (1) confirmation solde cheap avant POST hedge si cheap-fill requis ; (2) revalidation bande au POST via `shouldPostIndependentHedge` **sans** reprice des niveaux ; (3) cancel des hedges resting si **tous** les cheap resting ont disparu sans fill (sauf si `requireCheapFillBeforeExpensive=false`).
+- **Phase 2 flags** (tous **off** par défaut — activer depuis le dashboard / `bot-settings.json`) :
+  - `reverseCancelCheapOffBand` : cancel GTC cheap si l'ask underdog sort de `[cheapBuyMin, cheapBuyMax]`
+  - `reverseDefendEnabled` : FOK SELL du cheap non couvert si ask favori > `expensiveBuyMax`
+  - `reverseMaxGridLevels` : plafonne le nombre de niveaux maker par jambe (`null` = illimité)
+  - `reverseHedgeCapToFilledCheap` : cumul hedge ≤ `filledCheap − (filledExpensive + resting expensive GTC)`
+
+Preset : `config/presets/reverse.json`.
+
 
 ---
 
@@ -108,7 +129,7 @@ La méthode `scan()` interroge l'API Gamma :
 
 ### 3.3 Logique de stratégie (`src/strategy/*`)
 
-La **politique** vit dans `TradingStrategy` (`ArbStrategy` / `BarbellStrategy`). Le bot exécute (CLOB, soldes, exposition, tracker). `src/strategy.ts` est un barrel de tests : `findOpportunities` y appelle **toujours** `ArbStrategy` (ignore `config.strategyId`). Production : `createStrategy(config.strategyId)`.
+La **politique** vit dans `TradingStrategy` (`ArbStrategy` / `BarbellStrategy` / `EdgeLeadStrategy` / `ReverseStrategy`). Le bot exécute (CLOB, soldes, exposition, tracker). `src/strategy.ts` est un barrel helper/tests : `findOpportunities` délègue à `createStrategy(config.strategyId)` (natifs seulement ; `custom:` nécessite `repos`). Production : `ReverseBot` → `createStrategy(config.strategyId, repos)`.
 
 Commun aux deux moteurs :
 

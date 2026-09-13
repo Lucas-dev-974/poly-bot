@@ -59,6 +59,14 @@ export function parseOptionalNumber(value: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+export function isWithinMinutesBeforeClose(
+  minutesLeft: number,
+  min: number,
+  max: number,
+): boolean {
+  return minutesLeft >= min && minutesLeft <= max;
+}
+
 export function gammaMarketStats(market: GammaMarket): {
   volume: number | null;
   volume24hr: number | null;

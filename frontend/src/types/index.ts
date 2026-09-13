@@ -195,6 +195,14 @@ export interface BotConfig {
   edgeSellExpensiveLossPct: number;
   /** Edge-lead : durée de perte continue requise (ms) avant la vente. */
   edgeSellExpensiveLossWindowMs: number;
+  /** Reverse Phase 2: cancel resting cheap if ask left cheap band. */
+  reverseCancelCheapOffBand: boolean;
+  /** Reverse Phase 2: FOK-sell uncovered cheap when favorite ask > max. */
+  reverseDefendEnabled: boolean;
+  /** Reverse Phase 2: max maker grid levels per leg; null = unlimited. */
+  reverseMaxGridLevels: number | null;
+  /** Reverse Phase 2: cap hedge size to filledCheap − filledExpensive. */
+  reverseHedgeCapToFilledCheap: boolean;
   dryRun: boolean;
   readonlyLive: boolean;
   clobHost: string;

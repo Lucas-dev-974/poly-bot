@@ -961,6 +961,12 @@ body:has(.bt-page) {
   gap: 8px 12px;
 }
 
+.bt-pf-label {
+  cursor: help;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.28);
+  width: fit-content;
+}
+
 .bt-pf {
   display: flex;
   flex-direction: column;

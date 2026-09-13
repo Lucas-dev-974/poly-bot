@@ -164,6 +164,27 @@ export interface BotConfig {
   edgeSellExpensiveLossPct: number;
   /** Edge-lead : durée de perte continue requise (ms) avant la vente. */
   edgeSellExpensiveLossWindowMs: number;
+  /**
+   * Reverse (Phase 2, default off): cancel resting cheap GTC when the live
+   * underdog ask leaves [cheapBuyMin, cheapBuyMax].
+   */
+  reverseCancelCheapOffBand: boolean;
+  /**
+   * Reverse (Phase 2, default off): FOK-sell uncovered cheap when favorite
+   * ask > expensiveBuyMax (same trigger as arb defense).
+   */
+  reverseDefendEnabled: boolean;
+  /**
+   * Reverse (Phase 2): max price levels per leg from the maker grid.
+   * null = unlimited (legacy behaviour).
+   */
+  reverseMaxGridLevels: number | null;
+  /**
+   * Reverse (Phase 2, default off): cap cumulative hedge size to
+   * filledCheap − (filledExpensive + resting expensive GTC). Independent
+   * grid otherwise ignores 1:1.
+   */
+  reverseHedgeCapToFilledCheap: boolean;
 }
 
 /**
@@ -220,6 +241,10 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     edgeSellExpensiveAfterMin: 8,
     edgeSellExpensiveLossPct: 10,
     edgeSellExpensiveLossWindowMs: 10_000,
+    reverseCancelCheapOffBand: false,
+    reverseDefendEnabled: false,
+    reverseMaxGridLevels: null,
+    reverseHedgeCapToFilledCheap: false,
   };
 }
 
@@ -367,6 +392,13 @@ export function validateConfigCoherence(
     if (!(config.barbellHedgeRatio > 0 && config.barbellHedgeRatio <= 1)) {
       throw new Error("BARBELL_HEDGE_RATIO must be in (0, 1]");
     }
+  }
+  if (
+    config.strategyId === "reverse" &&
+    config.reverseMaxGridLevels !== null &&
+    config.reverseMaxGridLevels < 1
+  ) {
+    throw new Error("REVERSE_MAX_GRID_LEVELS must be null or >= 1");
   }
   if (config.minutesBeforeCloseMin > config.minutesBeforeCloseMax) {
     throw new Error("MINUTES_BEFORE_CLOSE_MIN must be <= MINUTES_BEFORE_CLOSE_MAX");

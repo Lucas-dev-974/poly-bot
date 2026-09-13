@@ -24,6 +24,7 @@ import {
 import { StrategyGraphRepository } from "./strategy-graph-repo.js";
 
 export interface Repositories {
+  db: Database;
   positions: PositionRepository;
   pairs: PairRepository;
   ledger: LedgerRepository;
@@ -49,6 +50,7 @@ export interface Repositories {
 
 export function createRepositories(db: Database): Repositories {
   return {
+    db,
     positions: new PositionRepository(db),
     pairs: new PairRepository(db),
     ledger: new LedgerRepository(db),

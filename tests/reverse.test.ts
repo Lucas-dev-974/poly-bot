@@ -90,6 +90,40 @@ describe("ReverseStrategy", () => {
     assert.ok(opps.some((o) => o.kind === "cheap"));
   });
 
+  it("does not emit hedge grid when favorite ask is above expensiveBuyMax", () => {
+    const tracker = new TradeTracker();
+    const event = testEvent();
+    const pairId = `${event.slug}:${event.windowEnd}`;
+    tracker.addOpenPosition({
+      id: "filled-cheap",
+      eventSlug: event.slug,
+      eventTitle: event.title,
+      tokenId: "t-down",
+      outcome: "Down",
+      outcomeIndex: 1,
+      kind: "cheap",
+      limitPrice: 0.08,
+      fillPrice: 0.08,
+      size: 10,
+      cost: 0.8,
+      windowEnd: event.windowEnd,
+      status: "open",
+      fillReason: "marketable",
+      pairId,
+    });
+    const opps = new ReverseStrategy().findOpportunities({
+      config: testConfig({
+        strategyId: "reverse",
+        expensiveBuyMin: 0.9,
+        expensiveBuyMax: 0.95,
+      }),
+      tracker,
+      event,
+      books: books(0.97, 0.08),
+    });
+    assert.equal(opps.filter((o) => o.kind === "expensive").length, 0);
+  });
+
   it("posts a hedge grid on the favorite only after a cheap fill", () => {
     const config = reverseConfig();
     const strategy = new ReverseStrategy();
@@ -132,11 +166,13 @@ describe("ReverseStrategy", () => {
     const tracker = makeTracker();
     const event = testEvent();
     withFilledCheap(tracker, event);
+    // Favorite ask must stay inside [expensiveBuyMin, Max] or the hedge
+    // grid is suppressed (aligned with shouldPostIndependentHedge).
     const opps = strategy.findOpportunities({
       config,
       tracker,
       event,
-      books: books(0.96, 0.04),
+      books: books(0.95, 0.04),
     });
     assert.equal(opps.filter((o) => o.kind === "cheap").length, 0);
     assert.ok(opps.some((o) => o.kind === "expensive"));
@@ -226,12 +262,196 @@ describe("ReverseStrategy", () => {
     assert.equal(hedge.length, 2);
   });
 
-  it("does not defend or sell the edge (expectation strategy, not arb)", () => {
+  it("does not defend or sell the edge by default (expectation strategy)", () => {
     const strategy = new ReverseStrategy();
-    assert.equal(strategy.shouldDefend({} as never), false);
-    assert.equal(strategy.defendShares({} as never), 0);
+    const config = reverseConfig();
+    assert.equal(
+      strategy.shouldDefend({
+        config,
+        favoriteAsk: 0.99,
+        filledCheap: 10,
+        filledExpensive: 0,
+        pairId: "p",
+      }),
+      false,
+    );
+    assert.equal(
+      strategy.defendShares({
+        config,
+        favoriteAsk: 0.99,
+        filledCheap: 10,
+        filledExpensive: 0,
+        pairId: "p",
+      }),
+      0,
+    );
     assert.equal(strategy.shouldSellExpensiveEdge({} as never), false);
     assert.equal(strategy.leadsWithEdge, false);
     assert.equal(strategy.independentHedgeGrid, true);
+    assert.equal(strategy.cheapOrderAction({
+      config,
+      limitPrice: 0.08,
+      cheapBook: undefined,
+      favoriteAsk: 0.95,
+      pairId: "p",
+    }), "keep");
   });
+
+  it("Phase2: cancel cheap off-band when reverseCancelCheapOffBand is on", () => {
+    const strategy = new ReverseStrategy();
+    const config = reverseConfig({ reverseCancelCheapOffBand: true });
+    const book = books(0.95, 0.03)[1];
+    assert.equal(
+      strategy.cheapOrderAction({
+        config,
+        limitPrice: 0.08,
+        cheapBook: book,
+        favoriteAsk: 0.95,
+        pairId: "p",
+      }),
+      "cancel-lock",
+    );
+    const inBand = books(0.95, 0.08)[1];
+    assert.equal(
+      strategy.cheapOrderAction({
+        config,
+        limitPrice: 0.08,
+        cheapBook: inBand,
+        favoriteAsk: 0.95,
+        pairId: "p",
+      }),
+      "keep",
+    );
+  });
+
+  it("Phase2: defends uncovered cheap when reverseDefendEnabled is on", () => {
+    const strategy = new ReverseStrategy();
+    const config = reverseConfig({ reverseDefendEnabled: true });
+    const ctx = {
+      config,
+      favoriteAsk: 0.99,
+      filledCheap: 10,
+      filledExpensive: 3,
+      pairId: "p",
+    };
+    assert.equal(strategy.shouldDefend(ctx), true);
+    assert.equal(strategy.defendShares(ctx), 7);
+    assert.equal(
+      strategy.shouldDefend({ ...ctx, favoriteAsk: 0.92 }),
+      false,
+    );
+  });
+
+  it("Phase2: reverseMaxGridLevels caps cheap levels", () => {
+    const strategy = new ReverseStrategy();
+    const { opps } = run(strategy, reverseConfig({ reverseMaxGridLevels: 2 }));
+    const cheap = opps.filter((o) => o.kind === "cheap");
+    assert.equal(cheap.length, 2);
+    assert.deepEqual(cheap.map((o) => o.price).sort(), [0.07, 0.08]);
+  });
+
+  it("Phase2: reverseHedgeCapToFilledCheap caps cumulative hedge size", () => {
+    const strategy = new ReverseStrategy();
+    const tracker = makeTracker();
+    const event = testEvent();
+    withFilledCheap(tracker, event, 6);
+    const opps = strategy.findOpportunities({
+      config: reverseConfig({
+        reverseHedgeCapToFilledCheap: true,
+        reverseMaxGridLevels: 6,
+        expensiveOrderUsdc: 50,
+        maxSharesPerOrder: 90,
+      }),
+      tracker,
+      event,
+      books: books(0.95, 0.08),
+    });
+    const hedge = opps.filter((o) => o.kind === "expensive");
+    assert.ok(hedge.length >= 1);
+    const total = Math.round(hedge.reduce((s, o) => s + o.size, 0) * 100) / 100;
+    assert.ok(total <= 6 + 1e-9, `hedge total ${total} should be <= 6`);
+  });
+
+  it("Phase2: hedge cap is not consumed when appendOpportunity no-ops", () => {
+    const strategy = new ReverseStrategy();
+    const tracker = makeTracker();
+    const event = testEvent();
+    withFilledCheap(tracker, event, 10);
+    // Pre-mark the only level we would post under maxOpen=1 so append no-ops.
+    tracker.mark(tracker.makeKey(event.slug, "Up", "expensive", 0.9));
+    const opps = strategy.findOpportunities({
+      config: reverseConfig({
+        reverseHedgeCapToFilledCheap: true,
+        reverseMaxGridLevels: 1,
+        maxOpenPositionsPerSide: 1,
+        expensiveOrderUsdc: 50,
+      }),
+      tracker,
+      event,
+      books: books(0.95, 0.08),
+    });
+    assert.equal(opps.filter((o) => o.kind === "expensive").length, 0);
+    // Second call without the mark should still be able to post (cap intact).
+    tracker.unmark(tracker.makeKey(event.slug, "Up", "expensive", 0.9));
+    const opps2 = strategy.findOpportunities({
+      config: reverseConfig({
+        reverseHedgeCapToFilledCheap: true,
+        reverseMaxGridLevels: 1,
+        maxOpenPositionsPerSide: 1,
+        expensiveOrderUsdc: 50,
+      }),
+      tracker,
+      event,
+      books: books(0.95, 0.08),
+    });
+    const hedge = opps2.filter((o) => o.kind === "expensive");
+    assert.equal(hedge.length, 1);
+    assert.ok(hedge[0]!.size <= 10 + 1e-9);
+  });
+
+  it("Phase2: resting expensive already consumes the hedge cap across ticks", () => {
+    const strategy = new ReverseStrategy();
+    const tracker = makeTracker();
+    const event = testEvent();
+    const pairId = withFilledCheap(tracker, event, 10);
+    // Simulate a prior tick that already posted 8 shares of hedge at 0.90.
+    const hedgeKey = tracker.makeKey(event.slug, "Up", "expensive", 0.9);
+    tracker.mark(hedgeKey);
+    tracker.recordPostedOrder(
+      hedgeKey,
+      event.slug,
+      event.windowEnd,
+      7.2,
+      "resting-hedge-1",
+      {
+        eventSlug: event.slug,
+        windowEnd: event.windowEnd,
+        tokenId: "t-up",
+        outcome: "Up",
+        outcomeIndex: 0,
+        kind: "expensive",
+        limitPrice: 0.9,
+        size: 8,
+        pairId,
+        eventTitle: event.title,
+        bestAskAtFill: 0.95,
+        strategyId: "reverse",
+      },
+    );
+    const opps = strategy.findOpportunities({
+      config: reverseConfig({
+        reverseHedgeCapToFilledCheap: true,
+        reverseMaxGridLevels: 6,
+        expensiveOrderUsdc: 50,
+        maxSharesPerOrder: 90,
+      }),
+      tracker,
+      event,
+      books: books(0.95, 0.08),
+    });
+    const hedge = opps.filter((o) => o.kind === "expensive");
+    const total = Math.round(hedge.reduce((s, o) => s + o.size, 0) * 100) / 100;
+    assert.ok(total <= 2 + 1e-9, `new hedge ${total} should be <= remaining cap 2`);
+  });
+
 });

@@ -10,6 +10,11 @@ import type {
   TradeOpportunity,
   UpDownEvent,
 } from "../types.js";
+import {
+  shouldCancelOrphanIndependentHedges,
+  shouldPostIndependentHedge,
+} from "../strategy/hedge-post.js";
+import { isWithinMinutesBeforeClose } from "../utils/market.js";
 import { MIN_CLOB_SHARES } from "../utils/prices.js";
 import { buyFillAgainstBook, estimatedBuyCost, sellFillAgainstBook } from "./broker.js";
 import { minutesLeft } from "./clock.js";
@@ -249,10 +254,15 @@ function processTick(ctx: {
   repos?: Repositories;
 }): void {
   const tick = { ...ctx, filledThisTick: new Set<string>() };
-  const mins = minutesLeft(ctx.event.windowEnd, ctx.nowMs);
   matchResting(tick);
 
-  if (mins >= ctx.config.minutesBeforeCloseMin && mins <= ctx.config.minutesBeforeCloseMax) {
+  if (
+    isWithinMinutesBeforeClose(
+      minutesLeft(ctx.event.windowEnd, ctx.nowMs),
+      ctx.config.minutesBeforeCloseMin,
+      ctx.config.minutesBeforeCloseMax,
+    )
+  ) {
     manageRestingPolicy(tick);
     const opportunities = ctx.strategy.findOpportunities({
       config: ctx.config,
@@ -389,6 +399,7 @@ function manageRestingPolicy(ctx: {
     // findOpportunities / executeOpp can take the ask. Filling here AND
     // unmarking would double-buy the same cheap.
     cancelResting(ctx, order.key, action);
+    cancelOrphanHedgesAfterCheapGone(ctx, pairId);
   }
 
   defendCheapLegs(ctx, pairId);
@@ -621,6 +632,24 @@ function executeOpp(
   if (
     opportunity.kind === "expensive" &&
     !ctx.strategy.leadsWithEdge &&
+    ctx.strategy.independentHedgeGrid === true
+  ) {
+    const freshAsk =
+      ctx.books.find((b) => b.tokenId === opportunity.token.tokenId)?.bestAsk ??
+      opportunity.token.bestAsk;
+    const band = shouldPostIndependentHedge(
+      freshAsk,
+      opportunity.price,
+      ctx.config.expensiveBuyMin,
+      ctx.config.expensiveBuyMax,
+    );
+    if (!band.ok) {
+      ctx.trades.push(tradeFromOpp(opportunity, ctx.nowMs, false, band.reason, null));
+      return;
+    }
+  } else if (
+    opportunity.kind === "expensive" &&
+    !ctx.strategy.leadsWithEdge &&
     !ctx.strategy.independentHedgeGrid
   ) {
     const freshAsk =
@@ -780,6 +809,36 @@ function openFill(
   ctx.tracker.mark(opportunity.tradeKey);
   ctx.tracker.addOpenPosition(position);
   ctx.tracker.attachLeg(position);
+}
+
+
+function cancelOrphanHedgesAfterCheapGone(
+  ctx: {
+    config: BotConfig;
+    strategy: TradingStrategy;
+    tracker: TradeTracker;
+    resting: BacktestRestingBook;
+  },
+  pairId: string,
+): void {
+  if (ctx.strategy.leadsWithEdge) return;
+  const filledCheap = ctx.tracker.getFilledCheapSizeForPair(pairId);
+  if (filledCheap > 0) return;
+  if (ctx.strategy.independentHedgeGrid) {
+    const restingCheap = ctx.tracker.getPostedOrdersForPair(pairId, "cheap").length;
+    if (
+      !shouldCancelOrphanIndependentHedges({
+        filledCheap,
+        restingCheapCount: restingCheap,
+        requireCheapFillBeforeExpensive: ctx.config.requireCheapFillBeforeExpensive,
+      })
+    ) {
+      return;
+    }
+  }
+  for (const hedge of [...ctx.resting.listForPair(pairId, "expensive")]) {
+    cancelResting(ctx, hedge.key, "orphan-hedge");
+  }
 }
 
 function cancelResting(

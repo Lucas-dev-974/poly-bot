@@ -53,6 +53,10 @@ export const EDITABLE_CONFIG_KEYS = [
   "edgeSellExpensiveAfterMin",
   "edgeSellExpensiveLossPct",
   "edgeSellExpensiveLossWindowMs",
+  "reverseCancelCheapOffBand",
+  "reverseDefendEnabled",
+  "reverseMaxGridLevels",
+  "reverseHedgeCapToFilledCheap",
 ] as const;
 
 export type EditableConfigKey = (typeof EDITABLE_CONFIG_KEYS)[number];
@@ -105,6 +109,10 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   edgeSellExpensiveAfterMin: "EDGE_SELL_EXPENSIVE_AFTER_MIN",
   edgeSellExpensiveLossPct: "EDGE_SELL_EXPENSIVE_LOSS_PCT",
   edgeSellExpensiveLossWindowMs: "EDGE_SELL_EXPENSIVE_LOSS_WINDOW_MS",
+  reverseCancelCheapOffBand: "REVERSE_CANCEL_CHEAP_OFF_BAND",
+  reverseDefendEnabled: "REVERSE_DEFEND_ENABLED",
+  reverseMaxGridLevels: "REVERSE_MAX_GRID_LEVELS",
+  reverseHedgeCapToFilledCheap: "REVERSE_HEDGE_CAP_TO_FILLED_CHEAP",
 };
 
 const FORBIDDEN_KEYS = new Set([
@@ -236,7 +244,12 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "requireCheapFillBeforeExpensive":
     case "simRequireCoveredPair":
     case "edgeSellExpensiveEnabled":
+    case "reverseCancelCheapOffBand":
+    case "reverseDefendEnabled":
+    case "reverseHedgeCapToFilledCheap":
       return parseBoolean(value, key);
+    case "reverseMaxGridLevels":
+      return parseNullableNumber(value, key);
     case "marketSlugPrefixes":
       return parseStringArray(value, key);
     case "expensiveOrderType":
@@ -328,6 +341,10 @@ const REVERSE_KEYS: readonly EditableConfigKey[] = [
   "expensiveOrderUsdc",
   "expensiveOrderType",
   "simRequireCoveredPair",
+  "reverseCancelCheapOffBand",
+  "reverseDefendEnabled",
+  "reverseMaxGridLevels",
+  "reverseHedgeCapToFilledCheap",
 ];
 
 /**

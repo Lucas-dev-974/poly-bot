@@ -116,7 +116,9 @@ export class DashboardServer {
         url.pathname === "/index.html" ||
         url.pathname === "/guide" ||
         url.pathname === "/backtest" ||
-        url.pathname === "/strategy-editor"
+        url.pathname === "/strategy-editor" ||
+        url.pathname === "/donnees" ||
+        url.pathname.startsWith("/donnees/")
       ) {
         void this.serveHtml(res);
         return;
@@ -129,6 +131,11 @@ export class DashboardServer {
 
       if (url.pathname === "/api/state") {
         this.handleState(res);
+        return;
+      }
+
+      if (url.pathname === "/api/db/tables" && req.method === "GET") {
+        this.handleDbTables(res);
         return;
       }
 
@@ -401,6 +408,23 @@ export class DashboardServer {
       clearInterval(heartbeat);
       unsubscribe();
     });
+  }
+
+  private handleDbTables(res: import("node:http").ServerResponse): void {
+    if (!this.repos) {
+      res.writeHead(503, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Base de données indisponible" }));
+      return;
+    }
+    try {
+      const tables = this.repos.db.listTableCounts();
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ tables }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: message }));
+    }
   }
 
   private handleState(res: import("node:http").ServerResponse): void {

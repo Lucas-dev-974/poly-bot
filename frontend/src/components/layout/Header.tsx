@@ -63,6 +63,9 @@ export function Header(props: {
       <a href="/strategy-editor" class="btn guide-nav-link">
         Éditeur
       </a>
+      <a href="/donnees" class="btn guide-nav-link">
+        Données
+      </a>
       {badge()}
       <BotToggle />
       <Show when={config() !== null && mode() === "dry"}>

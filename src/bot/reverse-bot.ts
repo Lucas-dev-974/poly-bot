@@ -21,6 +21,18 @@ import { TickSnapshots } from "./tick-snapshots.js";
 
 const TOTAL_ATTEMPTS_KEY = "totalAttempts";
 const PAUSED_KEY = "botPaused";
+/** If a tick's awaits never settle, force the loop to continue after this. */
+const TICK_WATCHDOG_MS = 30_000;
+/** Log a "slow tick" warning above this duration. */
+const TICK_SLOW_MS = 5_000;
+
+/** Thrown when a tick is abandoned after the watchdog supersedes it. */
+class TickSupersededError extends Error {
+  constructor(session: number) {
+    super(`tick session ${session} superseded`);
+    this.name = "TickSupersededError";
+  }
+}
 
 export class ReverseBot {
   private readonly scanner: MarketScanner;
@@ -31,7 +43,10 @@ export class ReverseBot {
   private totalAttempts = 0;
   private paused = false;
   private ticking = false;
-  private tickTimer: ReturnType<typeof setInterval> | null = null;
+  /** Bumped to supersede a hung tick after watchdog fire. */
+  private tickSession = 0;
+  private tickTimer: ReturnType<typeof setTimeout> | null = null;
+  private tickLoopGeneration = 0;
   private strategy: TradingStrategy;
   private readonly lifecycle: LiveOrderLifecycle;
   private readonly resting: RestingManager;
@@ -146,7 +161,7 @@ export class ReverseBot {
     bus.emit({ type: "config", config: toPublicConfig(this.config) });
     bus.emit({ type: "botControl", enabled: !this.paused });
 
-    await this.tick();
+    await this.tickWithWatchdog();
     this.scheduleTick();
 
     if (this.resolver) {
@@ -159,8 +174,77 @@ export class ReverseBot {
   }
 
   private scheduleTick(): void {
-    if (this.tickTimer) clearInterval(this.tickTimer);
-    this.tickTimer = setInterval(() => void this.tick(), this.config.pollIntervalMs);
+    if (this.tickTimer) clearTimeout(this.tickTimer);
+    this.tickLoopGeneration++;
+    const generation = this.tickLoopGeneration;
+    this.tickTimer = setTimeout(
+      () => void this.tickAndReschedule(generation),
+      this.config.pollIntervalMs,
+    );
+  }
+
+  private async tickAndReschedule(generation: number): Promise<void> {
+    if (generation !== this.tickLoopGeneration) return;
+    const started = Date.now();
+    await this.tickWithWatchdog();
+    if (generation !== this.tickLoopGeneration) return;
+    const elapsed = Date.now() - started;
+    const delay = Math.max(0, this.config.pollIntervalMs - elapsed);
+    this.tickTimer = setTimeout(
+      () => void this.tickAndReschedule(generation),
+      delay,
+    );
+  }
+
+  /** Runs tick(); if it hangs past TICK_WATCHDOG_MS, supersede it and keep looping. */
+  private async tickWithWatchdog(): Promise<void> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const sessionBefore = this.tickSession;
+    // Always attach a handler so a late tick rejection cannot become unhandled
+    // after Promise.race has already settled on the watchdog.
+    const tickPromise = this.tick().catch((error) => {
+      if (error instanceof TickSupersededError) return;
+      const message = error instanceof Error ? error.message : String(error);
+      log("Tick late error after watchdog race", { error: message });
+    });
+    try {
+      await Promise.race([
+        tickPromise,
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => {
+            reject(new Error(`tick watchdog exceeded ${TICK_WATCHDOG_MS}ms`));
+          }, TICK_WATCHDOG_MS);
+        }),
+      ]);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const isWatchdog = message.includes("tick watchdog exceeded");
+      if (isWatchdog) {
+        // Invalidate the hung tick: its cooperative checks bail, and its finally
+        // must not clear ticking for a newer session.
+        this.tickSession++;
+        this.ticking = false;
+        log("Tick watchdog fired — superseding hung tick", {
+          ms: TICK_WATCHDOG_MS,
+          sessionBefore,
+          sessionNow: this.tickSession,
+        });
+        bus.emit({
+          type: "error",
+          message: `Tick watchdog ${TICK_WATCHDOG_MS}ms — loop forced to continue`,
+        });
+      } else {
+        log("Tick watchdog wrapper error", { error: message });
+      }
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
+
+  private assertTickActive(session: number): void {
+    if (session !== this.tickSession) {
+      throw new TickSupersededError(session);
+    }
   }
 
   onRuntimeSettingsChanged(changed: Set<EditableConfigKey>): void {
@@ -186,18 +270,29 @@ export class ReverseBot {
   }
 
   private async tick(): Promise<void> {
-    if (this.ticking) return;
+    if (this.ticking) {
+      log("Tick heartbeat skipped — previous tick still marked running");
+      return;
+    }
+    const session = ++this.tickSession;
     this.ticking = true;
+    const started = Date.now();
+    let eventCount = 0;
+    log("Tick heartbeat start", { session });
     try {
       const nowSeconds = Date.now() / 1000;
       this.tracker.prunePostedOrders(nowSeconds);
       this.tracker.pruneWindowClaims(nowSeconds);
       if (!this.config.dryRun) {
         await this.lifecycle.cancelStaleOrders(nowSeconds);
+        this.assertTickActive(session);
         await this.lifecycle.pollOrderFills();
+        this.assertTickActive(session);
       }
       // Keep scanning + market data persistence even while paused; only trading is gated.
       const events = await this.scanner.scan();
+      this.assertTickActive(session);
+      eventCount = events.length;
       const tickTs = Date.now();
       this.snapshots.insertMarketSnapshots(events, tickTs);
       bus.emit({
@@ -211,37 +306,73 @@ export class ReverseBot {
       }
 
       for (const event of events) {
-        await this.processEvent(event, tickTs);
+        this.assertTickActive(session);
+        await this.processEvent(event, tickTs, session);
       }
     } catch (error) {
+      if (error instanceof TickSupersededError) {
+        return;
+      }
       const message = error instanceof Error ? error.message : String(error);
-      log("Scan error", { error: message });
+      log("Scan error", { error: message, session });
       bus.emit({ type: "error", message });
     } finally {
-      this.ticking = false;
+      const ms = Date.now() - started;
+      const superseded = session !== this.tickSession;
+      if (!superseded) {
+        this.ticking = false;
+      }
+      log("Tick heartbeat end", {
+        session,
+        ms,
+        events: eventCount,
+        superseded,
+        slow: ms >= TICK_SLOW_MS,
+      });
+      if (ms >= TICK_SLOW_MS && !superseded) {
+        log("Slow tick", { session, ms, events: eventCount });
+      }
     }
   }
 
-  private async processEvent(event: UpDownEvent, tickTs: number): Promise<void> {
+  private async processEvent(
+    event: UpDownEvent,
+    tickTs: number,
+    session: number,
+  ): Promise<void> {
     const books = await this.scanner.getTokenBooks(event);
+    this.assertTickActive(session);
     this.snapshots.insertBooks(event, books, tickTs);
+    // Resting management continues outside the entry window (open GTCs still need care).
     if (!this.config.dryRun && !this.paused) {
       await this.resting.manageLiveResting(event, books);
+      this.assertTickActive(session);
     }
+
+    bus.emit({ type: "watching", event, books });
+
+    // Market data is recorded for the full window; new entries only in trading window.
+    // Fresh clock for trading gates/strategy: tickTs is shared across events and can
+    // be seconds stale after several CLOB book fetches. Snapshots keep tickTs so both
+    // outcomes share one bot-tick timestamp.
+    const nowMs = Date.now();
+    if (!this.scanner.inTradingWindow(event, nowMs / 1000)) {
+      return;
+    }
+
+    if (this.paused) {
+      return;
+    }
+
+    this.assertTickActive(session);
     const opportunities = this.strategy.findOpportunities({
       config: this.config,
       tracker: this.tracker,
       event,
       books,
-      nowMs: tickTs,
+      nowMs,
     });
     this.snapshots.insertOpportunities(event, opportunities, tickTs);
-
-    bus.emit({ type: "watching", event, books });
-
-    if (this.paused) {
-      return;
-    }
 
     if (opportunities.length === 0) {
       log("Watching market", {
@@ -271,7 +402,9 @@ export class ReverseBot {
             : 1,
     );
     for (const opportunity of opportunities) {
+      this.assertTickActive(session);
       await this.executor.executeOpportunity(opportunity);
+      this.assertTickActive(session);
     }
   }
 }

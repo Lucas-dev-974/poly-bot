@@ -5,6 +5,7 @@ import type { PostedOrderContext, TradeTracker } from "../trade-tracker.js";
 import type { Trader } from "../trader.js";
 import type { TradingStrategy } from "../strategy/trading-strategy.js";
 import type { SimulatedPosition } from "../types.js";
+import { shouldCancelOrphanIndependentHedges } from "../strategy/hedge-post.js";
 import { confirmedFillSize } from "../utils/order-status.js";
 
 export type LiveOrderLifecycleDeps = {
@@ -152,12 +153,33 @@ export class LiveOrderLifecycle {
     // Edge-lead gère le GTC edge resting via manageRestingEdgeLead.
     // L'orphan-hedge arb (cheap disparu → cancel le favori) casserait un
     // edge qu'on veut garder in-bande.
-    // Reverse pose les deux grilles indépendamment : un cheap annulé
-    // (jamais fillé, cas normal) ne doit pas jeter la grille hedge.
+    // Reverse (independentHedgeGrid): cancel hedges only when cheap-fill is
+    // required, nothing is filled, and no cheap GTC remains on the pair.
     if (this.strategy.leadsWithEdge) return;
-    if (this.strategy.independentHedgeGrid) return;
     if (order.kind !== "cheap") return;
-    if (this.deps.tracker.getFilledCheapSizeForPair(order.pairId) > 0) return;
+    const filledCheap = this.deps.tracker.getFilledCheapSizeForPair(order.pairId);
+    if (filledCheap > 0) return;
+    if (this.strategy.independentHedgeGrid) {
+      const restingCheap = this.deps.tracker.getPostedOrdersForPair(
+        order.pairId,
+        "cheap",
+      ).length;
+      if (
+        !shouldCancelOrphanIndependentHedges({
+          filledCheap,
+          restingCheapCount: restingCheap,
+          requireCheapFillBeforeExpensive:
+            this.deps.config.requireCheapFillBeforeExpensive,
+        })
+      ) {
+        return;
+      }
+      await this.cancelRestingHedgesForPair(
+        order.pairId,
+        "all cheap legs vanished (independent grid)",
+      );
+      return;
+    }
     await this.cancelRestingHedgesForPair(order.pairId, "cheap leg vanished");
   }
 

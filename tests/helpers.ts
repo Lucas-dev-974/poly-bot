@@ -64,6 +64,10 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     edgeSellExpensiveAfterMin: 8,
     edgeSellExpensiveLossPct: 10,
     edgeSellExpensiveLossWindowMs: 10_000,
+    reverseCancelCheapOffBand: false,
+    reverseDefendEnabled: false,
+    reverseMaxGridLevels: null,
+    reverseHedgeCapToFilledCheap: false,
     ...overrides,
   };
 }

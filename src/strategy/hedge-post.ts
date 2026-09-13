@@ -54,3 +54,43 @@ export function evaluateHedgeAtPostTime(
 
   return { action: "post", price };
 }
+
+/** Band-only gate for independentHedgeGrid (reverse) at POST time. Does not reprice grid levels. */
+export function shouldPostIndependentHedge(
+  freshAsk: number | null,
+  limitPrice: number,
+  expensiveBuyMin: number,
+  expensiveBuyMax: number,
+): { ok: true } | { ok: false; reason: string } {
+  if (freshAsk === null) {
+    return { ok: false, reason: "favorite-book-missing" };
+  }
+  const ask = round2(freshAsk);
+  const limit = round2(limitPrice);
+  if (ask > expensiveBuyMax) {
+    return { ok: false, reason: "outside-band-above" };
+  }
+  if (ask < expensiveBuyMin) {
+    return { ok: false, reason: "outside-band" };
+  }
+  // Maker grid must not cross the live ask (would take / overpay).
+  if (limit > ask) {
+    return { ok: false, reason: "limit-above-ask" };
+  }
+  return { ok: true };
+}
+
+/**
+ * Orphan-hedge policy for independentHedgeGrid: cancel resting hedges only when
+ * cheap-fill is required, nothing is filled, and no cheap GTC remains on the pair.
+ */
+export function shouldCancelOrphanIndependentHedges(opts: {
+  filledCheap: number;
+  restingCheapCount: number;
+  requireCheapFillBeforeExpensive: boolean;
+}): boolean {
+  if (!opts.requireCheapFillBeforeExpensive) return false;
+  if (opts.filledCheap > 0) return false;
+  if (opts.restingCheapCount > 0) return false;
+  return true;
+}

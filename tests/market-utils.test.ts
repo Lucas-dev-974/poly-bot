@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { GammaMarket } from "../src/types.js";
-import { gammaMarketStats, l1Spread, rankedLevels, withSeriesVolume24hr } from "../src/utils/market.js";
+import { gammaMarketStats, isWithinMinutesBeforeClose, l1Spread, rankedLevels, withSeriesVolume24hr } from "../src/utils/market.js";
 
 describe("rankedLevels", () => {
   it("returns L1–L3 asks low to high and bids high to low", () => {
@@ -109,5 +109,14 @@ describe("l1Spread", () => {
   it("returns null when a side is missing", () => {
     assert.equal(l1Spread(null, 0.82), null);
     assert.equal(l1Spread(0.8, undefined), null);
+  });
+});
+
+describe("isWithinMinutesBeforeClose", () => {
+  it("includes boundaries and rejects outside the trading window", () => {
+    assert.equal(isWithinMinutesBeforeClose(4, 0, 4), true);
+    assert.equal(isWithinMinutesBeforeClose(0, 0, 4), true);
+    assert.equal(isWithinMinutesBeforeClose(4.01, 0, 4), false);
+    assert.equal(isWithinMinutesBeforeClose(15, 0, 4), false);
   });
 });

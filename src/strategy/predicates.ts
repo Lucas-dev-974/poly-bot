@@ -53,7 +53,8 @@ export function isAskInExpensiveBand(
   max: number,
 ): boolean {
   if (ask === null) return false;
-  return ask >= min && ask <= max;
+  const a = round2(ask);
+  return a >= min && a <= max;
 }
 
 /**

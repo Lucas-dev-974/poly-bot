@@ -393,6 +393,22 @@ export class Database {
     `);
   }
 
+
+  listTableCounts(): Array<{ name: string; count: number }> {
+    if (!this.conn) return [];
+    const tables = this.all<{ name: string }>(
+      "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
+    );
+    const out: Array<{ name: string; count: number }> = [];
+    for (const t of tables) {
+      // Only count real identifiers from sqlite_master (defense in depth).
+      if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(t.name)) continue;
+      const row = this.get<{ c: number | bigint }>(`SELECT COUNT(*) AS c FROM "${t.name}"`);
+      out.push({ name: t.name, count: Number(row?.c ?? 0) });
+    }
+    return out;
+  }
+
   close(): void {
     if (!this.conn) return;
     this.conn.close();

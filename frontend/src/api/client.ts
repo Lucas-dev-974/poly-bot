@@ -41,6 +41,18 @@ export interface RedeemResponse {
   error?: string;
 }
 
+export interface ClosePositionRequest {
+  positionId: string;
+}
+
+export interface ClosePositionResponse {
+  ok: boolean;
+  fillPrice?: number;
+  soldSize?: number;
+  pnl?: number;
+  error?: string;
+}
+
 export interface ConfigResponse {
   config: BotConfig;
   editableKeys: string[];
@@ -143,6 +155,12 @@ export const api = {
     }),
   redeem: (body: RedeemRequest) =>
     request<RedeemResponse>("/api/redeem", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }),
+  closePosition: (body: ClosePositionRequest) =>
+    request<ClosePositionResponse>("/api/open-positions/close", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

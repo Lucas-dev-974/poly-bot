@@ -6,6 +6,7 @@ import { ArbStrategy } from "./arb-strategy.js";
 import { BarbellStrategy } from "./barbell-strategy.js";
 import { EdgeLeadStrategy } from "./edge-lead-strategy.js";
 import { ReverseStrategy } from "./reverse-strategy.js";
+import { FavBandStrategy } from "./fav-band-strategy.js";
 import type { NativeStrategyId, StrategyId } from "./ids.js";
 import type { TradingStrategy } from "./trading-strategy.js";
 
@@ -14,6 +15,7 @@ const STRATEGIES: Record<NativeStrategyId, () => TradingStrategy> = {
   barbell: () => new BarbellStrategy(),
   "edge-lead": () => new EdgeLeadStrategy(),
   reverse: () => new ReverseStrategy(),
+  "fav-band": () => new FavBandStrategy(),
 };
 
 export type StrategyRepos = Pick<Repositories, "strategyGraphs">;
@@ -23,7 +25,7 @@ export function leadsWithEdgeFor(
   repos?: StrategyRepos,
 ): boolean | undefined {
   if (id === "edge-lead") return true;
-  if (id === "arb" || id === "barbell" || id === "reverse") return false;
+  if (id === "arb" || id === "barbell" || id === "reverse" || id === "fav-band") return false;
   if (!id.startsWith("custom:")) return undefined;
   return repos?.strategyGraphs?.get(id)?.leadsWithEdge;
 }

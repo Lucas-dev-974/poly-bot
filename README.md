@@ -1,10 +1,13 @@
 # Polymarket Reverse Arbitrage Bot
 
-A TypeScript/Node.js bot for Polymarket's 15-minute Up/Down markets (BTC, ETH, SOL, etc.). Two interchangeable **engines** (`strategyId` in `data/bot-settings.json`):
+A TypeScript/Node.js bot for Polymarket's 15-minute Up/Down markets (BTC, ETH, SOL, etc.). Interchangeable **engines** (`strategyId` in `data/bot-settings.json`):
 
 - **`arb` (B1, default)** — maker bid on the cheap (underdog), then a **1:1 hedge** after that fill only if `cheapFill + hedgeAsk ≤ PAIR_LOCK_MAX < 1.00`. If the lock is unreachable after fill (**Policy A**), FOK **SELL** the uncovered cheap — do **not** hold it as a directional leftover.
   - Mode optionnel **ask-lock / dual-FOK** (preset `ask-lock`) : voir section [Ask-lock (dual-FOK)](#ask-lock-dual-fok--mode-arb).
 - **`barbell`** — same cheap-then-hedge flow, but the hedge size is `filledCheap × barbellHedgeRatio` (default 0.5). **No profit lock.** Leftover cheap is an intentional directional bet. Higher variance than B1.
+- **`fav-band`** — stratégie **directionnelle** : FOK buy du **favori** si ask ∈ `[favBandAskMin, favBandAskMax]` après `favBandMinElapsedSec`, hold jusqu'à résolution, **sans hedge**. Voir [Fav-band](#fav-band--favori-mid-band).
+- Autres moteurs natifs : `edge-lead`, `reverse` (presets dédiés).
+
 
 ## Strategy Overview
 
@@ -92,6 +95,90 @@ npx tsx scripts/arb-audit-backtest.mts ask-lock
 - `src/backtest/runner.ts` — préflight dual-FOK
 - `src/bot/opportunity-executor.ts` / `src/trader.ts` — live FOK sans clamp bande
 - `config/presets/ask-lock.json` — preset UI / backtest
+
+
+## Fav-band — favori mid-band
+
+**Nouvelle** stratégie directionnelle (`strategyId: fav-band`). Ce n'est **pas** ask-lock, ni edge-lead, ni reverse.
+
+Idée empirique (BTC 15m) : après ~200 s dans la fenêtre, le favori (ask le plus haut) dans une bande mid `[0.70, 0.85]` gagne assez souvent pour que l'achat FOK au ask + hold jusqu'à résolution soit +EV ; les favoris « certitude » (> ~0.90) sont souvent surcotés.
+
+- Une seule jambe **FOK BUY** sur le favori
+- **Pas de hedge**, pas de Policy A, pas de confirm multi-ticks
+- Hold jusqu'à résolution (redeem 1 $ / 0 $)
+- En interne la jambe est `kind: "cheap"` (pipeline d'ordres unique) — ce n'est **pas** l'underdog
+
+### Activer
+
+1. Dashboard → **Configuration** → onglet **Profils** → moteur **fav-band** → profil **Fav-band (mid favorite hold)**  
+   (ou page **Backtest** → preset **Fav-band**)
+2. Vérifier les champs (notamment `cheapOrderUsdc`), puis **Enregistrer** (`data/bot-settings.json` + config live)
+
+Éditer seulement `config/presets/fav-band.json` **ne change pas** la config live : appliquer le profil puis enregistrer. Redémarrer le bot si besoin.
+
+### Paramètres
+
+| Clé | Défaut (preset) | Rôle |
+|-----|-----------------|------|
+| `strategyId` | `fav-band` | Active ce moteur |
+| `favBandAskMin` / `favBandAskMax` | `0.70` / `0.85` | Bande d'ask du favori pour entrer |
+| `favBandMinElapsedSec` | `200` | Secondes min depuis `windowStart` |
+| `favBandMaxElapsedSec` | `null` | Cap optionnel ; `null` = jusqu'à la fin de fenêtre |
+| `cheapOrderUsdc` | `15` | Budget USDC de l'entrée FOK |
+| `maxSharesPerOrder` | `40` | Cap shares |
+| `maxOpenPositionsPerSide` | `1` | Une entrée directionnelle à la fois |
+| `enableExpensiveHedge` / `arbAskLockOnly` | `false` | Forcés / nettoyés pour éviter des sticky flags ask-lock |
+
+### Contrainte CLOB (mise minimale)
+
+Polymarket impose **≥ 5 shares** (et ≥ ~1 $ de notionnel). La taille = `cheapOrderUsdc / ask` :
+
+| `cheapOrderUsdc` | ask 0.70 | ask 0.85 | Entrées ? |
+|------------------|----------:|--------:|-----------|
+| `3` | ~4.3 shares | ~3.5 shares | **Jamais** (sous le min 5) |
+| `5` | ~7.1 | ~5.9 | OK sur toute la bande |
+| `15` | ~21 | ~18 | OK (preset) |
+
+**Minimum pratique pour [0.70, 0.85] : `cheapOrderUsdc ≥ 5`** (strictement ≥ `5 × favBandAskMax` ≈ 4.25 $).
+
+### Flux (un tick)
+
+1. Les deux books ont un ask ; le favori = ask le plus haut (`pickEdgeToken`).
+2. Ask favori ∈ `[favBandAskMin, favBandAskMax]`.
+3. `elapsedSec ≥ favBandMinElapsedSec` (et ≤ max si défini).
+4. Pas déjà de jambe fill / open sur la paire (une entrée par fenêtre).
+5. `computeSize(cheapOrderUsdc, ask)` ≥ 5 shares ; profondeur ask ≥ ~80 % de la taille si connue.
+6. Émission **FOK BUY** au ask live ; hold jusqu'à résolution.
+
+### Différences vs autres moteurs
+
+| | Fav-band | Ask-lock | Edge-lead | Reverse |
+|--|----------|----------|-----------|---------|
+| Cible | Favori mid-band | Lock ask+ask | Favori + confirm + cheap | Underdog |
+| Ordre | FOK BUY seul | Dual FOK | GTC / logique edge | Directionnel underdog |
+| Hedge | Non | Oui (1:1 immédiat) | Cheap follow-up possible | Non |
+| Sortie | Résolution (ou fermeture manuelle) | Lock / Policy A | Edge sell / resolve | Résolution |
+
+### Fermeture manuelle (dashboard)
+
+Liste **Positions ouvertes** → **Fermer** → confirmation → FOK **SELL** au best bid. Au fill, seule cette `positionId` passe en `sold` (hedges resting de la paire annulés). Refus si pas de bid, taille &lt; 5, ou FOK tué / non confirmé.
+
+API : `POST /api/open-positions/close` body `{ "positionId": "..." }`.
+
+### Backtest (indicatif BTC 15m)
+
+Sur un long univers (~305 fenêtres) le preset fav-band a montré un PnL nettement plus élevé que ask-lock, avec variance / maxDD élevés (WR ~78 %). À retravailler live avec une mise ≥ 5 $.
+
+### Fichiers clés
+
+- `src/strategy/fav-band-strategy.ts` — logique d'entrée
+- `src/strategy/ids.ts` / `registry.ts` — `strategyId: fav-band`
+- `config/presets/fav-band.json` — preset UI / backtest
+- `tests/fav-band.test.ts` — unit tests
+- `src/bot/resting-manager.ts` — `closePositionManual`
+- `src/trade-tracker.ts` — `closePositionAsSold`
+- `src/dashboard/server.ts` — `POST /api/open-positions/close`
+- `frontend/src/components/panels/OpenPositions.tsx` — bouton Fermer
 
 ## Architecture
 
@@ -230,11 +317,11 @@ npm run dev
 ## Dashboard
 
 Open `http://localhost:3105` for real-time monitoring:
-- Live positions & PnL
+- Live positions & PnL (bouton **Fermer** = FOK SELL manuel au bid — voir [Fav-band](#fav-band--favori-mid-band))
 - Active opportunities
 - Balance & collateral
 - Event log (SSE stream)
-- Manual redemption trigger
+- Manual redemption trigger (positions Polymarket redeemables)
 
 The dashboard is a **SolidJS + Vite** frontend in `frontend/`:
 

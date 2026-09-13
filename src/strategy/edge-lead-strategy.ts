@@ -262,6 +262,20 @@ export class EdgeLeadStrategy implements TradingStrategy {
     );
     if (!ready) return opportunities;
 
+    const cheapForGate =
+      books.find((book) => book.outcome !== edgeToken.outcome) ?? null;
+    const cheapAskForGate = cheapForGate?.bestAsk ?? null;
+    if (config.edgeRequireCheapReady) {
+      if (cheapAskForGate === null) return opportunities;
+      if (!cheapAskInBand(round2(cheapAskForGate), config)) {
+        return opportunities;
+      }
+    }
+    if (config.edgeAskSumMax !== null && cheapAskForGate !== null) {
+      const askSum = round2(edgeToken.bestAsk + cheapAskForGate);
+      if (askSum > config.edgeAskSumMax) return opportunities;
+    }
+
     const size = computeEdgeLeadEdgeSize(config, edgeToken.bestAsk);
     if (size === null) {
       log("Edge-lead edge skipped - budget below CLOB minimums", {

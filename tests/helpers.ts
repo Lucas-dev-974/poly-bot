@@ -65,10 +65,18 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     edgeSellExpensiveAfterMin: 8,
     edgeSellExpensiveLossPct: 10,
     edgeSellExpensiveLossWindowMs: 10_000,
+    edgeRequireCheapReady: false,
+    edgeAskSumMax: null,
     reverseCancelCheapOffBand: false,
     reverseDefendEnabled: false,
     reverseMaxGridLevels: null,
     reverseHedgeCapToFilledCheap: false,
+    favBandAskMin: 0.7,
+    favBandAskMax: 0.85,
+    favBandMinElapsedSec: 200,
+    favBandMaxElapsedSec: null,
+    arbAskLockMinElapsedSec: null,
+    arbAskLockMaxImbalance: null,
     ...overrides,
   };
 }

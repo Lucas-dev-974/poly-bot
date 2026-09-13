@@ -2,7 +2,7 @@
 // Garder synchronisÃ© avec le backend lors des changements.
 
 export type TradeSide = "BUY" | "SELL";
-export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse";
+export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band";
 export type StrategyId = NativeStrategyId | `custom:${string}`;
 
 export interface GammaMarket {
@@ -163,6 +163,10 @@ export interface BotConfig {
   arbAskLockOnly: boolean;
   /** Optional stricter ask+ask cap (null = use pairLockMax). */
   arbAskSumMax: number | null;
+  /** Ask-lock: min seconds since windowStart (null = off). */
+  arbAskLockMinElapsedSec: number | null;
+  /** Ask-lock: max |ask_c - ask_e| (null = off). */
+  arbAskLockMaxImbalance: number | null;
   expensiveOrderUsdc: number;
   expensiveOrderType: "FOK" | "GTC";
   maxSharesPerOrder: number;
@@ -210,6 +214,10 @@ export interface BotConfig {
   reverseMaxGridLevels: number | null;
   /** Reverse Phase 2: cap hedge size to filledCheap − filledExpensive. */
   reverseHedgeCapToFilledCheap: boolean;
+  favBandAskMin: number;
+  favBandAskMax: number;
+  favBandMinElapsedSec: number;
+  favBandMaxElapsedSec: number | null;
   readonlyLive: boolean;
   clobHost: string;
   gammaApiHost: string;

@@ -22,6 +22,8 @@ export const EDITABLE_CONFIG_KEYS = [
   "pairLockMax",
   "arbAskLockOnly",
   "arbAskSumMax",
+  "arbAskLockMinElapsedSec",
+  "arbAskLockMaxImbalance",
   "expensiveOrderUsdc",
   "expensiveOrderType",
   "maxSharesPerOrder",
@@ -55,10 +57,16 @@ export const EDITABLE_CONFIG_KEYS = [
   "edgeSellExpensiveAfterMin",
   "edgeSellExpensiveLossPct",
   "edgeSellExpensiveLossWindowMs",
+  "edgeRequireCheapReady",
+  "edgeAskSumMax",
   "reverseCancelCheapOffBand",
   "reverseDefendEnabled",
   "reverseMaxGridLevels",
   "reverseHedgeCapToFilledCheap",
+  "favBandAskMin",
+  "favBandAskMax",
+  "favBandMinElapsedSec",
+  "favBandMaxElapsedSec",
 ] as const;
 
 export type EditableConfigKey = (typeof EDITABLE_CONFIG_KEYS)[number];
@@ -80,6 +88,8 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   pairLockMax: "PAIR_LOCK_MAX",
   arbAskLockOnly: "ARB_ASK_LOCK_ONLY",
   arbAskSumMax: "ARB_ASK_SUM_MAX",
+  arbAskLockMinElapsedSec: "ARB_ASK_LOCK_MIN_ELAPSED_SEC",
+  arbAskLockMaxImbalance: "ARB_ASK_LOCK_MAX_IMBALANCE",
   expensiveOrderUsdc: "EXPENSIVE_ORDER_USDC",
   expensiveOrderType: "EXPENSIVE_ORDER_TYPE",
   maxSharesPerOrder: "MAX_SHARES_PER_ORDER",
@@ -113,10 +123,16 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   edgeSellExpensiveAfterMin: "EDGE_SELL_EXPENSIVE_AFTER_MIN",
   edgeSellExpensiveLossPct: "EDGE_SELL_EXPENSIVE_LOSS_PCT",
   edgeSellExpensiveLossWindowMs: "EDGE_SELL_EXPENSIVE_LOSS_WINDOW_MS",
+  edgeRequireCheapReady: "EDGE_REQUIRE_CHEAP_READY",
+  edgeAskSumMax: "EDGE_ASK_SUM_MAX",
   reverseCancelCheapOffBand: "REVERSE_CANCEL_CHEAP_OFF_BAND",
   reverseDefendEnabled: "REVERSE_DEFEND_ENABLED",
   reverseMaxGridLevels: "REVERSE_MAX_GRID_LEVELS",
   reverseHedgeCapToFilledCheap: "REVERSE_HEDGE_CAP_TO_FILLED_CHEAP",
+  favBandAskMin: "FAV_BAND_ASK_MIN",
+  favBandAskMax: "FAV_BAND_ASK_MAX",
+  favBandMinElapsedSec: "FAV_BAND_MIN_ELAPSED_SEC",
+  favBandMaxElapsedSec: "FAV_BAND_MAX_ELAPSED_SEC",
 };
 
 const FORBIDDEN_KEYS = new Set([
@@ -212,6 +228,9 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "expensiveBuyMax":
     case "cheapOrderUsdc":
     case "barbellHedgeRatio":
+    case "favBandAskMin":
+    case "favBandAskMax":
+    case "favBandMinElapsedSec":
     case "pairLockMax":
     case "expensiveOrderUsdc":
     case "maxSharesPerOrder":
@@ -243,12 +262,17 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "edgeSizingMode":
       return parseEnum(value, ["shares", "pusd", "dynamic"] as const, key);
     case "minMinutesBeforeCloseToBuy":
+    case "edgeAskSumMax":
     case "arbAskSumMax":
+    case "arbAskLockMinElapsedSec":
+    case "arbAskLockMaxImbalance":
+    case "favBandMaxElapsedSec":
       return parseNullableNumber(value, key);
     case "enableExpensiveHedge":
     case "arbAskLockOnly":
     case "requireCheapFillBeforeExpensive":
     case "simRequireCoveredPair":
+    case "edgeRequireCheapReady":
     case "edgeSellExpensiveEnabled":
     case "reverseCancelCheapOffBand":
     case "reverseDefendEnabled":
@@ -332,6 +356,8 @@ const ARB_KEYS: readonly EditableConfigKey[] = [
   "pairLockMax",
   "arbAskLockOnly",
   "arbAskSumMax",
+  "arbAskLockMinElapsedSec",
+  "arbAskLockMaxImbalance",
   "expensiveOrderUsdc",
   "expensiveOrderType",
 ];
@@ -372,6 +398,16 @@ const REVERSE_KEYS: readonly EditableConfigKey[] = [
 /**
  * Clés propres à edge-lead (bandes edge/cheap, confirmation, sizing edge).
  */
+
+const FAV_BAND_KEYS: readonly EditableConfigKey[] = [
+  "cheapOrderUsdc",
+  "favBandAskMin",
+  "favBandAskMax",
+  "favBandMinElapsedSec",
+  "favBandMaxElapsedSec",
+  "enableExpensiveHedge",
+];
+
 const EDGE_LEAD_KEYS: readonly EditableConfigKey[] = [
   "edgeBandMin",
   "edgeBandMax",
@@ -389,6 +425,8 @@ const EDGE_LEAD_KEYS: readonly EditableConfigKey[] = [
   "edgeSellExpensiveAfterMin",
   "edgeSellExpensiveLossPct",
   "edgeSellExpensiveLossWindowMs",
+  "edgeRequireCheapReady",
+  "edgeAskSumMax",
 ];
 
 /**
@@ -406,7 +444,9 @@ export function keysForStrategy(
         ? REVERSE_KEYS
         : strategyId === "barbell"
           ? BARBELL_KEYS
-          : ARB_KEYS; // arb + custom sans leadsWithEdge
+          : strategyId === "fav-band"
+            ? FAV_BAND_KEYS
+            : ARB_KEYS; // arb + custom sans leadsWithEdge
   return [...SHARED_KEYS, ...strategyKeys];
 }
 

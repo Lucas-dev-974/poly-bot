@@ -1,4 +1,4 @@
-import { For, Show, createMemo } from "solid-js";
+import { For, Show, createMemo, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { Badge } from "../ui/Badge";
 import { EmptyState } from "../ui/EmptyState";
@@ -21,7 +21,11 @@ function usePositionPnl(
   });
 }
 
-export function OpenPositions(props: { now: number }): JSX.Element {
+export function OpenPositions(props: {
+  now: number;
+  onClosePosition?: (position: SimulatedPosition) => void;
+  closingId?: string | null;
+}): JSX.Element {
   const positions = createMemo(() => openPositionList());
 
   const byMarket = createMemo(() => {
@@ -45,7 +49,6 @@ export function OpenPositions(props: { now: number }): JSX.Element {
     return [...map.values()].sort((a, b) => a.windowEnd - b.windowEnd);
   });
 
-  // PNL total — réactif via createMemo (déjà correct).
   const totalPnl = createMemo(() => {
     let total = 0;
     for (const m of byMarket()) {
@@ -57,7 +60,6 @@ export function OpenPositions(props: { now: number }): JSX.Element {
     return total;
   });
 
-  // PNL par marché — réactif via createMemo.
   const marketPnls = createMemo(() => {
     const map = new Map<string, number>();
     for (const m of byMarket()) {
@@ -113,12 +115,14 @@ export function OpenPositions(props: { now: number }): JSX.Element {
                         <th>Taille</th>
                         <th>Coût</th>
                         <th>PNL latent</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
                       <For each={m.positions}>
                         {(p) => {
                           const pnlInfo = usePositionPnl(p);
+                          const busy = () => props.closingId === p.id;
                           return (
                             <tr>
                               <td>{p.outcome}</td>
@@ -139,6 +143,18 @@ export function OpenPositions(props: { now: number }): JSX.Element {
                                   <span class={pnlInfo().pnl! >= 0 ? "ok" : "err"}>
                                     {fmtUsd(pnlInfo().pnl)}
                                   </span>
+                                </Show>
+                              </td>
+                              <td>
+                                <Show when={props.onClosePosition}>
+                                  <button
+                                    class="btn"
+                                    type="button"
+                                    disabled={busy()}
+                                    onClick={() => props.onClosePosition?.(p)}
+                                  >
+                                    {busy() ? "…" : "Fermer"}
+                                  </button>
                                 </Show>
                               </td>
                             </tr>

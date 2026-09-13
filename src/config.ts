@@ -80,6 +80,16 @@ export interface BotConfig {
    * Must be ≤ pairLockMax when set.
    */
   arbAskSumMax: number | null;
+  /**
+   * Ask-lock : n'entrer qu'après N secondes depuis windowStart (null = off).
+   * Sert à concentrer le harvest en fin de fenêtre où les locks apparaissent plus.
+   */
+  arbAskLockMinElapsedSec: number | null;
+  /**
+   * Ask-lock : skip si |ask_cheap - ask_expensive| > seuil (null = off).
+   * Filtre les locks extrêmes type 0.08+0.91 (fin de marché / book déséquilibré).
+   */
+  arbAskLockMaxImbalance: number | null;
   expensiveOrderUsdc: number;
   expensiveOrderType: "FOK" | "GTC";
   maxSharesPerOrder: number;
@@ -176,6 +186,16 @@ export interface BotConfig {
   /** Edge-lead : durée de perte continue requise (ms) avant la vente. */
   edgeSellExpensiveLossWindowMs: number;
   /**
+   * Edge-lead : n'émettre l'edge que si l'ask cheap est déjà dans
+   * [edgeCheapBandMin, edgeCheapBandMax] (hedgeable dès le fill).
+   */
+  edgeRequireCheapReady: boolean;
+  /**
+   * Edge-lead : plafond ask_edge + ask_cheap à l'entrée (null = désactivé).
+   * Ex. 0.99 pour n'entrer que sur un quasi-lock.
+   */
+  edgeAskSumMax: number | null;
+  /**
    * Reverse (Phase 2, default off): cancel resting cheap GTC when the live
    * underdog ask leaves [cheapBuyMin, cheapBuyMax].
    */
@@ -196,6 +216,15 @@ export interface BotConfig {
    * grid otherwise ignores 1:1.
    */
   reverseHedgeCapToFilledCheap: boolean;
+  /**
+   * Fav-band: buy favorite when ask in [favBandAskMin, favBandAskMax]
+   * after favBandMinElapsedSec into the window. Hold to resolve, no hedge.
+   */
+  favBandAskMin: number;
+  favBandAskMax: number;
+  favBandMinElapsedSec: number;
+  /** Optional upper elapsed cap (null = until close / minutesBeforeClose). */
+  favBandMaxElapsedSec: number | null;
 }
 
 /**
@@ -219,6 +248,8 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     pairLockMax: 0.98,
     arbAskLockOnly: false,
     arbAskSumMax: null,
+    arbAskLockMinElapsedSec: null,
+    arbAskLockMaxImbalance: null,
     // 15 USDC covers a $1 cheap at 0.07 (~14 shares) 1:1 at 0.95.
     // A cap that buys < 5 shares at the hedge price yields no hedge.
     expensiveOrderUsdc: 15,
@@ -254,10 +285,16 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     edgeSellExpensiveAfterMin: 8,
     edgeSellExpensiveLossPct: 10,
     edgeSellExpensiveLossWindowMs: 10_000,
+    edgeRequireCheapReady: false,
+    edgeAskSumMax: null,
     reverseCancelCheapOffBand: false,
     reverseDefendEnabled: false,
     reverseMaxGridLevels: null,
     reverseHedgeCapToFilledCheap: false,
+    favBandAskMin: 0.7,
+    favBandAskMax: 0.85,
+    favBandMinElapsedSec: 200,
+    favBandMaxElapsedSec: null,
   };
 }
 
@@ -440,6 +477,27 @@ export function validateConfigCoherence(
   }
   if (config.maxOpenPositionsPerSide < 1) {
     throw new Error("MAX_OPEN_POSITIONS_PER_SIDE must be >= 1");
+  }
+  if (config.strategyId === "fav-band") {
+    // Sticky flags from a previous arb/ask-lock profile must not leak:
+    // fav-band is single-leg directional (no dual-FOK, no hedge).
+    config.arbAskLockOnly = false;
+    config.enableExpensiveHedge = false;
+    if (config.favBandAskMin >= config.favBandAskMax) {
+      throw new Error("favBandAskMin must be < favBandAskMax");
+    }
+    if (config.favBandMinElapsedSec < 0) {
+      throw new Error("favBandMinElapsedSec must be >= 0");
+    }
+    if (
+      config.favBandMaxElapsedSec != null &&
+      config.favBandMaxElapsedSec < config.favBandMinElapsedSec
+    ) {
+      throw new Error("favBandMaxElapsedSec must be >= favBandMinElapsedSec");
+    }
+    if (!(config.cheapOrderUsdc > 0)) {
+      throw new Error("cheapOrderUsdc must be > 0 for fav-band");
+    }
   }
   const validateEdge =
     opts?.leadsWithEdge === true || config.strategyId === "edge-lead";

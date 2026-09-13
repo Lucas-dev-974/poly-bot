@@ -58,7 +58,25 @@ export class ArbSizing implements SizingStrategy {
         if (askSum > lockCap) {
           pairLockOk = false;
         } else {
-          cheapPrice = round2(cheapAsk);
+          // Optional late-window gate (lock-harvest): wait N sec into the window.
+          const minElapsed = config.arbAskLockMinElapsedSec;
+          if (minElapsed != null && minElapsed > 0) {
+            const ws = ctx.windowStart;
+            const t = ctx.nowMs ?? Date.now();
+            if (ws == null || (t / 1000 - ws) < minElapsed) {
+              pairLockOk = false;
+            }
+          }
+          // Optional imbalance gate: skip extreme skewed locks (e.g. 0.08+0.91).
+          const maxImb = config.arbAskLockMaxImbalance;
+          if (pairLockOk && maxImb != null && maxImb > 0) {
+            if (Math.abs(cheapAsk - expAsk) > maxImb) {
+              pairLockOk = false;
+            }
+          }
+          if (pairLockOk) {
+            cheapPrice = round2(cheapAsk);
+          }
         }
       }
     } else if (hasPair) {

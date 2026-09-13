@@ -28,7 +28,7 @@ export class BarbellStrategy implements TradingStrategy {
   private readonly sizing = new BarbellSizing();
 
   findOpportunities(ctx: StrategyContext): TradeOpportunity[] {
-    return orchestrate(ctx.config, ctx.tracker, ctx.event, ctx.books, this.sizing);
+    return orchestrate(ctx.config, ctx.tracker, ctx.event, ctx.books, this.sizing, ctx.nowMs);
   }
 
   cheapOrderAction(ctx: RestingCheapContext): CheapOrderAction {

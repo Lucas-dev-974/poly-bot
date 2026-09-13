@@ -81,7 +81,7 @@ function NumberInput(props: {
 
 /* ---------- définition des sections ---------- */
 
-type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "risk" | "window";
+type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "fav" | "risk" | "window";
 
 interface SectionDef {
   id: SectionId;
@@ -96,6 +96,7 @@ const SECTIONS: SectionDef[] = [
   { id: "cheap", label: "Jambe cheap", icon: "▾", desc: "Bid maker underdog et verrou de paire" },
   { id: "hedge", label: "Jambe hedge", icon: "▴", desc: "Hedge après fill cheap" },
   { id: "edge", label: "Jambe edge", icon: "▴", desc: "Bande de confirmation edge-lead" },
+  { id: "fav", label: "Entrée fav-band", icon: "★", desc: "FOK favori mid-band, hold résolution" },
   { id: "risk", label: "Risque", icon: "◆", desc: "Limites de taille, positions et exposition" },
   { id: "window", label: "Fenêtre", icon: "◷", desc: "Plage de trading avant clôture" },
 ];
@@ -137,6 +138,7 @@ export function SettingsModal(props: {
   const usesEdge = createMemo(() =>
     engineUsesEdge(form().strategyId, selectedCustom()?.leadsWithEdge),
   );
+  const isFavBand = createMemo(() => form().strategyId === "fav-band");
   const errors = createMemo(() =>
     validateConfigForm(form(), false, {
       leadsWithEdge: selectedCustom()?.leadsWithEdge,
@@ -150,6 +152,8 @@ export function SettingsModal(props: {
         ...props.config,
         arbAskLockOnly: false,
         arbAskSumMax: null,
+        arbAskLockMinElapsedSec: null,
+        arbAskLockMaxImbalance: null,
         ...preset.settings,
         strategyId: preset.strategyId,
       });
@@ -175,10 +179,16 @@ export function SettingsModal(props: {
         ...props.config,
         arbAskLockOnly: false,
         arbAskSumMax: null,
+        arbAskLockMinElapsedSec: null,
+        arbAskLockMaxImbalance: null,
+        enableExpensiveHedge: preset.strategyId === "fav-band" ? false : props.config.enableExpensiveHedge,
         ...preset.settings,
         strategyId: preset.strategyId,
+        ...(preset.strategyId === "fav-band" ? { enableExpensiveHedge: false } : {}),
       }),
     );
+    if (preset.strategyId === "fav-band") setActiveSection("fav");
+    else if (preset.strategyId === "edge-lead") setActiveSection("edge");
     setSaveError(null);
   }
 
@@ -245,9 +255,18 @@ export function SettingsModal(props: {
             <select
               class="cfg-input"
               value={form().strategyId}
-              onChange={(e) =>
-                update("strategyId", e.currentTarget.value as ConfigFormState["strategyId"])
-              }
+              onChange={(e) => {
+                const id = e.currentTarget.value as ConfigFormState["strategyId"];
+                update("strategyId", id);
+                if (id === "fav-band") {
+                  update("enableExpensiveHedge", false);
+                  setActiveSection("fav");
+                } else if (id === "edge-lead") {
+                  setActiveSection("edge");
+                } else if (activeSection() === "fav" || activeSection() === "edge") {
+                  setActiveSection("presets");
+                }
+              }}
             >
               <For each={STRATEGY_ENGINE_OPTIONS}>
                 {(option) => <option value={option.id}>{option.label}</option>}
@@ -298,11 +317,20 @@ export function SettingsModal(props: {
                     when={
                       !(
                         usesEdge() &&
-                        (s.id === "cheap" || s.id === "hedge")
+                        (s.id === "cheap" || s.id === "hedge" || s.id === "fav")
+                      ) &&
+                      !(
+                        isFavBand() &&
+                        (s.id === "cheap" || s.id === "hedge" || s.id === "edge")
                       ) &&
                       !(
                         !usesEdge() &&
+                        !isFavBand() &&
                         s.id === "edge"
+                      ) &&
+                      !(
+                        !isFavBand() &&
+                        s.id === "fav"
                       )
                     }
                   >
@@ -422,7 +450,7 @@ export function SettingsModal(props: {
               {/* ---- Jambe cheap ---- */}
               <Show when={activeSection() === "cheap"}>
                 <div class="cfg-section">
-                  <h4>Jambe cheap (underdog)</h4>
+<h4>Jambe cheap (underdog)</h4>
                   <p class="cfg-section__desc">
                     {form().strategyId === "reverse"
                       ? "Grille de limit BUY maker sur l'underdog, un niveau par tick dans [cheap min, cheap max]. Chaque niveau est indépendant du hedge."
@@ -487,10 +515,10 @@ export function SettingsModal(props: {
                         Activer ask-lock
                       </label>
                     </Field>
-                    <Show when={form().arbAskLockOnly}>
+                                        <Show when={form().arbAskLockOnly}>
                       <Field
                         label="Ask-sum max (optionnel)"
-                        hint="Plafond ask+ask plus serré que pairLockMax. Vide = pairLockMax."
+                        hint="Plafond ask+ask plus serre que pairLockMax. Vide = pairLockMax."
                       >
                         <NumberInput
                           value={form().arbAskSumMax}
@@ -498,6 +526,30 @@ export function SettingsModal(props: {
                           max={0.99}
                           step={0.01}
                           onInput={(v) => update("arbAskSumMax", v)}
+                        />
+                      </Field>
+                      <Field
+                        label="Min elapsed sec"
+                        hint="N entrer qu apres N secondes depuis windowStart. Vide = off."
+                      >
+                        <NumberInput
+                          value={form().arbAskLockMinElapsedSec}
+                          min={0}
+                          max={900}
+                          step={1}
+                          onInput={(v) => update("arbAskLockMinElapsedSec", v)}
+                        />
+                      </Field>
+                      <Field
+                        label="Max imbalance"
+                        hint="Skip si |ask_c - ask_e| > seuil. Vide = off."
+                      >
+                        <NumberInput
+                          value={form().arbAskLockMaxImbalance}
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          onInput={(v) => update("arbAskLockMaxImbalance", v)}
                         />
                       </Field>
                     </Show>
@@ -592,15 +644,14 @@ export function SettingsModal(props: {
                     </Show>
                   </div>
                   <div class="cfg-divider" />
-                  <Show when={form().strategyId !== "arb"}>
+                  <Show when={form().strategyId !== "arb" && form().strategyId !== "fav-band"}>
                   <Toggle
                     label="Activer le hedge expensive"
                     hint="Désactivé : cheap = directionnel. Activé : hedge après fill (barbell/reverse)."
                     checked={form().enableExpensiveHedge}
                     onChange={(v) => update("enableExpensiveHedge", v)}
                   />
-                  </Show>
-                  <Show when={form().strategyId === "reverse"}>
+                  </Show><Show when={form().strategyId === "reverse"}>
                     <Toggle
                       label="Expensive après cheap fill"
                       hint="N'émettre / placer un ordre expensive qu'après qu'au moins un cheap de la paire a été fillé."
@@ -809,6 +860,85 @@ export function SettingsModal(props: {
               </Show>
 
               {/* ---- Risque ---- */}
+
+              {/* ---- Entrée fav-band ---- */}
+              <Show when={activeSection() === "fav"}>
+                <div class="cfg-section">
+                  <h4>Entrée fav-band</h4>
+                  <p class="cfg-section__desc">
+                    Stratégie directionnelle : FOK buy du <strong>favori</strong> quand son ask
+                    est dans la bande calibrée, après un délai minimum dans la fenêtre.
+                    Pas de hedge — hold jusqu&apos;à résolution. Distinct de ask-lock (arb)
+                    et de edge-lead (pas de confirm / pas de jambe cheap).
+                  </p>
+                  <div class="cfg-grid">
+                    <Field
+                      label="Ask favori min"
+                      hint="Borne basse de la bande d&apos;entrée (défaut 0.70). En dessous : trop cher en risque / hors edge empirique."
+                    >
+                      <NumberInput
+                        value={form().favBandAskMin}
+                        min={0.5}
+                        max={0.95}
+                        step={0.01}
+                        onInput={(v) => update("favBandAskMin", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Ask favori max"
+                      hint="Borne haute (défaut 0.85). Au-dessus : favoris « sûrs » souvent surcotés (EV négative en backtest)."
+                    >
+                      <NumberInput
+                        value={form().favBandAskMax}
+                        min={0.55}
+                        max={0.99}
+                        step={0.01}
+                        onInput={(v) => update("favBandAskMax", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Min elapsed (sec)"
+                      hint="Attendre N secondes depuis le début de la fenêtre 15m avant d&apos;entrer (défaut 200)."
+                    >
+                      <NumberInput
+                        value={form().favBandMinElapsedSec}
+                        min={0}
+                        max={900}
+                        step={1}
+                        onInput={(v) => update("favBandMinElapsedSec", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Max elapsed (sec, opt)"
+                      hint="Vide = jusqu&apos;à la close / minutesBeforeClose. Sinon coupe les entrées trop tardives."
+                    >
+                      <NumberInput
+                        value={form().favBandMaxElapsedSec}
+                        min={0}
+                        max={900}
+                        step={1}
+                        onInput={(v) => update("favBandMaxElapsedSec", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Order size (USDC)"
+                      hint="Budget FOK sur le favori (cheapOrderUsdc). Taille = budget / ask, plafonnée par max shares."
+                    >
+                      <NumberInput
+                        value={form().cheapOrderUsdc}
+                        min={0.1}
+                        step={0.1}
+                        onInput={(v) => update("cheapOrderUsdc", v)}
+                      />
+                    </Field>
+                  </div>
+                  <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
+                    Risque / exposition : onglet Risque (max shares, max exposure).
+                    Fenêtre de trading : onglet Fenêtre.
+                  </p>
+                </div>
+              </Show>
+
               <Show when={activeSection() === "risk"}>
                 <div class="cfg-section">
                   <h4>Limites de risque</h4>

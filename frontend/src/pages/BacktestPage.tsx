@@ -8,6 +8,7 @@ import { BacktestRunList } from "../components/backtest/BacktestRunList";
 import { StackedMarketChart } from "../components/backtest/StackedMarketChart";
 import {
   allPresetsForStrategy,
+  STRATEGY_ENGINE_OPTIONS,
   findPresetById,
   type AnyPreset,
   type StrategyId,
@@ -164,6 +165,8 @@ export function BacktestPage(): JSX.Element {
     const f = applySettingsToForm(base, {
       arbAskLockOnly: false,
       arbAskSumMax: null,
+      arbAskLockMinElapsedSec: null,
+      arbAskLockMaxImbalance: null,
       ...preset.settings,
       strategyId: preset.strategyId,
     });
@@ -792,10 +795,9 @@ export function BacktestPage(): JSX.Element {
               loadPresetIntoForm(first?.id ?? "", id);
             }}
           >
-            <option value="arb">Arb</option>
-            <option value="barbell">Barbell</option>
-            <option value="edge-lead">Edge-lead</option>
-            <option value="reverse">Reverse</option>
+            <For each={STRATEGY_ENGINE_OPTIONS}>
+              {(option) => <option value={option.id}>{option.label}</option>}
+            </For>
             <For each={customEngines()}>
               {(engine) => (
                 <option value={engine.id}>

@@ -4,6 +4,8 @@ import conservative from "../../../config/presets/conservative.json";
 import edgeLead from "../../../config/presets/edge-lead.json";
 import reverse from "../../../config/presets/reverse.json";
 import askLock from "../../../config/presets/ask-lock.json";
+import lockHarvest from "../../../config/presets/lock-harvest.json";
+import favBand from "../../../config/presets/fav-band.json";
 
 export type { NativeStrategyId, StrategyId };
 
@@ -21,6 +23,7 @@ export const STRATEGY_ENGINE_OPTIONS: Array<{ id: NativeStrategyId; label: strin
   { id: "arb", label: "B1 arbitrage 1:1 + lock" },
   { id: "barbell", label: "Ratio cheap/hedge (sans lock)" },
   { id: "edge-lead", label: "Edge-lead (edge d'abord, puis cheap)" },
+  { id: "fav-band", label: "Fav-band (FOK favori mid-band, hold resolve)" },
   { id: "reverse", label: "Reverse bet (underdog 7-10¢ + hedge favori)" },
 ];
 
@@ -28,8 +31,10 @@ export const STRATEGY_PRESETS: StrategyPreset[] = [
   coverageMax as StrategyPreset,
   conservative as StrategyPreset,
   askLock as StrategyPreset,
+  lockHarvest as StrategyPreset,
   edgeLead as StrategyPreset,
   reverse as StrategyPreset,
+  favBand as StrategyPreset,
 ];
 
 export function presetsForStrategy(id: string): StrategyPreset[] {

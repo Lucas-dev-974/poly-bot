@@ -75,6 +75,7 @@ export function orchestrate(
   event: UpDownEvent,
   books: TokenBook[],
   sizing: SizingStrategy,
+  nowMs?: number,
 ): TradeOpportunity[] {
   const opportunities: TradeOpportunity[] = [];
   const pairId = `${event.slug}:${event.windowEnd}`;
@@ -195,6 +196,8 @@ export function orchestrate(
     expensiveToken,
     hedgePrice,
     thisTickCheapSize: 0,
+    nowMs,
+    windowStart: event.windowStart,
   });
 
   const cheapPrice = sizingResult.cheapPrice;

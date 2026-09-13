@@ -15,6 +15,8 @@ export type ConfigFormState = {
   pairLockMax: string;
   arbAskLockOnly: boolean;
   arbAskSumMax: string;
+  arbAskLockMinElapsedSec: string;
+  arbAskLockMaxImbalance: string;
   expensiveOrderUsdc: string;
   expensiveOrderType: "FOK" | "GTC";
   maxSharesPerOrder: string;
@@ -53,6 +55,10 @@ export type ConfigFormState = {
   reverseDefendEnabled: boolean;
   reverseMaxGridLevels: string;
   reverseHedgeCapToFilledCheap: boolean;
+  favBandAskMin: string;
+  favBandAskMax: string;
+  favBandMinElapsedSec: string;
+  favBandMaxElapsedSec: string;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -73,6 +79,14 @@ export function configToForm(config: BotConfig): ConfigFormState {
       config.arbAskSumMax === null || config.arbAskSumMax === undefined
         ? ""
         : String(config.arbAskSumMax),
+    arbAskLockMinElapsedSec:
+      config.arbAskLockMinElapsedSec === null || config.arbAskLockMinElapsedSec === undefined
+        ? ""
+        : String(config.arbAskLockMinElapsedSec),
+    arbAskLockMaxImbalance:
+      config.arbAskLockMaxImbalance === null || config.arbAskLockMaxImbalance === undefined
+        ? ""
+        : String(config.arbAskLockMaxImbalance),
     expensiveOrderUsdc: String(config.expensiveOrderUsdc),
     expensiveOrderType: config.expensiveOrderType,
     maxSharesPerOrder: String(config.maxSharesPerOrder),
@@ -115,6 +129,13 @@ export function configToForm(config: BotConfig): ConfigFormState {
     reverseMaxGridLevels:
       config.reverseMaxGridLevels == null ? "" : String(config.reverseMaxGridLevels),
     reverseHedgeCapToFilledCheap: config.reverseHedgeCapToFilledCheap === true,
+    favBandAskMin: String(config.favBandAskMin ?? 0.7),
+    favBandAskMax: String(config.favBandAskMax ?? 0.85),
+    favBandMinElapsedSec: String(config.favBandMinElapsedSec ?? 200),
+    favBandMaxElapsedSec:
+      config.favBandMaxElapsedSec == null || config.favBandMaxElapsedSec === undefined
+        ? ""
+        : String(config.favBandMaxElapsedSec),
   };
 }
 
@@ -137,7 +158,11 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     expensiveBuyMin: parseNum(form.expensiveBuyMin, "Hedge min"),
     expensiveBuyMax: parseNum(form.expensiveBuyMax, "Hedge max"),
     enableExpensiveHedge:
-      form.strategyId === "arb" ? true : form.enableExpensiveHedge,
+      form.strategyId === "arb"
+        ? true
+        : form.strategyId === "fav-band"
+          ? false
+          : form.enableExpensiveHedge,
     requireCheapFillBeforeExpensive: form.requireCheapFillBeforeExpensive,
     cheapOrderUsdc: parseNum(form.cheapOrderUsdc, "Cheap order USDC"),
     strategyId: form.strategyId,
@@ -148,6 +173,14 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
       form.arbAskSumMax.trim() === ""
         ? null
         : parseNum(form.arbAskSumMax, "Ask-lock sum max"),
+    arbAskLockMinElapsedSec:
+      form.arbAskLockMinElapsedSec.trim() === ""
+        ? null
+        : parseNum(form.arbAskLockMinElapsedSec, "Ask-lock min elapsed sec"),
+    arbAskLockMaxImbalance:
+      form.arbAskLockMaxImbalance.trim() === ""
+        ? null
+        : parseNum(form.arbAskLockMaxImbalance, "Ask-lock max imbalance"),
     expensiveOrderUsdc: parseNum(form.expensiveOrderUsdc, "Plafond hedge USDC"),
     expensiveOrderType: form.expensiveOrderType,
     maxSharesPerOrder: parseNum(form.maxSharesPerOrder, "Max shares"),
@@ -198,8 +231,19 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
         ? null
         : parseNum(form.reverseMaxGridLevels, "Max niveaux grille reverse"),
     reverseHedgeCapToFilledCheap: form.reverseHedgeCapToFilledCheap,
+    favBandAskMin: parseNum(form.favBandAskMin, "Fav-band ask min"),
+    favBandAskMax: parseNum(form.favBandAskMax, "Fav-band ask max"),
+    favBandMinElapsedSec: parseNum(form.favBandMinElapsedSec, "Fav-band min elapsed"),
+    favBandMaxElapsedSec:
+      form.favBandMaxElapsedSec.trim() === ""
+        ? null
+        : parseNum(form.favBandMaxElapsedSec, "Fav-band max elapsed"),
   };
 
+  if (next.strategyId === "fav-band") {
+    next.enableExpensiveHedge = false;
+    next.arbAskLockOnly = false;
+  }
   if ((next.marketSlugPrefixes?.length ?? 0) === 0) {
     throw new Error("Au moins un préfixe de marché est requis");
   }
@@ -273,7 +317,7 @@ export function validateConfigForm(
     // Bandes cheap/hedge : arb, barbell, reverse (pas edge-lead).
     // pairLockMax : arb seulement. barbellHedgeRatio : barbell seulement.
     if (!edge) {
-      if (cheapBuyMax >= expensiveBuyMin) {
+      if (form.strategyId !== "fav-band" && cheapBuyMax >= expensiveBuyMin) {
         errors.push("Cheap max doit être < hedge min");
       }
       if (form.strategyId === "arb") {
@@ -310,6 +354,24 @@ export function validateConfigForm(
     }
     if (form.marketSlugPrefixes.split(",").map((s) => s.trim()).filter(Boolean).length === 0) {
       errors.push("Au moins un préfixe de marché est requis");
+    }
+
+    if (form.strategyId === "fav-band") {
+      const lo = Number(form.favBandAskMin);
+      const hi = Number(form.favBandAskMax);
+      const elapsed = Number(form.favBandMinElapsedSec);
+      if (!Number.isFinite(lo) || !Number.isFinite(hi) || lo >= hi) {
+        errors.push("Fav-band: ask min doit être < ask max");
+      }
+      if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed > 900) {
+        errors.push("Fav-band: min elapsed entre 0 et 900");
+      }
+      if (form.favBandMaxElapsedSec.trim() !== "") {
+        const maxE = Number(form.favBandMaxElapsedSec);
+        if (!Number.isFinite(maxE) || maxE < elapsed) {
+          errors.push("Fav-band: max elapsed invalide");
+        }
+      }
     }
     // Edge-lead : validations dédiées. Les champs arb/barbell (cheap/hedge
     // bandes, pairLockMax, barbellHedgeRatio) ne s'appliquent pas à ce moteur.
@@ -443,7 +505,7 @@ export function fieldErrors(
       result.expensiveBuyMax = "Hedge max doit être ≥ hedge min";
     }
     if (!edge) {
-      if (Number.isFinite(cheapBuyMax) && Number.isFinite(expensiveBuyMin) && cheapBuyMax >= expensiveBuyMin) {
+      if (form.strategyId !== "fav-band" && Number.isFinite(cheapBuyMax) && Number.isFinite(expensiveBuyMin) && cheapBuyMax >= expensiveBuyMin) {
         result.expensiveBuyMin = "Hedge min doit être > cheap max";
       }
       if (form.strategyId === "arb") {
@@ -554,6 +616,26 @@ export function fieldErrors(
       const maxLevels = Number(form.reverseMaxGridLevels);
       if (!Number.isFinite(maxLevels) || maxLevels < 1) {
         result.reverseMaxGridLevels = "vide ou ≥ 1";
+      }
+    }
+
+    if (form.strategyId === "fav-band") {
+      const lo = Number(form.favBandAskMin);
+      const hi = Number(form.favBandAskMax);
+      const elapsed = Number(form.favBandMinElapsedSec);
+      if (!Number.isFinite(lo)) result.favBandAskMin = "Nombre invalide";
+      if (!Number.isFinite(hi)) result.favBandAskMax = "Nombre invalide";
+      if (Number.isFinite(lo) && Number.isFinite(hi) && lo >= hi) {
+        result.favBandAskMin = "Doit être < ask max";
+      }
+      if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed > 900) {
+        result.favBandMinElapsedSec = "Entre 0 et 900";
+      }
+      if (form.favBandMaxElapsedSec.trim() !== "") {
+        const maxE = Number(form.favBandMaxElapsedSec);
+        if (!Number.isFinite(maxE) || (Number.isFinite(elapsed) && maxE < elapsed)) {
+          result.favBandMaxElapsedSec = "Vide ou >= min elapsed";
+        }
       }
     }
     }

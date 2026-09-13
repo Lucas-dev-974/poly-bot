@@ -129,6 +129,10 @@ export class ReverseBot {
     return this.paused;
   }
 
+  closePositionManual(positionId: string) {
+    return this.resting.closePositionManual(positionId);
+  }
+
   async run(): Promise<void> {
     log("Reverse bot starting", {
       strategy: this.strategy.label,

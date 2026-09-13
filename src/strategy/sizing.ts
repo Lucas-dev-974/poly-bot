@@ -15,6 +15,10 @@ export interface SizingContext {
   expensiveToken: TokenBook | null;
   hedgePrice: number;
   thisTickCheapSize: number;
+  /** Backtest/live clock. Live may omit — Date.now() used for elapsed gates. */
+  nowMs?: number;
+  /** Window start (unix sec). Needed for arbAskLockMinElapsedSec. */
+  windowStart?: number;
 }
 
 /**

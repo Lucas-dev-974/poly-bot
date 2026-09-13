@@ -76,6 +76,12 @@ export class DashboardServer {
   private configHandler: ((changed: Set<EditableConfigKey>) => void) | null = null;
   private controlHandler: ((enabled: boolean) => void) | null = null;
   private isPausedFn: (() => boolean) | null = null;
+  private closePositionFn:
+    | ((positionId: string) => Promise<
+        | { ok: true; fillPrice: number; soldSize: number; pnl?: number }
+        | { ok: false; error: string }
+      >)
+    | null = null;
   private readonly backtestJob: BacktestJob;
 
   constructor(
@@ -105,6 +111,15 @@ export class DashboardServer {
   setControlHandler(fn: (enabled: boolean) => void, isPausedFn: () => boolean): void {
     this.controlHandler = fn;
     this.isPausedFn = isPausedFn;
+  }
+
+  setClosePositionHandler(
+    fn: (positionId: string) => Promise<
+      | { ok: true; fillPrice: number; soldSize: number; pnl?: number }
+      | { ok: false; error: string }
+    >,
+  ): void {
+    this.closePositionFn = fn;
   }
 
   start(): void {
@@ -156,6 +171,11 @@ export class DashboardServer {
 
       if (url.pathname === "/api/config/presets" && req.method === "GET") {
         this.handleGetConfigPresets(res);
+        return;
+      }
+
+      if (url.pathname === "/api/open-positions/close" && req.method === "POST") {
+        void this.handleCloseOpenPosition(req, res);
         return;
       }
 
@@ -814,6 +834,44 @@ export class DashboardServer {
     }
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(series));
+  }
+
+  private async handleCloseOpenPosition(
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return;
+    }
+    try {
+      const body = await this.readBody(req);
+      const parsed = JSON.parse(body) as { positionId?: string };
+      const positionId = String(parsed.positionId ?? "");
+      if (!positionId) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "positionId is required" }));
+        return;
+      }
+      if (!this.closePositionFn) {
+        res.writeHead(503, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "Close handler not initialized" }));
+        return;
+      }
+      const result = await this.closePositionFn(positionId);
+      if (!result.ok) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(result));
+        return;
+      }
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(result));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: message }));
+    }
   }
 
   private handleOpenPositions(res: import("node:http").ServerResponse): void {

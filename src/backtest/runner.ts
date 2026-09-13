@@ -630,12 +630,13 @@ function executeOpp(
       ctx.config.expensiveOrderType === "FOK" &&
       !ctx.strategy.leadsWithEdge);
 
-  // Ask-lock dual-FOK preflight: only take cheap if the expensive ask can
-  // fill the same size on this tick's book. Otherwise skip (no one-legged).
+  // Ask-lock dual-FOK preflight: arb engine only. Fav-band also emits
+  // cheap+FOK but must NOT require a same-tick hedge leg (directional hold).
   if (
     opportunity.kind === "cheap" &&
     opportunity.orderType === "FOK" &&
-    ctx.config.arbAskLockOnly
+    ctx.config.arbAskLockOnly &&
+    ctx.config.strategyId === "arb"
   ) {
     const other = ctx.books.find((b) => b.tokenId !== opportunity.token.tokenId);
     if (!other || other.bestAsk == null) {

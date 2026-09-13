@@ -891,6 +891,61 @@ export class TradeTracker {
     return closedCount;
   }
 
+  /**
+   * Fermeture manuelle d'UNE position ouverte (FOK SELL dashboard).
+   * Ne touche que l'id demandé (pas toutes les jambes du même kind).
+   */
+  closePositionAsSold(
+    positionId: string,
+    sellPrice: number,
+    soldSize?: number,
+    nowMs: number = Date.now(),
+  ): number {
+    const position = this.openPositions.find(
+      (p) => p.id === positionId && p.status === "open",
+    );
+    if (!position) return 0;
+    const target = soldSize ?? position.size;
+    const closeSize = Math.min(position.size, target);
+    if (closeSize <= 0) return 0;
+    const proceeds = Math.round(closeSize * sellPrice * 100) / 100;
+    const pairId = position.pairId;
+    if (closeSize >= position.size) {
+      position.status = "sold";
+      position.resolvedAt = nowMs;
+      position.sellPrice = sellPrice;
+      position.pnl = round2(proceeds - position.cost);
+      this.resolvePosition(position);
+    } else {
+      position.size = Math.round((position.size - closeSize) * 100) / 100;
+      position.cost = Math.round(position.fillPrice * position.size * 100) / 100;
+      this.positionsRepo?.insert(position);
+      const sold: SimulatedPosition = {
+        ...position,
+        id: `${position.id}:sold-${nowMs}`,
+        size: closeSize,
+        cost: Math.round(position.fillPrice * closeSize * 100) / 100,
+        status: "sold",
+        resolvedAt: nowMs,
+        sellPrice,
+        pnl: round2(proceeds - Math.round(position.fillPrice * closeSize * 100) / 100),
+      };
+      this.openPositions.push(sold);
+      this.positionsRepo?.insert(sold);
+      this.resolvePosition(sold);
+    }
+    const pair = this.pairs.get(pairId);
+    if (pair && pair.status !== "resolved") {
+      const allLegsResolved =
+        pair.cheapLegs.every((leg) => leg.status !== "open") &&
+        pair.expensiveLegs.every((leg) => leg.status !== "open");
+      if (allLegsResolved) {
+        this.finalizePair(pair);
+      }
+    }
+    return 1;
+  }
+
   finalizePair(pair: SimulatedArbPair): void {
     const cheapLegs = pair.cheapLegs;
     const expensiveLegs = pair.expensiveLegs;

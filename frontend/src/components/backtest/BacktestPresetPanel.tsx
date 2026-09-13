@@ -45,6 +45,13 @@ export function BacktestPresetPanel(props: {
         { id: "window", label: "Fenêtre" },
       ];
     }
+    if (sid() === "fav-band") {
+      return [
+        { id: "cheap", label: "Fav-band" },
+        { id: "risk", label: "Risque" },
+        { id: "window", label: "Fenêtre" },
+      ];
+    }
     return [
       { id: "cheap", label: "Cheap" },
       { id: "hedge", label: "Hedge" },
@@ -60,7 +67,7 @@ export function BacktestPresetPanel(props: {
   const tabErrorCount = createMemo((): Record<PresetTab, number> => {
     const fe = props.fieldErrors;
     const counts: Record<PresetTab, number> = { cheap: 0, hedge: 0, edge: 0, risk: 0, window: 0, zones: 0 };
-    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax", "arbAskSumMax"];
+    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax", "arbAskSumMax", "arbAskLockMinElapsedSec", "arbAskLockMaxImbalance", "favBandAskMin", "favBandAskMax", "favBandMinElapsedSec", "favBandMaxElapsedSec"];
     const hedgeKeys: Array<keyof ConfigFormState> = ["expensiveBuyMin", "expensiveBuyMax", "expensiveOrderUsdc", "expensiveOrderType", "barbellHedgeRatio", "enableExpensiveHedge", "requireCheapFillBeforeExpensive"];
     const edgeKeys: Array<keyof ConfigFormState> = ["edgeBandMin", "edgeBandMax", "edgeConfirmSamples", "edgeMaxDownTick", "edgeCheapBandMin", "edgeCheapBandMax", "edgeSizingMode", "edgeSharesEdge", "edgeSharesCheap", "edgeOrderUsdc", "maxShareEdge", "edgeCheapOrderUsdc", "edgeSellExpensiveEnabled", "edgeSellExpensiveAfterMin", "edgeSellExpensiveLossPct", "edgeSellExpensiveLossWindowMs"];
     const riskKeys: Array<keyof ConfigFormState> = ["maxSharesPerOrder", "maxShareEdge", "maxOpenPositionsPerSide", "maxExposureUsdc", "simulatedCapital", "marketSlugPrefixes", "pollIntervalMs"];
@@ -174,21 +181,32 @@ export function BacktestPresetPanel(props: {
           <div class="bt-preset-body">
             <Show when={active() === "cheap"}>
               <div class="bt-preset-grid">
-                <Num label="Cheap min" tip="Ask / prix minimum de la bande cheap (underdog). En dessous : pas d'ordre cheap." value={form().cheapBuyMin} step={0.01} err={props.fieldErrors.cheapBuyMin} onInput={(v) => props.onUpdate("cheapBuyMin", v)} />
-                <Num label="Cheap max" tip="Plafond du bid cheap. Le prix posé reste dans [cheap min, cheap max]." value={form().cheapBuyMax} step={0.01} err={props.fieldErrors.cheapBuyMax} onInput={(v) => props.onUpdate("cheapBuyMax", v)} />
-                <Num label="Cheap USDC" tip="Budget USDC par ordre cheap (taille ≈ budget / prix)." value={form().cheapOrderUsdc} step={0.1} err={props.fieldErrors.cheapOrderUsdc} onInput={(v) => props.onUpdate("cheapOrderUsdc", v)} />
-                <Show when={sid() === "arb"}>
-                  <Num label="Pair lock" tip="Verrou de profit : bid+hedge à l'entrée et fill+hedge après fill doivent rester ≤ ce plafond (arb)." value={form().pairLockMax} step={0.01} err={props.fieldErrors.pairLockMax} onInput={(v) => props.onUpdate("pairLockMax", v)} />
-                  <label class="bt-pf bt-pf-check">
-                    <input
-                      type="checkbox"
-                      checked={form().arbAskLockOnly}
-                      onChange={(e) => props.onUpdate("arbAskLockOnly", e.currentTarget.checked)}
-                    />
-                    <span class="bt-pf-label" title="N'entrer que si ask_cheap+ask_expensive ≤ lock ; dual-FOK same tick.">Ask-lock dual-FOK</span>
-                  </label>
-                  <Show when={form().arbAskLockOnly}>
-                    <Num label="Ask-sum max" tip="Plafond ask+ask optionnel (vide = pairLockMax)." value={form().arbAskSumMax} step={0.01} err={props.fieldErrors.arbAskSumMax} onInput={(v) => props.onUpdate("arbAskSumMax", v)} />
+                <Show when={sid() === "fav-band"}>
+                  <Num label="Fav ask min" tip="Borne basse ask favori." value={form().favBandAskMin} step={0.01} err={props.fieldErrors.favBandAskMin} onInput={(v) => props.onUpdate("favBandAskMin", v)} />
+                  <Num label="Fav ask max" tip="Borne haute ask favori." value={form().favBandAskMax} step={0.01} err={props.fieldErrors.favBandAskMax} onInput={(v) => props.onUpdate("favBandAskMax", v)} />
+                  <Num label="Min elapsed sec" tip="Attendre N sec depuis windowStart." value={form().favBandMinElapsedSec} step={1} err={props.fieldErrors.favBandMinElapsedSec} onInput={(v) => props.onUpdate("favBandMinElapsedSec", v)} />
+                  <Num label="Max elapsed sec" tip="Vide = off." value={form().favBandMaxElapsedSec} step={1} err={props.fieldErrors.favBandMaxElapsedSec} onInput={(v) => props.onUpdate("favBandMaxElapsedSec", v)} />
+                  <Num label="Order USDC" tip="Budget FOK favori." value={form().cheapOrderUsdc} step={1} err={props.fieldErrors.cheapOrderUsdc} onInput={(v) => props.onUpdate("cheapOrderUsdc", v)} />
+                </Show>
+                <Show when={sid() !== "fav-band"}>
+                  <Num label="Cheap min" tip="Ask / prix minimum de la bande cheap (underdog). En dessous : pas d'ordre cheap." value={form().cheapBuyMin} step={0.01} err={props.fieldErrors.cheapBuyMin} onInput={(v) => props.onUpdate("cheapBuyMin", v)} />
+                  <Num label="Cheap max" tip="Plafond du bid cheap. Le prix pose reste dans [cheap min, cheap max]." value={form().cheapBuyMax} step={0.01} err={props.fieldErrors.cheapBuyMax} onInput={(v) => props.onUpdate("cheapBuyMax", v)} />
+                  <Num label="Cheap USDC" tip="Budget USDC par ordre cheap (taille = budget / prix)." value={form().cheapOrderUsdc} step={0.1} err={props.fieldErrors.cheapOrderUsdc} onInput={(v) => props.onUpdate("cheapOrderUsdc", v)} />
+                  <Show when={sid() === "arb"}>
+                    <Num label="Pair lock" tip="Verrou de profit : bid+hedge a l'entree et fill+hedge apres fill doivent rester <= ce plafond (arb)." value={form().pairLockMax} step={0.01} err={props.fieldErrors.pairLockMax} onInput={(v) => props.onUpdate("pairLockMax", v)} />
+                    <label class="bt-pf bt-pf-check">
+                      <input
+                        type="checkbox"
+                        checked={form().arbAskLockOnly}
+                        onChange={(e) => props.onUpdate("arbAskLockOnly", e.currentTarget.checked)}
+                      />
+                      <span class="bt-pf-label" title="N'entrer que si ask_cheap+ask_expensive <= lock ; dual-FOK same tick.">Ask-lock dual-FOK</span>
+                    </label>
+                    <Show when={form().arbAskLockOnly}>
+                      <Num label="Ask-sum max" tip="Plafond ask+ask optionnel (vide = pairLockMax)." value={form().arbAskSumMax} step={0.01} err={props.fieldErrors.arbAskSumMax} onInput={(v) => props.onUpdate("arbAskSumMax", v)} />
+                      <Num label="Min elapsed sec" tip="N'entrer qu'apres N secondes depuis windowStart (vide = off)." value={form().arbAskLockMinElapsedSec} step={1} err={props.fieldErrors.arbAskLockMinElapsedSec} onInput={(v) => props.onUpdate("arbAskLockMinElapsedSec", v)} />
+                      <Num label="Max imbalance" tip="Skip si |ask_c - ask_e| > seuil (vide = off)." value={form().arbAskLockMaxImbalance} step={0.01} err={props.fieldErrors.arbAskLockMaxImbalance} onInput={(v) => props.onUpdate("arbAskLockMaxImbalance", v)} />
+                    </Show>
                   </Show>
                 </Show>
               </div>

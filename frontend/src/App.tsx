@@ -27,7 +27,7 @@ import {
 } from "./stores/polyStore";
 import { addLog } from "./stores/logStore";
 import { fmtUsd } from "./utils/format";
-import type { BalanceSnapshot, BotEvent } from "./types";
+import type { BalanceSnapshot, BotEvent, SimulatedPosition } from "./types";
 
 export function App(): JSX.Element {
   const [now, setNow] = createSignal(Date.now());
@@ -35,6 +35,8 @@ export function App(): JSX.Element {
   const [redeemTarget, setRedeemTarget] = createSignal<string | null>(null);
   const [settingsOpen, setSettingsOpen] = createSignal(false);
   const [confirmDiscardSettings, setConfirmDiscardSettings] = createSignal(false);
+  const [closeTarget, setCloseTarget] = createSignal<SimulatedPosition | null>(null);
+  const [closingId, setClosingId] = createSignal<string | null>(null);
 
   // SSE → stores + signaux locaux (balance)
   useEventSource((event: BotEvent) => {
@@ -138,6 +140,37 @@ export function App(): JSX.Element {
     }
   }
 
+
+  function handleClosePosition(position: SimulatedPosition): void {
+    setCloseTarget(position);
+  }
+
+  async function confirmClosePosition(): Promise<void> {
+    const position = closeTarget();
+    if (!position) return;
+    setCloseTarget(null);
+    setClosingId(position.id);
+    try {
+      const data = await api.closePosition({ positionId: position.id });
+      if (!data.ok) throw new Error(data.error || "Échec de la fermeture");
+      addLog("Position fermée (FOK SELL)", {
+        outcome: position.outcome,
+        fillPrice: data.fillPrice,
+        soldSize: data.soldSize,
+        pnl: data.pnl,
+      });
+      await syncPositions();
+    } catch (e) {
+      addLog(
+        "Erreur fermeture manuelle : " + (e instanceof Error ? e.message : String(e)),
+        undefined,
+        true,
+      );
+    } finally {
+      setClosingId(null);
+    }
+  }
+
   onMount(() => {
     void loadInitialState();
   });
@@ -152,7 +185,11 @@ export function App(): JSX.Element {
       <ConfigBar onConfigure={() => setSettingsOpen(true)} />
       <div class="grid">
         <PolymarketPositions onRedeem={handleRedeem} />
-        <OpenPositions now={now()} />
+        <OpenPositions
+          now={now()}
+          onClosePosition={handleClosePosition}
+          closingId={closingId()}
+        />
         <ActiveMarkets now={now()} />
         <RecentOrders now={now()} />
         <Performance />
@@ -170,6 +207,18 @@ export function App(): JSX.Element {
         confirmLabel="Clôturer"
         onConfirm={() => void confirmRedeem()}
         onCancel={() => setRedeemTarget(null)}
+      />
+      <ConfirmModal
+        open={closeTarget() !== null}
+        title={`Fermer la position "${closeTarget()?.outcome ?? ""}" ?`}
+        message={
+          closeTarget()
+            ? `FOK SELL de ${closeTarget()!.size} shares au bid courant. Irréversible.`
+            : ""
+        }
+        confirmLabel="Fermer"
+        onConfirm={() => void confirmClosePosition()}
+        onCancel={() => setCloseTarget(null)}
       />
       <Show when={config()}>
         {(c) => (

@@ -1,0 +1,32 @@
+{
+  "id": "fav-band",
+  "strategyId": "fav-band",
+  "name": "Fav-band (mid favorite hold)",
+  "description": "NOUVELLE strategie directionnelle (pas ask-lock). Apres favBandMinElapsedSec, FOK buy du favori si ask dans [0.70, 0.85], hold jusqu a resolution, sans hedge. Edge empirique BTC 15m: winrate ~78% vs prix mid-band (les favoris >0.90 sont surcotes). Distinct de edge-lead (pas de confirm / pas de cheap follow-up) et de reverse (favori, pas underdog).",
+  "settings": {
+    "pollIntervalMs": 1000,
+    "marketSlugPrefixes": ["btc-updown-15m"],
+    "strategyId": "fav-band",
+    "enableExpensiveHedge": false,
+    "arbAskLockOnly": false,
+    "arbAskSumMax": null,
+    "cheapOrderUsdc": 15,
+    "favBandAskMin": 0.7,
+    "favBandAskMax": 0.85,
+    "favBandMinElapsedSec": 200,
+    "favBandMaxElapsedSec": null,
+    "maxSharesPerOrder": 40,
+    "maxOpenPositionsPerSide": 1,
+    "maxExposureUsdc": 40,
+    "minutesBeforeCloseMin": 0,
+    "minutesBeforeCloseMax": 15,
+    "minMinutesBeforeCloseToBuy": null,
+    "simulatedCapital": 75,
+    "simFillProbabilityNonMarketable": 0.3,
+    "simResolveDelaySeconds": 5,
+    "simResolveRetryIntervalMs": 5000,
+    "simResolveMaxRetries": 5,
+    "simResolveFallback": "none",
+    "simMaxRetryAttempts": 20
+  }
+}

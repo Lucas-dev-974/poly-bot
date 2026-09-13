@@ -554,4 +554,101 @@ export class RestingManager {
       });
     }
   }
+
+  /**
+   * Fermeture manuelle d'une position ouverte (dashboard) : FOK SELL au best bid.
+   */
+  async closePositionManual(positionId: string): Promise<
+    | { ok: true; fillPrice: number; soldSize: number; pnl?: number }
+    | { ok: false; error: string }
+  > {
+    const position = this.deps.tracker
+      .getOpenPositions()
+      .find((p) => p.id === positionId && p.status === "open");
+    if (!position) {
+      return { ok: false, error: "Position introuvable ou déjà fermée" };
+    }
+    if (position.size < MIN_CLOB_SHARES) {
+      return {
+        ok: false,
+        error: `Taille ${position.size} sous le minimum CLOB (${MIN_CLOB_SHARES})`,
+      };
+    }
+    const freshBook = await this.deps.scanner.getTokenBook(position.tokenId);
+    const bestBid = freshBook?.bestBid ?? null;
+    if (bestBid === null || bestBid <= 0) {
+      return { ok: false, error: "Pas de bid pour vendre (carnet vide)" };
+    }
+    const pair = this.deps.tracker.getPair(position.pairId);
+    const sellOpportunity: TradeOpportunity = {
+      kind: position.kind,
+      event: {
+        title: pair?.eventTitle ?? position.eventTitle,
+        slug: pair?.eventSlug ?? position.eventSlug,
+        market: {} as never,
+        windowStart: 0,
+        windowEnd: pair?.windowEnd ?? position.windowEnd,
+      },
+      token: {
+        tokenId: position.tokenId,
+        outcome: position.outcome,
+        outcomeIndex: position.outcomeIndex,
+        bestBid,
+        bestAsk: freshBook?.bestAsk ?? null,
+        bestAskSize: freshBook?.bestAskSize ?? null,
+        bestBidSize: freshBook?.bestBidSize ?? null,
+      },
+      price: bestBid,
+      size: position.size,
+      tickSize: "0.01",
+      negRisk: false,
+      tradeKey: `manual-close:${positionId}`,
+      pairId: position.pairId,
+    };
+    try {
+      const result = await this.deps.trader.placeSell(sellOpportunity);
+      if (result.filled && (result.filledSize ?? 0) > 0) {
+        const fillPrice = result.fillPrice ?? bestBid;
+        const soldSize = Math.min(result.filledSize ?? position.size, position.size);
+        this.deps.tracker.closePositionAsSold(positionId, fillPrice, soldSize);
+        await this.deps.lifecycle.cancelRestingHedgesForPair(
+          position.pairId,
+          "manual close",
+        );
+        log("closePositionManual: sold via FOK SELL", {
+          positionId,
+          tokenId: position.tokenId,
+          fillPrice,
+          soldSize,
+        });
+        bus.emit({ type: "order", result, opportunity: sellOpportunity });
+        const closed = this.deps.tracker
+          .getResolvedPositions()
+          .find((p) => p.id === positionId || p.id.startsWith(positionId + ":sold-"));
+        return {
+          ok: true,
+          fillPrice,
+          soldSize,
+          pnl: closed?.pnl,
+        };
+      }
+      if (result.reason === "sell-unconfirmed") {
+        return {
+          ok: false,
+          error: "SELL non confirmé — position laissée ouverte",
+        };
+      }
+      return {
+        ok: false,
+        error: result.reason
+          ? `FOK SELL échoué (${result.reason})`
+          : "FOK SELL tué — position laissée ouverte",
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      log("closePositionManual: SELL failed", { positionId, error: message });
+      return { ok: false, error: message };
+    }
+  }
+
 }

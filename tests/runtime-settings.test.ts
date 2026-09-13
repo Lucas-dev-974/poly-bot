@@ -182,4 +182,17 @@ describe("keysForStrategy", () => {
     assert.ok(!keysForStrategy("reverse").includes("barbellHedgeRatio"));
     assert.ok(keysForStrategy("arb").includes("pairLockMax"));
   });
+
+  it("separates arb lock from barbell ratio keys", () => {
+    const arb = keysForStrategy("arb");
+    const barbell = keysForStrategy("barbell");
+    assert.ok(arb.includes("pairLockMax"));
+    assert.ok(!arb.includes("barbellHedgeRatio"));
+    assert.ok(!arb.includes("simRequireCoveredPair"));
+    assert.ok(!arb.includes("enableExpensiveHedge"));
+    assert.ok(barbell.includes("barbellHedgeRatio"));
+    assert.ok(!barbell.includes("pairLockMax"));
+    assert.ok(!barbell.includes("simRequireCoveredPair"));
+    assert.ok(!keysForStrategy("reverse").includes("simRequireCoveredPair"));
+  });
 });

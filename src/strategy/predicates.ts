@@ -71,6 +71,20 @@ export function shouldDefendUncoveredPair(
 }
 
 /**
+ * Policy A (arb): FOK-sell uncovered cheap when fill+favoriteAsk already
+ * exceeds pairLockMax — lock unreachable even if the favorite is still
+ * inside the expensive buy band. Missing book / missing fill → no defend.
+ */
+export function shouldDefendPairLockUnreachable(
+  cheapFillPrice: number | null,
+  favoriteAsk: number | null,
+  pairLockMax: number,
+): boolean {
+  if (cheapFillPrice === null || favoriteAsk === null) return false;
+  return round2(cheapFillPrice + favoriteAsk) > pairLockMax;
+}
+
+/**
  * A pair is covered 1:1 when the filled expensive size is at least the
  * filled cheap size. Defense must never sell the cheap in that case: the
  * favorite going to $1 is the expected path, not an uncovered book.

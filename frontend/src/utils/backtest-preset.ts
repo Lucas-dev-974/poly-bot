@@ -150,7 +150,11 @@ export function groupedSettings(
     if (group.engines && sid && !group.engines.includes(sid)) continue;
     const rows: SettingRow[] = [];
     for (const [key, label] of group.keys) {
-      if (sid === "reverse" && (key === "pairLockMax" || key === "barbellHedgeRatio")) continue;
+      // Afficher lock seulement pour arb ; ratio seulement pour barbell.
+      if (key === "pairLockMax" && sid !== "arb") continue;
+      if (key === "barbellHedgeRatio" && sid !== "barbell") continue;
+      if (key === "enableExpensiveHedge" && sid === "arb") continue;
+      if (key === "simRequireCoveredPair") continue;
       if (!(key in settings)) continue;
       const raw = settings[key];
       if (raw === undefined) continue;

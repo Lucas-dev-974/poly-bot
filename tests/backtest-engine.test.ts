@@ -290,7 +290,6 @@ describe("backtest engine", () => {
       },
       resolveWinner: async () => ({ winnerOutcomeIndex: 1 }),
     });
-
     const cheapFills = trades.filter((t) => t.filled === 1 && t.kind === "cheap" && t.side === "BUY");
     const totalSize = Math.round(cheapFills.reduce((sum, t) => sum + t.size, 0) * 100) / 100;
     assert.ok(cheapFills.length >= 2, `expected several partial fills, got ${cheapFills.length}`);

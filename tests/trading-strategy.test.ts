@@ -174,7 +174,7 @@ describe("ArbStrategy interface", () => {
     const tracker3 = new TradeTracker();
     addFill(tracker3, event, "cheap", 10, 0.2);
     assert.deepEqual(arb.hedgeAtPostTime(hedgeCtx(tracker3, event, 0.85)), {
-      action: "skip",
+      action: "defend",
       reason: "pair-lock-unreachable",
     });
 

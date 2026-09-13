@@ -4,7 +4,11 @@ import type {
   HedgePostContext,
   HedgePostDecision,
 } from "./trading-strategy.js";
-import { round2 } from "./predicates.js";
+import {
+  isPairCovered,
+  round2,
+  shouldDefendPairLockUnreachable,
+} from "./predicates.js";
 
 export function evaluateHedgeAtPostTime(
   ctx: HedgePostContext,
@@ -47,8 +51,19 @@ export function evaluateHedgeAtPostTime(
   const price = Math.min(freshAsk, config.expensiveBuyMax);
   if (options.checkPairLock) {
     const fillPrice = tracker.getCheapFillPriceForPair(pairId);
-    if (fillPrice !== null && round2(fillPrice + price) > config.pairLockMax) {
-      return { action: "skip", reason: "pair-lock-unreachable" };
+    if (shouldDefendPairLockUnreachable(fillPrice, price, config.pairLockMax)) {
+      // Policy A: current ask cannot lock → FOK-sell uncovered cheap now
+      // (do not hold directional hoping for a lower favorite).
+      if (!config.enableExpensiveHedge) {
+        return { action: "skip", reason: "pair-lock-unreachable" };
+      }
+      if (isPairCovered(defendCtx.filledCheap, defendCtx.filledExpensive)) {
+        return { action: "skip", reason: "already-covered" };
+      }
+      if (options.defendShares(defendCtx) < MIN_CLOB_SHARES) {
+        return { action: "skip", reason: "defend-below-clob-min" };
+      }
+      return { action: "defend", reason: "pair-lock-unreachable" };
     }
   }
 

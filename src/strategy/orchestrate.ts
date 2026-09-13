@@ -159,11 +159,15 @@ export function orchestrate(
   // expensiveBuyMax]. A hedge far below a 0.97 ask is not a cover.
   // If cheap is already filled, keep evaluating this tick (hedge still
   // requires fill+lock, and FOK still requires the favorite in band).
+  //
+  // Note: when enableExpensiveHedge is false, favoriteInRange is true
+  // (short-circuit), so this early-return never fired for hedge-off even
+  // with simRequireCoveredPair — that flag was dead. Gate is hedge-on only.
   const favoriteInRange =
     !config.enableExpensiveHedge || favoriteAskInBuyRange(expensiveToken, config);
 
   if (
-    (config.simRequireCoveredPair || config.enableExpensiveHedge) &&
+    config.enableExpensiveHedge &&
     !favoriteInRange &&
     committedCheapSize === 0
   ) {
@@ -243,16 +247,40 @@ export function orchestrate(
   } else if (
     config.enableExpensiveHedge &&
     expensiveToken &&
+    expensiveToken.bestAsk !== null &&
     sizingResult.reason === "pair-lock-unreachable" &&
     tracker.getFilledCheapSizeForPair(pairId) > 0
   ) {
-    log("Hedge skipped - pair lock unreachable, holding cheap directional", {
-      market: event.title,
-      cheapFill: tracker.getCheapFillPriceForPair(pairId),
-      hedgePrice,
-      pairCost: sizingResult.pairCost,
-      pairLockMax: config.pairLockMax,
-    });
+    // Policy A: push a hedge stub that bypasses maxOpen/leg guards (those
+    // would silently drop the stub after a partial expensive leg). Execute
+    // → hedgeAtPostTime → FOK SELL cheap. tradeKey is per-tick price so a
+    // failed defend can retry if the ask moves.
+    const stubSize = Math.max(
+      MIN_CLOB_SHARES,
+      tracker.getFilledCheapSizeForPair(pairId) -
+        tracker.getFilledExpensiveSizeForPair(pairId),
+    );
+    const tradeKey = `policy-a-defend:${pairId}:${hedgePrice}`;
+    if (!tracker.has(tradeKey)) {
+      log("Pair lock unreachable — queuing Policy A defend via hedge post-time", {
+        market: event.title,
+        cheapFill: tracker.getCheapFillPriceForPair(pairId),
+        hedgePrice,
+        pairCost: sizingResult.pairCost,
+        pairLockMax: config.pairLockMax,
+      });
+      opportunities.push({
+        kind: "expensive",
+        event,
+        token: expensiveToken,
+        price: hedgePrice,
+        size: stubSize,
+        tickSize: tickSizeFromMarket(event.market),
+        negRisk: event.market.negRisk,
+        tradeKey,
+        pairId,
+      });
+    }
   } else if (
     config.enableExpensiveHedge &&
     expensiveToken &&

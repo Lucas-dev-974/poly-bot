@@ -58,6 +58,16 @@ function hedgeOpportunity(size: number, bestAsk: number): TradeOpportunity {
 }
 
 describe("Trader.placeSell", () => {
+  it("simulates a full FOK sell in dry-run without a CLOB client", async () => {
+    const trader = new Trader(testConfig({ dryRun: true }));
+    const result = await trader.placeSell(sellOpportunity(7, 0.11));
+    assert.equal(result.filled, true);
+    assert.equal(result.filledSize, 7);
+    assert.equal(result.fillPrice, 0.11);
+    assert.equal(result.reason, "dry-run-fok-sell");
+    assert.equal(result.dryRun, true);
+  });
+
   it("sends SHARES as the market-order amount (not USDC) and confirms via balance drop", async () => {
     const client = new MockClobClient();
     client.balances.set("t-down", 10);

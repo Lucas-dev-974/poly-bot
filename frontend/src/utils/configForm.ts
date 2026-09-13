@@ -129,7 +129,8 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     cheapBuyMax: parseNum(form.cheapBuyMax, "Cheap max"),
     expensiveBuyMin: parseNum(form.expensiveBuyMin, "Hedge min"),
     expensiveBuyMax: parseNum(form.expensiveBuyMax, "Hedge max"),
-    enableExpensiveHedge: form.enableExpensiveHedge,
+    enableExpensiveHedge:
+      form.strategyId === "arb" ? true : form.enableExpensiveHedge,
     requireCheapFillBeforeExpensive: form.requireCheapFillBeforeExpensive,
     cheapOrderUsdc: parseNum(form.cheapOrderUsdc, "Cheap order USDC"),
     strategyId: form.strategyId,
@@ -257,17 +258,21 @@ export function validateConfigForm(
     if (expensiveBuyMin > expensiveBuyMax) {
       errors.push("Hedge min doit être ≤ hedge max");
     }
-    // Les validations arb/barbell (bandes cheap/hedge, lock, ratio) ne
-    // s'appliquent pas à edge-lead : ces champs ne sont pas utilisés.
-    // Reverse réutilise les bandes cheap/hedge mais ignore lock et ratio.
+    // Bandes cheap/hedge : arb, barbell, reverse (pas edge-lead).
+    // pairLockMax : arb seulement. barbellHedgeRatio : barbell seulement.
     if (!edge) {
       if (cheapBuyMax >= expensiveBuyMin) {
         errors.push("Cheap max doit être < hedge min");
       }
-      if (form.strategyId !== "reverse") {
+      if (form.strategyId === "arb") {
         if (pairLockMax < 0.90 || pairLockMax >= 1.00) {
           errors.push("Pair lock max doit être entre 0.90 et 0.99");
         }
+        if (!form.enableExpensiveHedge) {
+          errors.push("Le hedge expensive est obligatoire pour arb (B1)");
+        }
+      }
+      if (form.strategyId === "barbell") {
         if (!(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
           errors.push("Ratio hedge doit être dans (0, 1]");
         }
@@ -429,10 +434,15 @@ export function fieldErrors(
       if (Number.isFinite(cheapBuyMax) && Number.isFinite(expensiveBuyMin) && cheapBuyMax >= expensiveBuyMin) {
         result.expensiveBuyMin = "Hedge min doit être > cheap max";
       }
-      if (form.strategyId !== "reverse") {
+      if (form.strategyId === "arb") {
         if (Number.isFinite(pairLockMax) && (pairLockMax < 0.9 || pairLockMax >= 1.0)) {
           result.pairLockMax = "Entre 0.90 et 0.99";
         }
+        if (!form.enableExpensiveHedge) {
+          result.enableExpensiveHedge = "Obligatoire pour arb";
+        }
+      }
+      if (form.strategyId === "barbell") {
         if (Number.isFinite(barbellHedgeRatio) && !(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
           result.barbellHedgeRatio = "Doit être dans (0, 1]";
         }

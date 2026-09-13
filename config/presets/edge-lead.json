@@ -5,7 +5,9 @@
   "description": "Confirmer 5 ticks que l'ask favori monte dans une bande, GTC edge, attendre le fill, puis cheap au best ask si dans [0.04, 0.14] (budgets indépendants).",
   "settings": {
     "pollIntervalMs": 1000,
-    "marketSlugPrefixes": ["btc-updown-15m"],
+    "marketSlugPrefixes": [
+      "btc-updown-15m"
+    ],
     "edgeBandMin": 0.85,
     "edgeBandMax": 0.9,
     "edgeConfirmSamples": 5,
@@ -34,7 +36,6 @@
     "simResolveRetryIntervalMs": 5000,
     "simResolveMaxRetries": 5,
     "simResolveFallback": "none",
-    "simMaxRetryAttempts": 20,
-    "simRequireCoveredPair": true
+    "simMaxRetryAttempts": 20
   }
 }

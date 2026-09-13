@@ -2,10 +2,12 @@
   "id": "coverage-max",
   "strategyId": "arb",
   "name": "Couverture max",
-  "description": "FOK immédiat après fill cheap, budget 1:1, lock 0.98 (~2 ¢ / share). Plus de paires couvertes, plus de capital par fenêtre.",
+  "description": "FOK immédiat après fill cheap, budget 1:1, lock 0.98 (~2 ¢ / share). cheapBuyMax=0.20 = pairLockMax − expensiveBuyMin (plafond théorique quand le favori est au bas de bande); le bid live reste min(ask, cheapBuyMax, pairLockMax − hedge).",
   "settings": {
     "pollIntervalMs": 5000,
-    "marketSlugPrefixes": ["btc-updown-15m"],
+    "marketSlugPrefixes": [
+      "btc-updown-15m"
+    ],
     "cheapBuyMin": 0.07,
     "cheapBuyMax": 0.2,
     "expensiveBuyMin": 0.78,
@@ -27,7 +29,6 @@
     "simResolveRetryIntervalMs": 5000,
     "simResolveMaxRetries": 5,
     "simResolveFallback": "none",
-    "simMaxRetryAttempts": 20,
-    "simRequireCoveredPair": true
+    "simMaxRetryAttempts": 20
   }
 }

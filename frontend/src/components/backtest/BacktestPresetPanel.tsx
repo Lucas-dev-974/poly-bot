@@ -177,7 +177,7 @@ export function BacktestPresetPanel(props: {
                 <Num label="Cheap min" tip="Ask / prix minimum de la bande cheap (underdog). En dessous : pas d'ordre cheap." value={form().cheapBuyMin} step={0.01} err={props.fieldErrors.cheapBuyMin} onInput={(v) => props.onUpdate("cheapBuyMin", v)} />
                 <Num label="Cheap max" tip="Plafond du bid cheap. Le prix posé reste dans [cheap min, cheap max]." value={form().cheapBuyMax} step={0.01} err={props.fieldErrors.cheapBuyMax} onInput={(v) => props.onUpdate("cheapBuyMax", v)} />
                 <Num label="Cheap USDC" tip="Budget USDC par ordre cheap (taille ≈ budget / prix)." value={form().cheapOrderUsdc} step={0.1} err={props.fieldErrors.cheapOrderUsdc} onInput={(v) => props.onUpdate("cheapOrderUsdc", v)} />
-                <Show when={sid() !== "reverse"}>
+                <Show when={sid() === "arb"}>
                   <Num label="Pair lock" tip="Verrou de profit : bid+hedge à l'entrée et fill+hedge après fill doivent rester ≤ ce plafond (arb)." value={form().pairLockMax} step={0.01} err={props.fieldErrors.pairLockMax} onInput={(v) => props.onUpdate("pairLockMax", v)} />
                 </Show>
               </div>
@@ -197,9 +197,10 @@ export function BacktestPresetPanel(props: {
                     <option value="GTC">GTC</option>
                   </select>
                 </label>
-                <Show when={sid() !== "reverse"}>
+                <Show when={sid() === "barbell"}>
                   <Num label="Ratio hedge" tip="Parts hedge ciblées = cheap rempli × ratio (barbell). (0, 1]." value={form().barbellHedgeRatio} step={0.05} err={props.fieldErrors.barbellHedgeRatio} onInput={(v) => props.onUpdate("barbellHedgeRatio", v)} />
                 </Show>
+                <Show when={sid() !== "arb"}>
                 <label class="bt-pf bt-pf-check">
                   <input
                     type="checkbox"
@@ -208,6 +209,7 @@ export function BacktestPresetPanel(props: {
                   />
                   <span class="bt-pf-label" title="Active ou coupe toute la jambe expensive / hedge.">Hedge on</span>
                 </label>
+                </Show>
                 <Show when={sid() === "reverse"}>
                   <label class="bt-pf bt-pf-check">
                     <input
@@ -298,14 +300,6 @@ export function BacktestPresetPanel(props: {
                     <option value="none">none</option>
                     <option value="probabilistic">probabilistic</option>
                   </select>
-                </label>
-                <label class="bt-pf bt-pf-check">
-                  <input
-                    type="checkbox"
-                    checked={form().simRequireCoveredPair}
-                    onChange={(e) => props.onUpdate("simRequireCoveredPair", e.currentTarget.checked)}
-                  />
-                  <span class="bt-pf-label" title="En sim : exige un favori dans la bande pour continuer le cheap (paire couvrable). Ne garantit pas le fill hedge.">Covered pair required</span>
                 </label>
                 <label class="bt-pf bt-pf-wide">
                   <span class="bt-pf-label" title="Préfixes de slug de marchés à scanner (ex. btc-updown-15m, eth-updown-15m), séparés par des virgules.">Préfixes live</span>

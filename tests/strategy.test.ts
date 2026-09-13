@@ -237,10 +237,45 @@ describe("findOpportunities", () => {
       fillReason: "resting",
       pairId,
     });
-    // 0.20 + 0.81 = 1.01 > 0.98 → hold cheap directional, do not lock a loss.
+    // 0.20 + 0.81 = 1.01 > 0.98 → Policy A queues stub for FOK-sell.
     const opps = findOpportunities(config, tracker, event, books(0.21, 0.81, 80));
     const hedge = opps.find((o) => o.kind === "expensive");
-    assert.equal(hedge, undefined);
+    assert.ok(hedge, "expected Policy A hedge stub");
+  });
+
+  it("queues Policy A stub when fill + expensiveBuyMin exceeds pairLockMax", () => {
+    const tracker = new TradeTracker();
+    const event = testEvent();
+    const config = testConfig({
+      cheapBuyMin: 0.07,
+      cheapBuyMax: 0.24,
+      expensiveBuyMin: 0.76,
+      expensiveBuyMax: 0.85,
+      expensiveOrderType: "GTC",
+      expensiveOrderUsdc: 10,
+      pairLockMax: 0.98,
+    });
+    const pairId = `${event.slug}:${event.windowEnd}`;
+    tracker.addOpenPosition({
+      id: "test-cheap-fill-perm",
+      eventSlug: event.slug,
+      eventTitle: event.title,
+      tokenId: "t-up",
+      outcome: "Up",
+      outcomeIndex: 0,
+      kind: "cheap",
+      limitPrice: 0.25,
+      fillPrice: 0.25,
+      size: 5,
+      cost: 1.25,
+      windowEnd: event.windowEnd,
+      status: "open",
+      fillReason: "resting",
+      pairId,
+    });
+    // 0.25 + 0.76 = 1.01 > 0.98 → permanently unreachable → Policy A stub
+    const opps = findOpportunities(config, tracker, event, books(0.21, 0.81, 80));
+    assert.ok(opps.find((o) => o.kind === "expensive"), "expected Policy A stub");
   });
 
   function filledCheap(event: ReturnType<typeof testEvent>, size: number, fillPrice: number) {

@@ -59,20 +59,54 @@ describe("validateTradingConfig", () => {
     );
   });
 
-  it("rejects barbellHedgeRatio of 0 or above 1", () => {
+  it("rejects barbellHedgeRatio of 0 or above 1 only for barbell", () => {
     assert.throws(
-      () => validateConfigCoherence(testConfig({ barbellHedgeRatio: 0 })),
+      () =>
+        validateConfigCoherence(
+          testConfig({ strategyId: "barbell", barbellHedgeRatio: 0 }),
+        ),
       /BARBELL_HEDGE_RATIO/,
     );
     assert.throws(
-      () => validateConfigCoherence(testConfig({ barbellHedgeRatio: 1.1 })),
+      () =>
+        validateConfigCoherence(
+          testConfig({ strategyId: "barbell", barbellHedgeRatio: 1.1 }),
+        ),
       /BARBELL_HEDGE_RATIO/,
+    );
+    // arb ignores barbellHedgeRatio — invalid ratio must not block arb saves
+    assert.doesNotThrow(() =>
+      validateConfigCoherence(testConfig({ strategyId: "arb", barbellHedgeRatio: 0 })),
     );
   });
 
-  it("accepts barbellHedgeRatio of 1", () => {
+  it("accepts barbellHedgeRatio of 1 for barbell", () => {
     assert.doesNotThrow(() =>
-      validateConfigCoherence(testConfig({ barbellHedgeRatio: 1 })),
+      validateConfigCoherence(
+        testConfig({ strategyId: "barbell", barbellHedgeRatio: 1 }),
+      ),
+    );
+  });
+
+  it("rejects arb without expensive hedge", () => {
+    assert.throws(
+      () =>
+        validateConfigCoherence(
+          testConfig({ strategyId: "arb", enableExpensiveHedge: false }),
+        ),
+      /ENABLE_EXPENSIVE_HEDGE/,
+    );
+  });
+
+  it("does not require pairLockMax range for barbell", () => {
+    assert.doesNotThrow(() =>
+      validateConfigCoherence(
+        testConfig({
+          strategyId: "barbell",
+          barbellHedgeRatio: 0.5,
+          pairLockMax: 1.0,
+        }),
+      ),
     );
   });
 

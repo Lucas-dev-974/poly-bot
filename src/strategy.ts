@@ -7,6 +7,7 @@ export {
   isAskInExpensiveBand,
   isPairCovered,
   shouldCancelRestingCheapForLock,
+  shouldDefendPairLockUnreachable,
   shouldDefendUncoveredPair,
   shouldReplaceRestingCheap,
 } from "./strategy/predicates.js";

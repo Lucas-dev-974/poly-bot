@@ -10,6 +10,7 @@ import {
 import {
   isAskInExpensiveBand,
   isPairCovered,
+  shouldDefendPairLockUnreachable,
   shouldDefendUncoveredPair,
 } from "../src/strategy.js";
 
@@ -156,6 +157,19 @@ describe("shouldDefendUncoveredPair", () => {
   it("does not defend on a missing book or a collapsed favorite", () => {
     assert.equal(shouldDefendUncoveredPair(null, 0.85), false);
     assert.equal(shouldDefendUncoveredPair(0.72, 0.85), false);
+  });
+});
+
+describe("shouldDefendPairLockUnreachable", () => {
+  it("defends when fill + favoriteAsk exceeds pairLockMax", () => {
+    assert.equal(shouldDefendPairLockUnreachable(0.2, 0.85, 0.98), true);
+    assert.equal(shouldDefendPairLockUnreachable(0.1, 0.87, 0.98), false);
+    assert.equal(shouldDefendPairLockUnreachable(0.13, 0.85, 0.98), false);
+  });
+
+  it("does not defend on missing fill or ask", () => {
+    assert.equal(shouldDefendPairLockUnreachable(null, 0.85, 0.98), false);
+    assert.equal(shouldDefendPairLockUnreachable(0.2, null, 0.98), false);
   });
 });
 

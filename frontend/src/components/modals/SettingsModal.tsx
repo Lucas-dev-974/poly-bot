@@ -457,14 +457,10 @@ export function SettingsModal(props: {
                         onInput={(v) => update("cheapOrderUsdc", v)}
                       />
                     </Field>
-                    <Show when={form().strategyId !== "reverse"}>
+                    <Show when={form().strategyId === "arb" || form().strategyId.startsWith("custom:")}>
                     <Field
                       label="Pair lock max"
-                      hint={
-                        form().strategyId === "barbell"
-                          ? "Ignoré par barbell. Conservé 0.90–0.99 pour un retour à B1."
-                          : "Entrée : bid + hedge ≤ lock. Après fill : fillPrice + hedge ≤ lock, sinon pas de hedge (0.90–0.99)"
-                      }
+                      hint="Entrée : bid + hedge ≤ lock. Après fill : fillPrice + hedge ≤ lock, sinon pas de hedge (0.90–0.99)"
                     >
                       <NumberInput
                         value={form().pairLockMax}
@@ -549,14 +545,10 @@ export function SettingsModal(props: {
                         <option value="GTC">GTC — Good Till Cancelled</option>
                       </select>
                     </Field>
-                    <Show when={form().strategyId !== "reverse"}>
+                    <Show when={form().strategyId === "barbell"}>
                     <Field
                       label="Ratio hedge"
-                      hint={
-                        form().strategyId === "arb"
-                          ? "Ignoré par B1. Parts hedge = cheap rempli × ratio (barbell)."
-                          : "Parts hedge ciblées = cheap rempli × ratio. (0, 1]. Défaut 0.5."
-                      }
+                      hint="Parts hedge ciblées = cheap rempli × ratio. (0, 1]. Défaut 0.5."
                     >
                       <NumberInput
                         value={form().barbellHedgeRatio}
@@ -569,12 +561,14 @@ export function SettingsModal(props: {
                     </Show>
                   </div>
                   <div class="cfg-divider" />
+                  <Show when={form().strategyId !== "arb"}>
                   <Toggle
                     label="Activer le hedge expensive"
-                    hint="Désactivé : cheap = directionnel. Activé : cheap aussi directionnel si le lock n'est plus atteignable après fill."
+                    hint="Désactivé : cheap = directionnel. Activé : hedge après fill (barbell/reverse)."
                     checked={form().enableExpensiveHedge}
                     onChange={(v) => update("enableExpensiveHedge", v)}
                   />
+                  </Show>
                   <Show when={form().strategyId === "reverse"}>
                     <Toggle
                       label="Expensive après cheap fill"
@@ -955,13 +949,7 @@ export function SettingsModal(props: {
                       />
                     </Field>
                   </div>
-                  <div class="cfg-divider" />
-                  <Toggle
-                    label="Exiger une paire couverte"
-                    hint="Avec le hedge activé, déjà le cas : pas de nouveau cheap sans favori dans la bande. Ne garantit pas que le hedge fill."
-                    checked={form().simRequireCoveredPair}
-                    onChange={(v) => update("simRequireCoveredPair", v)}
-                  />
+                  {/* simRequireCoveredPair retiré : flag mort dans orchestrate */}
                 </div>
               </Show>
 

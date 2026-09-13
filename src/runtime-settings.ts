@@ -313,9 +313,26 @@ const SHARED_KEYS: readonly EditableConfigKey[] = [
 ];
 
 /**
- * Clés propres à arb / barbell (hedge, lock, bandes cheap/expensive, budgets).
+ * Clés propres à arb (1:1 + lock). Pas de barbellHedgeRatio.
+ * enableExpensiveHedge omis : toujours true (validé dans config).
+ * simRequireCoveredPair omis : flag mort (voir orchestrate).
  */
-const ARB_BARBELL_KEYS: readonly EditableConfigKey[] = [
+const ARB_KEYS: readonly EditableConfigKey[] = [
+  "cheapBuyMin",
+  "cheapBuyMax",
+  "expensiveBuyMin",
+  "expensiveBuyMax",
+  "cheapOrderUsdc",
+  "pairLockMax",
+  "expensiveOrderUsdc",
+  "expensiveOrderType",
+];
+
+/**
+ * Clés propres à barbell (ratio, pas de lock). Pas de pairLockMax.
+ * simRequireCoveredPair retiré : même redondance qu'arb quand le hedge est on.
+ */
+const BARBELL_KEYS: readonly EditableConfigKey[] = [
   "cheapBuyMin",
   "cheapBuyMax",
   "expensiveBuyMin",
@@ -323,10 +340,8 @@ const ARB_BARBELL_KEYS: readonly EditableConfigKey[] = [
   "enableExpensiveHedge",
   "cheapOrderUsdc",
   "barbellHedgeRatio",
-  "pairLockMax",
   "expensiveOrderUsdc",
   "expensiveOrderType",
-  "simRequireCoveredPair",
 ];
 
 /** Reverse : mêmes bandes / budgets, sans lock ni ratio barbell. */
@@ -340,7 +355,6 @@ const REVERSE_KEYS: readonly EditableConfigKey[] = [
   "cheapOrderUsdc",
   "expensiveOrderUsdc",
   "expensiveOrderType",
-  "simRequireCoveredPair",
   "reverseCancelCheapOffBand",
   "reverseDefendEnabled",
   "reverseMaxGridLevels",
@@ -387,7 +401,9 @@ export function keysForStrategy(
       ? EDGE_LEAD_KEYS
       : strategyId === "reverse"
         ? REVERSE_KEYS
-        : ARB_BARBELL_KEYS;
+        : strategyId === "barbell"
+          ? BARBELL_KEYS
+          : ARB_KEYS; // arb + custom sans leadsWithEdge
   return [...SHARED_KEYS, ...strategyKeys, ...SIM_DRYRUN_KEYS];
 }
 

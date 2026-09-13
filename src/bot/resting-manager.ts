@@ -283,11 +283,12 @@ export class RestingManager {
       return;
     }
 
-    log("Pair uncovered - favorite ask above hedge max, defending", {
+    log("Pair uncovered - defending (favorite above max and/or pair-lock-unreachable)", {
       market: event.title,
       pairId,
       favoriteAsk,
       expensiveBuyMax: this.deps.config.expensiveBuyMax,
+      pairLockMax: this.deps.config.pairLockMax,
       strategyId: this.strategy.id,
     });
     await this.defendPair(pairId);

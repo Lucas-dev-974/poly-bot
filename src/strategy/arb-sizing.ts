@@ -20,7 +20,7 @@ function round2(n: number): number {
  * EXPENSIVE_ORDER_USDC is a secondary cap; a budget that buys fewer than
  * MIN_CLOB_SHARES (5) at the hedge price yields NO hedge at all.
  * After a cheap fill, the hedge is refused when fillPrice + hedge > pairLockMax
- * (hold the cheap directional — never lock a pair above $1).
+ * (Policy A: orchestrate queues a defend stub → FOK-sell cheap; never lock a pair above $1).
  *
  * When the hedge is disabled (or no favorite is in the books), the cheap
  * is directional and the pair lock does not apply.

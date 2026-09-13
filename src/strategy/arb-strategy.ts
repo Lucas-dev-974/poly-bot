@@ -62,6 +62,10 @@ export class ArbStrategy implements TradingStrategy {
   }
 
   shouldDefend(ctx: DefendContext): boolean {
+    // Live skips defense when hedge is off; mirror that so backtest does not
+    // dump maker GTCs in no-hedge runs. Policy A (lock-unreachable → FOK SELL)
+    // lives in hedgeAtPostTime / orchestrate, not in the per-tick above-max path.
+    if (!ctx.config.enableExpensiveHedge) return false;
     return (
       shouldDefendUncoveredPair(ctx.favoriteAsk, ctx.config.expensiveBuyMax) &&
       !isPairCovered(ctx.filledCheap, ctx.filledExpensive)

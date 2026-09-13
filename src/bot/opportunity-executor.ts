@@ -170,6 +170,56 @@ export class OpportunityExecutor {
       }
     }
 
+    // Post-time hedge gate (arb/barbell) BEFORE sim fill and buy-side
+    // balance/exposure checks. Policy A stubs must FOK-sell the cheap, not be
+    // rejected as an expensive BUY or filled as a locked-loss hedge in dry-run.
+    if (
+      opportunity.kind === "expensive" &&
+      !this.strategy.leadsWithEdge &&
+      !this.strategy.independentHedgeGrid
+    ) {
+      const isSim = Boolean(this.deps.broker && this.deps.ledger);
+      const freshAsk = isSim
+        ? (opportunity.token.bestAsk ?? opportunity.price)
+        : ((await this.deps.scanner.getTokenBook(opportunity.token.tokenId))?.bestAsk ??
+          null);
+      const decision = this.strategy.hedgeAtPostTime({
+        config: this.deps.config,
+        tracker: this.deps.tracker,
+        pairId: opportunity.pairId,
+        freshAsk,
+        nowMs: Date.now(),
+      });
+      if (decision.action === "defend") {
+        log("Hedge skipped - defending uncovered pair at post time", {
+          market: opportunity.event.title,
+          outcome: opportunity.token.outcome,
+          reason: decision.reason,
+          freshAsk,
+        });
+        await this.deps.defendPair(opportunity.pairId);
+        return;
+      }
+      if (decision.action === "skip") {
+        log("Hedge skipped at post time", {
+          market: opportunity.event.title,
+          outcome: opportunity.token.outcome,
+          reason: decision.reason,
+          freshAsk,
+          originalAsk: opportunity.token.bestAsk,
+        });
+        return;
+      }
+      opportunity = {
+        ...opportunity,
+        price: decision.price,
+        token: {
+          ...opportunity.token,
+          bestAsk: freshAsk ?? opportunity.token.bestAsk,
+        },
+      };
+    }
+
     if (this.deps.broker && this.deps.ledger) {
       this.executeSimulated(opportunity);
       return;
@@ -261,75 +311,6 @@ export class OpportunityExecutor {
         ...opportunity,
         token: { ...opportunity.token, bestAsk: freshAsk },
       };
-    } else if (
-      opportunity.kind === "expensive" &&
-      !this.deps.config.dryRun &&
-      !this.strategy.leadsWithEdge &&
-      !this.strategy.independentHedgeGrid
-    ) {
-      const freshBook = await this.deps.scanner.getTokenBook(opportunity.token.tokenId);
-      const freshAsk = freshBook?.bestAsk ?? null;
-      const decision = this.strategy.hedgeAtPostTime({
-        config: this.deps.config,
-        tracker: this.deps.tracker,
-        pairId: opportunity.pairId,
-        freshAsk,
-        nowMs: Date.now(),
-      });
-      if (decision.action === "defend") {
-        log("Hedge skipped - defending uncovered pair at post time", {
-          market: opportunity.event.title,
-          outcome: opportunity.token.outcome,
-          reason: decision.reason,
-          freshAsk,
-        });
-        await this.deps.defendPair(opportunity.pairId);
-        return;
-      }
-      if (decision.action === "skip") {
-        log("Hedge skipped at post time", {
-          market: opportunity.event.title,
-          outcome: opportunity.token.outcome,
-          reason: decision.reason,
-          freshAsk,
-          originalAsk: opportunity.token.bestAsk,
-        });
-        return;
-      }
-      opportunity = {
-        ...opportunity,
-        price: decision.price,
-        token: { ...opportunity.token, bestAsk: freshAsk },
-      };
-      estimatedCost = Math.round(decision.price * opportunity.size * 100) / 100;
-      // Fresh ask can be higher than the snapshot used for the first
-      // collateral / exposure checks. Re-evaluate with the POST price.
-      if (available !== null && estimatedCost > available) {
-        this.rejectLiveWithRetry(opportunity, "insufficient-balance", {
-          estimatedCost,
-          available,
-        });
-        return;
-      }
-      if (
-        this.deps.tracker.getOpenExposure() +
-          this.deps.tracker.getRestingExposure() +
-          estimatedCost >
-        this.deps.config.maxExposureUsdc
-      ) {
-        log("Live order skipped - exposure cap", {
-          kind: opportunity.kind,
-          market: opportunity.event.title,
-          outcome: opportunity.token.outcome,
-          limitPrice: opportunity.price,
-          size: opportunity.size,
-          estimatedCost,
-          openExposure: this.deps.tracker.getOpenExposure(),
-          restingExposure: this.deps.tracker.getRestingExposure(),
-          cap: this.deps.config.maxExposureUsdc,
-        });
-        return;
-      }
     }
 
     // --- Dispatch: FOK or GTC for expensive hedge, GTC for cheap legs ---

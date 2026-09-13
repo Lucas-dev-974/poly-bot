@@ -226,11 +226,24 @@ export class Trader {
    * constructing the opportunity — placeSell does not fetch the book itself.
    */
   async placeSell(opportunity: TradeOpportunity): Promise<OrderResult> {
-    if (!this.client) {
-      throw new Error("Trading client not initialized");
+    const fokPrice = Math.max(opportunity.token.bestBid ?? 0, 0.01);
+    // Dry-run / no CLOB client: simulate a full FOK fill at the bid so
+    // Policy A / edge-lead defense can close tracker legs without throwing.
+    if (this.config.dryRun || !this.client) {
+      return {
+        dryRun: true,
+        tokenId: opportunity.token.tokenId,
+        side: "SELL",
+        price: fokPrice,
+        fillPrice: fokPrice,
+        size: opportunity.size,
+        filledSize: opportunity.size,
+        filled: true,
+        reason: "dry-run-fok-sell",
+        orderType: "FOK",
+      };
     }
 
-    const fokPrice = Math.max(opportunity.token.bestBid ?? 0, 0.01);
     // CLOB market SELL semantics: `amount` is the number of SHARES to sell
     // (UserMarketOrderV2: "SELL orders: Shares to sell"), NOT USDC. Passing
     // a USDC amount here would sell price × size shares — a 0.12 bid would

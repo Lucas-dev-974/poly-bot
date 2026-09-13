@@ -98,6 +98,7 @@ export interface BotConfig {
   simResolveFallback: "probabilistic" | "none";
   simMaxRetryAttempts: number;
   simRandomSeed?: string;
+  /** @deprecated No effect in orchestrate (favoriteInRange already true when hedge is off). Kept for JSON backward compat. */
   simRequireCoveredPair: boolean;
   dbPath: string;
   persistenceEnabled: boolean;
@@ -385,10 +386,19 @@ export function validateConfigCoherence(
   if (config.cheapBuyMax >= config.expensiveBuyMin) {
     throw new Error("CHEAP_BUY_MAX must be < EXPENSIVE_BUY_MIN");
   }
-  if (config.strategyId !== "reverse") {
+  // pairLockMax : moteur arb uniquement (barbell / reverse / edge-lead l'ignorent).
+  if (config.strategyId === "arb") {
     if (config.pairLockMax < 0.90 || config.pairLockMax >= 1.00) {
       throw new Error("PAIR_LOCK_MAX must be between 0.90 and 0.99 (profit lock < 1.00)");
     }
+    if (!config.enableExpensiveHedge) {
+      throw new Error(
+        "ENABLE_EXPENSIVE_HEDGE must be true when STRATEGY_ID=arb (B1 requires the favorite hedge)",
+      );
+    }
+  }
+  // barbellHedgeRatio : moteur barbell uniquement (ne plus bloquer arb).
+  if (config.strategyId === "barbell") {
     if (!(config.barbellHedgeRatio > 0 && config.barbellHedgeRatio <= 1)) {
       throw new Error("BARBELL_HEDGE_RATIO must be in (0, 1]");
     }

@@ -24,7 +24,6 @@
     "minMinutesBeforeCloseToBuy": null,
     "simulatedCapital": 1000,
     "simFillProbabilityNonMarketable": 0.3,
-    "simRequireCoveredPair": false,
     "requireCheapFillBeforeExpensive": true
   }
 }

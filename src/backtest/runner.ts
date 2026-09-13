@@ -512,6 +512,7 @@ function defendCheapLegs(
     repos?: Repositories;
   },
   pairId: string,
+  opts?: { force?: boolean },
 ): void {
   // Let the strategy decide: native edge-lead returns false from shouldDefend,
   // but a custom chart-rules strategy with leadsWithEdge may define a
@@ -535,7 +536,7 @@ function defendCheapLegs(
     cheapAsk: cheapBook?.bestAsk ?? null,
     tracker: ctx.tracker,
   };
-  if (!ctx.strategy.shouldDefend(defendCtx)) return;
+  if (!opts?.force && !ctx.strategy.shouldDefend(defendCtx)) return;
   const shares = ctx.strategy.defendShares(defendCtx);
   if (shares < MIN_CLOB_SHARES) return;
   const fill = sellFillAgainstBook(0, shares, cheapBook);
@@ -664,7 +665,7 @@ function executeOpp(
     });
     if (decision.action === "defend") {
       ctx.trades.push(tradeFromOpp(opportunity, ctx.nowMs, false, decision.reason, null));
-      defendCheapLegs(ctx, opportunity.pairId);
+      defendCheapLegs(ctx, opportunity.pairId, { force: true });
       return;
     }
     if (decision.action === "skip") {

@@ -69,6 +69,17 @@ export interface BotConfig {
   barbellHedgeRatio: number;
   /** Verrou profit : bid+hedge à l'entrée et fillPrice+hedge après fill, tous deux ≤ pairLockMax. */
   pairLockMax: number;
+  /**
+   * Arb ask-lock (dual-FOK): only enter when ask_cheap + ask_expensive ≤ lock
+   * (pairLockMax, or arbAskSumMax if set). Take both asks FOK same tick; no
+   * resting maker bid. Default false = classic maker-cheap Policy A path.
+   */
+  arbAskLockOnly: boolean;
+  /**
+   * Optional stricter ask+ask cap for ask-lock (null = use pairLockMax).
+   * Must be ≤ pairLockMax when set.
+   */
+  arbAskSumMax: number | null;
   expensiveOrderUsdc: number;
   expensiveOrderType: "FOK" | "GTC";
   maxSharesPerOrder: number;
@@ -206,6 +217,8 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     strategyId: "arb",
     barbellHedgeRatio: 0.5,
     pairLockMax: 0.98,
+    arbAskLockOnly: false,
+    arbAskSumMax: null,
     // 15 USDC covers a $1 cheap at 0.07 (~14 shares) 1:1 at 0.95.
     // A cap that buys < 5 shares at the hedge price yields no hedge.
     expensiveOrderUsdc: 15,
@@ -394,6 +407,15 @@ export function validateConfigCoherence(
     if (!config.enableExpensiveHedge) {
       throw new Error(
         "ENABLE_EXPENSIVE_HEDGE must be true when STRATEGY_ID=arb (B1 requires the favorite hedge)",
+      );
+    }
+    if (
+      config.arbAskSumMax !== null &&
+      (config.arbAskSumMax < 0.90 ||
+        config.arbAskSumMax > config.pairLockMax)
+    ) {
+      throw new Error(
+        "ARB_ASK_SUM_MAX must be null or in [0.90, PAIR_LOCK_MAX]",
       );
     }
   }

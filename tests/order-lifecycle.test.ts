@@ -604,7 +604,39 @@ describe("ArbSizing", () => {
     const tracker = new TradeTracker();
     const pairId = "test-event:1234567890";
     const config = testConfig({
-      expensiveOrderUsdc: 5, // 5 USDC / 0.85 = 5.88 shares → capped at 5.88
+      // 12 USDC / 0.85 ≈ 14.11, but maxSharesPerOrder caps later — use a
+      // budget that leaves leftover ≥ CLOB min after the raw cap.
+      expensiveOrderUsdc: 7.65, // 7.65 / 0.85 = 9 shares on 14 cheap → leftover 5
+      expensiveBuyMax: 0.85,
+      pairLockMax: 0.98,
+      maxSharesPerOrder: 50,
+    });
+    tracker.addOpenPosition(cheapLeg(pairId, 14));
+
+    const result = new ArbSizing().compute({
+      config,
+      pairId,
+      tracker,
+      cheapToken: cheapBook,
+      expensiveToken: null,
+      hedgePrice: 0.85,
+      thisTickCheapSize: 0,
+    });
+
+    assert.equal(result.hedgeSize, 9);
+    assert.equal(result.reason, "arb-pair-budget-capped");
+  });
+
+  it("shrinks a budget-capped hedge to leave a sellable CLOB-min remainder", async () => {
+    const { ArbSizing } = await import("../src/strategy/arb-sizing.js");
+    const { TradeTracker } = await import("../src/trade-tracker.js");
+    const { testConfig } = await import("./helpers.js");
+
+    const tracker = new TradeTracker();
+    const pairId = "test-event:1234567890";
+    // Raw cap 5.88 on 10 cheap would leave 4.12 unsellable dust → adjust to 5 / 5.
+    const config = testConfig({
+      expensiveOrderUsdc: 5, // 5 / 0.85 ≈ 5.88
       expensiveBuyMax: 0.85,
       pairLockMax: 0.98,
       maxSharesPerOrder: 50,
@@ -621,8 +653,38 @@ describe("ArbSizing", () => {
       thisTickCheapSize: 0,
     });
 
-    assert.equal(result.hedgeSize, 5.88);
-    assert.equal(result.reason, "arb-pair-budget-capped");
+    assert.equal(result.hedgeSize, 5);
+    assert.equal(result.reason, "arb-pair-budget-capped-sellable-remainder");
+  });
+
+  it("skips a capped hedge that cannot leave a sellable remainder without going under CLOB min", async () => {
+    const { ArbSizing } = await import("../src/strategy/arb-sizing.js");
+    const { TradeTracker } = await import("../src/trade-tracker.js");
+    const { testConfig } = await import("./helpers.js");
+
+    const tracker = new TradeTracker();
+    const pairId = "test-event:1234567890";
+    // uncovered 8, budget ≈ 5.88 → leftover 2.12; adjusted 8-5=3 < 5 → skip, keep 8 sellable.
+    const config = testConfig({
+      expensiveOrderUsdc: 5,
+      expensiveBuyMax: 0.85,
+      pairLockMax: 0.98,
+      maxSharesPerOrder: 50,
+    });
+    tracker.addOpenPosition(cheapLeg(pairId, 8));
+
+    const result = new ArbSizing().compute({
+      config,
+      pairId,
+      tracker,
+      cheapToken: cheapBook,
+      expensiveToken: null,
+      hedgePrice: 0.85,
+      thisTickCheapSize: 0,
+    });
+
+    assert.equal(result.hedgeSize, 0);
+    assert.equal(result.reason, "arb-pair-budget-would-leave-unsellable-dust");
   });
 
   it("yields NO hedge when the budget buys fewer than 5 shares (CLOB minimum)", async () => {

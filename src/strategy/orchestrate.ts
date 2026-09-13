@@ -29,6 +29,7 @@ function appendLimitOrderForSide(
   size: number,
   maxOpenPerSide: number,
   pendingThisTick: number,
+  orderType?: "GTC" | "FOK",
 ): void {
   // Guard mémoire : positions open + ordres GTC restants + générés ce tick.
   if (
@@ -60,6 +61,7 @@ function appendLimitOrderForSide(
     negRisk: event.market.negRisk,
     tradeKey,
     pairId,
+    ...(orderType ? { orderType } : {}),
   });
 }
 
@@ -166,18 +168,22 @@ export function orchestrate(
   const favoriteInRange =
     !config.enableExpensiveHedge || favoriteAskInBuyRange(expensiveToken, config);
 
+  const askLockOnly = config.arbAskLockOnly;
+
   if (
     config.enableExpensiveHedge &&
     !favoriteInRange &&
-    committedCheapSize === 0
+    committedCheapSize === 0 &&
+    !askLockOnly
   ) {
     return opportunities;
   }
 
   // Cheap limit is a maker bid. ArbSizing also caps by pairLockMax − hedge;
   // BarbellSizing uses min(ask, cheapBuyMax) only.
-  const hedgePrice =
-    expensiveToken?.bestAsk != null
+  const hedgePrice = askLockOnly
+    ? (expensiveToken?.bestAsk ?? config.expensiveBuyMax)
+    : expensiveToken?.bestAsk != null
       ? Math.min(expensiveToken.bestAsk, config.expensiveBuyMax)
       : config.expensiveBuyMax;
 
@@ -196,13 +202,28 @@ export function orchestrate(
     cheapToken.bestAsk !== null && cheapToken.bestAsk >= config.cheapBuyMin;
   const inCheapBand =
     cheapPrice >= config.cheapBuyMin && cheapPrice <= config.cheapBuyMax;
-  if (
-    favoriteInRange &&
-    inCheapBand &&
-    askAlive &&
-    sizingResult.pairLockOk &&
-    sizingResult.cheapSize !== null
-  ) {
+  // Ask-lock ignores cheap/favorite bands: any ask+ask <= pairLockMax is valid.
+  // Also require hedge ask depth so we do not take cheap then fail the FOK cover.
+  // Ask-lock dual-FOK: both asks need known size >= order (no optimistic null).
+  const askLockDepthOk =
+    !askLockOnly ||
+    sizingResult.cheapSize === null ||
+    (cheapToken.bestAskSize != null &&
+      expensiveToken?.bestAskSize != null &&
+      cheapToken.bestAskSize >= sizingResult.cheapSize * 0.8 &&
+      expensiveToken.bestAskSize >= sizingResult.cheapSize * 0.8);
+  const entryOk = askLockOnly
+    ? committedCheapSize === 0 &&
+      askAlive &&
+      sizingResult.pairLockOk &&
+      sizingResult.cheapSize !== null &&
+      askLockDepthOk
+    : favoriteInRange &&
+      inCheapBand &&
+      askAlive &&
+      sizingResult.pairLockOk &&
+      sizingResult.cheapSize !== null;
+  if (entryOk) {
     appendLimitOrderForSide(
       tracker,
       opportunities,
@@ -213,17 +234,23 @@ export function orchestrate(
       sizingResult.cheapSize,
       config.maxOpenPositionsPerSide,
       0,
+      askLockOnly ? "FOK" : undefined,
     );
   }
 
   const hedgeSize = sizingResult.hedgeSize;
   // GTC rests below the touch; a thin best ask must not block the hedge.
+  // Ask-lock dual-FOK always needs known depth (never treat null as infinite),
+  // even if expensiveOrderType is GTC in settings — legs are posted as FOK.
   const hasDepth =
     hedgeSize !== null &&
     hedgeSize > 0 &&
-    (config.expensiveOrderType === "GTC" ||
-      expensiveToken?.bestAskSize == null ||
-      expensiveToken.bestAskSize >= hedgeSize * 0.8);
+    (askLockOnly
+      ? expensiveToken?.bestAskSize != null &&
+        expensiveToken.bestAskSize >= hedgeSize * 0.8
+      : config.expensiveOrderType === "GTC" ||
+        expensiveToken?.bestAskSize == null ||
+        expensiveToken.bestAskSize >= hedgeSize * 0.8);
   if (
     config.enableExpensiveHedge &&
     expensiveToken &&
@@ -231,7 +258,7 @@ export function orchestrate(
     hedgeSize !== null &&
     hedgeSize > 0 &&
     hasDepth &&
-    favoriteInRange
+    (askLockOnly || favoriteInRange)
   ) {
     appendLimitOrderForSide(
       tracker,
@@ -243,6 +270,7 @@ export function orchestrate(
       hedgeSize,
       config.maxOpenPositionsPerSide,
       0,
+      askLockOnly ? "FOK" : undefined,
     );
   } else if (
     config.enableExpensiveHedge &&
@@ -253,14 +281,16 @@ export function orchestrate(
   ) {
     // Policy A: push a hedge stub that bypasses maxOpen/leg guards (those
     // would silently drop the stub after a partial expensive leg). Execute
-    // → hedgeAtPostTime → FOK SELL cheap. tradeKey is per-tick price so a
-    // failed defend can retry if the ask moves.
+    // → hedgeAtPostTime → FOK SELL cheap.
+    // tradeKey is stable per pair (NOT priced): a per-tick ask key re-queued
+    // and re-logged every book update. Mark on enqueue so later ticks do not
+    // spam; Failed defend does not unmark (avoids per-tick spam); band defend still covers ask > max.
     const stubSize = Math.max(
       MIN_CLOB_SHARES,
       tracker.getFilledCheapSizeForPair(pairId) -
         tracker.getFilledExpensiveSizeForPair(pairId),
     );
-    const tradeKey = `policy-a-defend:${pairId}:${hedgePrice}`;
+    const tradeKey = `policy-a-defend:${pairId}`;
     if (!tracker.has(tradeKey)) {
       log("Pair lock unreachable — queuing Policy A defend via hedge post-time", {
         market: event.title,
@@ -269,6 +299,7 @@ export function orchestrate(
         pairCost: sizingResult.pairCost,
         pairLockMax: config.pairLockMax,
       });
+      tracker.mark(tradeKey);
       opportunities.push({
         kind: "expensive",
         event,

@@ -124,13 +124,66 @@ export class OpportunityExecutor {
       return;
     }
 
-    // Live wallet gate: arb/barbell always; independentHedgeGrid when cheap-fill
-    // is required (default reverse). Skip only when requireCheapFillBeforeExpensive
-    // is false (intentional naked-hedge bypass). Never downsize reverse grid levels
-    // to cheapHeld — only fail-closed on missing/zero balance.
+    // Post-time hedge gate FIRST (arb/barbell). Policy A defend must not be
+    // blocked by confirmCheapTokens wallet lag — that skipped FOK sells and
+    // left stubs re-queued forever.
     if (
       opportunity.kind === "expensive" &&
       !this.strategy.leadsWithEdge &&
+      !this.strategy.independentHedgeGrid
+    ) {
+      const freshAsk =
+        (await this.deps.scanner.getTokenBook(opportunity.token.tokenId))?.bestAsk ??
+        null;
+      const decision = this.strategy.hedgeAtPostTime({
+        config: this.deps.config,
+        tracker: this.deps.tracker,
+        pairId: opportunity.pairId,
+        freshAsk,
+        nowMs: Date.now(),
+      });
+      if (decision.action === "defend") {
+        log("Hedge skipped - defending uncovered pair at post time", {
+          market: opportunity.event.title,
+          outcome: opportunity.token.outcome,
+          reason: decision.reason,
+          freshAsk,
+        });
+        await this.deps.defendPair(opportunity.pairId);
+        // Keep enqueue mark — no unmark-on-fail (prevents per-tick requeue spam).
+        // Tick-path band defend still runs when ask > expensiveBuyMax.
+        return;
+      }
+      if (decision.action === "skip") {
+        log("Hedge skipped at post time", {
+          market: opportunity.event.title,
+          outcome: opportunity.token.outcome,
+          reason: decision.reason,
+          freshAsk,
+          originalAsk: opportunity.token.bestAsk,
+        });
+        // Keep enqueue mark for Policy A dust/covered skips (no retry spam).
+        return;
+      }
+      opportunity = {
+        ...opportunity,
+        price: decision.price,
+        token: {
+          ...opportunity.token,
+          bestAsk: freshAsk ?? opportunity.token.bestAsk,
+        },
+      };
+    }
+
+    // Live wallet gate: only when we are about to BUY the hedge (not Policy A
+    // defend). arb/barbell always; independentHedgeGrid when cheap-fill is
+    // required. Fail-closed on missing/zero balance.
+    // Ask-lock dual-FOK: cheap was just FOK-filled same tick — wallet balance
+    // often lags; trust tracker filled size instead of confirmCheapTokens.
+    if (
+      opportunity.kind === "expensive" &&
+      !this.strategy.leadsWithEdge &&
+      !this.deps.config.arbAskLockOnly &&
       (this.strategy.independentHedgeGrid !== true ||
         this.deps.config.requireCheapFillBeforeExpensive)
     ) {
@@ -165,62 +218,14 @@ export class OpportunityExecutor {
       }
     }
 
-    // Post-time hedge gate (arb/barbell) BEFORE buy-side balance/exposure checks.
-    if (
-      opportunity.kind === "expensive" &&
-      !this.strategy.leadsWithEdge &&
-      !this.strategy.independentHedgeGrid
-    ) {
-      const freshAsk =
-        (await this.deps.scanner.getTokenBook(opportunity.token.tokenId))?.bestAsk ??
-        null;
-      const decision = this.strategy.hedgeAtPostTime({
-        config: this.deps.config,
-        tracker: this.deps.tracker,
-        pairId: opportunity.pairId,
-        freshAsk,
-        nowMs: Date.now(),
-      });
-      if (decision.action === "defend") {
-        log("Hedge skipped - defending uncovered pair at post time", {
-          market: opportunity.event.title,
-          outcome: opportunity.token.outcome,
-          reason: decision.reason,
-          freshAsk,
-        });
-        await this.deps.defendPair(opportunity.pairId);
-        return;
-      }
-      if (decision.action === "skip") {
-        log("Hedge skipped at post time", {
-          market: opportunity.event.title,
-          outcome: opportunity.token.outcome,
-          reason: decision.reason,
-          freshAsk,
-          originalAsk: opportunity.token.bestAsk,
-        });
-        return;
-      }
-      opportunity = {
-        ...opportunity,
-        price: decision.price,
-        token: {
-          ...opportunity.token,
-          bestAsk: freshAsk ?? opportunity.token.bestAsk,
-        },
-      };
-    }
-
     const useFOK = orderTypeFor(opportunity, this.deps.config, this.strategy) === "FOK";
+    const rawAskForCost = opportunity.token.bestAsk ?? opportunity.price;
+    const fokCostPrice =
+      opportunity.kind === "cheap" || this.deps.config.arbAskLockOnly
+        ? rawAskForCost
+        : Math.min(rawAskForCost, this.deps.config.expensiveBuyMax);
     let estimatedCost = Math.round(
-      (useFOK
-        ? Math.min(
-            opportunity.token.bestAsk ?? opportunity.price,
-            this.deps.config.expensiveBuyMax,
-          )
-        : opportunity.price) *
-        opportunity.size *
-        100,
+      (useFOK ? fokCostPrice : opportunity.price) * opportunity.size * 100,
     ) / 100;
 
     // Garde-fou balance : ne pas poster si le solde CLOB disponible est
@@ -303,7 +308,7 @@ export class OpportunityExecutor {
     //  - GTC: same price clamp, also only after a cheap fill. Rests if not
     //    fully filled; cancelled if the cheap vanishes without a fill.
     //
-    // Cheap leg: always GTC limit order (unchanged).
+    // Cheap leg: GTC by default; FOK when opportunity.orderType is FOK (ask-lock).
     // useFOK / estimatedCost computed above (FOK-aware notionnel).
 
     let result: OrderResult;

@@ -15,6 +15,8 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     strategyId: "arb",
     barbellHedgeRatio: 0.5,
     pairLockMax: 0.98,
+    arbAskLockOnly: false,
+    arbAskSumMax: null,
     expensiveOrderUsdc: 3,
     expensiveOrderType: "GTC",
     maxSharesPerOrder: 20,

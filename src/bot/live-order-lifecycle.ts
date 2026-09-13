@@ -21,7 +21,7 @@ export class LiveOrderLifecycle {
   private readonly cheapMissingFailures = new Map<string, number>();
   private static readonly ORDER_STATUS_MAX_FAILURES = 10;
   private static readonly FILL_CONFIRM_MAX_ATTEMPTS = 8;
-  private static readonly CHEAP_MISSING_MAX_ATTEMPTS = 3;
+  private static readonly CHEAP_MISSING_MAX_ATTEMPTS = 8;
 
   constructor(
     private readonly deps: LiveOrderLifecycleDeps,
@@ -390,14 +390,16 @@ export class LiveOrderLifecycle {
     this.cheapMissingFailures.set(pairId, next);
     const filled = this.deps.tracker.getFilledCheapSizeForPair(pairId);
     if (filled > 0 && next >= LiveOrderLifecycle.CHEAP_MISSING_MAX_ATTEMPTS) {
-      log("Cheap tokens gone — syncing local legs as sold (no hedge)", {
+      // Do NOT closePairCheapAsSold(..., 0, ...): a $0 fill books −100% PnL on
+      // wallet lag / indexer delay. Stop hedging this pair and leave the legs
+      // for settlement (or a later successful balance read that clears the map).
+      log("Cheap token balance still zero after retries — skip hedge, keep legs", {
         pairId,
         cheapTokenId,
         filled,
         attempts: next,
       });
-      this.deps.tracker.closePairCheapAsSold(pairId, 0, filled);
-      this.cheapMissingFailures.delete(pairId);
+      this.deps.tracker.mark(`cheap-missing:${pairId}`);
     } else {
       log("Hedge skipped - cheap token balance is zero, will recheck", {
         pairId,

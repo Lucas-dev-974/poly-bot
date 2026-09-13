@@ -130,15 +130,15 @@ export class Trader {
     // sellers at 0.85. Using bestAsk ensures the FOK fills at the actual
     // market price. The bot only generates this after a cheap fill exists.
     //
-    // Clamp to expensiveBuyMax: EXPENSIVE_BUY_MAX is the absolute ceiling for
-    // the hedge. Without the clamp, a favorite at 0.92-0.96 was bought at the
-    // ask, silently exceeding the configured max (fills recorded at 0.92-0.95
-    // with EXPENSIVE_BUY_MAX=0.90). When bestAsk > max, the clamped FOK is
-    // non-marketable and gets killed — a clean skip, retried next tick.
-    const fokPrice = Math.min(
-      opportunity.token.bestAsk ?? opportunity.price,
-      this.config.expensiveBuyMax,
-    );
+    // Clamp to expensiveBuyMax for classic expensive FOK hedges only.
+    // Cheap FOK (ask-lock) must lift the cheap ask as-is. Ask-lock expensive
+    // also uses the live ask (bands bypassed); clamping to expensiveBuyMax
+    // would make the FOK non-marketable and leave a one-legged cheap.
+    const rawAsk = opportunity.token.bestAsk ?? opportunity.price;
+    const fokPrice =
+      opportunity.kind === "cheap" || this.config.arbAskLockOnly
+        ? rawAsk
+        : Math.min(rawAsk, this.config.expensiveBuyMax);
     const usdcAmount = fokPrice * opportunity.size;
     let response;
     try {

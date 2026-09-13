@@ -2,7 +2,8 @@
 
 A TypeScript/Node.js bot for Polymarket's 15-minute Up/Down markets (BTC, ETH, SOL, etc.). Two interchangeable **engines** (`strategyId` in `data/bot-settings.json`):
 
-- **`arb` (B1, default)** — maker bid on the cheap (underdog), then a **1:1 hedge** after that fill only if `cheapFill + hedgeAsk ≤ PAIR_LOCK_MAX < 1.00`.
+- **`arb` (B1, default)** — maker bid on the cheap (underdog), then a **1:1 hedge** after that fill only if `cheapFill + hedgeAsk ≤ PAIR_LOCK_MAX < 1.00`. If the lock is unreachable after fill (**Policy A**), FOK **SELL** the uncovered cheap — do **not** hold it as a directional leftover.
+  - Mode optionnel **ask-lock / dual-FOK** (preset `ask-lock`) : voir section [Ask-lock (dual-FOK)](#ask-lock-dual-fok--mode-arb).
 - **`barbell`** — same cheap-then-hedge flow, but the hedge size is `filledCheap × barbellHedgeRatio` (default 0.5). **No profit lock.** Leftover cheap is an intentional directional bet. Higher variance than B1.
 
 ## Strategy Overview
@@ -18,19 +19,79 @@ A TypeScript/Node.js bot for Polymarket's 15-minute Up/Down markets (BTC, ETH, S
 │    PAIR_LOCK_MAX − hedge)              filledCheap × ratio      │
 │  Hedge 1:1 after fill iff            No pair lock. Ask < min →  │
 │    fill + hedge ≤ PAIR_LOCK_MAX        hold leftover cheap.     │
-│  Else: hold cheap directional        Defense sells only the     │
-│  Defense sells cheap − hedge           missing hedge slice.     │
+│  Else Policy A: FOK SELL cheap       Defense sells only the     │
+│  Also defend if ask > MAX              missing hedge slice.     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 **Example (lock 0.98):**
-- Favorite ask **0.85** (inside `EXPENSIVE_BUY_MIN`–`MAX`) → max cheap bid = `0.98 − 0.85 = 0.13`
-- Cheap ask 0.16 → sit at **0.13** (do not wait for ask+ask ≤ lock; 15m books usually sum to ~1.01)
-- After a **0.13 fill**, hedge 1:1 at 0.85 → pair cost **0.98** → **2¢ locked** per share
-- If the cheap fills at **0.20** and the favorite has moved to **0.83** (`0.20+0.83=1.03 > 0.98`) → **no hedge**. Cheap stays directional (badge *partiel*).
-- If the favorite asks **above** `EXPENSIVE_BUY_MAX` (e.g. 0.97) with an **uncovered** cheap → FOK **SELL** the uncovered excess (`cheap − hedge`) at the bid (`defendPair`), then cancel any resting GTC hedge. A pair already covered 1:1 is **never** sold, even if the favorite goes to $1.
+- Favorite ask **0.85** (inside `EXPENSIVE_BUY_MIN`–`MAX`) → lock cap for the cheap bid = `0.98 − 0.85 = 0.13` (then also capped by `CHEAP_BUY_MAX`, default **0.10**)
+- Cheap ask 0.16 → sit at **min(0.16, CHEAP_BUY_MAX, 0.13)** (do not wait for ask+ask ≤ lock; 15m books usually sum to ~1.01)
+- After a fill at the posted limit with hedge still at 0.85 and `fill + 0.85 ≤ 0.98` → hedge **1:1** → locked edge `(1 − pairCost)` per share
+- If the cheap fills at **0.20** and the favorite ask is **0.85** (`0.20+0.85=1.05 > 0.98`) → **no hedge**. **Policy A**: FOK **SELL** the uncovered cheap at the bid — do **not** hold it directional hoping the favorite gets cheaper
+- Separately, if the favorite asks **above** `EXPENSIVE_BUY_MAX` (e.g. 0.97) with an **uncovered** cheap → band defense also FOK **SELL**s the uncovered excess (`cheap − hedge`) at the bid (`defendPair`), then cancels any resting GTC hedge. A pair already covered 1:1 is **never** sold, even if the favorite goes to $1.
 
 A GTC hedge is never posted against a *resting* cheap (anti naked-favorite). If a resting cheap is cancelled without a fill, any hedge GTC on that pair is cancelled too.
+
+
+## Ask-lock (dual-FOK) — mode arb
+
+Variante du moteur **`arb`** (B1) pour n’entrer que lorsqu’un **vrai lock marché** est déjà visible sur le book : `ask_cheap + ask_expensive ≤ lock`. Les deux jambes sont prises en **FOK le même tick** (dual-FOK), sans bid maker resting ni jambe seule volontaire.
+
+Sur les books BTC 15m, `ask+ask` vaut souvent ~1.01 : les opportunités sont **rares**, mais le backtest était légèrement positif là où le maker Policy A perdait beaucoup.
+
+### Activer
+
+1. Dashboard → **Configuration** → onglet **Profils** → moteur **arb** → profil **Ask-lock dual-FOK**  
+   (ou page **Backtest** → preset **Ask-lock dual-FOK**)
+2. Vérifier les champs, puis **Enregistrer** (écrit `data/bot-settings.json` et met à jour la config live)
+
+Éditer seulement `config/presets/ask-lock.json` **ne change pas** la config affichée à l’ouverture du dialog : il faut appliquer le profil puis enregistrer. Redémarrer le bot si la mémoire process n’a pas encore relu les settings.
+
+### Paramètres
+
+| Clé | Défaut | Rôle |
+|-----|--------|------|
+| `arbAskLockOnly` | `false` | Active le mode ask-lock (sinon maker classique + Policy A) |
+| `arbAskSumMax` | `null` | Plafond ask+ask optionnel ; `null` = utilise `pairLockMax` |
+| `pairLockMax` | (preset 0.99) | Lock de profit ; aussi plafond fill-time / Policy A |
+| `expensiveOrderType` | `FOK` (preset) | Les jambes ask-lock sont taguées FOK même si GTC est configuré ailleurs |
+
+Le preset élargit aussi les bandes cheap/hedge : en ask-lock le filtre principal est le **sum des asks**, pas la bande maker.
+
+### Flux (un tick)
+
+1. Les deux asks existent et `ask_cheap + ask_expensive ≤ lock` (`pairLockMax` ou `arbAskSumMax`).
+2. Profondeurs connues et suffisantes sur **les deux** asks.
+3. Taille dual = `min(budget cheap, budget hedge, depth cheap, depth expensive)`, ≥ 5 shares CLOB ; sinon skip.
+4. Émission **cheap FOK** + **expensive FOK** (même tick ; cheap exécuté en premier).
+5. Préflight backtest : ne prend le cheap que si le hedge est fillable sur le même book.
+6. Live : pas de clamp `expensiveBuyMax` sur ces FOK ; `confirmCheapTokens` est sauté (le fill FOK cheap vient d’avoir lieu, le wallet peut lag).
+
+Si le hedge échoue malgré tout → **Policy A** (FOK SELL du cheap non couvert), comme en arb classique.
+
+### Différences vs arb maker
+
+| | Maker (défaut) | Ask-lock |
+|--|----------------|----------|
+| Entrée | Bid GTC `min(ask, cheapBuyMax, lock − hedge)` | Uniquement si ask+ask déjà ≤ lock |
+| Hedge | Après fill cheap, si encore lockable | FOK prévu 1:1 dès l’entrée |
+| Bandes favorite | Obligatoires pour entrer | Contournées (le lock ask+ask suffit) |
+| Volume BTC 15m | Élevé, beaucoup de dumps Policy A | Faible, peu de trades |
+
+### Backtest
+
+```bash
+npx tsx scripts/arb-audit-backtest.mts ask-lock
+```
+
+### Fichiers clés
+
+- `src/strategy/arb-sizing.ts` — gate ask+ask, taille dual
+- `src/strategy/orchestrate.ts` — FOK des deux jambes, profondeur
+- `src/backtest/runner.ts` — préflight dual-FOK
+- `src/bot/opportunity-executor.ts` / `src/trader.ts` — live FOK sans clamp bande
+- `config/presets/ask-lock.json` — preset UI / backtest
 
 ## Architecture
 
@@ -220,7 +281,7 @@ bot_state          → Key-value runtime state
 3. **Favorite already in band** — no new cheap unless the favorite ask is in `[EXPENSIVE_BUY_MIN, EXPENSIVE_BUY_MAX]` (a hedge limit far below a 0.97 ask is not a cover)
 4. **Covered-pair** (`SIM_REQUIRE_COVERED_PAIR`) — skip new cheap if no hedgeable favorite
 5. **Favorite pick depth** — identifying the favorite only needs CLOB-min size (5 shares) at the touch; GTC hedges are not blocked by a thin top of book
-6. **Pair lock (`arb` only)** — new cheap GTC: `limit + min(favoriteAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. Hedge after fill: `fillPrice + min(freshAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. If the lock fails after fill, the cheap is held directional (no Down at a locked loss). **Barbell ignores the lock.**
+6. **Pair lock (`arb` only)** — *maker path* when `arbAskLockOnly=false`: new cheap GTC: `limit + min(favoriteAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. Hedge after fill: `fillPrice + min(freshAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. If the lock is unreachable after fill (**Policy A**: `fillPrice + favoriteAsk > PAIR_LOCK_MAX`), FOK **SELL** the uncovered cheap at the bid — do **not** hold it directional. A budget-capped hedge must not leave uncovered dust in `(0, 5)` shares: leave exactly 5 sellable, or skip the partial hedge so the full uncovered stays defendable. If dust is already below 5, hold to resolution (CLOB cannot sell it). **Ask-lock** (`arbAskLockOnly=true`): see [Ask-lock (dual-FOK)](#ask-lock-dual-fok--mode-arb). **Barbell ignores the lock.**
 7. **Pair defense** — FOK SELL at the bid only if the favorite ask is **above** `EXPENSIVE_BUY_MAX` **and** the pair is not covered (`arb`: 1:1; `barbell`: filled hedge ≥ cheap × ratio). Shares sold = `defendShares` (arb: cheap − hedge; barbell: missing hedge slice only). Ask below `EXPENSIVE_BUY_MIN` does not dump the cheap. After a sale, resting GTC hedges of that pair are cancelled.
 8. **CLOB fill confirmation** — a CLOB `matched` is not enough: cheap positions open only when the funder holds the tokens (re-checked up to 8 ticks, since the CLOB balance can lag a maker fill); FOK sells are confirmed by token-balance drop (ghost MATCHED / empty `makingAmount` are ignored). A partially filled cheap that must be repriced/cancelled is cancelled **first**, then the filled part is booked — no remainder is left orphaned on the book.
 9. **CLOB minimums** — order size floored at 5 shares / $1 notional; tick size never below 0.01

@@ -20,6 +20,8 @@ export const EDITABLE_CONFIG_KEYS = [
   "strategyId",
   "barbellHedgeRatio",
   "pairLockMax",
+  "arbAskLockOnly",
+  "arbAskSumMax",
   "expensiveOrderUsdc",
   "expensiveOrderType",
   "maxSharesPerOrder",
@@ -76,6 +78,8 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   strategyId: "STRATEGY_ID",
   barbellHedgeRatio: "BARBELL_HEDGE_RATIO",
   pairLockMax: "PAIR_LOCK_MAX",
+  arbAskLockOnly: "ARB_ASK_LOCK_ONLY",
+  arbAskSumMax: "ARB_ASK_SUM_MAX",
   expensiveOrderUsdc: "EXPENSIVE_ORDER_USDC",
   expensiveOrderType: "EXPENSIVE_ORDER_TYPE",
   maxSharesPerOrder: "MAX_SHARES_PER_ORDER",
@@ -239,8 +243,10 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "edgeSizingMode":
       return parseEnum(value, ["shares", "pusd", "dynamic"] as const, key);
     case "minMinutesBeforeCloseToBuy":
+    case "arbAskSumMax":
       return parseNullableNumber(value, key);
     case "enableExpensiveHedge":
+    case "arbAskLockOnly":
     case "requireCheapFillBeforeExpensive":
     case "simRequireCoveredPair":
     case "edgeSellExpensiveEnabled":
@@ -324,6 +330,8 @@ const ARB_KEYS: readonly EditableConfigKey[] = [
   "expensiveBuyMax",
   "cheapOrderUsdc",
   "pairLockMax",
+  "arbAskLockOnly",
+  "arbAskSumMax",
   "expensiveOrderUsdc",
   "expensiveOrderType",
 ];

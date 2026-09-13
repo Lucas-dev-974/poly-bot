@@ -161,7 +161,12 @@ export function BacktestPage(): JSX.Element {
       setPresetFormSnapshot(f);
       return;
     }
-    const f = applySettingsToForm(base, { ...preset.settings, strategyId: preset.strategyId });
+    const f = applySettingsToForm(base, {
+      arbAskLockOnly: false,
+      arbAskSumMax: null,
+      ...preset.settings,
+      strategyId: preset.strategyId,
+    });
     setForm(f);
     setPresetFormSnapshot(f);
   }

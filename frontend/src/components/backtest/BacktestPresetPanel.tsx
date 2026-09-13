@@ -60,7 +60,7 @@ export function BacktestPresetPanel(props: {
   const tabErrorCount = createMemo((): Record<PresetTab, number> => {
     const fe = props.fieldErrors;
     const counts: Record<PresetTab, number> = { cheap: 0, hedge: 0, edge: 0, risk: 0, window: 0, zones: 0 };
-    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax"];
+    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax", "arbAskSumMax"];
     const hedgeKeys: Array<keyof ConfigFormState> = ["expensiveBuyMin", "expensiveBuyMax", "expensiveOrderUsdc", "expensiveOrderType", "barbellHedgeRatio", "enableExpensiveHedge", "requireCheapFillBeforeExpensive"];
     const edgeKeys: Array<keyof ConfigFormState> = ["edgeBandMin", "edgeBandMax", "edgeConfirmSamples", "edgeMaxDownTick", "edgeCheapBandMin", "edgeCheapBandMax", "edgeSizingMode", "edgeSharesEdge", "edgeSharesCheap", "edgeOrderUsdc", "maxShareEdge", "edgeCheapOrderUsdc", "edgeSellExpensiveEnabled", "edgeSellExpensiveAfterMin", "edgeSellExpensiveLossPct", "edgeSellExpensiveLossWindowMs"];
     const riskKeys: Array<keyof ConfigFormState> = ["maxSharesPerOrder", "maxShareEdge", "maxOpenPositionsPerSide", "maxExposureUsdc", "simulatedCapital", "marketSlugPrefixes", "pollIntervalMs"];
@@ -179,6 +179,17 @@ export function BacktestPresetPanel(props: {
                 <Num label="Cheap USDC" tip="Budget USDC par ordre cheap (taille ≈ budget / prix)." value={form().cheapOrderUsdc} step={0.1} err={props.fieldErrors.cheapOrderUsdc} onInput={(v) => props.onUpdate("cheapOrderUsdc", v)} />
                 <Show when={sid() === "arb"}>
                   <Num label="Pair lock" tip="Verrou de profit : bid+hedge à l'entrée et fill+hedge après fill doivent rester ≤ ce plafond (arb)." value={form().pairLockMax} step={0.01} err={props.fieldErrors.pairLockMax} onInput={(v) => props.onUpdate("pairLockMax", v)} />
+                  <label class="bt-pf bt-pf-check">
+                    <input
+                      type="checkbox"
+                      checked={form().arbAskLockOnly}
+                      onChange={(e) => props.onUpdate("arbAskLockOnly", e.currentTarget.checked)}
+                    />
+                    <span class="bt-pf-label" title="N'entrer que si ask_cheap+ask_expensive ≤ lock ; dual-FOK same tick.">Ask-lock dual-FOK</span>
+                  </label>
+                  <Show when={form().arbAskLockOnly}>
+                    <Num label="Ask-sum max" tip="Plafond ask+ask optionnel (vide = pairLockMax)." value={form().arbAskSumMax} step={0.01} err={props.fieldErrors.arbAskSumMax} onInput={(v) => props.onUpdate("arbAskSumMax", v)} />
+                  </Show>
                 </Show>
               </div>
             </Show>

@@ -1,0 +1,36 @@
+{
+  "id": "ask-lock",
+  "strategyId": "arb",
+  "name": "Ask-lock dual-FOK",
+  "description": "B1 vrai lock marché : n’entre que si ask_cheap + ask_expensive ≤ pairLockMax (ou arbAskSumMax). Prend les deux asks en FOK le même tick, avec préflight profondeur (pas de jambe seule). Bandes élargies car le filtre est le lock ask+ask, pas la bande maker. Sur BTC 15m les opportunités sont rares ; backtest légèrement positif vs maker Policy A très négatif.",
+  "settings": {
+    "pollIntervalMs": 1000,
+    "marketSlugPrefixes": [
+      "btc-updown-15m"
+    ],
+    "cheapBuyMin": 0.01,
+    "cheapBuyMax": 0.49,
+    "expensiveBuyMin": 0.5,
+    "expensiveBuyMax": 0.99,
+    "enableExpensiveHedge": true,
+    "cheapOrderUsdc": 1,
+    "pairLockMax": 0.99,
+    "arbAskLockOnly": true,
+    "arbAskSumMax": null,
+    "expensiveOrderUsdc": 12,
+    "expensiveOrderType": "FOK",
+    "maxSharesPerOrder": 25,
+    "maxOpenPositionsPerSide": 1,
+    "maxExposureUsdc": 25,
+    "minutesBeforeCloseMin": 0,
+    "minutesBeforeCloseMax": 15,
+    "minMinutesBeforeCloseToBuy": null,
+    "simulatedCapital": 50,
+    "simFillProbabilityNonMarketable": 0.3,
+    "simResolveDelaySeconds": 5,
+    "simResolveRetryIntervalMs": 5000,
+    "simResolveMaxRetries": 5,
+    "simResolveFallback": "none",
+    "simMaxRetryAttempts": 20
+  }
+}

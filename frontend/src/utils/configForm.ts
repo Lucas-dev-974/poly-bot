@@ -13,6 +13,8 @@ export type ConfigFormState = {
   strategyId: StrategyId;
   barbellHedgeRatio: string;
   pairLockMax: string;
+  arbAskLockOnly: boolean;
+  arbAskSumMax: string;
   expensiveOrderUsdc: string;
   expensiveOrderType: "FOK" | "GTC";
   maxSharesPerOrder: string;
@@ -66,6 +68,11 @@ export function configToForm(config: BotConfig): ConfigFormState {
     strategyId: config.strategyId ?? "arb",
     barbellHedgeRatio: String(config.barbellHedgeRatio ?? 0.5),
     pairLockMax: String(config.pairLockMax),
+    arbAskLockOnly: config.arbAskLockOnly === true,
+    arbAskSumMax:
+      config.arbAskSumMax === null || config.arbAskSumMax === undefined
+        ? ""
+        : String(config.arbAskSumMax),
     expensiveOrderUsdc: String(config.expensiveOrderUsdc),
     expensiveOrderType: config.expensiveOrderType,
     maxSharesPerOrder: String(config.maxSharesPerOrder),
@@ -136,6 +143,11 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     strategyId: form.strategyId,
     barbellHedgeRatio: parseNum(form.barbellHedgeRatio, "Ratio hedge"),
     pairLockMax: parseNum(form.pairLockMax, "Pair lock max"),
+    arbAskLockOnly: form.arbAskLockOnly,
+    arbAskSumMax:
+      form.arbAskSumMax.trim() === ""
+        ? null
+        : parseNum(form.arbAskSumMax, "Ask-lock sum max"),
     expensiveOrderUsdc: parseNum(form.expensiveOrderUsdc, "Plafond hedge USDC"),
     expensiveOrderType: form.expensiveOrderType,
     maxSharesPerOrder: parseNum(form.maxSharesPerOrder, "Max shares"),
@@ -437,6 +449,14 @@ export function fieldErrors(
       if (form.strategyId === "arb") {
         if (Number.isFinite(pairLockMax) && (pairLockMax < 0.9 || pairLockMax >= 1.0)) {
           result.pairLockMax = "Entre 0.90 et 0.99";
+        }
+        if (form.arbAskSumMax.trim() !== "") {
+          const askSum = Number(form.arbAskSumMax);
+          if (!Number.isFinite(askSum)) {
+            result.arbAskSumMax = "Nombre invalide";
+          } else if (askSum < 0.9 || (Number.isFinite(pairLockMax) && askSum > pairLockMax)) {
+            result.arbAskSumMax = "Entre 0.90 et pairLockMax";
+          }
         }
         if (!form.enableExpensiveHedge) {
           result.enableExpensiveHedge = "Obligatoire pour arb";

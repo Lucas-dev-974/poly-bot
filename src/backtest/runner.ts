@@ -625,9 +625,52 @@ function executeOpp(
   }
 
   const useFOK =
-    opportunity.kind === "expensive" &&
-    ctx.config.expensiveOrderType === "FOK" &&
-    !ctx.strategy.leadsWithEdge;
+    opportunity.orderType === "FOK" ||
+    (opportunity.kind === "expensive" &&
+      ctx.config.expensiveOrderType === "FOK" &&
+      !ctx.strategy.leadsWithEdge);
+
+  // Ask-lock dual-FOK preflight: only take cheap if the expensive ask can
+  // fill the same size on this tick's book. Otherwise skip (no one-legged).
+  if (
+    opportunity.kind === "cheap" &&
+    opportunity.orderType === "FOK" &&
+    ctx.config.arbAskLockOnly
+  ) {
+    const other = ctx.books.find((b) => b.tokenId !== opportunity.token.tokenId);
+    if (!other || other.bestAsk == null) {
+      ctx.trades.push(
+        tradeFromOpp(opportunity, ctx.nowMs, false, "ask-lock-no-hedge-book", null, undefined, undefined, "FOK"),
+      );
+      return;
+    }
+    const hedgeProbe = buyFillAgainstBook(
+      other.bestAsk,
+      opportunity.size,
+      other,
+      "marketable",
+      true,
+    );
+    if (!hedgeProbe.filled || (hedgeProbe.size ?? 0) + 1e-9 < opportunity.size) {
+      ctx.trades.push(
+        tradeFromOpp(opportunity, ctx.nowMs, false, "ask-lock-hedge-unfillable", null, undefined, undefined, "FOK"),
+      );
+      return;
+    }
+    const cheapProbe = buyFillAgainstBook(
+      opportunity.price,
+      opportunity.size,
+      ctx.books.find((b) => b.tokenId === opportunity.token.tokenId),
+      "marketable",
+      true,
+    );
+    if (!cheapProbe.filled || (cheapProbe.size ?? 0) + 1e-9 < opportunity.size) {
+      ctx.trades.push(
+        tradeFromOpp(opportunity, ctx.nowMs, false, "ask-lock-cheap-unfillable", null, undefined, undefined, "FOK"),
+      );
+      return;
+    }
+  }
 
   let limit = opportunity.price;
   if (
@@ -666,10 +709,14 @@ function executeOpp(
     if (decision.action === "defend") {
       ctx.trades.push(tradeFromOpp(opportunity, ctx.nowMs, false, decision.reason, null));
       defendCheapLegs(ctx, opportunity.pairId, { force: true });
+      // Policy A tradeKey stays marked (enqueue). No unmark-on-fail: that
+      // re-queued every book tick inside the same window. Band defend still
+      // covers ask > expensiveBuyMax later.
       return;
     }
     if (decision.action === "skip") {
       ctx.trades.push(tradeFromOpp(opportunity, ctx.nowMs, false, decision.reason, null));
+      // Dust / covered / unreachable-with-hedge-off: keep marked (no retry spam).
       return;
     }
     limit = decision.price;

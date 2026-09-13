@@ -29,6 +29,8 @@
     "simResolveRetryIntervalMs": 5000,
     "simResolveMaxRetries": 5,
     "simResolveFallback": "none",
-    "simMaxRetryAttempts": 20
+    "simMaxRetryAttempts": 20,
+    "arbAskLockOnly": false,
+    "arbAskSumMax": null
   }
 }

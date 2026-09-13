@@ -9,6 +9,9 @@ export function orderTypeFor(
   config: BotConfig,
   strategy: Pick<TradingStrategy, "leadsWithEdge">,
 ): OrderType {
+  if (opportunity.orderType === "FOK" || opportunity.orderType === "GTC") {
+    return opportunity.orderType;
+  }
   return opportunity.kind === "expensive" &&
     config.expensiveOrderType === "FOK" &&
     !strategy.leadsWithEdge

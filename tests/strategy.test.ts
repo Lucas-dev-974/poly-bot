@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+﻿import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   findOpportunities,
@@ -70,13 +70,14 @@ describe("findOpportunities", () => {
     const opps = findOpportunities(config, tracker, event, books(0.85, 0.08, 200));
     const hedge = opps.find((o) => o.kind === "expensive");
     assert.ok(hedge);
-    assert.equal(hedge.size, computeSize(5, 0.85, 90));
+    // Raw budget cap would be ~5.88 leaving 4.12 dust → shrink to leave 5 sellable.
+    assert.equal(hedge.size, 5);
   });
 
   it("posts cheap at the live ask when it already satisfies the pair lock", () => {
     const tracker = new TradeTracker();
     const event = testEvent();
-    // cheap=0.17, hedge=0.80 → pairCost=0.97 ≤ 0.98 → ok
+    // cheap=0.17, hedge=0.80 â†’ pairCost=0.97 â‰¤ 0.98 â†’ ok
     const opps = findOpportunities(
       testConfig({
         cheapBuyMax: 0.25,
@@ -92,7 +93,7 @@ describe("findOpportunities", () => {
     );
     const cheap = opps.find((o) => o.kind === "cheap");
     assert.ok(cheap);
-    // ask 0.17 + hedge 0.80 = 0.97 ≤ 0.98 → take the ask (no need to sit lower)
+    // ask 0.17 + hedge 0.80 = 0.97 â‰¤ 0.98 â†’ take the ask (no need to sit lower)
     assert.equal(cheap.price, 0.17);
   });
 
@@ -117,7 +118,7 @@ describe("findOpportunities", () => {
     assert.equal(cheap.price, 0.13);
   });
 
-  it("posts a maker cheap at pairLockMax − hedge when the ask is above the lock", () => {
+  it("posts a maker cheap at pairLockMax âˆ’ hedge when the ask is above the lock", () => {
     const tracker = new TradeTracker();
     const event = testEvent();
     // ask=0.20 + hedge=0.80 = 1.00 > 0.98, but the maker bid sits at 0.18
@@ -140,7 +141,7 @@ describe("findOpportunities", () => {
   it("posts cheap when pair cost is within pairLockMax", () => {
     const tracker = new TradeTracker();
     const event = testEvent();
-    // cheap=0.17, hedge=0.80 → pairCost=0.97 ≤ 0.98 → ok
+    // cheap=0.17, hedge=0.80 â†’ pairCost=0.97 â‰¤ 0.98 â†’ ok
     const opps = findOpportunities(
       testConfig({
         cheapBuyMax: 0.25,
@@ -194,20 +195,16 @@ describe("findOpportunities", () => {
       expensiveOrderType: "GTC",
       expensiveOrderUsdc: 10,
     });
-    // No filled cheap — hedge should not be generated.
+    // No filled cheap â€” hedge should not be generated.
     const opps = findOpportunities(config, tracker, event, books(0.87, 0.08));
     const hedge = opps.find((o) => o.kind === "expensive");
-    // Strategy generates the hedge opportunity, but bot.ts S1.4 blocks it.
-    // The strategy itself still generates it based on committedCheapSize.
-    // The anti-favori-nu guard is in bot.ts (getFilledCheapSizeForPair).
-    // So this test verifies the strategy behavior; the bot guard is tested
-    // separately in order-lifecycle tests.
-    // With GTC, committedCheapSize includes resting orders. No resting order
-    // here, so cheapCommittedForHedge = 0 → no hedge generated.
+    // No filled/resting cheap â†’ strategy does not emit an expensive opp.
+    // Live C2 also re-checks getFilledCheapSizeForPair in opportunity-executor
+    // before posting a hedge (order-lifecycle tests cover that guard).
     assert.equal(hedge, undefined);
   });
 
-  it("does not hedge a filled cheap when fill + favorite exceeds pairLockMax", () => {
+  it("queues Policy A stub when fill + favorite exceeds pairLockMax", () => {
     const tracker = new TradeTracker();
     const event = testEvent();
     const config = testConfig({
@@ -237,7 +234,7 @@ describe("findOpportunities", () => {
       fillReason: "resting",
       pairId,
     });
-    // 0.20 + 0.81 = 1.01 > 0.98 → Policy A queues stub for FOK-sell.
+    // 0.20 + 0.81 = 1.01 > 0.98 â†’ Policy A queues stub for FOK-sell.
     const opps = findOpportunities(config, tracker, event, books(0.21, 0.81, 80));
     const hedge = opps.find((o) => o.kind === "expensive");
     assert.ok(hedge, "expected Policy A hedge stub");
@@ -273,7 +270,7 @@ describe("findOpportunities", () => {
       fillReason: "resting",
       pairId,
     });
-    // 0.25 + 0.76 = 1.01 > 0.98 → permanently unreachable → Policy A stub
+    // 0.25 + 0.76 = 1.01 > 0.98 â†’ permanently unreachable â†’ Policy A stub
     const opps = findOpportunities(config, tracker, event, books(0.21, 0.81, 80));
     assert.ok(opps.find((o) => o.kind === "expensive"), "expected Policy A stub");
   });
@@ -337,9 +334,9 @@ describe("findOpportunities", () => {
       expensiveBuyMax: 0.9,
       pairLockMax: 0.98,
     });
-    // Favorite 0.97 > max → no cheap: a 0.01 maker bid is not a cover.
+    // Favorite 0.97 > max â†’ no cheap: a 0.01 maker bid is not a cover.
     assert.equal(findOpportunities(config, tracker, event, books(0.97, 0.05)).length, 0);
-    // Favorite 0.7 < min → no cheap either (no favorite to hedge against).
+    // Favorite 0.7 < min â†’ no cheap either (no favorite to hedge against).
     assert.equal(findOpportunities(config, tracker, event, books(0.7, 0.3)).length, 0);
   });
 
@@ -418,7 +415,7 @@ describe("shouldCancelRestingCheapForLock", () => {
   });
 
   it("cancels when the resting bid is above the new lock cap", () => {
-    // hedge 0.85 → max cheap 0.13; a 0.18 bid would break the lock
+    // hedge 0.85 â†’ max cheap 0.13; a 0.18 bid would break the lock
     assert.equal(shouldCancelRestingCheapForLock(0.18, 0.85, config), true);
   });
 

@@ -148,6 +148,8 @@ export function SettingsModal(props: {
     for (const preset of presetsForStrategy(current.strategyId)) {
       const filled = configToForm({
         ...props.config,
+        arbAskLockOnly: false,
+        arbAskSumMax: null,
         ...preset.settings,
         strategyId: preset.strategyId,
       });
@@ -166,9 +168,13 @@ export function SettingsModal(props: {
   }
 
   function applyPreset(preset: StrategyPreset): void {
+    // Explicit arb ask-lock defaults: classic presets omit the keys; spreading
+    // live config would keep a previous arbAskLockOnly=true (ghost sticky).
     setForm(
       configToForm({
         ...props.config,
+        arbAskLockOnly: false,
+        arbAskSumMax: null,
         ...preset.settings,
         strategyId: preset.strategyId,
       }),
@@ -468,6 +474,33 @@ export function SettingsModal(props: {
                         onInput={(v) => update("pairLockMax", v)}
                       />
                     </Field>
+                    <Field
+                      label="Ask-lock dual-FOK"
+                      hint="N'entrer que si ask_cheap + ask_expensive ≤ lock ; prend les deux asks en FOK (pas de jambe maker seule)."
+                    >
+                      <label class="cfg-check">
+                        <input
+                          type="checkbox"
+                          checked={form().arbAskLockOnly}
+                          onChange={(e) => update("arbAskLockOnly", e.currentTarget.checked)}
+                        />
+                        Activer ask-lock
+                      </label>
+                    </Field>
+                    <Show when={form().arbAskLockOnly}>
+                      <Field
+                        label="Ask-sum max (optionnel)"
+                        hint="Plafond ask+ask plus serré que pairLockMax. Vide = pairLockMax."
+                      >
+                        <NumberInput
+                          value={form().arbAskSumMax}
+                          min={0.90}
+                          max={0.99}
+                          step={0.01}
+                          onInput={(v) => update("arbAskSumMax", v)}
+                        />
+                      </Field>
+                    </Show>
                     </Show>
                   </div>
                 </div>

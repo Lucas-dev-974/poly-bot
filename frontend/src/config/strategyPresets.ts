@@ -3,6 +3,7 @@ import coverageMax from "../../../config/presets/coverage-max.json";
 import conservative from "../../../config/presets/conservative.json";
 import edgeLead from "../../../config/presets/edge-lead.json";
 import reverse from "../../../config/presets/reverse.json";
+import askLock from "../../../config/presets/ask-lock.json";
 
 export type { NativeStrategyId, StrategyId };
 
@@ -26,6 +27,7 @@ export const STRATEGY_ENGINE_OPTIONS: Array<{ id: NativeStrategyId; label: strin
 export const STRATEGY_PRESETS: StrategyPreset[] = [
   coverageMax as StrategyPreset,
   conservative as StrategyPreset,
+  askLock as StrategyPreset,
   edgeLead as StrategyPreset,
   reverse as StrategyPreset,
 ];

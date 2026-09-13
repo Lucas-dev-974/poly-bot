@@ -156,6 +156,13 @@ export interface BotConfig {
   barbellHedgeRatio: number;
   /** Verrou profit : bid+hedge à l'entrée et fillPrice+hedge après fill, tous deux ≤ pairLockMax. */
   pairLockMax: number;
+  /**
+   * Arb ask-lock (dual-FOK): only enter when ask_cheap + ask_expensive ≤ lock.
+   * Take both asks FOK same tick. Default false = classic maker cheap.
+   */
+  arbAskLockOnly: boolean;
+  /** Optional stricter ask+ask cap (null = use pairLockMax). */
+  arbAskSumMax: number | null;
   expensiveOrderUsdc: number;
   expensiveOrderType: "FOK" | "GTC";
   maxSharesPerOrder: number;

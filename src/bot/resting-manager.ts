@@ -283,12 +283,13 @@ export class RestingManager {
       return;
     }
 
-    log("Pair uncovered - defending (favorite above max and/or pair-lock-unreachable)", {
+    // Tick-path defense = strategy.shouldDefend (arb: ask > expensiveBuyMax + uncovered).
+    // Policy A (pair-lock-unreachable → FOK SELL) is handled in hedgeAtPostTime / orchestrate, not here.
+    log("Pair uncovered - defending (favorite ask above max)", {
       market: event.title,
       pairId,
       favoriteAsk,
       expensiveBuyMax: this.deps.config.expensiveBuyMax,
-      pairLockMax: this.deps.config.pairLockMax,
       strategyId: this.strategy.id,
     });
     await this.defendPair(pairId);

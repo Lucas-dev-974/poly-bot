@@ -27,7 +27,7 @@ export function dispatchEvent(event: BotEvent): void {
       break;
 
     case "simulatedBalance":
-      // Géré par App via simulatedCash signal
+      // Capital / balance come from live wallet events
       break;
 
     case "scan":
@@ -69,7 +69,7 @@ export function dispatchEvent(event: BotEvent): void {
         });
       }
       addLog(
-        `${event.result.dryRun ? "DRY-RUN" : "LIVE"} order ${o.kind} @ ${o.price} x ${o.size} (${o.token.outcome})`,
+        `${event.result.dryRun ? "SIM" : "LIVE"} order ${o.kind} @ ${o.price} x ${o.size} (${o.token.outcome})`,
       );
       break;
     }

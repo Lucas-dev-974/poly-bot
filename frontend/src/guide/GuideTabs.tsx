@@ -564,8 +564,8 @@ export function HedgeTab(): JSX.Element {
         </p>
       </GuideCallout>
       <p>
-        Live uniquement. <code>executeSimulated</code> return L883 — <strong>ne pas</strong> appeler{" "}
-        <code>hedgeAtPostTime</code> en dry-run. Remplace le filtre stale L927 et S2.3 L964–1035,{" "}
+        Live uniquement. <code>hedgeAtPostTime</code> tourne <strong>avant</strong> les checks balance/buy
+        (defend Policy A possible sans tenter un BUY). Remplace le filtre stale L927 et S2.3 L964–1035,{" "}
         <strong>après</strong> collatéral et exposition.
       </p>
       <h3 class="guide-h3">
@@ -712,7 +712,7 @@ export function ShipTab(): JSX.Element {
           ["Oracle / Kelly / EdgeModel", "Séquence 3 audit-5 — vrai B2 plus tard"],
           ["Presets barbell", "Seulement tagger les deux existants arb + edge-lead"],
           ["Nested { arb, barbell } dans un JSON", "Un preset = un moteur + settings plats"],
-          ["Revalidation hedge dry-run", "executeSimulated sort avant S2.3 aujourd'hui"],
+          ["Revalidation hedge live", "hedgeAtPostTime avant balance/buy (Policy A defend)"],
           ["Accounting covered 1:1 pour barbell", "Paires ratio < 1 restent partial / directional"],
           ["1:1 shares en edge-lead", "Budgets USDC indépendants par design"],
         ]}

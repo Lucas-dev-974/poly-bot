@@ -125,6 +125,27 @@ describe("applyRuntimeSettings", () => {
     );
     assert.equal(config.simResolveFallback, "none");
   });
+
+  it("ignores backtest-only keys on live apply (no in-memory mutate)", async () => {
+    const path = tempSettingsPath();
+    const config = testConfig({
+      strategyId: "arb",
+      simulatedCapital: 50,
+      simFillProbabilityNonMarketable: 0.1,
+      cheapOrderUsdc: 1,
+      funderAddress: "0x1234567890123456789012345678901234567890",
+      privateKey: "0x1234567890123456789012345678901234567890123456789012345678901234",
+      simResolveFallback: "none",
+    });
+    await applyRuntimeSettings(
+      config,
+      { cheapOrderUsdc: 3, simulatedCapital: 999, simFillProbabilityNonMarketable: 0.9 },
+      path,
+    );
+    assert.equal(config.cheapOrderUsdc, 3);
+    assert.equal(config.simulatedCapital, 50);
+    assert.equal(config.simFillProbabilityNonMarketable, 0.1);
+  });
 });
 
 describe("readRuntimeSettings", () => {

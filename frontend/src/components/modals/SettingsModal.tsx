@@ -863,9 +863,6 @@ export function SettingsModal(props: {
                 </div>
               </Show>
 
-              {/* ---- Simulation ---- */}
-
-
               {/* Erreurs */}
               <Show when={errors().length > 0}>
                 <div class="cfg-errors">

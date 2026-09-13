@@ -490,10 +490,19 @@ export async function applyRuntimeSettings(
   const snapshot = snapshotEditableSettings(config, leadsWithEdge);
   const changed = new Set<EditableConfigKey>();
 
+  // Live settings file / in-memory config only accept keysForStrategy.
+  // sanitizePatch still allows backtest-only keys (simulatedCapital, etc.) for
+  // JSON/preset compatibility — drop them here so a live PATCH cannot mutate them.
+  const nextStrategyId = (patch.strategyId ?? config.strategyId) as BotConfig["strategyId"];
+  const allowed = new Set(keysForStrategy(nextStrategyId, leadsWithEdge));
   const target = config as unknown as Record<string, unknown>;
   for (const key of Object.keys(patch) as EditableConfigKey[]) {
+    if (!allowed.has(key)) continue;
     changed.add(key);
     target[key] = patch[key];
+  }
+  if (changed.size === 0) {
+    throw new Error("At least one editable field is required");
   }
 
   try {

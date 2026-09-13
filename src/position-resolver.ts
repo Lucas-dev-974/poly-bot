@@ -64,7 +64,7 @@ export class PositionResolver {
     // Guard: a position may already be resolved (status !== "open") if it was
     // resolved in a previous cycle but still appeared in getOpenPositions() due
     // to a race, or after a restart while the in-memory tracker hadn't synced.
-    // Re-crediting the ledger would inflate the simulated cash, so skip it.
+    // Skip to avoid double-counting PnL / re-emitting resolution for an already-settled leg.
     if (position.status !== "open") {
       log("Position already resolved - skipping re-resolution", {
         market: position.eventTitle,

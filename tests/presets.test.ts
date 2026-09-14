@@ -11,13 +11,19 @@ import {
 import { testConfig } from "./helpers.js";
 
 describe("strategy presets", () => {
-  it("loads Couverture max, Conservateur and Edge-lead from config/presets", () => {
+  it("loads the bundled presets from config/presets", () => {
     const presets = listStrategyPresets();
     const ids = presets.map((preset) => preset.id).sort();
     assert.deepEqual(ids, [
+      "ask-lock",
       "conservative",
       "coverage-max",
+      "dip-revert",
       "edge-lead",
+      "fav-band",
+      "fav-band-opt",
+      "fav-band-opt-risk",
+      "lock-harvest",
       "reverse",
     ]);
 
@@ -25,10 +31,18 @@ describe("strategy presets", () => {
     const conservative = presets.find((preset) => preset.id === "conservative");
     const edgeLead = presets.find((preset) => preset.id === "edge-lead");
     const reverse = presets.find((preset) => preset.id === "reverse");
+    const askLock = presets.find((preset) => preset.id === "ask-lock");
+    const lockHarvest = presets.find((preset) => preset.id === "lock-harvest");
+    const dipRevert = presets.find((preset) => preset.id === "dip-revert");
+    const favBand = presets.find((preset) => preset.id === "fav-band");
     assert.ok(coverage);
     assert.ok(conservative);
     assert.ok(edgeLead);
     assert.ok(reverse);
+    assert.ok(askLock);
+    assert.ok(lockHarvest);
+    assert.ok(dipRevert);
+    assert.ok(favBand);
     assert.equal(coverage.settings.expensiveOrderType, "FOK");
     assert.equal(coverage.settings.expensiveOrderUsdc, 15);
     assert.equal(conservative.settings.expensiveOrderType, "GTC");
@@ -40,7 +54,7 @@ describe("strategy presets", () => {
     assert.equal(edgeLead.strategyId, "edge-lead");
     assert.equal(edgeLead.settings.strategyId, "edge-lead");
     assert.equal(edgeLead.settings.pollIntervalMs, 1000);
-    assert.equal(edgeLead.settings.maxShareEdge, 40);
+    assert.equal(edgeLead.settings.maxShareEdge, 15);
     assert.equal(reverse.strategyId, "reverse");
     assert.equal(reverse.settings.strategyId, "reverse");
     assert.equal(reverse.settings.cheapBuyMin, 0.07);
@@ -53,12 +67,23 @@ describe("strategy presets", () => {
     assert.equal(reverse.settings.maxOpenPositionsPerSide, 6);
     assert.equal(reverse.settings.maxExposureUsdc, 340);
     assert.equal(reverse.settings.simulatedCapital, 1000);
+    assert.equal(askLock.settings.arbAskLockOnly, true);
+    assert.equal(lockHarvest.settings.arbAskLockOnly, true);
+    assert.equal(dipRevert.strategyId, "dip-revert");
+    assert.equal(dipRevert.settings.strategyId, "dip-revert");
+    assert.equal(dipRevert.settings.dipRevertBandMin, 0.55);
+    assert.equal(dipRevert.settings.dipRevertBandMax, 0.65);
+    assert.equal(dipRevert.settings.dipRevertMaxElapsedSec, 420);
+    assert.equal(dipRevert.settings.dipRevertExitTakeProfitEnabled, false);
+    assert.equal(dipRevert.settings.dipRevertExitWinAsk, 0.85);
+    assert.equal(favBand.strategyId, "fav-band");
+    assert.equal(favBand.settings.favBandAskMin, 0.7);
   });
 
   it("filters bundled presets by engine", () => {
     assert.deepEqual(
       presetsForStrategy("arb").map((preset) => preset.id).sort(),
-      ["conservative", "coverage-max"],
+      ["ask-lock", "conservative", "coverage-max", "lock-harvest"],
     );
     assert.deepEqual(presetsForStrategy("barbell"), []);
     assert.deepEqual(
@@ -68,6 +93,14 @@ describe("strategy presets", () => {
     assert.deepEqual(
       presetsForStrategy("reverse").map((preset) => preset.id),
       ["reverse"],
+    );
+    assert.deepEqual(
+      presetsForStrategy("fav-band").map((preset) => preset.id).sort(),
+      ["fav-band", "fav-band-opt", "fav-band-opt-risk"],
+    );
+    assert.deepEqual(
+      presetsForStrategy("dip-revert").map((preset) => preset.id),
+      ["dip-revert"],
     );
   });
 

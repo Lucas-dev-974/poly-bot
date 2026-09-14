@@ -92,7 +92,7 @@ export const STRATEGY_COMPARE_ROWS: [string, string, string, string, string, str
   ["Signal d'entrée", "Bandes cheap/favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant", "Min (sous-coté) et l'autre token, niveaux grille", "Ask favori chuté ≥ minDrop puis rebond"],
   ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeSizingMode : shares / pUSD / dynamic", "Budget USDC par niveau de grille", "Budget USDC unique (dipRevertOrderUsdc)"],
   ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés", "Pas de lock — asymétrie + amortissement", "Pas de lock — mean-reversion"],
-  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Vend l'edge nu si en perte soutenue (FOK SELL)", "Aucune — grilles tenues jusqu'à la clôture", "Aucune — hold jusqu'à résolution"],
+  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Vend l'edge nu si en perte soutenue (FOK SELL)", "Aucune — grilles tenues jusqu'à la clôture", "Aucune — hold jusqu'à résolution (ou take-profit optionnel)"],
   ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu (vendu si perte)", "La plupart des underdogs expirent à 0 ¢", "Le favori chuté perd vraiment (variance)"],
 ];
 
@@ -134,6 +134,7 @@ export const RESOLUTION_ROWS: Record<EngineId, [string, string][]> = {
   "dip-revert": [
     ["Le favori chuté gagne", "Favori × 1 $ − coût d'entrée (~0.60) ≈ +0.40/share. Le scénario cible (~64%)."],
     ["L'outsider gagne", "Le favori expire à 0 — perte = coût d'entrée. La chute était un signal de faiblesse réel."],
+    ["Take-profit activé, ask ≥ seuil", "Vente au bid (~seuil − 1¢) : gain verrouillé avant la clôture. Désactivé par défaut — en backtest le hold intégral reste meilleur."],
   ],
 };
 
@@ -169,7 +170,8 @@ export const BOT_STEPS: Record<EngineId, string[]> = {
     "Si l'ask est dans [dipRevertBandMin, dipRevertBandMax] et a chuté ≥ dipRevertMinDrop sur dipRevertDropLookbackMs (~60 s)…",
     "…et que l'ask est repassé au-dessus de son minimum local (rebond confirmé) et que le spread ≤ dipRevertMaxSpread : FOK buy du favori (budget dipRevertOrderUsdc).",
     "Une seule entrée par fenêtre (les FOK ratés par profondeur sont retentés au tick suivant).",
-    "Hold jusqu'à la résolution ; pas de hedge, pas de défense, pas de vente anticipée.",
+    "Hold jusqu'à la résolution ; pas de hedge, pas de défense.",
+    "Optionnel (dipRevertExitTakeProfitEnabled) : si l'ask du favori détenu atteint dipRevertExitWinAsk, FOK SELL au bid (take-profit) ; un FOK tué par la profondeur garde la position pour la résolution.",
   ],
 };
 

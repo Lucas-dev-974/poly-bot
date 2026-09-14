@@ -211,6 +211,8 @@ Idée empirique (BTC/ETH 15m, univers audité > 800 ticks / 60 s de trous max, 3
 | `dipRevertMaxElapsedSec` | `null` | Cap optionnel ; `null` = jusqu'à la fin de fenêtre |
 | `dipRevertMaxSpread` | `0.04` | Spread max du favori à l'entrée (liquidité) |
 | `dipRevertOrderUsdc` | `15` | Budget USDC de l'entrée FOK |
+| `dipRevertExitTakeProfitEnabled` | `false` | Take-profit optionnel : FOK SELL du favori détenu à seuil atteint |
+| `dipRevertExitWinAsk` | `0.85` | Seuil TP sur l'ask du favori détenu (doit être > bande max) |
 | `maxSharesPerOrder` | `30` | Cap shares |
 | `maxOpenPositionsPerSide` | `1` | Une entrée directionnelle à la fois |
 | `enableExpensiveHedge` / `arbAskLockOnly` | `false` | Forcés / nettoyés (pas de hedge, pas d'ask-lock) |
@@ -224,6 +226,8 @@ Idée empirique (BTC/ETH 15m, univers audité > 800 ticks / 60 s de trous max, 3
 5. Spread ≤ `dipRevertMaxSpread`, profondeur ask suffisante pour la taille, pas déjà de jambe fillée.
 6. Émission **FOK BUY** au ask live ; hold jusqu'à résolution.
 
+**Sortie optionnelle (take-profit)** : `dipRevertExitTakeProfitEnabled` (défaut `false`). Activé, le bot vend en FOK SELL au bid le favori détenu dès que **son propre ask** atteint `dipRevertExitWinAsk` (défaut 0.85, doit être > bande max). Un FOK tué par manque de profondeur garde la position jusqu'à la résolution. Backtest officiel (326 fenêtres) : le TP dégrade le PnL à tous les seuils (+$74 à +$194 vs +$278 hold) — le hold intégral reste la politique recommandée. Le seul axe testé qui améliore le résultat est `dipRevertMaxElapsedSec: 420` (+$305).
+
 ### Différences vs autres moteurs
 
 | | Dip-revert | Fav-band | Edge-lead | Ask-lock |
@@ -231,7 +235,7 @@ Idée empirique (BTC/ETH 15m, univers audité > 800 ticks / 60 s de trous max, 3
 | Condition | Chute + rebond intra-fenêtre | Ask favori mid-band | Favori + confirm + cheap | Lock ask+ask |
 | Ordre | FOK BUY seul | FOK BUY seul | GTC / logique edge | Dual FOK |
 | Hedge | Non | Non | Cheap follow-up possible | Oui (1:1 immédiat) |
-| Sortie | Résolution | Résolution (ou fermeture manuelle) | Edge sell / resolve | Lock / Policy A |
+| Sortie | Résolution (ou TP optionnel) | Résolution (ou fermeture manuelle) | Edge sell / resolve | Lock / Policy A |
 
 ### Backtest (indicatif BTC 15m, univers 321 fenêtres)
 

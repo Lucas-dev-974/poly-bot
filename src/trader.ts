@@ -23,6 +23,13 @@ export class Trader {
   private client: ClobClient | null = null;
   private static readonly TRADING_TIMEOUT_MS = 8_000;
   private static readonly BALANCE_TIMEOUT_MS = 10_000;
+  /**
+   * Crypto up/down markets apply a 250 ms taker delay to marketable orders and
+   * the conditional-balance cache can lag further. A SELL that the CLOB reports
+   * as killed can still settle afterwards: before booking a kill we re-read the
+   * balance once after this delay.
+   */
+  private static readonly SELL_CONFIRM_RETRY_MS = 750;
 
   constructor(private readonly config: BotConfig) {}
 
@@ -217,18 +224,46 @@ export class Trader {
    * above expensiveBuyMax, the filled cheap is sold at the current best
    * bid instead of holding it naked to resolution.
    *
-   * The CLOB FOK response is not trusted alone: a real match can come
-   * back as killed / empty makingAmount. We confirm against the
-   * conditional-token balance drop.
+   * The CLOB FOK response is not trusted alone when it reports a kill: a
+   * real match can come back as killed / empty makingAmount (ghost fill),
+   * so a kill is confirmed against the conditional-token balance drop.
+   * Conversely a CLOB-confirmed match (success=true, makingAmount>0) IS
+   * trusted — the balance cache can lag the settlement by hundreds of ms.
    *
-   * The caller (defendPair) is responsible for refreshing the book before
-   * constructing the opportunity — placeSell does not fetch the book itself.
+   * The callers are responsible for refreshing the book and passing the
+   * 3-level bid depth (bestBidSize/bid2/bid3) — placeSell does not fetch
+   * the book itself.
    */
   async placeSell(opportunity: TradeOpportunity): Promise<OrderResult> {
     if (!this.client) {
       throw new Error("Trading client not initialized");
     }
-    const fokPrice = Math.max(opportunity.token.bestBid ?? 0, 0.01);
+    // CLOB market-order semantics: `price` is a WORST-PRICE LIMIT, not a
+    // target. A SELL FOK matches every bid level with price >= limit. Pricing
+    // exactly at bestBid therefore only matches the top-of-book level: if
+    // bestBidSize < order size the CLOB kills the order
+    // (FOK_ORDER_NOT_FILLED_ERROR -> killed-fok-sell), which is exactly what
+    // happens on thin 15m up/down books when closing a manual position.
+    // Walk down one tick per visible bid level needed to cover the order,
+    // bounded to 3 ticks of slippage so we never dump deep into the book.
+    const tick = tickSizeToNumber(opportunity.tickSize);
+    const bidDepth = [
+      opportunity.token.bestBidSize,
+      opportunity.token.bid2Size,
+      opportunity.token.bid3Size,
+    ];
+    let ticksDown = 0;
+    let covered = 0;
+    for (const levelSize of bidDepth) {
+      if (levelSize == null || levelSize <= 0) break;
+      covered += levelSize;
+      if (covered >= opportunity.size) break;
+      ticksDown += 1;
+    }
+    ticksDown = Math.min(ticksDown, 3);
+    const fokPrice = round4(
+      Math.max((opportunity.token.bestBid ?? 0) - tick * ticksDown, 0.01),
+    );
 
     // CLOB market SELL semantics: `amount` is the number of SHARES to sell
     // (UserMarketOrderV2: "SELL orders: Shares to sell"), NOT USDC. Passing
@@ -301,12 +336,29 @@ export class Trader {
     }
 
     const heldAfter = await this.getConditionalTokenBalance(opportunity.token.tokenId);
-    const confirmed = confirmedSoldSize(
+    let confirmed = confirmedSoldSize(
       sellShares,
       clobFilledSize,
       heldBefore,
       heldAfter,
     );
+    // The CLOB's 250 ms taker delay (crypto up/down) plus balance-cache lag
+    // means a real fill can still be invisible immediately after the POST.
+    // When the CLOB itself confirmed the match (success=true, makingAmount>0)
+    // but the balance cache hasn't fully caught up (unchanged or partially
+    // updated), trust the CLOB: it is the settlement source of truth and a
+    // stale cache under-reports the drop, never over-reports it. Booking a
+    // real fill as killed leaves a phantom position that can never be closed.
+    if (confirmed.soldSize < clobFilledSize) {
+      confirmed = { soldSize: Math.min(clobFilledSize, sellShares), balanceUnknown: false };
+    }
+    // When the CLOB reported a kill, re-read once after the taker delay:
+    // a real match can settle after the "killed" response on these markets.
+    if (confirmed.soldSize === 0 && !confirmed.balanceUnknown && clobFilledSize === 0) {
+      await new Promise((resolve) => setTimeout(resolve, Trader.SELL_CONFIRM_RETRY_MS));
+      const heldLater = await this.getConditionalTokenBalance(opportunity.token.tokenId);
+      confirmed = confirmedSoldSize(sellShares, 0, heldBefore, heldLater);
+    }
     const soldSize = confirmed.soldSize;
     const filled = soldSize > 0;
     return {
@@ -406,6 +458,12 @@ export class Trader {
 
 function round4(value: number): number {
   return Math.round(value * 10_000) / 10_000;
+}
+
+/** Numeric tick increment for the string tick sizes used across the codebase. */
+function tickSizeToNumber(tickSize: string): number {
+  const n = Number(tickSize);
+  return Number.isFinite(n) && n > 0 ? n : 0.01;
 }
 
 async function createTradingClient(config: BotConfig): Promise<ClobClient> {

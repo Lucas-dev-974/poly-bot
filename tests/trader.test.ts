@@ -15,7 +15,11 @@ function liveTrader(client: MockClobClient): Trader {
   return trader;
 }
 
-function sellOpportunity(size: number, bestBid = 0.12): TradeOpportunity {
+function sellOpportunity(
+  size: number,
+  bestBid = 0.12,
+  depth?: { bestBidSize?: number; bid2?: number; bid2Size?: number; bid3?: number; bid3Size?: number },
+): TradeOpportunity {
   return {
     kind: "cheap",
     event: testEvent(),
@@ -26,6 +30,11 @@ function sellOpportunity(size: number, bestBid = 0.12): TradeOpportunity {
       bestBid,
       bestAsk: bestBid + 0.01,
       bestAskSize: 100,
+      bestBidSize: depth?.bestBidSize ?? null,
+      bid2: depth?.bid2 ?? null,
+      bid2Size: depth?.bid2Size ?? null,
+      bid3: depth?.bid3 ?? null,
+      bid3Size: depth?.bid3Size ?? null,
     },
     price: bestBid,
     size,
@@ -87,6 +96,33 @@ describe("Trader.placeSell", () => {
     assert.equal(result.reason, "filled-fok-sell-balance");
   });
 
+  it("trusts the CLOB-confirmed makingAmount over a partially stale balance cache", async () => {
+    const client = new MockClobClient();
+    client.balances.set("t-down", 10);
+    client.sellDropsPartially = true; // cache only shows a 1/10 drop
+    const trader = liveTrader(client);
+
+    const result = await trader.placeSell(sellOpportunity(10, 0.12));
+
+    assert.equal(result.filled, true, "CLOB-confirmed fill must be booked fully");
+    assert.equal(result.filledSize, 10, "stale cache must not under-report the sold size");
+    assert.equal(result.reason, "filled-fok-sell");
+  });
+
+  it("re-checks the balance after the taker delay when the first read still shows the pre-sell balance (delayed settlement)", async () => {
+    const client = new MockClobClient();
+    client.balances.set("t-down", 10);
+    client.sellSettlesOnSecondRead = true;
+    const trader = liveTrader(client);
+
+    const result = await trader.placeSell(sellOpportunity(10, 0.12));
+
+    assert.equal(result.filled, true, "delayed settlement must be caught by the re-check");
+    assert.equal(result.filledSize, 10);
+    assert.equal(result.reason, "filled-fok-sell-balance");
+    assert.equal(client.balances.get("t-down"), 0);
+  });
+
   it("returns sell-unconfirmed when the balance is unknown and the CLOB reports a kill", async () => {
     const client = new MockClobClient();
     client.balances.set("t-down", 10);
@@ -110,6 +146,51 @@ describe("Trader.placeSell", () => {
     await trader.placeSell(opp);
 
     assert.equal(client.marketOrders[0].price, 0.01);
+  });
+
+  it("walks down bid levels when top-of-book depth is insufficient instead of pricing at bestBid", async () => {
+    const client = new MockClobClient();
+    // 8 at best bid, 6 at the next level: selling 10 requires the 2nd level.
+    client.balances.set("t-down", 10);
+    const trader = liveTrader(client);
+
+    const result = await trader.placeSell(
+      sellOpportunity(10, 0.12, { bestBidSize: 8, bid2: 0.11, bid2Size: 6 }),
+    );
+
+    assert.equal(client.marketOrders[0].price, 0.11, "worst-price limit must step down one tick");
+    assert.equal(result.filled, true);
+    assert.equal(result.filledSize, 10);
+  });
+
+  it("bounded to 3 ticks of slippage: an order deeper than 3 bid levels is priced at bid-3 ticks", async () => {
+    const client = new MockClobClient();
+    client.balances.set("t-down", 100);
+    const trader = liveTrader(client);
+
+    await trader.placeSell(
+      sellOpportunity(100, 0.20, {
+        bestBidSize: 5,
+        bid2: 0.19,
+        bid2Size: 5,
+        bid3: 0.18,
+        bid3Size: 5,
+      }),
+    );
+
+    assert.equal(client.marketOrders[0].price, 0.17);
+  });
+
+  it("keeps pricing at bestBid when the top level alone covers the order", async () => {
+    const client = new MockClobClient();
+    client.balances.set("t-down", 10);
+    const trader = liveTrader(client);
+
+    await trader.placeSell(
+      sellOpportunity(10, 0.12, { bestBidSize: 20, bid2: 0.11, bid2Size: 6 }),
+    );
+
+    assert.equal(client.marketOrders[0].price, 0.12);
   });
 });
 

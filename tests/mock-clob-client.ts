@@ -29,6 +29,22 @@ export class MockClobClient {
    * but the CLOB answers success=false / empty makingAmount.
    */
   public sellReportsKilledButFills = false;
+  /**
+   * Simulates the 250 ms taker delay (+ balance-cache lag): the SELL settles on
+   * the exchange but the balance drop is only visible on the SECOND balance
+   * read after the POST (the first read still shows the pre-sell balance).
+   * Lets tests cover the delayed re-check in Trader.placeSell.
+   */
+  public sellSettlesOnSecondRead = false;
+  /**
+   * CLOB reports success with the full makingAmount but the balance cache
+   * only drops a fraction of the sold size on the first re-read (partially
+   * stale cache). Covers the "trust the CLOB over a stale cache" override.
+   */
+  public sellDropsPartially = false;
+  private pendingSellDrop:
+    | { tokenId: string; amount: number; readsAfterPost: number }
+    | null = null;
   private orderCounter = 0;
 
   async updateBalanceAllowance(_params: { asset_type: string; token_id?: string }): Promise<void> {
@@ -37,6 +53,17 @@ export class MockClobClient {
 
   async getBalanceAllowance(params: { asset_type: string; token_id?: string }): Promise<{ balance: string }> {
     if (this.balanceShouldFail) throw new Error("balance read failed");
+    if (this.pendingSellDrop && this.pendingSellDrop.tokenId === params.token_id) {
+      this.pendingSellDrop.readsAfterPost -= 1;
+      if (this.pendingSellDrop.readsAfterPost <= 0) {
+        const cur = this.balances.get(params.token_id ?? "") ?? 0;
+        this.balances.set(
+          params.token_id ?? "",
+          Number(Math.max(0, cur - this.pendingSellDrop.amount).toFixed(2)),
+        );
+        this.pendingSellDrop = null;
+      }
+    }
     const shares = this.balances.get(params.token_id ?? "") ?? 0;
     return { balance: String(Math.round(shares * this.rawBalanceScale)) };
   }
@@ -93,6 +120,33 @@ export class MockClobClient {
       tokenID: req.tokenID,
     });
     const held = this.balances.get(req.tokenID) ?? 0;
+    if (req.side === "SELL" && this.sellDropsPartially) {
+      // CLOB confirms the full match but the balance cache only reflects a
+      // fraction of the drop on the re-read (partially stale cache).
+      const sold = Math.min(size, held);
+      this.balances.set(req.tokenID, Number(Math.max(0, held - sold / 10).toFixed(2)));
+      return {
+        success: true,
+        makingAmount: String(size),
+        takingAmount: String(Number((req.amount * req.price).toFixed(2))),
+        orderID,
+      };
+    }
+    if (req.side === "SELL" && this.sellSettlesOnSecondRead) {
+      // Real-world: match settles after the first balance re-read. Postpone
+      // the balance drop until the 2nd read after this POST, and report the
+      // order as killed in the meantime.
+      this.pendingSellDrop = {
+        tokenId: req.tokenID,
+        amount: Math.min(size, held),
+        // placeSell reads the balance twice after the POST (heldAfter, then
+        // the delayed heldLater); the settlement must be visible only on the
+        // 2nd read to exercise the delayed re-check.
+        readsAfterPost: 2,
+      };
+      this.orders.set(orderID, { status: "canceled", sizeMatched: 0, originalSize: size, side: req.side, price: req.price, tokenID: req.tokenID });
+      return { success: false, makingAmount: "", takingAmount: "", orderID };
+    }
     this.balances.set(
       req.tokenID,
       Number((req.side === "BUY" ? held + size : Math.max(0, held - size)).toFixed(2)),

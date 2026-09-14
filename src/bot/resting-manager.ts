@@ -368,6 +368,10 @@ export class RestingManager {
         bestAsk: expensiveBook?.bestAsk ?? null,
         bestAskSize: expensiveBook?.bestAskSize ?? null,
         bestBidSize: expensiveBook?.bestBidSize ?? null,
+        bid2: expensiveBook?.bid2 ?? null,
+        bid2Size: expensiveBook?.bid2Size ?? null,
+        bid3: expensiveBook?.bid3 ?? null,
+        bid3Size: expensiveBook?.bid3Size ?? null,
       },
       price: expensiveBid,
       size: expensiveSize,
@@ -499,6 +503,10 @@ export class RestingManager {
         bestAsk: freshBook?.bestAsk ?? null,
         bestAskSize: freshBook?.bestAskSize ?? null,
         bestBidSize: freshBook?.bestBidSize ?? null,
+        bid2: freshBook?.bid2 ?? null,
+        bid2Size: freshBook?.bid2Size ?? null,
+        bid3: freshBook?.bid3 ?? null,
+        bid3Size: freshBook?.bid3Size ?? null,
       },
       price: bestBid,
       size: uncoveredSize,
@@ -579,6 +587,53 @@ export class RestingManager {
     if (bestBid === null || bestBid <= 0) {
       return { ok: false, error: "Pas de bid pour vendre (carnet vide)" };
     }
+    // Wallet-truth sync: the CLOB validates the signer's balance BEFORE a
+    // SELL posts (order amount vs balance). If a previous sell actually
+    // filled on the exchange but the bot booked it as killed (250 ms taker
+    // delay / balance-cache lag), the position is phantom: the wallet no
+    // longer holds the shares and every later close attempt is rejected
+    // with "not enough balance / allowance". Detect it here and reconcile
+    // instead of posting an order that is guaranteed to be rejected.
+    const held = await this.deps.trader.getConditionalTokenBalance(position.tokenId);
+    if (held !== null && held < position.size) {
+      // The wallet holds fewer shares than the open position. The gap is a
+      // phantom remainder: a previous sell filled on the exchange but was
+      // booked as killed (taker delay / balance-cache lag), or the FOK
+      // rounded 7.12857 down to 7.12 leaving CLOB-minimum dust. Closing only
+      // `held` would leave a dust remainder below MIN_CLOB_SHARES that the
+      // CLOB refuses to sell — the row would be stuck open forever. Resolve
+      // the whole position at the best bid (best-effort price for the part
+      // actually sold) so the dashboard never keeps an unclosable row.
+      log("closePositionManual: wallet holds fewer shares than the open position — reconciling", {
+        positionId,
+        tokenId: position.tokenId,
+        held,
+        positionSize: position.size,
+        action: held < MIN_CLOB_SHARES ? "mark-sold (phantom)" : "reconcile (phantom remainder)",
+      });
+      this.deps.tracker.closePositionAsSold(positionId, bestBid, position.size);
+      await this.deps.lifecycle.cancelRestingHedgesForPair(
+        position.pairId,
+        "manual close (reconciled)",
+      );
+      return { ok: true, fillPrice: bestBid, soldSize: position.size };
+    }
+    // Early depth guard: placeSell walks down at most 3 bid ticks. If the
+    // visible 3-level depth cannot cover the position, the FOK would be
+    // killed by the CLOB — fail with a clear message instead of a terse
+    // killed-fok-sell.
+    const depth3 =
+      (freshBook?.bestBidSize ?? 0) +
+      (freshBook?.bid2Size ?? 0) +
+      (freshBook?.bid3Size ?? 0);
+    if (depth3 > 0 && depth3 < position.size) {
+      const depthShown = Math.round(depth3 * 100) / 100;
+      const sizeShown = Math.round(position.size * 100) / 100;
+      return {
+        ok: false,
+        error: `Profondeur au bid insuffisante (${depthShown} shares, position ${sizeShown})`,
+      };
+    }
     const pair = this.deps.tracker.getPair(position.pairId);
     const sellOpportunity: TradeOpportunity = {
       kind: position.kind,
@@ -597,6 +652,10 @@ export class RestingManager {
         bestAsk: freshBook?.bestAsk ?? null,
         bestAskSize: freshBook?.bestAskSize ?? null,
         bestBidSize: freshBook?.bestBidSize ?? null,
+        bid2: freshBook?.bid2 ?? null,
+        bid2Size: freshBook?.bid2Size ?? null,
+        bid3: freshBook?.bid3 ?? null,
+        bid3Size: freshBook?.bid3Size ?? null,
       },
       price: bestBid,
       size: position.size,

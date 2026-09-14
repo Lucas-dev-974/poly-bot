@@ -1,0 +1,271 @@
+{
+  "phase": "explore-momentum",
+  "auditPath": "C:\\Users\\lcsystem\\Desktop\\TradeInterface\\polymarket-github\\polymarket-reverse-arbitrage-bot\\audits\\arb-backtest\\audit-data-coverage-1789363201479.json",
+  "windowsClosed": 313,
+  "windowsWithResolution": 310,
+  "totalSamples": 983572,
+  "samplesWithLookback": 983572,
+  "favHoldsToClose": {
+    "n": 310,
+    "win": 0,
+    "winRate": 0
+  },
+  "priceOnly": [
+    {
+      "band": "0.50-0.60",
+      "n": 29000,
+      "winRate": 51.7,
+      "avgCost": 0.5,
+      "ev": 0.017
+    },
+    {
+      "band": "0.40-0.50",
+      "n": 247904,
+      "winRate": 45.9,
+      "avgCost": 0.447,
+      "ev": 0.012
+    }
+  ],
+  "momentum": [
+    {
+      "lookback": "60s",
+      "band": "0.50-0.60",
+      "momentum": "down",
+      "n": 229,
+      "winRate": 67.2,
+      "avgCost": 0.5000436681222707,
+      "ev": 0.17244541484716158,
+      "pnlPerShare": 17.24
+    },
+    {
+      "lookback": "120s",
+      "band": "0.50-0.60",
+      "momentum": "down",
+      "n": 339,
+      "winRate": 59.6,
+      "avgCost": 0.5000294985250737,
+      "ev": 0.09584070796460176,
+      "pnlPerShare": 9.58
+    },
+    {
+      "lookback": "60s",
+      "band": "0.40-0.50",
+      "momentum": "flat",
+      "n": 5221,
+      "winRate": 48.9,
+      "avgCost": 0.4576786056311156,
+      "ev": 0.03149971269870627,
+      "pnlPerShare": 3.15
+    },
+    {
+      "lookback": "360s",
+      "band": "0.50-0.60",
+      "momentum": "flat",
+      "n": 1188,
+      "winRate": 53,
+      "avgCost": 0.5001599326599326,
+      "ev": 0.03014309764309764,
+      "pnlPerShare": 3.01
+    },
+    {
+      "lookback": "360s",
+      "band": "0.40-0.50",
+      "momentum": "up",
+      "n": 18656,
+      "winRate": 48.9,
+      "avgCost": 0.4600646440822384,
+      "ev": 0.029322148370591772,
+      "pnlPerShare": 2.93
+    },
+    {
+      "lookback": "120s",
+      "band": "0.50-0.60",
+      "momentum": "up",
+      "n": 5920,
+      "winRate": 52.2,
+      "avgCost": 0.5003614864864872,
+      "ev": 0.021766891891891182,
+      "pnlPerShare": 2.18
+    },
+    {
+      "lookback": "240s",
+      "band": "0.50-0.60",
+      "momentum": "up",
+      "n": 5701,
+      "winRate": 52.1,
+      "avgCost": 0.5003718645851611,
+      "ev": 0.0204139624627252,
+      "pnlPerShare": 2.04
+    },
+    {
+      "lookback": "120s",
+      "band": "0.40-0.50",
+      "momentum": "flat",
+      "n": 4779,
+      "winRate": 48.1,
+      "avgCost": 0.4613643021552753,
+      "ev": 0.019489432935747952,
+      "pnlPerShare": 1.95
+    },
+    {
+      "lookback": "60s",
+      "band": "0.50-0.60",
+      "momentum": "up",
+      "n": 6114,
+      "winRate": 51.8,
+      "avgCost": 0.5003631010794904,
+      "ev": 0.01730127576054885,
+      "pnlPerShare": 1.73
+    },
+    {
+      "lookback": "60s",
+      "band": "0.40-0.50",
+      "momentum": "down",
+      "n": 27658,
+      "winRate": 45.3,
+      "avgCost": 0.4381600260321982,
+      "ev": 0.015271169281996566,
+      "pnlPerShare": 1.53
+    },
+    {
+      "lookback": "360s",
+      "band": "0.50-0.60",
+      "momentum": "up",
+      "n": 5432,
+      "winRate": 51.5,
+      "avgCost": 0.5003829160530195,
+      "ev": 0.015081001472753597,
+      "pnlPerShare": 1.51
+    },
+    {
+      "lookback": "120s",
+      "band": "0.40-0.50",
+      "momentum": "down",
+      "n": 29456,
+      "winRate": 45.3,
+      "avgCost": 0.43827131993476726,
+      "ev": 0.014641499185276186,
+      "pnlPerShare": 1.46
+    },
+    {
+      "lookback": "240s",
+      "band": "0.40-0.50",
+      "momentum": "up",
+      "n": 22288,
+      "winRate": 47.1,
+      "avgCost": 0.45750789662588376,
+      "ev": 0.01323869346744,
+      "pnlPerShare": 1.32
+    },
+    {
+      "lookback": "240s",
+      "band": "0.50-0.60",
+      "momentum": "down",
+      "n": 527,
+      "winRate": 51.2,
+      "avgCost": 0.5000379506641366,
+      "ev": 0.012296015180265685,
+      "pnlPerShare": 1.23
+    },
+    {
+      "lookback": "240s",
+      "band": "0.40-0.50",
+      "momentum": "down",
+      "n": 35128,
+      "winRate": 45.1,
+      "avgCost": 0.438877818264579,
+      "ev": 0.011731382373088961,
+      "pnlPerShare": 1.17
+    },
+    {
+      "lookback": "360s",
+      "band": "0.50-0.60",
+      "momentum": "down",
+      "n": 630,
+      "winRate": 51,
+      "avgCost": 0.500031746031746,
+      "ev": 0.00949206349206344,
+      "pnlPerShare": 0.95
+    },
+    {
+      "lookback": "120s",
+      "band": "0.40-0.50",
+      "momentum": "up",
+      "n": 27741,
+      "winRate": 46.2,
+      "avgCost": 0.454706968025556,
+      "ev": 0.00717256047017234,
+      "pnlPerShare": 0.72
+    },
+    {
+      "lookback": "60s",
+      "band": "0.40-0.50",
+      "momentum": "up",
+      "n": 29097,
+      "winRate": 45.9,
+      "avgCost": 0.4543573564283915,
+      "ev": 0.004693404818472469,
+      "pnlPerShare": 0.47
+    },
+    {
+      "lookback": "360s",
+      "band": "0.40-0.50",
+      "momentum": "down",
+      "n": 38540,
+      "winRate": 44.4,
+      "avgCost": 0.43904929942910603,
+      "ev": 0.004671510119414968,
+      "pnlPerShare": 0.47
+    },
+    {
+      "lookback": "240s",
+      "band": "0.40-0.50",
+      "momentum": "flat",
+      "n": 4560,
+      "winRate": 46.7,
+      "avgCost": 0.46376535087721354,
+      "ev": 0.003559210526295209,
+      "pnlPerShare": 0.36
+    },
+    {
+      "lookback": "240s",
+      "band": "0.50-0.60",
+      "momentum": "flat",
+      "n": 1022,
+      "winRate": 50.1,
+      "avgCost": 0.500146771037182,
+      "ev": 0.0008317025440313097,
+      "pnlPerShare": 0.08
+    },
+    {
+      "lookback": "360s",
+      "band": "0.40-0.50",
+      "momentum": "flat",
+      "n": 4780,
+      "winRate": 46.5,
+      "avgCost": 0.465414225941434,
+      "ev": -0.000769874476998833,
+      "pnlPerShare": -0.08
+    },
+    {
+      "lookback": "60s",
+      "band": "0.50-0.60",
+      "momentum": "flat",
+      "n": 907,
+      "winRate": 47.6,
+      "avgCost": 0.5000661521499448,
+      "ev": -0.023770672546857663,
+      "pnlPerShare": -2.38
+    },
+    {
+      "lookback": "120s",
+      "band": "0.50-0.60",
+      "momentum": "flat",
+      "n": 991,
+      "winRate": 46.2,
+      "avgCost": 0.5001412714429868,
+      "ev": -0.03798183652875875,
+      "pnlPerShare": -3.8
+    }
+  ]
+}

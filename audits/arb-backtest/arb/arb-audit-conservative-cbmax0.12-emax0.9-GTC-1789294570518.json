@@ -1,0 +1,221 @@
+{
+  "runId": "arb-audit-conservative-cbmax0.12-emax0.9-GTC-1789294570518",
+  "when": "2026-09-13T10:16:15.998Z",
+  "preset": "conservative-cbmax0.12-emax0.9-GTC",
+  "basePreset": "conservative",
+  "config": {
+    "strategyId": "arb",
+    "pairLockMax": 0.99,
+    "cheapBuyMin": 0.07,
+    "cheapBuyMax": 0.12,
+    "expensiveBuyMin": 0.76,
+    "expensiveBuyMax": 0.9,
+    "cheapOrderUsdc": 1,
+    "expensiveOrderUsdc": 12,
+    "expensiveOrderType": "GTC",
+    "simulatedCapital": 50,
+    "maxExposureUsdc": 25
+  },
+  "universe": {
+    "btcWindows": 363,
+    "completeWindows": 84,
+    "skippedIncomplete": 279
+  },
+  "headline": {
+    "strategyId": "arb",
+    "windowsTested": 84,
+    "windowsSkippedIncomplete": 279,
+    "unresolvedWindows": 0,
+    "coveredPairs": 1,
+    "uncoveredPairs": 75,
+    "uncoveredRatePct": 98.68,
+    "fillCount": 152,
+    "rejectCount": 40,
+    "capitalStart": 50,
+    "capitalEnd": 37.82,
+    "pnl": -12.18,
+    "pnlPctOfStart": -24.36
+  },
+  "flow": {
+    "filledBuyCheap": 76,
+    "filledBuyExpensive": 1,
+    "filledSellCheap": 75,
+    "hedgeRatioVsCheapBuys": 1.3,
+    "sellVsCheapBuys": 98.7
+  },
+  "tradeGroups": [
+    {
+      "side": "BUY",
+      "kind": "cheap",
+      "reason": "resting",
+      "filled": 0,
+      "c": 575,
+      "sz": 5048.92,
+      "pnlSum": 0
+    },
+    {
+      "side": "BUY",
+      "kind": "cheap",
+      "reason": null,
+      "filled": 1,
+      "c": 76,
+      "sz": 690.4,
+      "pnlSum": 0
+    },
+    {
+      "side": "SELL",
+      "kind": "cheap",
+      "reason": "defend",
+      "filled": 1,
+      "c": 75,
+      "sz": 681.3,
+      "pnlSum": 0
+    },
+    {
+      "side": "BUY",
+      "kind": "expensive",
+      "reason": null,
+      "filled": 1,
+      "c": 1,
+      "sz": 9.1,
+      "pnlSum": 0
+    }
+  ],
+  "posGroups": [
+    {
+      "kind": "cheap",
+      "status": "sold",
+      "c": 150,
+      "sz": 1362.6,
+      "pnlSum": -24.54
+    },
+    {
+      "kind": "cheap",
+      "status": "lost",
+      "c": 1,
+      "sz": 9.1,
+      "pnlSum": -1
+    },
+    {
+      "kind": "expensive",
+      "status": "won",
+      "c": 1,
+      "sz": 9.1,
+      "pnlSum": 1.09
+    }
+  ],
+  "sellReasons": [
+    {
+      "reason": "defend",
+      "c": 75,
+      "sz": 681.3,
+      "pnlSum": 0
+    }
+  ],
+  "policyAHints": [
+    {
+      "reason": "defend",
+      "c": 75
+    }
+  ],
+  "worstWindows": [
+    {
+      "eventSlug": "btc-updown-15m-1788876900",
+      "pnl": 0,
+      "trades": 11,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1788885000",
+      "pnl": 0,
+      "trades": 6,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1788885900",
+      "pnl": 0,
+      "trades": 8,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1788886800",
+      "pnl": 0,
+      "trades": 15,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1788887700",
+      "pnl": 0,
+      "trades": 13,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1788888600",
+      "pnl": 0,
+      "trades": 15,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1788889500",
+      "pnl": 0,
+      "trades": 14,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1788890400",
+      "pnl": 0,
+      "trades": 5,
+      "fills": 2
+    }
+  ],
+  "bestWindows": [
+    {
+      "eventSlug": "btc-updown-15m-1789291800",
+      "pnl": 0,
+      "trades": 12,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789290000",
+      "pnl": 0,
+      "trades": 6,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789289100",
+      "pnl": 0,
+      "trades": 18,
+      "fills": 0
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789288200",
+      "pnl": 0,
+      "trades": 6,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789286400",
+      "pnl": 0,
+      "trades": 5,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789284600",
+      "pnl": 0,
+      "trades": 3,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789282800",
+      "pnl": 0,
+      "trades": 8,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789281000",
+      "pnl": 0,
+      "trades": 3,
+      "fills": 2
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "headline": {
+    "pnl": -28.19,
+    "capitalStart": 50,
+    "capitalEnd": 21.81,
+    "fills": 223,
+    "rejects": 8108,
+    "covered": 96,
+    "uncovered": 4,
+    "windows": 301,
+    "definition": "rejectCount = in-memory trades with filled=false (FOK no-fill retries, exposure-cap, insufficient-capital, band skips, …). Resting GTC posts are not counted unless a separate unfilled trade row is pushed."
+  },
+  "rejectBreakdown": [
+    {
+      "key": "insufficient-capital|GTC|expensive|BUY",
+      "count": 8078
+    },
+    {
+      "key": "insufficient-capital|GTC|cheap|BUY",
+      "count": 30
+    }
+  ],
+  "top": [
+    {
+      "key": "insufficient-capital|GTC|expensive|BUY",
+      "count": 8078
+    },
+    {
+      "key": "insufficient-capital|GTC|cheap|BUY",
+      "count": 30
+    }
+  ]
+}

@@ -1,0 +1,406 @@
+{
+  "phase": "measure-scalp",
+  "minElapsed": 240,
+  "rows": [
+    {
+      "buyMax": "0.35",
+      "favMin": "0.55",
+      "spreadCap": "0.04",
+      "takeProfit": "0.03",
+      "nWindows": 310,
+      "soldPct": 77.1,
+      "winPct": 77.1,
+      "evPerShareCents": -2.03
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.6",
+      "spreadCap": "0.04",
+      "takeProfit": "0.03",
+      "nWindows": 310,
+      "soldPct": 77.1,
+      "winPct": 77.1,
+      "evPerShareCents": -2.03
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.55",
+      "spreadCap": "0.03",
+      "takeProfit": "0.03",
+      "nWindows": 310,
+      "soldPct": 77.1,
+      "winPct": 77.1,
+      "evPerShareCents": -2.04
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.6",
+      "spreadCap": "0.03",
+      "takeProfit": "0.03",
+      "nWindows": 310,
+      "soldPct": 77.1,
+      "winPct": 77.1,
+      "evPerShareCents": -2.04
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.55",
+      "spreadCap": "0.02",
+      "takeProfit": "0.03",
+      "nWindows": 310,
+      "soldPct": 77.1,
+      "winPct": 77.1,
+      "evPerShareCents": -2.05
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.6",
+      "spreadCap": "0.02",
+      "takeProfit": "0.03",
+      "nWindows": 310,
+      "soldPct": 77.1,
+      "winPct": 77.1,
+      "evPerShareCents": -2.05
+    },
+    {
+      "buyMax": "0.3",
+      "favMin": "0.55",
+      "spreadCap": "0.03",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 78.7,
+      "winPct": 78.7,
+      "evPerShareCents": -2.12
+    },
+    {
+      "buyMax": "0.3",
+      "favMin": "0.55",
+      "spreadCap": "0.04",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 78.7,
+      "winPct": 78.7,
+      "evPerShareCents": -2.12
+    },
+    {
+      "buyMax": "0.3",
+      "favMin": "0.6",
+      "spreadCap": "0.03",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 78.7,
+      "winPct": 78.7,
+      "evPerShareCents": -2.12
+    },
+    {
+      "buyMax": "0.3",
+      "favMin": "0.6",
+      "spreadCap": "0.04",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 78.7,
+      "winPct": 78.7,
+      "evPerShareCents": -2.12
+    },
+    {
+      "buyMax": "0.3",
+      "favMin": "0.55",
+      "spreadCap": "0.02",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 78.4,
+      "winPct": 78.4,
+      "evPerShareCents": -2.24
+    },
+    {
+      "buyMax": "0.3",
+      "favMin": "0.6",
+      "spreadCap": "0.02",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 78.4,
+      "winPct": 78.4,
+      "evPerShareCents": -2.24
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.55",
+      "spreadCap": "0.02",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 80.3,
+      "winPct": 80.3,
+      "evPerShareCents": -2.27
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.6",
+      "spreadCap": "0.02",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 80.3,
+      "winPct": 80.3,
+      "evPerShareCents": -2.27
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.55",
+      "spreadCap": "0.04",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 80.3,
+      "winPct": 80.3,
+      "evPerShareCents": -2.29
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.6",
+      "spreadCap": "0.04",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 80.3,
+      "winPct": 80.3,
+      "evPerShareCents": -2.29
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.55",
+      "spreadCap": "0.03",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 80.3,
+      "winPct": 80.3,
+      "evPerShareCents": -2.3
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.6",
+      "spreadCap": "0.03",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 80.3,
+      "winPct": 80.3,
+      "evPerShareCents": -2.3
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.55",
+      "spreadCap": "0.02",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 79,
+      "winPct": 79,
+      "evPerShareCents": -2.36
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.55",
+      "spreadCap": "0.04",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 79,
+      "winPct": 79,
+      "evPerShareCents": -2.36
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.6",
+      "spreadCap": "0.02",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 79,
+      "winPct": 79,
+      "evPerShareCents": -2.36
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.6",
+      "spreadCap": "0.04",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 79,
+      "winPct": 79,
+      "evPerShareCents": -2.36
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.55",
+      "spreadCap": "0.03",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 79,
+      "winPct": 79,
+      "evPerShareCents": -2.37
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.6",
+      "spreadCap": "0.03",
+      "takeProfit": "0.02",
+      "nWindows": 310,
+      "soldPct": 79,
+      "winPct": 79,
+      "evPerShareCents": -2.37
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.55",
+      "spreadCap": "0.04",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 73.5,
+      "winPct": 73.5,
+      "evPerShareCents": -2.41
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.6",
+      "spreadCap": "0.04",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 73.5,
+      "winPct": 73.5,
+      "evPerShareCents": -2.41
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.55",
+      "spreadCap": "0.03",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 73.5,
+      "winPct": 73.5,
+      "evPerShareCents": -2.42
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.6",
+      "spreadCap": "0.03",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 73.5,
+      "winPct": 73.5,
+      "evPerShareCents": -2.42
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.55",
+      "spreadCap": "0.02",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 73.5,
+      "winPct": 73.5,
+      "evPerShareCents": -2.43
+    },
+    {
+      "buyMax": "0.35",
+      "favMin": "0.6",
+      "spreadCap": "0.02",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 73.5,
+      "winPct": 73.5,
+      "evPerShareCents": -2.43
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.55",
+      "spreadCap": "0.02",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 75.5,
+      "winPct": 75.5,
+      "evPerShareCents": -2.44
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.55",
+      "spreadCap": "0.04",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 75.5,
+      "winPct": 75.5,
+      "evPerShareCents": -2.44
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.6",
+      "spreadCap": "0.02",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 75.5,
+      "winPct": 75.5,
+      "evPerShareCents": -2.44
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.6",
+      "spreadCap": "0.04",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 75.5,
+      "winPct": 75.5,
+      "evPerShareCents": -2.44
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.55",
+      "spreadCap": "0.03",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 75.5,
+      "winPct": 75.5,
+      "evPerShareCents": -2.45
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.6",
+      "spreadCap": "0.03",
+      "takeProfit": "0.04",
+      "nWindows": 310,
+      "soldPct": 75.5,
+      "winPct": 75.5,
+      "evPerShareCents": -2.45
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.55",
+      "spreadCap": "0.02",
+      "takeProfit": "0.03",
+      "nWindows": 310,
+      "soldPct": 77.1,
+      "winPct": 77.1,
+      "evPerShareCents": -2.46
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.55",
+      "spreadCap": "0.04",
+      "takeProfit": "0.03",
+      "nWindows": 310,
+      "soldPct": 77.1,
+      "winPct": 77.1,
+      "evPerShareCents": -2.46
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.6",
+      "spreadCap": "0.02",
+      "takeProfit": "0.03",
+      "nWindows": 310,
+      "soldPct": 77.1,
+      "winPct": 77.1,
+      "evPerShareCents": -2.46
+    },
+    {
+      "buyMax": "0.4",
+      "favMin": "0.6",
+      "spreadCap": "0.04",
+      "takeProfit": "0.03",
+      "nWindows": 310,
+      "soldPct": 77.1,
+      "winPct": 77.1,
+      "evPerShareCents": -2.46
+    }
+  ]
+}

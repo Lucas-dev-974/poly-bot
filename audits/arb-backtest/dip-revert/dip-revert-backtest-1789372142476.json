@@ -1,0 +1,82 @@
+{
+  "criteria": {
+    "minTicks": 801,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 321,
+  "ranked": [
+    {
+      "label": "dip-revert-base",
+      "strategyId": "dip-revert",
+      "ms": 13915,
+      "pnl": 289.6,
+      "pnlPct": 57.92,
+      "capitalStart": 500,
+      "capitalEnd": 789.6,
+      "covered": 0,
+      "uncovered": 239,
+      "fills": 239,
+      "rejects": 0,
+      "unresolved": 0,
+      "windows": 321,
+      "winRate": 64.9,
+      "wins": 155,
+      "losses": 84
+    },
+    {
+      "label": "fav-band-ref",
+      "strategyId": "fav-band",
+      "ms": 13619,
+      "pnl": 205.05,
+      "pnlPct": 41.01,
+      "capitalStart": 500,
+      "capitalEnd": 705.05,
+      "covered": 0,
+      "uncovered": 316,
+      "fills": 316,
+      "rejects": 2,
+      "unresolved": 0,
+      "windows": 321,
+      "winRate": 76.6,
+      "wins": 242,
+      "losses": 74
+    },
+    {
+      "label": "dip-revert-loose",
+      "strategyId": "dip-revert",
+      "ms": 12575,
+      "pnl": 96.67,
+      "pnlPct": 19.33,
+      "capitalStart": 500,
+      "capitalEnd": 596.67,
+      "covered": 0,
+      "uncovered": 250,
+      "fills": 250,
+      "rejects": 0,
+      "unresolved": 0,
+      "windows": 321,
+      "winRate": 60.8,
+      "wins": 152,
+      "losses": 98
+    },
+    {
+      "label": "dip-revert-tight",
+      "strategyId": "dip-revert",
+      "ms": 12726,
+      "pnl": 26.33,
+      "pnlPct": 5.27,
+      "capitalStart": 500,
+      "capitalEnd": 526.33,
+      "covered": 0,
+      "uncovered": 219,
+      "fills": 219,
+      "rejects": 0,
+      "unresolved": 0,
+      "windows": 321,
+      "winRate": 60.3,
+      "wins": 132,
+      "losses": 87
+    }
+  ]
+}

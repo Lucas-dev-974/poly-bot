@@ -247,9 +247,9 @@ const audit = {
   bestWindows: best,
 };
 
-mkdirSync(join("audits", "arb-backtest"), { recursive: true });
-const outJson = join("audits", "arb-backtest", `${runId}.json`);
-const outMd = join("audits", "arb-backtest", `${runId}.md`);
+mkdirSync(join("audits", "arb-backtest", "arb"), { recursive: true });
+const outJson = join("audits", "arb-backtest", "arb", `${runId}.json`);
+const outMd = join("audits", "arb-backtest", "arb", `${runId}.md`);
 writeFileSync(outJson, JSON.stringify(audit, null, 2));
 
 const md = `# Audit backtest ARB — ${runId}

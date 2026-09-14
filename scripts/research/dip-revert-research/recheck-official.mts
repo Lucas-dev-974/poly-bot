@@ -183,10 +183,11 @@ for (const spec of specs) {
 }
 
 rows.sort((a, b) => Number(b.pnlPct) - Number(a.pnlPct));
-mkdirSync(join("audits", "arb-backtest"), { recursive: true });
+mkdirSync(join("audits", "arb-backtest", "dip-revert"), { recursive: true });
 const outPath = join(
   "audits",
   "arb-backtest",
+  "dip-revert",
   `dip-revert-recheck-${Date.now()}.json`,
 );
 writeFileSync(outPath, JSON.stringify({ criteria, windows: selected.length, ranked: rows }, null, 2));

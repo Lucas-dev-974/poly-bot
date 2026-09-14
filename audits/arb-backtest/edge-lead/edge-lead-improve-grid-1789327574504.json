@@ -1,0 +1,212 @@
+{
+  "windows": 301,
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "rows": [
+    {
+      "id": "size-small-cap100",
+      "ms": 13466,
+      "pnl": -16.05,
+      "pnlPct": -16.05,
+      "capitalStart": 100,
+      "capitalEnd": 83.95,
+      "covered": 269,
+      "uncovered": 8,
+      "fills": 572,
+      "rejects": 0,
+      "overrides": {
+        "edgeOrderUsdc": 10,
+        "edgeCheapOrderUsdc": 2,
+        "maxShareEdge": 15,
+        "maxSharesPerOrder": 15,
+        "maxExposureUsdc": 25,
+        "simulatedCapital": 100
+      }
+    },
+    {
+      "id": "combo-robust",
+      "ms": 13104,
+      "pnl": -24.59,
+      "pnlPct": -24.59,
+      "capitalStart": 100,
+      "capitalEnd": 75.41,
+      "covered": 199,
+      "uncovered": 12,
+      "fills": 446,
+      "rejects": 0,
+      "overrides": {
+        "edgeConfirmSamples": 8,
+        "edgeBandMin": 0.86,
+        "edgeBandMax": 0.89,
+        "edgeMaxDownTick": 0.005,
+        "edgeSellExpensiveAfterMin": 3,
+        "edgeSellExpensiveLossPct": 5,
+        "edgeSellExpensiveLossWindowMs": 5000,
+        "edgeOrderUsdc": 10,
+        "edgeCheapOrderUsdc": 2,
+        "maxShareEdge": 15,
+        "maxSharesPerOrder": 15,
+        "maxExposureUsdc": 25,
+        "simulatedCapital": 100
+      }
+    },
+    {
+      "id": "confirm-8",
+      "ms": 12493,
+      "pnl": -25.25,
+      "pnlPct": -50.5,
+      "capitalStart": 50,
+      "capitalEnd": 24.75,
+      "covered": 63,
+      "uncovered": 3,
+      "fills": 154,
+      "rejects": 8132,
+      "overrides": {
+        "edgeConfirmSamples": 8
+      }
+    },
+    {
+      "id": "maxDown-0.005",
+      "ms": 11917,
+      "pnl": -25.54,
+      "pnlPct": -51.08,
+      "capitalStart": 50,
+      "capitalEnd": 24.46,
+      "covered": 69,
+      "uncovered": 2,
+      "fills": 157,
+      "rejects": 7307,
+      "overrides": {
+        "edgeMaxDownTick": 0.005
+      }
+    },
+    {
+      "id": "confirm-10",
+      "ms": 12379,
+      "pnl": -25.62,
+      "pnlPct": -51.24,
+      "capitalStart": 50,
+      "capitalEnd": 24.38,
+      "covered": 59,
+      "uncovered": 6,
+      "fills": 143,
+      "rejects": 7717,
+      "overrides": {
+        "edgeConfirmSamples": 10
+      }
+    },
+    {
+      "id": "band-86-89",
+      "ms": 12944,
+      "pnl": -25.65,
+      "pnlPct": -51.3,
+      "capitalStart": 50,
+      "capitalEnd": 24.35,
+      "covered": 63,
+      "uncovered": 1,
+      "fills": 149,
+      "rejects": 4759,
+      "overrides": {
+        "edgeBandMin": 0.86,
+        "edgeBandMax": 0.89
+      }
+    },
+    {
+      "id": "band-87-90",
+      "ms": 11851,
+      "pnl": -26.41,
+      "pnlPct": -52.82,
+      "capitalStart": 50,
+      "capitalEnd": 23.59,
+      "covered": 66,
+      "uncovered": 1,
+      "fills": 154,
+      "rejects": 5045,
+      "overrides": {
+        "edgeBandMin": 0.87,
+        "edgeBandMax": 0.9
+      }
+    },
+    {
+      "id": "stop-very-tight",
+      "ms": 12334,
+      "pnl": -26.57,
+      "pnlPct": -53.14,
+      "capitalStart": 50,
+      "capitalEnd": 23.43,
+      "covered": 53,
+      "uncovered": 11,
+      "fills": 140,
+      "rejects": 9152,
+      "overrides": {
+        "edgeSellExpensiveAfterMin": 2,
+        "edgeSellExpensiveLossPct": 3,
+        "edgeSellExpensiveLossWindowMs": 3000
+      }
+    },
+    {
+      "id": "baseline",
+      "ms": 14648,
+      "pnl": -28.19,
+      "pnlPct": -56.38,
+      "capitalStart": 50,
+      "capitalEnd": 21.81,
+      "covered": 96,
+      "uncovered": 4,
+      "fills": 223,
+      "rejects": 8108,
+      "overrides": {}
+    },
+    {
+      "id": "stop-tight",
+      "ms": 11742,
+      "pnl": -29.25,
+      "pnlPct": -58.5,
+      "capitalStart": 50,
+      "capitalEnd": 20.75,
+      "covered": 54,
+      "uncovered": 8,
+      "fills": 137,
+      "rejects": 9317,
+      "overrides": {
+        "edgeSellExpensiveAfterMin": 3,
+        "edgeSellExpensiveLossPct": 5,
+        "edgeSellExpensiveLossWindowMs": 5000
+      }
+    },
+    {
+      "id": "cheap-band-wide",
+      "ms": 12435,
+      "pnl": -30.17,
+      "pnlPct": -60.34,
+      "capitalStart": 50,
+      "capitalEnd": 19.83,
+      "covered": 61,
+      "uncovered": 4,
+      "fills": 143,
+      "rejects": 9670,
+      "overrides": {
+        "edgeCheapBandMin": 0.02,
+        "edgeCheapBandMax": 0.2
+      }
+    },
+    {
+      "id": "no-edge-sell",
+      "ms": 12106,
+      "pnl": -30.38,
+      "pnlPct": -60.76,
+      "capitalStart": 50,
+      "capitalEnd": 19.62,
+      "covered": 94,
+      "uncovered": 1,
+      "fills": 212,
+      "rejects": 8276,
+      "overrides": {
+        "edgeSellExpensiveEnabled": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "runId": "arb-audit-conservative-cbmax0.5-emax0.99-FOK-1789296966165",
+  "when": "2026-09-13T10:56:11.109Z",
+  "preset": "conservative-cbmax0.5-emax0.99-FOK",
+  "basePreset": "conservative",
+  "config": {
+    "strategyId": "arb",
+    "pairLockMax": 0.99,
+    "cheapBuyMin": 0.07,
+    "cheapBuyMax": 0.5,
+    "expensiveBuyMin": 0.76,
+    "expensiveBuyMax": 0.99,
+    "cheapOrderUsdc": 1,
+    "expensiveOrderUsdc": 12,
+    "expensiveOrderType": "FOK",
+    "simulatedCapital": 50,
+    "maxExposureUsdc": 25
+  },
+  "universe": {
+    "btcWindows": 365,
+    "completeWindows": 85,
+    "skippedIncomplete": 280
+  },
+  "headline": {
+    "strategyId": "arb",
+    "windowsTested": 85,
+    "windowsSkippedIncomplete": 280,
+    "unresolvedWindows": 0,
+    "coveredPairs": 0,
+    "uncoveredPairs": 0,
+    "uncoveredRatePct": null,
+    "fillCount": 0,
+    "rejectCount": 0,
+    "capitalStart": 50,
+    "capitalEnd": 50,
+    "pnl": 0,
+    "pnlPctOfStart": 0
+  },
+  "flow": {
+    "filledBuyCheap": 0,
+    "filledBuyExpensive": 0,
+    "filledSellCheap": 0,
+    "hedgeRatioVsCheapBuys": null,
+    "sellVsCheapBuys": null
+  },
+  "tradeGroups": [],
+  "posGroups": [],
+  "sellReasons": [],
+  "policyAHints": [],
+  "worstWindows": [],
+  "bestWindows": []
+}

@@ -1,0 +1,138 @@
+{
+  "runId": "arb-audit-ask-lock-1789302816650",
+  "when": "2026-09-13T12:33:40.618Z",
+  "preset": "ask-lock",
+  "basePreset": "ask-lock",
+  "config": {
+    "strategyId": "arb",
+    "pairLockMax": 0.99,
+    "cheapBuyMin": 0.01,
+    "cheapBuyMax": 0.49,
+    "expensiveBuyMin": 0.5,
+    "expensiveBuyMax": 0.99,
+    "cheapOrderUsdc": 1,
+    "expensiveOrderUsdc": 12,
+    "expensiveOrderType": "FOK",
+    "simulatedCapital": 50,
+    "maxExposureUsdc": 25
+  },
+  "universe": {
+    "btcWindows": 372,
+    "completeWindows": 88,
+    "skippedIncomplete": 284
+  },
+  "headline": {
+    "strategyId": "arb",
+    "windowsTested": 88,
+    "windowsSkippedIncomplete": 284,
+    "unresolvedWindows": 0,
+    "coveredPairs": 3,
+    "uncoveredPairs": 0,
+    "uncoveredRatePct": 0,
+    "fillCount": 6,
+    "rejectCount": 3,
+    "capitalStart": 50,
+    "capitalEnd": 50.23,
+    "pnl": 0.23,
+    "pnlPctOfStart": 0.46
+  },
+  "flow": {
+    "filledBuyCheap": 3,
+    "filledBuyExpensive": 3,
+    "filledSellCheap": 0,
+    "hedgeRatioVsCheapBuys": 100,
+    "sellVsCheapBuys": 0
+  },
+  "tradeGroups": [
+    {
+      "side": "BUY",
+      "kind": "cheap",
+      "reason": null,
+      "filled": 1,
+      "c": 3,
+      "sz": 22.66,
+      "pnlSum": 0
+    },
+    {
+      "side": "BUY",
+      "kind": "expensive",
+      "reason": null,
+      "filled": 1,
+      "c": 3,
+      "sz": 22.66,
+      "pnlSum": 0
+    }
+  ],
+  "posGroups": [
+    {
+      "kind": "cheap",
+      "status": "lost",
+      "c": 2,
+      "sz": 14.76,
+      "pnlSum": -1.96
+    },
+    {
+      "kind": "expensive",
+      "status": "won",
+      "c": 2,
+      "sz": 14.76,
+      "pnlSum": 2.11
+    },
+    {
+      "kind": "cheap",
+      "status": "won",
+      "c": 1,
+      "sz": 7.9,
+      "pnlSum": 7.03
+    },
+    {
+      "kind": "expensive",
+      "status": "lost",
+      "c": 1,
+      "sz": 7.9,
+      "pnlSum": -6.95
+    }
+  ],
+  "sellReasons": [],
+  "policyAHints": [],
+  "worstWindows": [
+    {
+      "eventSlug": "btc-updown-15m-1789090200",
+      "pnl": 0,
+      "trades": 2,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789094700",
+      "pnl": 0,
+      "trades": 2,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789098300",
+      "pnl": 0,
+      "trades": 2,
+      "fills": 2
+    }
+  ],
+  "bestWindows": [
+    {
+      "eventSlug": "btc-updown-15m-1789098300",
+      "pnl": 0,
+      "trades": 2,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789094700",
+      "pnl": 0,
+      "trades": 2,
+      "fills": 2
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789090200",
+      "pnl": 0,
+      "trades": 2,
+      "fills": 2
+    }
+  ]
+}

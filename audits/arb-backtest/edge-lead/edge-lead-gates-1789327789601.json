@@ -1,0 +1,119 @@
+{
+  "windows": 301,
+  "rows": [
+    {
+      "id": "asksum-0.99",
+      "pnl": 0,
+      "pnlPct": 0,
+      "capitalStart": 50,
+      "capitalEnd": 50,
+      "covered": 0,
+      "uncovered": 0,
+      "fills": 0,
+      "rejects": 0,
+      "overrides": {
+        "edgeAskSumMax": 0.99
+      }
+    },
+    {
+      "id": "cheap-ready+asksum99",
+      "pnl": 0,
+      "pnlPct": 0,
+      "capitalStart": 50,
+      "capitalEnd": 50,
+      "covered": 0,
+      "uncovered": 0,
+      "fills": 0,
+      "rejects": 0,
+      "overrides": {
+        "edgeRequireCheapReady": true,
+        "edgeAskSumMax": 0.99
+      }
+    },
+    {
+      "id": "gates+small",
+      "pnl": 0,
+      "pnlPct": 0,
+      "capitalStart": 100,
+      "capitalEnd": 100,
+      "covered": 0,
+      "uncovered": 0,
+      "fills": 0,
+      "rejects": 0,
+      "overrides": {
+        "edgeRequireCheapReady": true,
+        "edgeAskSumMax": 0.99,
+        "edgeOrderUsdc": 10,
+        "edgeCheapOrderUsdc": 2,
+        "maxShareEdge": 15,
+        "maxSharesPerOrder": 15,
+        "maxExposureUsdc": 25,
+        "simulatedCapital": 100,
+        "edgeConfirmSamples": 8,
+        "edgeSellExpensiveAfterMin": 3,
+        "edgeSellExpensiveLossPct": 5,
+        "edgeSellExpensiveLossWindowMs": 5000
+      }
+    },
+    {
+      "id": "asksum-1.00",
+      "pnl": -19.12,
+      "pnlPct": -38.24,
+      "capitalStart": 50,
+      "capitalEnd": 30.88,
+      "covered": 22,
+      "uncovered": 0,
+      "fills": 59,
+      "rejects": 0,
+      "overrides": {
+        "edgeAskSumMax": 1
+      }
+    },
+    {
+      "id": "cheap-ready",
+      "pnl": -25.71,
+      "pnlPct": -51.42,
+      "capitalStart": 50,
+      "capitalEnd": 24.29,
+      "covered": 69,
+      "uncovered": 1,
+      "fills": 160,
+      "rejects": 7123,
+      "overrides": {
+        "edgeRequireCheapReady": true
+      }
+    },
+    {
+      "id": "cheap-ready+small",
+      "pnl": -27.2,
+      "pnlPct": -27.2,
+      "capitalStart": 100,
+      "capitalEnd": 72.8,
+      "covered": 271,
+      "uncovered": 2,
+      "fills": 566,
+      "rejects": 0,
+      "overrides": {
+        "edgeRequireCheapReady": true,
+        "edgeOrderUsdc": 10,
+        "edgeCheapOrderUsdc": 2,
+        "maxShareEdge": 15,
+        "maxSharesPerOrder": 15,
+        "maxExposureUsdc": 25,
+        "simulatedCapital": 100
+      }
+    },
+    {
+      "id": "baseline",
+      "pnl": -28.19,
+      "pnlPct": -56.38,
+      "capitalStart": 50,
+      "capitalEnd": 21.81,
+      "covered": 96,
+      "uncovered": 4,
+      "fills": 223,
+      "rejects": 8108,
+      "overrides": {}
+    }
+  ]
+}

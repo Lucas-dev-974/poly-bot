@@ -1,0 +1,22 @@
+[
+  {
+    "id": "asksum1-small",
+    "pnl": -4.58,
+    "pnlPct": -4.58,
+    "covered": 14,
+    "uncovered": 1,
+    "fills": 37,
+    "rejects": 0,
+    "capitalStart": 100
+  },
+  {
+    "id": "asksum1-only",
+    "pnl": -19.12,
+    "pnlPct": -38.24,
+    "covered": 22,
+    "uncovered": 0,
+    "fills": 59,
+    "rejects": 0,
+    "capitalStart": 50
+  }
+]

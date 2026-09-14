@@ -1,0 +1,40 @@
+{
+  "phase": "done",
+  "runId": "edge-lead-600t-1m-1789326951142",
+  "ms": 14029,
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "listed": 399,
+  "selected": 301,
+  "skipped": 98,
+  "prefixCount": {
+    "btc-updown-15m": 301
+  },
+  "pnl": -28.19,
+  "capitalStart": 50,
+  "capitalEnd": 21.81,
+  "pnlPct": -56.38,
+  "covered": 96,
+  "uncovered": 4,
+  "fills": 223,
+  "rejects": 8108,
+  "unresolved": 0,
+  "windowsTested": 301,
+  "presetId": "edge-lead",
+  "config": {
+    "strategyId": "edge-lead",
+    "edgeOrderUsdc": 25,
+    "edgeCheapOrderUsdc": 5,
+    "edgeBandMin": 0.85,
+    "edgeBandMax": 0.9,
+    "edgeConfirmSamples": 5,
+    "maxExposureUsdc": 50,
+    "simulatedCapital": 50,
+    "marketSlugPrefixes": [
+      "btc-updown-15m"
+    ]
+  }
+}

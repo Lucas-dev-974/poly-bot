@@ -1,0 +1,300 @@
+{
+  "phase": "validate-meanrev",
+  "LOOKBACK": 60000,
+  "mainSignal": {
+    "n": 147,
+    "nWindows": 147,
+    "win": 71,
+    "winRate": 48.3
+  },
+  "rows": [
+    {
+      "band": "0.45-0.55",
+      "drop": 0.02,
+      "elapsedBin": "360+",
+      "n": 55,
+      "nWindows": 55,
+      "winRate": 58.2,
+      "winRateByWindow": 58.2
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.03,
+      "elapsedBin": "540+",
+      "n": 37,
+      "nWindows": 37,
+      "winRate": 54.1,
+      "winRateByWindow": 54.1
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.001,
+      "elapsedBin": "360+",
+      "n": 67,
+      "nWindows": 67,
+      "winRate": 53.7,
+      "winRateByWindow": 53.7
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.01,
+      "elapsedBin": "360+",
+      "n": 67,
+      "nWindows": 67,
+      "winRate": 53.7,
+      "winRateByWindow": 53.7
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.02,
+      "elapsedBin": "180+",
+      "n": 88,
+      "nWindows": 88,
+      "winRate": 48.9,
+      "winRateByWindow": 48.9
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.01,
+      "elapsedBin": "180+",
+      "n": 102,
+      "nWindows": 102,
+      "winRate": 48,
+      "winRateByWindow": 48
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.03,
+      "elapsedBin": "360+",
+      "n": 47,
+      "nWindows": 47,
+      "winRate": 46.8,
+      "winRateByWindow": 46.8
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.001,
+      "elapsedBin": "0+",
+      "n": 257,
+      "nWindows": 257,
+      "winRate": 46.3,
+      "winRateByWindow": 46.3
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.01,
+      "elapsedBin": "0+",
+      "n": 255,
+      "nWindows": 255,
+      "winRate": 45.9,
+      "winRateByWindow": 45.9
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.03,
+      "elapsedBin": "0+",
+      "n": 170,
+      "nWindows": 170,
+      "winRate": 45.9,
+      "winRateByWindow": 45.9
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.03,
+      "elapsedBin": "180+",
+      "n": 70,
+      "nWindows": 70,
+      "winRate": 45.7,
+      "winRateByWindow": 45.7
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.02,
+      "elapsedBin": "0+",
+      "n": 217,
+      "nWindows": 217,
+      "winRate": 45.2,
+      "winRateByWindow": 45.2
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.001,
+      "elapsedBin": "180+",
+      "n": 104,
+      "nWindows": 104,
+      "winRate": 45.2,
+      "winRateByWindow": 45.2
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.02,
+      "elapsedBin": "540+",
+      "n": 42,
+      "nWindows": 42,
+      "winRate": 45.2,
+      "winRateByWindow": 45.2
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.001,
+      "elapsedBin": "540+",
+      "n": 51,
+      "nWindows": 51,
+      "winRate": 45.1,
+      "winRateByWindow": 45.1
+    },
+    {
+      "band": "0.45-0.55",
+      "drop": 0.01,
+      "elapsedBin": "540+",
+      "n": 49,
+      "nWindows": 49,
+      "winRate": 42.9,
+      "winRateByWindow": 42.9
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.02,
+      "elapsedBin": "360+",
+      "n": 131,
+      "nWindows": 131,
+      "winRate": 40.5,
+      "winRateByWindow": 40.5
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.001,
+      "elapsedBin": "360+",
+      "n": 136,
+      "nWindows": 136,
+      "winRate": 39.7,
+      "winRateByWindow": 39.7
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.01,
+      "elapsedBin": "360+",
+      "n": 136,
+      "nWindows": 136,
+      "winRate": 39.7,
+      "winRateByWindow": 39.7
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.001,
+      "elapsedBin": "0+",
+      "n": 304,
+      "nWindows": 304,
+      "winRate": 39.5,
+      "winRateByWindow": 39.5
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.01,
+      "elapsedBin": "0+",
+      "n": 304,
+      "nWindows": 304,
+      "winRate": 39.5,
+      "winRateByWindow": 39.5
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.02,
+      "elapsedBin": "0+",
+      "n": 304,
+      "nWindows": 304,
+      "winRate": 39.5,
+      "winRateByWindow": 39.5
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.03,
+      "elapsedBin": "360+",
+      "n": 125,
+      "nWindows": 125,
+      "winRate": 39.2,
+      "winRateByWindow": 39.2
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.03,
+      "elapsedBin": "0+",
+      "n": 303,
+      "nWindows": 303,
+      "winRate": 38.3,
+      "winRateByWindow": 38.3
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.03,
+      "elapsedBin": "180+",
+      "n": 194,
+      "nWindows": 194,
+      "winRate": 38.1,
+      "winRateByWindow": 38.1
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.02,
+      "elapsedBin": "180+",
+      "n": 202,
+      "nWindows": 202,
+      "winRate": 37.1,
+      "winRateByWindow": 37.1
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.001,
+      "elapsedBin": "540+",
+      "n": 112,
+      "nWindows": 112,
+      "winRate": 36.6,
+      "winRateByWindow": 36.6
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.01,
+      "elapsedBin": "540+",
+      "n": 112,
+      "nWindows": 112,
+      "winRate": 36.6,
+      "winRateByWindow": 36.6
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.02,
+      "elapsedBin": "540+",
+      "n": 112,
+      "nWindows": 112,
+      "winRate": 36.6,
+      "winRateByWindow": 36.6
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.001,
+      "elapsedBin": "180+",
+      "n": 208,
+      "nWindows": 208,
+      "winRate": 36.5,
+      "winRateByWindow": 36.5
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.01,
+      "elapsedBin": "180+",
+      "n": 208,
+      "nWindows": 208,
+      "winRate": 36.5,
+      "winRateByWindow": 36.5
+    },
+    {
+      "band": "0.35-0.45",
+      "drop": 0.03,
+      "elapsedBin": "540+",
+      "n": 110,
+      "nWindows": 110,
+      "winRate": 36.4,
+      "winRateByWindow": 36.4
+    }
+  ]
+}

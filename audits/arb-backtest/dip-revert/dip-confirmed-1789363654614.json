@@ -1,0 +1,293 @@
+{
+  "phase": "dip-confirmed",
+  "rows": [
+    {
+      "bandMin": 0.55,
+      "drop": 0.03,
+      "elapsed": 180,
+      "nWindows": 231,
+      "winRate": 64.5,
+      "evPerShareCents": 5.07
+    },
+    {
+      "bandMin": 0.55,
+      "drop": 0.025,
+      "elapsed": 180,
+      "nWindows": 233,
+      "winRate": 63.1,
+      "evPerShareCents": 3.79
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.015,
+      "elapsed": 180,
+      "nWindows": 241,
+      "winRate": 61,
+      "evPerShareCents": 2.78
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.015,
+      "elapsed": 180,
+      "nWindows": 241,
+      "winRate": 61,
+      "evPerShareCents": 2.78
+    },
+    {
+      "bandMin": 0.55,
+      "drop": 0.015,
+      "elapsed": 180,
+      "nWindows": 234,
+      "winRate": 62,
+      "evPerShareCents": 2.73
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.03,
+      "elapsed": 180,
+      "nWindows": 239,
+      "winRate": 60.7,
+      "evPerShareCents": 2.66
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.03,
+      "elapsed": 180,
+      "nWindows": 239,
+      "winRate": 60.7,
+      "evPerShareCents": 2.66
+    },
+    {
+      "bandMin": 0.55,
+      "drop": 0.02,
+      "elapsed": 180,
+      "nWindows": 234,
+      "winRate": 62,
+      "evPerShareCents": 2.61
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.02,
+      "elapsed": 180,
+      "nWindows": 241,
+      "winRate": 60.6,
+      "evPerShareCents": 2.34
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.02,
+      "elapsed": 180,
+      "nWindows": 241,
+      "winRate": 60.6,
+      "evPerShareCents": 2.34
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.025,
+      "elapsed": 180,
+      "nWindows": 239,
+      "winRate": 60.3,
+      "evPerShareCents": 2.2
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.025,
+      "elapsed": 180,
+      "nWindows": 239,
+      "winRate": 60.3,
+      "evPerShareCents": 2.2
+    },
+    {
+      "bandMin": 0.55,
+      "drop": 0.03,
+      "elapsed": 240,
+      "nWindows": 215,
+      "winRate": 60.5,
+      "evPerShareCents": 1.1
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.015,
+      "elapsed": 240,
+      "nWindows": 220,
+      "winRate": 58.2,
+      "evPerShareCents": -0.04
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.015,
+      "elapsed": 240,
+      "nWindows": 220,
+      "winRate": 58.2,
+      "evPerShareCents": -0.04
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.02,
+      "elapsed": 240,
+      "nWindows": 220,
+      "winRate": 58.2,
+      "evPerShareCents": -0.05
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.02,
+      "elapsed": 240,
+      "nWindows": 220,
+      "winRate": 58.2,
+      "evPerShareCents": -0.05
+    },
+    {
+      "bandMin": 0.55,
+      "drop": 0.025,
+      "elapsed": 240,
+      "nWindows": 215,
+      "winRate": 59.1,
+      "evPerShareCents": -0.23
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.03,
+      "elapsed": 240,
+      "nWindows": 219,
+      "winRate": 57.5,
+      "evPerShareCents": -0.57
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.03,
+      "elapsed": 240,
+      "nWindows": 219,
+      "winRate": 57.5,
+      "evPerShareCents": -0.57
+    },
+    {
+      "bandMin": 0.55,
+      "drop": 0.015,
+      "elapsed": 240,
+      "nWindows": 217,
+      "winRate": 58.1,
+      "evPerShareCents": -1.2
+    },
+    {
+      "bandMin": 0.55,
+      "drop": 0.02,
+      "elapsed": 240,
+      "nWindows": 217,
+      "winRate": 58.1,
+      "evPerShareCents": -1.27
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.025,
+      "elapsed": 240,
+      "nWindows": 219,
+      "winRate": 56.6,
+      "evPerShareCents": -1.52
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.025,
+      "elapsed": 240,
+      "nWindows": 219,
+      "winRate": 56.6,
+      "evPerShareCents": -1.52
+    },
+    {
+      "bandMin": 0.55,
+      "drop": 0.03,
+      "elapsed": 360,
+      "nWindows": 178,
+      "winRate": 55.6,
+      "evPerShareCents": -3.8
+    },
+    {
+      "bandMin": 0.55,
+      "drop": 0.025,
+      "elapsed": 360,
+      "nWindows": 179,
+      "winRate": 55.3,
+      "evPerShareCents": -4.03
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.025,
+      "elapsed": 360,
+      "nWindows": 184,
+      "winRate": 53.8,
+      "evPerShareCents": -4.57
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.025,
+      "elapsed": 360,
+      "nWindows": 184,
+      "winRate": 53.8,
+      "evPerShareCents": -4.57
+    },
+    {
+      "bandMin": 0.55,
+      "drop": 0.02,
+      "elapsed": 360,
+      "nWindows": 181,
+      "winRate": 54.7,
+      "evPerShareCents": -4.65
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.03,
+      "elapsed": 360,
+      "nWindows": 183,
+      "winRate": 53.6,
+      "evPerShareCents": -4.82
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.03,
+      "elapsed": 360,
+      "nWindows": 183,
+      "winRate": 53.6,
+      "evPerShareCents": -4.82
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.02,
+      "elapsed": 360,
+      "nWindows": 185,
+      "winRate": 53.5,
+      "evPerShareCents": -4.85
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.02,
+      "elapsed": 360,
+      "nWindows": 185,
+      "winRate": 53.5,
+      "evPerShareCents": -4.85
+    },
+    {
+      "bandMin": 0.45,
+      "drop": 0.015,
+      "elapsed": 360,
+      "nWindows": 185,
+      "winRate": 53.5,
+      "evPerShareCents": -4.86
+    },
+    {
+      "bandMin": 0.5,
+      "drop": 0.015,
+      "elapsed": 360,
+      "nWindows": 185,
+      "winRate": 53.5,
+      "evPerShareCents": -4.86
+    },
+    {
+      "bandMin": 0.55,
+      "drop": 0.015,
+      "elapsed": 360,
+      "nWindows": 183,
+      "winRate": 54.1,
+      "evPerShareCents": -5.13
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "windows": 88,
+  "rows": [
+    {
+      "label": "ask-lock (ref)",
+      "strategyId": "arb",
+      "presetId": "ask-lock",
+      "ms": 2244,
+      "pnl": 3.51,
+      "capitalStart": 75,
+      "capitalEnd": 78.51,
+      "pnlPct": 4.68,
+      "covered": 32,
+      "uncovered": 0,
+      "fills": 64,
+      "rejects": 32,
+      "unresolved": 0,
+      "windows": 88,
+      "simulatedCapital": 75
+    },
+    {
+      "label": "edge-lead",
+      "strategyId": "edge-lead",
+      "presetId": "edge-lead",
+      "ms": 2688,
+      "pnl": 44.61,
+      "capitalStart": 50,
+      "capitalEnd": 94.61,
+      "pnlPct": 89.22,
+      "covered": 80,
+      "uncovered": 4,
+      "fills": 187,
+      "rejects": 0,
+      "unresolved": 0,
+      "windows": 88,
+      "simulatedCapital": 50
+    },
+    {
+      "label": "reverse",
+      "strategyId": "reverse",
+      "presetId": "reverse",
+      "ms": 9834,
+      "pnl": -624.25,
+      "capitalStart": 1000,
+      "capitalEnd": 375.75,
+      "pnlPct": -62.42,
+      "covered": 58,
+      "uncovered": 29,
+      "fills": 883,
+      "rejects": 0,
+      "unresolved": 0,
+      "windows": 88,
+      "simulatedCapital": 1000
+    },
+    {
+      "label": "barbell-0.5",
+      "strategyId": "barbell",
+      "presetId": null,
+      "ms": 3673,
+      "pnl": 70.63,
+      "capitalStart": 50,
+      "capitalEnd": 120.63,
+      "pnlPct": 141.26,
+      "covered": 87,
+      "uncovered": 1,
+      "fills": 185,
+      "rejects": 1,
+      "unresolved": 0,
+      "windows": 88,
+      "simulatedCapital": 50
+    }
+  ]
+}

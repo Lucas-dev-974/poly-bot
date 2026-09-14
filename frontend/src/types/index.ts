@@ -150,6 +150,11 @@ export interface BotConfig {
   enableExpensiveHedge: boolean;
   requireCheapFillBeforeExpensive: boolean;
   cheapOrderUsdc: number;
+  /** ARB-ONLY: budget de la jambe cheap arb. Les autres moteurs ont leur propre clé. */
+  favBandOrderUsdc: number;
+  barbellCheapOrderUsdc: number;
+  reverseCheapOrderUsdc: number;
+  customOrderUsdc: number;
   /** Trading engine: arb = 1:1 + lock; barbell = cheap/hedge ratio, no lock. */
   strategyId: StrategyId;
   /** Target hedge / cheap fill ratio for barbell. Ignored by arb. (0, 1]. */

@@ -14,6 +14,26 @@ export function ConfigBar(props: { onConfigure?: () => void }): JSX.Element {
                 {" · edge "}
                 <b>{c().edgeOrderUsdc}</b> USDC · cheap <b>{c().edgeCheapOrderUsdc}</b> USDC
               </>
+            ) : c().strategyId === "fav-band" ? (
+              <>
+                Fav <b>{c().favBandAskMin}–{c().favBandAskMax}</b> · {c().favBandOrderUsdc} USDC
+              </>
+            ) : c().strategyId === "dip-revert" ? (
+              <>
+                Dip <b>{c().dipRevertBandMin}–{c().dipRevertBandMax}</b> · {c().dipRevertOrderUsdc} USDC
+              </>
+            ) : c().strategyId === "barbell" ? (
+              <>
+                Cheap <b>{c().cheapBuyMin}–{c().cheapBuyMax}</b> · {c().barbellCheapOrderUsdc} USDC
+              </>
+            ) : c().strategyId === "reverse" ? (
+              <>
+                Cheap <b>{c().cheapBuyMin}–{c().cheapBuyMax}</b> · {c().reverseCheapOrderUsdc} USDC
+              </>
+            ) : String(c().strategyId).startsWith("custom:") ? (
+              <>
+                Custom · {c().customOrderUsdc} USDC
+              </>
             ) : (
               <>
                 Cheap <b>{c().cheapBuyMin}–{c().cheapBuyMax}</b> · {c().cheapOrderUsdc} USDC

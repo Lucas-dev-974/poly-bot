@@ -10,6 +10,10 @@ export type ConfigFormState = {
   enableExpensiveHedge: boolean;
   requireCheapFillBeforeExpensive: boolean;
   cheapOrderUsdc: string;
+  favBandOrderUsdc: string;
+  barbellCheapOrderUsdc: string;
+  reverseCheapOrderUsdc: string;
+  customOrderUsdc: string;
   strategyId: StrategyId;
   barbellHedgeRatio: string;
   pairLockMax: string;
@@ -81,6 +85,10 @@ export function configToForm(config: BotConfig): ConfigFormState {
     enableExpensiveHedge: config.enableExpensiveHedge,
     requireCheapFillBeforeExpensive: config.requireCheapFillBeforeExpensive !== false,
     cheapOrderUsdc: String(config.cheapOrderUsdc),
+    favBandOrderUsdc: String(config.favBandOrderUsdc ?? 15),
+    barbellCheapOrderUsdc: String(config.barbellCheapOrderUsdc ?? 15),
+    reverseCheapOrderUsdc: String(config.reverseCheapOrderUsdc ?? 15),
+    customOrderUsdc: String(config.customOrderUsdc ?? 15),
     strategyId: config.strategyId ?? "arb",
     barbellHedgeRatio: String(config.barbellHedgeRatio ?? 0.5),
     pairLockMax: String(config.pairLockMax),
@@ -188,6 +196,10 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
           : form.enableExpensiveHedge,
     requireCheapFillBeforeExpensive: form.requireCheapFillBeforeExpensive,
     cheapOrderUsdc: parseNum(form.cheapOrderUsdc, "Cheap order USDC"),
+    favBandOrderUsdc: parseNum(form.favBandOrderUsdc, "Fav-band order USDC"),
+    barbellCheapOrderUsdc: parseNum(form.barbellCheapOrderUsdc, "Barbell cheap USDC"),
+    reverseCheapOrderUsdc: parseNum(form.reverseCheapOrderUsdc, "Reverse cheap USDC"),
+    customOrderUsdc: parseNum(form.customOrderUsdc, "Custom order USDC"),
     strategyId: form.strategyId,
     barbellHedgeRatio: parseNum(form.barbellHedgeRatio, "Ratio hedge"),
     pairLockMax: parseNum(form.pairLockMax, "Pair lock max"),

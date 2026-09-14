@@ -506,12 +506,36 @@ export function SettingsModal(props: {
                         onInput={(v) => update("cheapBuyMax", v)}
                       />
                     </Field>
-                    <Field label="Cheap order (USDC)" hint="Budget par ordre cheap">
+                    <Field
+                      label="Cheap order (USDC)"
+                      hint={
+                        form().strategyId === "barbell"
+                          ? "Budget par ordre cheap (barbell)"
+                          : form().strategyId === "reverse"
+                            ? "Budget par ordre cheap (reverse)"
+                            : "Budget par ordre cheap (arb)"
+                      }
+                    >
                       <NumberInput
-                        value={form().cheapOrderUsdc}
+                        value={
+                          form().strategyId === "barbell"
+                            ? form().barbellCheapOrderUsdc
+                            : form().strategyId === "reverse"
+                              ? form().reverseCheapOrderUsdc
+                              : form().cheapOrderUsdc
+                        }
                         min={0.1}
                         step={0.1}
-                        onInput={(v) => update("cheapOrderUsdc", v)}
+                        onInput={(v) =>
+                          update(
+                            form().strategyId === "barbell"
+                              ? "barbellCheapOrderUsdc"
+                              : form().strategyId === "reverse"
+                                ? "reverseCheapOrderUsdc"
+                                : "cheapOrderUsdc",
+                            v,
+                          )
+                        }
                       />
                     </Field>
                     <Show when={form().strategyId === "arb" || form().strategyId.startsWith("custom:")}>
@@ -947,13 +971,13 @@ export function SettingsModal(props: {
                     </Field>
                     <Field
                       label="Order size (USDC)"
-                      hint="Budget FOK sur le favori (cheapOrderUsdc). Taille = budget / ask, plafonnée par max shares."
+                      hint="Budget FOK sur le favori. Taille = budget / ask, plafonnée par max shares."
                     >
                       <NumberInput
-                        value={form().cheapOrderUsdc}
+                        value={form().favBandOrderUsdc}
                         min={0.1}
                         step={0.1}
-                        onInput={(v) => update("cheapOrderUsdc", v)}
+                        onInput={(v) => update("favBandOrderUsdc", v)}
                       />
                     </Field>
                   </div>

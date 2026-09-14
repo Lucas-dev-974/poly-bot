@@ -67,6 +67,14 @@ export const EDITABLE_CONFIG_KEYS = [
   "favBandAskMax",
   "favBandMinElapsedSec",
   "favBandMaxElapsedSec",
+  "dipRevertBandMin",
+  "dipRevertBandMax",
+  "dipRevertMinDrop",
+  "dipRevertDropLookbackMs",
+  "dipRevertMinElapsedSec",
+  "dipRevertMaxElapsedSec",
+  "dipRevertMaxSpread",
+  "dipRevertOrderUsdc",
 ] as const;
 
 export type EditableConfigKey = (typeof EDITABLE_CONFIG_KEYS)[number];
@@ -133,6 +141,14 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   favBandAskMax: "FAV_BAND_ASK_MAX",
   favBandMinElapsedSec: "FAV_BAND_MIN_ELAPSED_SEC",
   favBandMaxElapsedSec: "FAV_BAND_MAX_ELAPSED_SEC",
+  dipRevertBandMin: "DIP_REVERT_BAND_MIN",
+  dipRevertBandMax: "DIP_REVERT_BAND_MAX",
+  dipRevertMinDrop: "DIP_REVERT_MIN_DROP",
+  dipRevertDropLookbackMs: "DIP_REVERT_DROP_LOOKBACK_MS",
+  dipRevertMinElapsedSec: "DIP_REVERT_MIN_ELAPSED_SEC",
+  dipRevertMaxElapsedSec: "DIP_REVERT_MAX_ELAPSED_SEC",
+  dipRevertMaxSpread: "DIP_REVERT_MAX_SPREAD",
+  dipRevertOrderUsdc: "DIP_REVERT_ORDER_USDC",
 };
 
 const FORBIDDEN_KEYS = new Set([
@@ -231,6 +247,13 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "favBandAskMin":
     case "favBandAskMax":
     case "favBandMinElapsedSec":
+    case "dipRevertBandMin":
+    case "dipRevertBandMax":
+    case "dipRevertMinDrop":
+    case "dipRevertDropLookbackMs":
+    case "dipRevertMinElapsedSec":
+    case "dipRevertMaxSpread":
+    case "dipRevertOrderUsdc":
     case "pairLockMax":
     case "expensiveOrderUsdc":
     case "maxSharesPerOrder":
@@ -267,6 +290,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "arbAskLockMinElapsedSec":
     case "arbAskLockMaxImbalance":
     case "favBandMaxElapsedSec":
+    case "dipRevertMaxElapsedSec":
       return parseNullableNumber(value, key);
     case "enableExpensiveHedge":
     case "arbAskLockOnly":
@@ -408,6 +432,18 @@ const FAV_BAND_KEYS: readonly EditableConfigKey[] = [
   "enableExpensiveHedge",
 ];
 
+/** Dip-revert : bande favori, conditions de dip/rebond, budget. */
+const DIP_REVERT_KEYS: readonly EditableConfigKey[] = [
+  "dipRevertBandMin",
+  "dipRevertBandMax",
+  "dipRevertMinDrop",
+  "dipRevertDropLookbackMs",
+  "dipRevertMinElapsedSec",
+  "dipRevertMaxElapsedSec",
+  "dipRevertMaxSpread",
+  "dipRevertOrderUsdc",
+];
+
 const EDGE_LEAD_KEYS: readonly EditableConfigKey[] = [
   "edgeBandMin",
   "edgeBandMax",
@@ -446,7 +482,9 @@ export function keysForStrategy(
           ? BARBELL_KEYS
           : strategyId === "fav-band"
             ? FAV_BAND_KEYS
-            : ARB_KEYS; // arb + custom sans leadsWithEdge
+            : strategyId === "dip-revert"
+              ? DIP_REVERT_KEYS
+              : ARB_KEYS; // arb + custom sans leadsWithEdge
   return [...SHARED_KEYS, ...strategyKeys];
 }
 

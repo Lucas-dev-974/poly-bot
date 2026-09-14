@@ -180,6 +180,71 @@ Sur un long univers (~305 fenêtres) le preset fav-band a montré un PnL netteme
 - `src/dashboard/server.ts` — `POST /api/open-positions/close`
 - `frontend/src/components/panels/OpenPositions.tsx` — bouton Fermer
 
+## Dip-revert — favori chuté + rebond (mean-reversion)
+
+**Nouvelle** stratégie directionnelle (`strategyId: dip-revert`). Ce n'est **pas** fav-band, ni edge-lead, ni arb/ask-lock.
+
+Idée empirique (BTC/ETH 15m, univers audité > 800 ticks / 60 s de trous max, 313 fenêtres) : après ~180 s dans la fenêtre, le favori (ask le plus haut) qui a subi une **chute intra-fenêtre** ≥ 3 ¢ en 60 s puis qui **stabilise / rebondit** (ask repassé au-dessus de son minimum local) gagne à la résolution **~64 % du temps** (vs ~52 % pour le favori moyen). Le marché sur-pénalise temporairement le favori après une secousse ; la clôture revient à la tendance dominante.
+
+- Une seule jambe **FOK BUY** sur le favori, bande `[0.55, 0.65]`
+- **Pas de hedge**, pas de défense, pas de vente anticipée — hold jusqu'à résolution
+- Une entrée par fenêtre (FOK raté par profondeur → retenté au tick suivant)
+- En interne la jambe est `kind: "cheap"` (pipeline d'ordres unique) — c'est le **favori**, pas l'underdog
+
+### Activer
+
+1. Dashboard → **Configuration** → onglet **Profils** → moteur **dip-revert** → profil **Dip-revert (dip favori + rebond, hold resolve)**  \
+   (ou page **Backtest** → preset **Dip-revert**)
+2. Vérifier les champs, puis **Enregistrer** (`data/bot-settings.json` + config live)
+
+Éditer `config/presets/dip-revert.json` ne change pas la config live : appliquer le profil puis enregistrer. Redémarrer le bot si besoin.
+
+### Paramètres
+
+| Clé | Défaut | Rôle |
+|-----|--------|------|
+| `strategyId` | `dip-revert` | Active ce moteur |
+| `dipRevertBandMin` / `dipRevertBandMax` | `0.55` / `0.65` | Bande d'ask du favori pour entrer |
+| `dipRevertMinDrop` | `0.03` | Chute minimale (¢) sur la fenêtre lookback |
+| `dipRevertDropLookbackMs` | `60000` | Fenêtre glissante de mesure du drop |
+| `dipRevertMinElapsedSec` | `180` | Secondes min depuis `windowStart` |
+| `dipRevertMaxElapsedSec` | `null` | Cap optionnel ; `null` = jusqu'à la fin de fenêtre |
+| `dipRevertMaxSpread` | `0.04` | Spread max du favori à l'entrée (liquidité) |
+| `dipRevertOrderUsdc` | `15` | Budget USDC de l'entrée FOK |
+| `maxSharesPerOrder` | `30` | Cap shares |
+| `maxOpenPositionsPerSide` | `1` | Une entrée directionnelle à la fois |
+| `enableExpensiveHedge` / `arbAskLockOnly` | `false` | Forcés / nettoyés (pas de hedge, pas d'ask-lock) |
+
+### Flux (un tick)
+
+1. `elapsedSec ≥ dipRevertMinElapsedSec`.
+2. Favori = token au **best ask le plus haut** (`pickEdgeToken`), ask ∈ bande.
+3. Fenêtre glissante `dipRevertDropLookbackMs` : le plus vieil ask − ask actuel ≥ `dipRevertMinDrop`.
+4. Rebond : ask actuel **> minimum local** de la fenêtre (le prix a cessé de descendre).
+5. Spread ≤ `dipRevertMaxSpread`, profondeur ask suffisante pour la taille, pas déjà de jambe fillée.
+6. Émission **FOK BUY** au ask live ; hold jusqu'à résolution.
+
+### Différences vs autres moteurs
+
+| | Dip-revert | Fav-band | Edge-lead | Ask-lock |
+|--|------------|----------|-----------|----------|
+| Condition | Chute + rebond intra-fenêtre | Ask favori mid-band | Favori + confirm + cheap | Lock ask+ask |
+| Ordre | FOK BUY seul | FOK BUY seul | GTC / logique edge | Dual FOK |
+| Hedge | Non | Non | Cheap follow-up possible | Oui (1:1 immédiat) |
+| Sortie | Résolution | Résolution (ou fermeture manuelle) | Edge sell / resolve | Lock / Policy A |
+
+### Backtest (indicatif BTC 15m, univers 321 fenêtres)
+
+Capital simulé 500 $, preset par défaut : **PnL ≈ +290 $ (+58 %)**, 239 fills, **winRate ≈ 65 %** sur les fenêtres réellement tradées (155 wins / 84 losses) — cohérent avec la recherche (~64 %). Positif sur longue période mais fortement directionnel (variance élevée, pas de hedge). Référence fav-band sur le même univers : +205 $ (+41 %), winRate ~77 %. À retravailler live avec une mise prudente.
+
+### Fichiers clés
+
+- `src/strategy/dip-revert-strategy.ts` — logique d'entrée
+- `src/strategy/ids.ts` / `registry.ts` — `strategyId: dip-revert`
+- `config/presets/dip-revert.json` — preset UI / backtest
+- `tests/dip-revert.test.ts` — unit tests
+- `scripts/backtest-dip-revert.mts` — backtest univers audité
+
 ## Architecture
 
 ```
@@ -317,7 +382,7 @@ npm run dev
 ## Dashboard
 
 Open `http://localhost:3105` for real-time monitoring:
-- Live positions & PnL (bouton **Fermer** = FOK SELL manuel au bid — voir [Fav-band](#fav-band--favori-mid-band))
+- Live positions & PnL (bouton **Fermer** = FOK SELL manuel au bid, avec descente jusqu'à 3 ticks si la profondeur l'exige, et resync wallet si le solde réel est inférieur à la position — voir [Fav-band](#fav-band--favori-mid-band))
 - Active opportunities
 - Balance & collateral
 - Event log (SSE stream)

@@ -225,6 +225,21 @@ export interface BotConfig {
   favBandMinElapsedSec: number;
   /** Optional upper elapsed cap (null = until close / minutesBeforeClose). */
   favBandMaxElapsedSec: number | null;
+  /**
+   * Dip-revert: buy favorite after an intra-window dip + stabilization.
+   * Ask must be in [dipRevertBandMin, dipRevertBandMax]; the favorite must
+   * have dropped >= dipRevertMinDrop over dipRevertDropLookbackMs then
+   * bounced off its local low; entry only after dipRevertMinElapsedSec.
+   */
+  dipRevertBandMin: number;
+  dipRevertBandMax: number;
+  dipRevertMinDrop: number;
+  dipRevertDropLookbackMs: number;
+  dipRevertMinElapsedSec: number;
+  /** Optional upper elapsed cap (null = until close / minutesBeforeClose). */
+  dipRevertMaxElapsedSec: number | null;
+  dipRevertMaxSpread: number;
+  dipRevertOrderUsdc: number;
 }
 
 /**
@@ -295,6 +310,14 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     favBandAskMax: 0.85,
     favBandMinElapsedSec: 200,
     favBandMaxElapsedSec: null,
+    dipRevertBandMin: 0.55,
+    dipRevertBandMax: 0.65,
+    dipRevertMinDrop: 0.03,
+    dipRevertDropLookbackMs: 60_000,
+    dipRevertMinElapsedSec: 180,
+    dipRevertMaxElapsedSec: null,
+    dipRevertMaxSpread: 0.04,
+    dipRevertOrderUsdc: 15,
   };
 }
 
@@ -497,6 +520,35 @@ export function validateConfigCoherence(
     }
     if (!(config.cheapOrderUsdc > 0)) {
       throw new Error("cheapOrderUsdc must be > 0 for fav-band");
+    }
+  }
+  if (config.strategyId === "dip-revert") {
+    // Dip-revert is single-leg directional (no hedge, no dual-FOK).
+    config.arbAskLockOnly = false;
+    config.enableExpensiveHedge = false;
+    if (config.dipRevertBandMin >= config.dipRevertBandMax) {
+      throw new Error("dipRevertBandMin must be < dipRevertBandMax");
+    }
+    if (config.dipRevertMinDrop <= 0) {
+      throw new Error("dipRevertMinDrop must be > 0");
+    }
+    if (config.dipRevertDropLookbackMs <= 0) {
+      throw new Error("dipRevertDropLookbackMs must be > 0");
+    }
+    if (config.dipRevertMinElapsedSec < 0) {
+      throw new Error("dipRevertMinElapsedSec must be >= 0");
+    }
+    if (config.dipRevertMaxSpread < 0) {
+      throw new Error("dipRevertMaxSpread must be >= 0");
+    }
+    if (
+      config.dipRevertMaxElapsedSec != null &&
+      config.dipRevertMaxElapsedSec < config.dipRevertMinElapsedSec
+    ) {
+      throw new Error("dipRevertMaxElapsedSec must be >= dipRevertMinElapsedSec");
+    }
+    if (!(config.dipRevertOrderUsdc > 0)) {
+      throw new Error("dipRevertOrderUsdc must be > 0 for dip-revert");
     }
   }
   const validateEdge =

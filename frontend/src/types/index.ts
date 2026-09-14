@@ -2,7 +2,7 @@
 // Garder synchronisÃ© avec le backend lors des changements.
 
 export type TradeSide = "BUY" | "SELL";
-export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band";
+export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band" | "dip-revert";
 export type StrategyId = NativeStrategyId | `custom:${string}`;
 
 export interface GammaMarket {
@@ -218,6 +218,15 @@ export interface BotConfig {
   favBandAskMax: number;
   favBandMinElapsedSec: number;
   favBandMaxElapsedSec: number | null;
+  /** Dip-revert: buy favorite after intra-window dip + stabilization. */
+  dipRevertBandMin: number;
+  dipRevertBandMax: number;
+  dipRevertMinDrop: number;
+  dipRevertDropLookbackMs: number;
+  dipRevertMinElapsedSec: number;
+  dipRevertMaxElapsedSec: number | null;
+  dipRevertMaxSpread: number;
+  dipRevertOrderUsdc: number;
   readonlyLive: boolean;
   clobHost: string;
   gammaApiHost: string;

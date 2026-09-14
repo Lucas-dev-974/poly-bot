@@ -234,7 +234,7 @@ export function orchestrate(
       cheapToken,
       "cheap",
       cheapPrice,
-      sizingResult.cheapSize,
+      sizingResult.cheapSize as number,
       config.maxOpenPositionsPerSide,
       0,
       askLockOnly ? "FOK" : undefined,

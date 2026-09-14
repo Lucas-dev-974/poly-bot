@@ -60,7 +60,7 @@ export interface TradeOpportunity {
   pairId: string;
   /** Chart rule that emitted this buy. Used to commit once / dependsOn after POST. */
   chartRuleId?: string;
-  /** Optional override (FOK for ask-lock / fav-band). Default inferred by kind. */
+  /** Optional override (FOK for ask-lock / fav-band / dip-revert). Default inferred by kind. */
   orderType?: "GTC" | "FOK" | "FAK" | "SIM";
 }
 

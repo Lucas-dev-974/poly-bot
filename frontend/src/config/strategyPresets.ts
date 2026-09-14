@@ -6,6 +6,7 @@ import reverse from "../../../config/presets/reverse.json";
 import askLock from "../../../config/presets/ask-lock.json";
 import lockHarvest from "../../../config/presets/lock-harvest.json";
 import favBand from "../../../config/presets/fav-band.json";
+import dipRevert from "../../../config/presets/dip-revert.json";
 
 export type { NativeStrategyId, StrategyId };
 
@@ -24,6 +25,7 @@ export const STRATEGY_ENGINE_OPTIONS: Array<{ id: NativeStrategyId; label: strin
   { id: "barbell", label: "Ratio cheap/hedge (sans lock)" },
   { id: "edge-lead", label: "Edge-lead (edge d'abord, puis cheap)" },
   { id: "fav-band", label: "Fav-band (FOK favori mid-band, hold resolve)" },
+  { id: "dip-revert", label: "Dip-revert (FOK favori dip + rebond, hold resolve)" },
   { id: "reverse", label: "Reverse bet (underdog 7-10¢ + hedge favori)" },
 ];
 
@@ -35,6 +37,7 @@ export const STRATEGY_PRESETS: StrategyPreset[] = [
   edgeLead as StrategyPreset,
   reverse as StrategyPreset,
   favBand as StrategyPreset,
+  dipRevert as StrategyPreset,
 ];
 
 export function presetsForStrategy(id: string): StrategyPreset[] {

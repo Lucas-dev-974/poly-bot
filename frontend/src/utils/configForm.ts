@@ -59,6 +59,14 @@ export type ConfigFormState = {
   favBandAskMax: string;
   favBandMinElapsedSec: string;
   favBandMaxElapsedSec: string;
+  dipRevertBandMin: string;
+  dipRevertBandMax: string;
+  dipRevertMinDrop: string;
+  dipRevertDropLookbackMs: string;
+  dipRevertMinElapsedSec: string;
+  dipRevertMaxElapsedSec: string;
+  dipRevertMaxSpread: string;
+  dipRevertOrderUsdc: string;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -136,6 +144,17 @@ export function configToForm(config: BotConfig): ConfigFormState {
       config.favBandMaxElapsedSec == null || config.favBandMaxElapsedSec === undefined
         ? ""
         : String(config.favBandMaxElapsedSec),
+    dipRevertBandMin: String(config.dipRevertBandMin ?? 0.55),
+    dipRevertBandMax: String(config.dipRevertBandMax ?? 0.65),
+    dipRevertMinDrop: String(config.dipRevertMinDrop ?? 0.03),
+    dipRevertDropLookbackMs: String(config.dipRevertDropLookbackMs ?? 60000),
+    dipRevertMinElapsedSec: String(config.dipRevertMinElapsedSec ?? 180),
+    dipRevertMaxElapsedSec:
+      config.dipRevertMaxElapsedSec == null || config.dipRevertMaxElapsedSec === undefined
+        ? ""
+        : String(config.dipRevertMaxElapsedSec),
+    dipRevertMaxSpread: String(config.dipRevertMaxSpread ?? 0.04),
+    dipRevertOrderUsdc: String(config.dipRevertOrderUsdc ?? 15),
   };
 }
 
@@ -160,7 +179,7 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     enableExpensiveHedge:
       form.strategyId === "arb"
         ? true
-        : form.strategyId === "fav-band"
+        : form.strategyId === "fav-band" || form.strategyId === "dip-revert"
           ? false
           : form.enableExpensiveHedge,
     requireCheapFillBeforeExpensive: form.requireCheapFillBeforeExpensive,
@@ -238,9 +257,26 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
       form.favBandMaxElapsedSec.trim() === ""
         ? null
         : parseNum(form.favBandMaxElapsedSec, "Fav-band max elapsed"),
+    dipRevertBandMin: parseNum(form.dipRevertBandMin, "Dip-revert band min"),
+    dipRevertBandMax: parseNum(form.dipRevertBandMax, "Dip-revert band max"),
+    dipRevertMinDrop: parseNum(form.dipRevertMinDrop, "Dip-revert min drop"),
+    dipRevertDropLookbackMs: parseNum(
+      form.dipRevertDropLookbackMs,
+      "Dip-revert drop lookback ms",
+    ),
+    dipRevertMinElapsedSec: parseNum(
+      form.dipRevertMinElapsedSec,
+      "Dip-revert min elapsed",
+    ),
+    dipRevertMaxElapsedSec:
+      form.dipRevertMaxElapsedSec.trim() === ""
+        ? null
+        : parseNum(form.dipRevertMaxElapsedSec, "Dip-revert max elapsed"),
+    dipRevertMaxSpread: parseNum(form.dipRevertMaxSpread, "Dip-revert max spread"),
+    dipRevertOrderUsdc: parseNum(form.dipRevertOrderUsdc, "Dip-revert order USDC"),
   };
 
-  if (next.strategyId === "fav-band") {
+  if (next.strategyId === "fav-band" || next.strategyId === "dip-revert") {
     next.enableExpensiveHedge = false;
     next.arbAskLockOnly = false;
   }
@@ -317,7 +353,11 @@ export function validateConfigForm(
     // Bandes cheap/hedge : arb, barbell, reverse (pas edge-lead).
     // pairLockMax : arb seulement. barbellHedgeRatio : barbell seulement.
     if (!edge) {
-      if (form.strategyId !== "fav-band" && cheapBuyMax >= expensiveBuyMin) {
+      if (
+        form.strategyId !== "fav-band" &&
+        form.strategyId !== "dip-revert" &&
+        cheapBuyMax >= expensiveBuyMin
+      ) {
         errors.push("Cheap max doit être < hedge min");
       }
       if (form.strategyId === "arb") {
@@ -371,6 +411,39 @@ export function validateConfigForm(
         if (!Number.isFinite(maxE) || maxE < elapsed) {
           errors.push("Fav-band: max elapsed invalide");
         }
+      }
+    }
+    if (form.strategyId === "dip-revert") {
+      const lo = Number(form.dipRevertBandMin);
+      const hi = Number(form.dipRevertBandMax);
+      const drop = Number(form.dipRevertMinDrop);
+      const lookback = Number(form.dipRevertDropLookbackMs);
+      const elapsed = Number(form.dipRevertMinElapsedSec);
+      const spread = Number(form.dipRevertMaxSpread);
+      const budget = Number(form.dipRevertOrderUsdc);
+      if (!Number.isFinite(lo) || !Number.isFinite(hi) || lo >= hi) {
+        errors.push("Dip-revert: ask min doit être < ask max");
+      }
+      if (!Number.isFinite(drop) || drop <= 0) {
+        errors.push("Dip-revert: min drop doit être > 0");
+      }
+      if (!Number.isFinite(lookback) || lookback <= 0) {
+        errors.push("Dip-revert: lookback doit être > 0 ms");
+      }
+      if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed > 900) {
+        errors.push("Dip-revert: min elapsed entre 0 et 900");
+      }
+      if (form.dipRevertMaxElapsedSec.trim() !== "") {
+        const maxE = Number(form.dipRevertMaxElapsedSec);
+        if (!Number.isFinite(maxE) || maxE < elapsed) {
+          errors.push("Dip-revert: max elapsed invalide");
+        }
+      }
+      if (!Number.isFinite(spread) || spread < 0) {
+        errors.push("Dip-revert: max spread doit être >= 0");
+      }
+      if (!Number.isFinite(budget) || budget <= 0) {
+        errors.push("Dip-revert: budget doit être > 0");
       }
     }
     // Edge-lead : validations dédiées. Les champs arb/barbell (cheap/hedge
@@ -505,7 +578,13 @@ export function fieldErrors(
       result.expensiveBuyMax = "Hedge max doit être ≥ hedge min";
     }
     if (!edge) {
-      if (form.strategyId !== "fav-band" && Number.isFinite(cheapBuyMax) && Number.isFinite(expensiveBuyMin) && cheapBuyMax >= expensiveBuyMin) {
+      if (
+        form.strategyId !== "fav-band" &&
+        form.strategyId !== "dip-revert" &&
+        Number.isFinite(cheapBuyMax) &&
+        Number.isFinite(expensiveBuyMin) &&
+        cheapBuyMax >= expensiveBuyMin
+      ) {
         result.expensiveBuyMin = "Hedge min doit être > cheap max";
       }
       if (form.strategyId === "arb") {
@@ -637,6 +716,33 @@ export function fieldErrors(
           result.favBandMaxElapsedSec = "Vide ou >= min elapsed";
         }
       }
+    }
+    if (form.strategyId === "dip-revert") {
+      const lo = Number(form.dipRevertBandMin);
+      const hi = Number(form.dipRevertBandMax);
+      const drop = Number(form.dipRevertMinDrop);
+      const lookback = Number(form.dipRevertDropLookbackMs);
+      const elapsed = Number(form.dipRevertMinElapsedSec);
+      const spread = Number(form.dipRevertMaxSpread);
+      const budget = Number(form.dipRevertOrderUsdc);
+      if (!Number.isFinite(lo)) result.dipRevertBandMin = "Nombre invalide";
+      if (!Number.isFinite(hi)) result.dipRevertBandMax = "Nombre invalide";
+      if (Number.isFinite(lo) && Number.isFinite(hi) && lo >= hi) {
+        result.dipRevertBandMin = "Doit être < ask max";
+      }
+      if (!Number.isFinite(drop) || drop <= 0) result.dipRevertMinDrop = "> 0";
+      if (!Number.isFinite(lookback) || lookback <= 0) result.dipRevertDropLookbackMs = "> 0 ms";
+      if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed > 900) {
+        result.dipRevertMinElapsedSec = "Entre 0 et 900";
+      }
+      if (form.dipRevertMaxElapsedSec.trim() !== "") {
+        const maxE = Number(form.dipRevertMaxElapsedSec);
+        if (!Number.isFinite(maxE) || (Number.isFinite(elapsed) && maxE < elapsed)) {
+          result.dipRevertMaxElapsedSec = "Vide ou >= min elapsed";
+        }
+      }
+      if (!Number.isFinite(spread) || spread < 0) result.dipRevertMaxSpread = ">= 0";
+      if (!Number.isFinite(budget) || budget <= 0) result.dipRevertOrderUsdc = "> 0";
     }
     }
   } catch (error) {

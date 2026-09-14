@@ -30,6 +30,8 @@ import {
   HEDGE_TREE,
   NEW_FILES,
   CHART_ZONE_SEMANTICS,
+  DIP_LIFE_EDGES,
+  DIP_LIFE_NODES,
   REVERSE_LIFE_EDGES,
   REVERSE_LIFE_NODES,
   RESOLUTION_ROWS,
@@ -58,6 +60,9 @@ function EngineSelector(props: {
       <GuidePill active={props.engine() === "reverse"} onClick={() => props.setEngine("reverse")}>
         Reverse — contre la foule
       </GuidePill>
+      <GuidePill active={props.engine() === "dip-revert"} onClick={() => props.setEngine("dip-revert")}>
+        Dip-revert — favori chuté
+      </GuidePill>
     </GuideRow>
   );
 }
@@ -70,7 +75,9 @@ function LifecycleCard(props: { engine: EngineId }): JSX.Element {
         ? "Barbell"
         : props.engine === "edge-lead"
           ? "Edge-lead"
-          : "Reverse";
+          : props.engine === "reverse"
+            ? "Reverse"
+            : "Dip-revert";
 
   return (
     <GuideCard title={`Cycle de vie — ${title()}`}>
@@ -132,6 +139,24 @@ function LifecycleCard(props: { engine: EngineId }): JSX.Element {
             dédupliqué par <code>slug:outcome:kind-prix</code>. Cap <code>maxOpenPositionsPerSide</code>
             y compris les niveaux émis dans le même tick. Pas de cancel de bande, pas de
             défense : les grilles tiennent jusqu'à la clôture.
+          </p>
+        </Show>
+        <Show when={props.engine === "dip-revert"}>
+          <LifecycleDiagram
+            nodes={DIP_LIFE_NODES}
+            edges={DIP_LIFE_EDGES}
+            markerId="life-arrow-dip"
+            ariaLabel="Cycle de vie d'une position dip-revert"
+          />
+          <p class="guide-muted guide-small">
+            Après <code>dipRevertMinElapsedSec</code>, on surveille l'ask du favori. Une chute
+            ≥ <code>dipRevertMinDrop</code> sur <code>dipRevertDropLookbackMs</code> (~60 s)
+            dans la bande <code>[dipRevertBandMin, dipRevertBandMax]</code> puis un rebond
+            (ask &gt; minimum local, spread ≤ <code>dipRevertMaxSpread</code>) déclenche un
+            FOK buy au budget <code>dipRevertOrderUsdc</code>. Une seule entrée par fenêtre.
+            Pas de hedge, pas de défense : la position est tenue jusqu'à la résolution.
+            Aucune stratégie existante (fav-band, edge-lead, arb/barbell) n'achète le favori
+            en contrepied d'une chute.
           </p>
         </Show>
       </GuideStack>
@@ -425,6 +450,72 @@ function ReverseStory(): JSX.Element {
   );
 }
 
+function DipRevertStory(): JSX.Element {
+  return (
+    <GuideStack>
+      <GuideCallout tone={ENGINE_META["dip-revert"].tone} title={ENGINE_META["dip-revert"].label}>
+        <p>{ENGINE_META["dip-revert"].subtitle}</p>
+        <p class="guide-muted guide-small" style={{ "margin-top": "8px" }}>
+          <strong>Ordre :</strong> {ENGINE_META["dip-revert"].order} ·{" "}
+          <strong>Risque :</strong> {ENGINE_META["dip-revert"].risk}
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">Le favori sur-pénalisé après une secousse</h3>
+      <p>
+        Au début de la fenêtre, tout le monde achète le favori ; son ask grimpe. Quand une
+        secousse (flux d'ordres, news, gros vendeur) le fait <strong>chuter brutalement</strong>,
+        le marché réagit comme si la tendance était cassée — mais les Up/Down 15m reviennent
+        souvent à la tendance dominante. Le dip-revert parie que <strong>le favori est temporairement
+        sous-évalué</strong> et entre en contrepied.
+      </p>
+
+      <GuideGrid columns={2}>
+        <GuideCard title="Chute mesurée">
+          <p>
+            Sur la fenêtre glissante <code>dipRevertDropLookbackMs</code> (~60 s), l'ask du favori
+            doit avoir perdu au moins <code>dipRevertMinDrop</code> (défaut 0.03 = 3¢), tout en
+            restant dans la bande <code>[dipRevertBandMin, dipRevertBandMax]</code> (défaut
+            0.55–0.65) — ni trop « évident », ni déjà effondré.
+          </p>
+        </GuideCard>
+        <GuideCard title="Rebond confirmé">
+          <p>
+            On n'achète <strong>pas pendant la baisse</strong> : on attend que l'ask repasse au-dessus
+            de son minimum local (le prix a cessé de descendre) et que le spread soit
+            ≤ <code>dipRevertMaxSpread</code>. Entrée FOK au budget <code>dipRevertOrderUsdc</code>.
+          </p>
+        </GuideCard>
+      </GuideGrid>
+
+      <GuideCallout tone="warning" title="Pas de filet">
+        <p>
+          Une seule jambe, pas de hedge, pas de défense — la position est tenue jusqu'à la
+          résolution. C'est un pari directionnel assumé : sur l'univers audité (&gt; 800 ticks /
+          trous ≤ 60 s), le favori chuté + rebond gagne ~64 % du temps (vs ~52 % favori moyen) ;
+          le backtest long univers (315 fenêtres) ressort en PnL positif (+62 % sur capital 500 $)
+          avec une variance élevée.
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">À la fin des 15 minutes</h3>
+      <GuideTable
+        headers={["Scénario", "Résultat"]}
+        rows={RESOLUTION_ROWS["dip-revert"]}
+        rowTone={RESOLUTION_ROWS["dip-revert"].map((_, i) => (i === 0 ? "success" : "danger"))}
+      />
+
+      <GuideDetails title="Les étapes — Dip-revert" defaultOpen>
+        <GuideStack gap={8}>
+          <For each={BOT_STEPS["dip-revert"]}>
+            {(step, i) => <p>{i() + 1}. {step}</p>}
+          </For>
+        </GuideStack>
+      </GuideDetails>
+    </GuideStack>
+  );
+}
+
 export function StoryTab(): JSX.Element {
   const [engine, setEngine] = createSignal<EngineId>("arb");
   const [phase, setPhase] = createSignal<PhaseId>("mid");
@@ -433,7 +524,7 @@ export function StoryTab(): JSX.Element {
     <GuideStack>
       <p>
         Toutes les 15 minutes, Polymarket pose une question : le Bitcoin va-t-il monter ou
-        descendre ?         Deux billets, un seul paie 1 $ à la fin. Quatre moteurs jouent ce marché
+        descendre ?         Deux billets, un seul paie 1 $ à la fin. Cinq moteurs jouent ce marché
         différemment — choisis-en un pour voir sa logique.
       </p>
 
@@ -467,10 +558,13 @@ export function StoryTab(): JSX.Element {
       <Show when={engine() === "reverse"}>
         <ReverseStory />
       </Show>
+      <Show when={engine() === "dip-revert"}>
+        <DipRevertStory />
+      </Show>
 
-      <GuideDetails title="Comparer les quatre moteurs">
+      <GuideDetails title="Comparer les cinq moteurs">
         <GuideTable
-          headers={["Règle", "Arb", "Barbell", "Edge-lead", "Reverse"]}
+          headers={["Règle", "Arb", "Barbell", "Edge-lead", "Reverse", "Dip-revert"]}
           rows={STRATEGY_COMPARE_ROWS}
           rowTone={STRATEGY_COMPARE_ROWS.map((_, i) =>
             i === 0 || i === 2 ? "info" : "neutral",
@@ -496,14 +590,14 @@ export function ArchTab(): JSX.Element {
           <FlowDag />
           <p class="guide-muted guide-small">
             Production : <code>this.strategy</code> via <code>createStrategy(config.strategyId)</code>
-            . Quatre moteurs : <code>arb</code>, <code>barbell</code>, <code>edge-lead</code>,{" "}
-            <code>reverse</code>. Le
+            . Cinq moteurs : <code>arb</code>, <code>barbell</code>, <code>edge-lead</code>,{" "}
+            <code>reverse</code>, <code>dip-revert</code>. Le
             barrel <code>findOpportunities()</code> reste <strong>arb-only</strong> pour les tests
             existants.
           </p>
         </GuideStack>
       </GuideCard>
-      <GuideGrid columns={4}>
+      <GuideGrid columns={5}>
         <GuideCard title="Arb / Barbell" trailing={<span class="guide-tag">cheap-first</span>}>
           <GuideStack gap={6}>
             <p>Picks cheap / favori via orchestrate</p>
@@ -519,13 +613,20 @@ export function ArchTab(): JSX.Element {
           </GuideStack>
         </GuideCard>
         <GuideCard title="Reverse" trailing={<span class="guide-tag">contre-foule</span>}>
-          <GuideStack gap={6}>
-            <p>Grilles maker underdog + favori (simultanées)</p>
-            <p>Sizing budget USDC par niveau</p>
-            <p>Pas de C2 / lock / défense — espérance</p>
-          </GuideStack>
-        </GuideCard>
-        <GuideCard title="Exécution" trailing={<span class="guide-tag">bot</span>}>
+            <GuideStack gap={6}>
+              <p>Grilles maker underdog + favori (simultanées)</p>
+              <p>Sizing budget USDC par niveau</p>
+              <p>Pas de C2 / lock / défense — espérance</p>
+            </GuideStack>
+          </GuideCard>
+          <GuideCard title="Dip-revert" trailing={<span class="guide-tag">mean-reversion</span>}>
+            <GuideStack gap={6}>
+              <p>FOK favori après chute + rebond</p>
+              <p>Sizing budget USDC unique</p>
+              <p>Pas de hedge / défense — hold résolution</p>
+            </GuideStack>
+          </GuideCard>
+          <GuideCard title="Exécution" trailing={<span class="guide-tag">bot</span>}>
           <GuideStack gap={6}>
             <p>Scan, tick, pause, READONLY_LIVE</p>
             <p>Place / cancel / poll, confirmation tokens</p>
@@ -561,6 +662,7 @@ export function HedgeTab(): JSX.Element {
           <strong> Edge-lead</strong> n'utilise pas ce flux : le cheap est posté après fill edge,
           sans revalidation hedge live. <strong>Reverse</strong> non plus : ses deux grilles sont
           déposées par <code>findOpportunities</code>, sans revalidation hedge au POST.
+          <strong>Dip-revert</strong> non plus : aucune jambe hedge, hold jusqu'à résolution.
         </p>
       </GuideCallout>
       <p>
@@ -616,7 +718,7 @@ export function UiTab(): JSX.Element {
         headers={["Étape", "Effet"]}
         rows={[
           [
-            "Select Moteur (arb / barbell / edge-lead / reverse / custom:…)",
+            "Select Moteur (arb / barbell / edge-lead / reverse / fav-band / dip-revert / custom:…)",
             "Filtre les profils ; un custom n'a pas de presets — règles chart dans /strategy-editor",
           ],
           ["Ratio hedge", "Onglet hedge ; hint « ignoré par B1 » si arb ; N/A edge-lead"],

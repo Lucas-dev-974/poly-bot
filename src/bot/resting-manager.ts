@@ -247,8 +247,15 @@ export class RestingManager {
   async defendUncoveredPairs(event: UpDownEvent, books: TokenBook[]): Promise<void> {
     // Native arb/barbell need the hedge flag to defend. A custom chart-rules
     // strategy with leadsWithEdge may define a "sell cheap" zone that is
-    // independent of the hedge setting — don't block it here.
-    if (!this.deps.config.enableExpensiveHedge && !this.strategy.id.startsWith("custom:")) return;
+    // independent of the hedge setting — don't block it here. Strategies with
+    // usesDefendAsExit (dip-revert take-profit) reuse this pipeline as their
+    // EXIT hook without any hedge; shouldDefend gates the trigger itself.
+    if (
+      !this.deps.config.enableExpensiveHedge &&
+      !this.strategy.id.startsWith("custom:") &&
+      this.strategy.usesDefendAsExit !== true
+    )
+      return;
     const pairId = `${event.slug}:${event.windowEnd}`;
     const filledCheap = this.deps.tracker.getFilledCheapSizeForPair(pairId);
     if (filledCheap <= 0) return;

@@ -227,6 +227,10 @@ export interface BotConfig {
   dipRevertMaxElapsedSec: number | null;
   dipRevertMaxSpread: number;
   dipRevertOrderUsdc: number;
+  /** Dip-revert optional take-profit exit: FOK-sell the held favorite when its own ask >= threshold. */
+  dipRevertExitTakeProfitEnabled: boolean;
+  /** Dip-revert take-profit threshold on the held favorite's ask (0..1). */
+  dipRevertExitWinAsk: number;
   readonlyLive: boolean;
   clobHost: string;
   gammaApiHost: string;

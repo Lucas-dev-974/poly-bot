@@ -67,6 +67,8 @@ export type ConfigFormState = {
   dipRevertMaxElapsedSec: string;
   dipRevertMaxSpread: string;
   dipRevertOrderUsdc: string;
+  dipRevertExitTakeProfitEnabled: boolean;
+  dipRevertExitWinAsk: string;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -155,6 +157,8 @@ export function configToForm(config: BotConfig): ConfigFormState {
         : String(config.dipRevertMaxElapsedSec),
     dipRevertMaxSpread: String(config.dipRevertMaxSpread ?? 0.04),
     dipRevertOrderUsdc: String(config.dipRevertOrderUsdc ?? 15),
+    dipRevertExitTakeProfitEnabled: config.dipRevertExitTakeProfitEnabled === true,
+    dipRevertExitWinAsk: String(config.dipRevertExitWinAsk ?? 0.85),
   };
 }
 
@@ -274,6 +278,8 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
         : parseNum(form.dipRevertMaxElapsedSec, "Dip-revert max elapsed"),
     dipRevertMaxSpread: parseNum(form.dipRevertMaxSpread, "Dip-revert max spread"),
     dipRevertOrderUsdc: parseNum(form.dipRevertOrderUsdc, "Dip-revert order USDC"),
+    dipRevertExitTakeProfitEnabled: form.dipRevertExitTakeProfitEnabled === true,
+    dipRevertExitWinAsk: parseNum(form.dipRevertExitWinAsk, "Dip-revert take-profit ask"),
   };
 
   if (next.strategyId === "fav-band" || next.strategyId === "dip-revert") {
@@ -444,6 +450,14 @@ export function validateConfigForm(
       }
       if (!Number.isFinite(budget) || budget <= 0) {
         errors.push("Dip-revert: budget doit être > 0");
+      }
+      if (form.dipRevertExitTakeProfitEnabled) {
+        const tpAsk = Number(form.dipRevertExitWinAsk);
+        if (!Number.isFinite(tpAsk) || tpAsk <= 0 || tpAsk >= 1) {
+          errors.push("Dip-revert: take-profit ask entre 0 et 1");
+        } else if (Number.isFinite(hi) && tpAsk <= hi) {
+          errors.push("Dip-revert: take-profit ask doit être > ask max (bande d'entrée)");
+        }
       }
     }
     // Edge-lead : validations dédiées. Les champs arb/barbell (cheap/hedge
@@ -691,6 +705,8 @@ export function fieldErrors(
       if (Number.isFinite(sellAfterMin) && sellAfterMin < 0) result.edgeSellExpensiveAfterMin = "≥ 0";
       if (Number.isFinite(sellLossPct) && sellLossPct <= 0) result.edgeSellExpensiveLossPct = "> 0";
       if (Number.isFinite(sellLossWindowMs) && sellLossWindowMs <= 0) result.edgeSellExpensiveLossWindowMs = "> 0";
+    }
+
     if (form.strategyId === "reverse" && form.reverseMaxGridLevels.trim() !== "") {
       const maxLevels = Number(form.reverseMaxGridLevels);
       if (!Number.isFinite(maxLevels) || maxLevels < 1) {
@@ -743,7 +759,14 @@ export function fieldErrors(
       }
       if (!Number.isFinite(spread) || spread < 0) result.dipRevertMaxSpread = ">= 0";
       if (!Number.isFinite(budget) || budget <= 0) result.dipRevertOrderUsdc = "> 0";
-    }
+      if (form.dipRevertExitTakeProfitEnabled) {
+        const tpAsk = Number(form.dipRevertExitWinAsk);
+        if (!Number.isFinite(tpAsk) || tpAsk <= 0 || tpAsk >= 1) {
+          result.dipRevertExitWinAsk = "Entre 0 et 1";
+        } else if (Number.isFinite(hi) && tpAsk <= hi) {
+          result.dipRevertExitWinAsk = "Doit être > ask max";
+        }
+      }
     }
   } catch (error) {
     // ignore — validateConfigForm handles this

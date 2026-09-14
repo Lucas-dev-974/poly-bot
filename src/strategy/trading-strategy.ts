@@ -92,6 +92,13 @@ export interface TradingStrategy {
    */
   readonly leadsWithEdge: boolean;
   /**
+   * Défense comme sortie (exit) : la stratégie n'a PAS de hedge mais utilise
+   * le pipeline defendUncoveredPairs / defendCheapLegs comme hook de vente
+   * (ex. dip-revert take-profit optionnel). Permet à ces moteurs de passer
+   * le garde-fou enableExpensiveHedge dans resting-manager.defendUncoveredPairs.
+   */
+  readonly usesDefendAsExit?: boolean;
+  /**
    * Reverse : la grille hedge est pricée dans findOpportunities (pas via
    * `hedgeAtPostTime`) et n'est pas retaillée sur le cheap détenu. Le C2
    * (cheap fillé avant expensive) reste obligatoire — seuls edge-lead

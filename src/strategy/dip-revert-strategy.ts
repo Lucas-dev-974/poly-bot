@@ -43,6 +43,8 @@ export class DipRevertStrategy implements TradingStrategy {
   readonly label =
     "Dip-revert: FOK buy favorite after intra-window dip + stabilization; hold to resolve (no hedge)";
   readonly leadsWithEdge = false;
+  /** Optional take-profit exit reuses the defend pipeline (see shouldDefend). */
+  readonly usesDefendAsExit = true;
 
   private readonly states = new Map<string, DipState>();
 
@@ -216,12 +218,33 @@ export class DipRevertStrategy implements TradingStrategy {
     return "keep";
   }
 
-  shouldDefend(_ctx: DefendContext): boolean {
-    return false;
+  /**
+   * Take-profit exit (optional, `dipRevertExitTakeProfitEnabled`).
+   *
+   * Fires when the HELD favorite's own ask reaches `dipRevertExitWinAsk`
+   * (priced on the held token's book — never on the current favorite's:
+   * after an identity flip the held token IS the underdog and must not be
+   * sold at the winner's price). Defend hooks run through defendUncoveredPairs
+   * (live, favoriteAsk = the other token's ask) and defendCheapLegs (backtest).
+   * When the pair context lacks a filled cheap or the trigger is not met we
+   * return false / 0 and the position keeps riding to resolution.
+   */
+  shouldDefend(ctx: DefendContext): boolean {
+    if (!ctx.config.dipRevertExitTakeProfitEnabled) return false;
+    if (ctx.filledCheap <= 0) return false;
+    return this.takeProfitTriggered(ctx.config, ctx.cheapAsk);
   }
 
-  defendShares(_ctx: DefendContext): number {
-    return 0;
+  defendShares(ctx: DefendContext): number {
+    if (!this.shouldDefend(ctx)) return 0;
+    return round2(ctx.filledCheap);
+  }
+
+  /** Held-token ask threshold for the optional take-profit exit. */
+  private takeProfitTriggered(config: BotConfig, heldAsk: number | null | undefined): boolean {
+    if (!config.dipRevertExitTakeProfitEnabled) return false;
+    if (heldAsk == null) return false;
+    return heldAsk >= config.dipRevertExitWinAsk;
   }
 
   hedgeAtPostTime(_ctx: HedgePostContext): HedgePostDecision {

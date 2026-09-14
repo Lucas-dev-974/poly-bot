@@ -75,6 +75,8 @@ export const EDITABLE_CONFIG_KEYS = [
   "dipRevertMaxElapsedSec",
   "dipRevertMaxSpread",
   "dipRevertOrderUsdc",
+  "dipRevertExitTakeProfitEnabled",
+  "dipRevertExitWinAsk",
 ] as const;
 
 export type EditableConfigKey = (typeof EDITABLE_CONFIG_KEYS)[number];
@@ -149,6 +151,8 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   dipRevertMaxElapsedSec: "DIP_REVERT_MAX_ELAPSED_SEC",
   dipRevertMaxSpread: "DIP_REVERT_MAX_SPREAD",
   dipRevertOrderUsdc: "DIP_REVERT_ORDER_USDC",
+  dipRevertExitTakeProfitEnabled: "DIP_REVERT_EXIT_TAKE_PROFIT_ENABLED",
+  dipRevertExitWinAsk: "DIP_REVERT_EXIT_WIN_ASK",
 };
 
 const FORBIDDEN_KEYS = new Set([
@@ -254,6 +258,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "dipRevertMinElapsedSec":
     case "dipRevertMaxSpread":
     case "dipRevertOrderUsdc":
+    case "dipRevertExitWinAsk":
     case "pairLockMax":
     case "expensiveOrderUsdc":
     case "maxSharesPerOrder":
@@ -301,6 +306,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "reverseCancelCheapOffBand":
     case "reverseDefendEnabled":
     case "reverseHedgeCapToFilledCheap":
+    case "dipRevertExitTakeProfitEnabled":
       return parseBoolean(value, key);
     case "reverseMaxGridLevels":
       return parseNullableNumber(value, key);
@@ -432,7 +438,7 @@ const FAV_BAND_KEYS: readonly EditableConfigKey[] = [
   "enableExpensiveHedge",
 ];
 
-/** Dip-revert : bande favori, conditions de dip/rebond, budget. */
+/** Dip-revert : bande favori, conditions de dip/rebond, budget, sortie TP. */
 const DIP_REVERT_KEYS: readonly EditableConfigKey[] = [
   "dipRevertBandMin",
   "dipRevertBandMax",
@@ -442,6 +448,8 @@ const DIP_REVERT_KEYS: readonly EditableConfigKey[] = [
   "dipRevertMaxElapsedSec",
   "dipRevertMaxSpread",
   "dipRevertOrderUsdc",
+  "dipRevertExitTakeProfitEnabled",
+  "dipRevertExitWinAsk",
 ];
 
 const EDGE_LEAD_KEYS: readonly EditableConfigKey[] = [

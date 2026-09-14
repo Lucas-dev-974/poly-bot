@@ -240,6 +240,15 @@ export interface BotConfig {
   dipRevertMaxElapsedSec: number | null;
   dipRevertMaxSpread: number;
   dipRevertOrderUsdc: number;
+  /**
+   * Dip-revert take-profit (optional, default off): when enabled, FOK-sell
+   * the held favorite once ITS OWN ask >= dipRevertExitWin (early exit,
+   * no hold to resolution). Priced on the held token's book; killed FOKs
+   * hold to resolution.
+   */
+  dipRevertExitTakeProfitEnabled: boolean;
+  /** Dip-revert take-profit threshold on the held favorite's ask (0..1). */
+  dipRevertExitWinAsk: number;
 }
 
 /**
@@ -318,6 +327,8 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     dipRevertMaxElapsedSec: null,
     dipRevertMaxSpread: 0.04,
     dipRevertOrderUsdc: 15,
+    dipRevertExitTakeProfitEnabled: false,
+    dipRevertExitWinAsk: 0.85,
   };
 }
 
@@ -549,6 +560,18 @@ export function validateConfigCoherence(
     }
     if (!(config.dipRevertOrderUsdc > 0)) {
       throw new Error("dipRevertOrderUsdc must be > 0 for dip-revert");
+    }
+    if (config.dipRevertExitTakeProfitEnabled) {
+      if (
+        !(config.dipRevertExitWinAsk > 0 && config.dipRevertExitWinAsk < 1)
+      ) {
+        throw new Error("dipRevertExitWinAsk must be in (0, 1)");
+      }
+      if (config.dipRevertExitWinAsk <= config.dipRevertBandMax) {
+        throw new Error(
+          "dipRevertExitWinAsk must be > dipRevertBandMax (exit above entry band)",
+        );
+      }
     }
   }
   const validateEdge =

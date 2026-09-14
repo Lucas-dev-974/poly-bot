@@ -1073,6 +1073,30 @@ export function SettingsModal(props: {
                       />
                     </Field>
                   </div>
+                  <div style={{ "margin-top": "0.75rem" }}>
+                    <Toggle
+                      label="Take-profit (sortie anticipée)"
+                      hint="Vendre le favori détenu (FOK SELL au bid) quand son propre ask atteint le seuil, au lieu de hold jusqu'à la résolution. Désactivé : hold intégral (comportement par défaut)."
+                      checked={form().dipRevertExitTakeProfitEnabled}
+                      onChange={(v) => update("dipRevertExitTakeProfitEnabled", v)}
+                    />
+                    <Show when={form().dipRevertExitTakeProfitEnabled}>
+                      <div class="cfg-grid" style={{ "margin-top": "0.5rem" }}>
+                        <Field
+                          label="Take-profit ask"
+                          hint="Seuil sur l'ask du favori DÉTENU (défaut 0.85). Doit être > ask max de la bande d'entrée. Un FOK tué (profondeur) garde la position jusqu'à la résolution."
+                        >
+                          <NumberInput
+                            value={form().dipRevertExitWinAsk}
+                            min={0.6}
+                            max={0.99}
+                            step={0.01}
+                            onInput={(v) => update("dipRevertExitWinAsk", v)}
+                          />
+                        </Field>
+                      </div>
+                    </Show>
+                  </div>
                   <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
                     Risque / exposition : onglet Risque (max shares, max exposure).
                     Fenêtre de trading : onglet Fenêtre.

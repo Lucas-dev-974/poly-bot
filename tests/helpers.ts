@@ -83,6 +83,8 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     dipRevertMaxElapsedSec: null,
     dipRevertMaxSpread: 0.04,
     dipRevertOrderUsdc: 15,
+    dipRevertExitTakeProfitEnabled: false,
+    dipRevertExitWinAsk: 0.85,
     arbAskLockMinElapsedSec: null,
     arbAskLockMaxImbalance: null,
     ...overrides,

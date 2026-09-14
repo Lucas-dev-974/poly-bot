@@ -1,0 +1,94 @@
+{
+  "criteria": {
+    "minTicks": 801,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 326,
+  "ranked": [
+    {
+      "label": "max420",
+      "strategyId": "dip-revert",
+      "ms": 12763,
+      "pnl": 305.5,
+      "pnlPct": 61.1,
+      "capitalEnd": 805.5,
+      "fills": 197,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 66,
+      "wins": 130,
+      "losses": 67
+    },
+    {
+      "label": "base-hold",
+      "strategyId": "dip-revert",
+      "ms": 13818,
+      "pnl": 278.41,
+      "pnlPct": 55.68,
+      "capitalEnd": 778.41,
+      "fills": 243,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 64.6,
+      "wins": 157,
+      "losses": 86
+    },
+    {
+      "label": "tp-090",
+      "strategyId": "dip-revert",
+      "ms": 14099,
+      "pnl": 193.93,
+      "pnlPct": 38.79,
+      "capitalEnd": 693.93,
+      "fills": 413,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 70.4,
+      "wins": 171,
+      "losses": 72
+    },
+    {
+      "label": "tp-095",
+      "strategyId": "dip-revert",
+      "ms": 13148,
+      "pnl": 150.42,
+      "pnlPct": 30.08,
+      "capitalEnd": 650.42,
+      "fills": 401,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 66.3,
+      "wins": 161,
+      "losses": 82
+    },
+    {
+      "label": "max420-tp085",
+      "strategyId": "dip-revert",
+      "ms": 13779,
+      "pnl": 129.79,
+      "pnlPct": 25.96,
+      "capitalEnd": 629.79,
+      "fills": 340,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 73.1,
+      "wins": 144,
+      "losses": 53
+    },
+    {
+      "label": "tp-085",
+      "strategyId": "dip-revert",
+      "ms": 14419,
+      "pnl": 73.97,
+      "pnlPct": 14.79,
+      "capitalEnd": 573.97,
+      "fills": 416,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 71.6,
+      "wins": 174,
+      "losses": 69
+    }
+  ]
+}

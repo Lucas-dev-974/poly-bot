@@ -88,7 +88,7 @@ export class ReverseStrategy implements TradingStrategy {
       );
       for (const price of cheapLevels) {
         const size = computeSize(
-          config.cheapOrderUsdc,
+          config.reverseCheapOrderUsdc,
           price,
           config.maxSharesPerOrder,
         );

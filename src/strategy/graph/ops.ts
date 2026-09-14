@@ -252,7 +252,7 @@ export function executeOp(
     case "computeSize": {
       const config = requireConfig(ctx);
       const price = requireNumber(getPort("price"), "price");
-      return computeSize(config.cheapOrderUsdc, price, config.maxSharesPerOrder);
+      return computeSize(config.customOrderUsdc, price, config.maxSharesPerOrder);
     }
     case "computeEdgeLeadEdgeSize":
       return computeEdgeLeadEdgeSize(

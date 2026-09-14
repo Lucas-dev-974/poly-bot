@@ -72,7 +72,7 @@ export class FavBandStrategy implements TradingStrategy {
     }
 
     const size = computeSize(
-      config.cheapOrderUsdc,
+      config.favBandOrderUsdc,
       ask,
       config.maxSharesPerOrder,
     );

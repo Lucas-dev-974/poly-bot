@@ -22,7 +22,7 @@ export class BarbellSizing implements SizingStrategy {
     let pairCost = round2(cheapPrice + hedgePrice);
 
     let cheapSize = computeSize(
-      config.cheapOrderUsdc,
+      config.barbellCheapOrderUsdc,
       cheapPrice,
       config.maxSharesPerOrder,
     );
@@ -33,7 +33,7 @@ export class BarbellSizing implements SizingStrategy {
         p = round2(p - 0.01)
       ) {
         const sized = computeSize(
-          config.cheapOrderUsdc,
+          config.barbellCheapOrderUsdc,
           p,
           config.maxSharesPerOrder,
         );

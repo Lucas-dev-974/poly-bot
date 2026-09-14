@@ -20,7 +20,6 @@
     "dipRevertOrderUsdc": 15,
     "dipRevertExitTakeProfitEnabled": false,
     "dipRevertExitWinAsk": 0.85,
-    "cheapOrderUsdc": 15,
     "maxSharesPerOrder": 30,
     "maxOpenPositionsPerSide": 1,
     "maxExposureUsdc": 450,

@@ -10,7 +10,7 @@
     "enableExpensiveHedge": false,
     "arbAskLockOnly": false,
     "arbAskSumMax": null,
-    "cheapOrderUsdc": 15,
+    "favBandOrderUsdc": 15,
     "favBandAskMin": 0.68,
     "favBandAskMax": 0.82,
     "favBandMinElapsedSec": 200,

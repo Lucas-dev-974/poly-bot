@@ -13,7 +13,7 @@
     "expensiveBuyMin": 0.9,
     "expensiveBuyMax": 0.95,
     "enableExpensiveHedge": true,
-    "cheapOrderUsdc": 10,
+    "reverseCheapOrderUsdc": 10,
     "expensiveOrderUsdc": 50,
     "expensiveOrderType": "GTC",
     "maxSharesPerOrder": 90,

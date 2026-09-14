@@ -40,3 +40,27 @@ export function computeSize(
 export function formatReturnPct(price: number): string {
   return `${Math.round((1 / price - 1) * 100)}% if wins`;
 }
+
+/**
+ * Garde-fou de viabilité : un budget moteur doit pouvoir acheter au moins
+ * MIN_CLOB_SHARES au PIRE prix de sa bande. Sinon computeSize renvoie null
+ * à chaque tick de la bande et le moteur devient muet silencieusement
+ * (incident 2026-09-14 : fav-band avec cheapOrderUsdc=1, 1/0.85 = 1.18 < 5).
+ * Appelé par validateTradingConfig pour chaque moteur, au boot et à chaque
+ * PATCH runtime settings.
+ */
+export function validateEngineBudget(
+  usdcBudget: number,
+  bandMax: number,
+  label: string,
+): void {
+  const minShares = Math.floor((usdcBudget / bandMax) * 100) / 100;
+  if (minShares < MIN_CLOB_SHARES) {
+    const needed = Math.ceil(MIN_CLOB_SHARES * bandMax * 100) / 100;
+    throw new Error(
+      `${label}: budget ${usdcBudget} USDC can never reach MIN_CLOB_SHARES ` +
+        `(${MIN_CLOB_SHARES}) at band max ${bandMax} — needs >= ${needed} USDC. ` +
+        `Refusing a silently-muted engine.`,
+    );
+  }
+}

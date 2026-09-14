@@ -12,6 +12,8 @@ import type {
 } from "../trading-strategy.js";
 import type { StrategyId } from "../ids.js";
 import type { TradeOpportunity } from "../../types.js";
+import { bus } from "../../dashboard/events.js";
+import { log } from "../../logger.js";
 import { EdgeConfirmBuffer } from "../edge-confirm.js";
 import { executeOp, purgeExpiredSampleWindows, type GraphRuntimeState } from "./ops.js";
 import { validateStrategyGraph } from "./validate.js";
@@ -158,6 +160,60 @@ function methodClock(injected?: number): number {
   return injected ?? Date.now();
 }
 
+/**
+ * Runs a graph method and downgrades runtime errors to a safe fallback.
+ * A malformed graph op (unknown node, runtime cycle, missing port) must not
+ * abort the bot tick: the other market of the tick and resting management
+ * still need to run. Validation catches structural errors at construction;
+ * this is the runtime net (e.g. an op referencing state that is absent).
+ *
+ * Dashboard emission is transition-based (ok → failing emits once, like the
+ * FOK kill path): a permanently broken graph must not flood the event bus
+ * every tick. The log fires every call (diagnostics), the bus event only on
+ * the streak start and recovery.
+ */
+const graphErrorStreaks = new Map<string, boolean>();
+
+function interpretMethodSafe<T>(
+  method: GraphMethod,
+  ctx: GraphContext,
+  state: GraphRuntimeState,
+  mode: "findOpp" | "value",
+  fallback: T,
+  methodName: string,
+  graphId: string,
+): T {
+  const streakKey = `${graphId}::${methodName}`;
+  try {
+    const result = interpretMethod(method, ctx, state, mode) as T;
+    if (graphErrorStreaks.get(streakKey)) {
+      graphErrorStreaks.delete(streakKey);
+      log("Graph strategy recovered — runtime error streak ended", {
+        graphId,
+        method: methodName,
+      });
+    }
+    return result;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const streakStart = !graphErrorStreaks.has(streakKey);
+    graphErrorStreaks.set(streakKey, true);
+    log("Graph strategy runtime error — safe fallback applied", {
+      graphId,
+      method: methodName,
+      error: message,
+      streak: true,
+    });
+    if (streakStart) {
+      bus.emit({
+        type: "error",
+        message: `Graph ${graphId} ${methodName} failing: ${message} (safe fallback active)`,
+      });
+    }
+    return fallback;
+  }
+}
+
 export class GraphStrategy implements TradingStrategy {
   readonly id: StrategyId;
   readonly label: string;
@@ -194,12 +250,15 @@ export class GraphStrategy implements TradingStrategy {
     gctx.books = ctx.books;
     gctx.pairId = pairId;
     gctx.nowMs = nowMs;
-    return interpretMethod(
+    return interpretMethodSafe(
       this.graph.findOpportunities,
       gctx,
       this.state,
       "findOpp",
-    ) as TradeOpportunity[];
+      [] as TradeOpportunity[],
+      "findOpportunities",
+      this.id,
+    );
   }
 
   cheapOrderAction(ctx: RestingCheapContext): CheapOrderAction {
@@ -210,12 +269,15 @@ export class GraphStrategy implements TradingStrategy {
     gctx.limitPrice = ctx.limitPrice;
     gctx.pairId = ctx.pairId;
     gctx.nowMs = methodClock(ctx.nowMs);
-    return interpretMethod(
+    return interpretMethodSafe(
       this.graph.cheapOrderAction,
       gctx,
       this.state,
       "value",
-    ) as CheapOrderAction;
+      "keep" as CheapOrderAction,
+      "cheapOrderAction",
+      this.id,
+    );
   }
 
   edgeOrderAction(ctx: RestingEdgeContext): EdgeOrderAction {
@@ -225,12 +287,15 @@ export class GraphStrategy implements TradingStrategy {
     gctx.pairId = ctx.pairId;
     gctx.favoriteAsk = ctx.edgeBook?.bestAsk ?? null;
     gctx.nowMs = methodClock(ctx.nowMs);
-    return interpretMethod(
+    return interpretMethodSafe(
       this.graph.edgeOrderAction,
       gctx,
       this.state,
       "value",
-    ) as EdgeOrderAction;
+      "keep" as EdgeOrderAction,
+      "edgeOrderAction",
+      this.id,
+    );
   }
 
   shouldDefend(ctx: DefendContext): boolean {
@@ -242,7 +307,15 @@ export class GraphStrategy implements TradingStrategy {
     gctx.pairId = ctx.pairId;
     gctx.nowMs = methodClock(ctx.nowMs);
     return Boolean(
-      interpretMethod(this.graph.shouldDefend, gctx, this.state, "value"),
+      interpretMethodSafe(
+        this.graph.shouldDefend,
+        gctx,
+        this.state,
+        "value",
+        false as unknown,
+        "shouldDefend",
+        this.id,
+      ),
     );
   }
 
@@ -254,11 +327,14 @@ export class GraphStrategy implements TradingStrategy {
     gctx.filledExpensive = ctx.filledExpensive;
     gctx.pairId = ctx.pairId;
     gctx.nowMs = methodClock(ctx.nowMs);
-    const value = interpretMethod(
+    const value = interpretMethodSafe(
       this.graph.defendShares,
       gctx,
       this.state,
       "value",
+      0 as unknown,
+      "defendShares",
+      this.id,
     );
     return typeof value === "number" ? value : 0;
   }
@@ -270,12 +346,15 @@ export class GraphStrategy implements TradingStrategy {
     gctx.pairId = ctx.pairId;
     gctx.freshAsk = ctx.freshAsk;
     gctx.nowMs = methodClock(ctx.nowMs);
-    return interpretMethod(
+    return interpretMethodSafe(
       this.graph.hedgeAtPostTime,
       gctx,
       this.state,
       "value",
-    ) as HedgePostDecision;
+      { action: "skip", reason: "graph-error-fallback" } as HedgePostDecision,
+      "hedgeAtPostTime",
+      this.id,
+    );
   }
 
   shouldSellExpensiveEdge(ctx: EdgeSellContext): boolean {
@@ -290,11 +369,14 @@ export class GraphStrategy implements TradingStrategy {
     gctx.marketAgeMs = ctx.marketAgeMs;
     gctx.nowMs = methodClock(ctx.nowMs);
     return Boolean(
-      interpretMethod(
+      interpretMethodSafe(
         this.graph.shouldSellExpensiveEdge,
         gctx,
         this.state,
         "value",
+        false as unknown,
+        "shouldSellExpensiveEdge",
+        this.id,
       ),
     );
   }

@@ -77,6 +77,10 @@ export const EDITABLE_CONFIG_KEYS = [
   "dipRevertOrderUsdc",
   "dipRevertExitTakeProfitEnabled",
   "dipRevertExitWinAsk",
+  "favBandOrderUsdc",
+  "barbellCheapOrderUsdc",
+  "reverseCheapOrderUsdc",
+  "customOrderUsdc",
 ] as const;
 
 export type EditableConfigKey = (typeof EDITABLE_CONFIG_KEYS)[number];
@@ -143,6 +147,10 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   favBandAskMax: "FAV_BAND_ASK_MAX",
   favBandMinElapsedSec: "FAV_BAND_MIN_ELAPSED_SEC",
   favBandMaxElapsedSec: "FAV_BAND_MAX_ELAPSED_SEC",
+  favBandOrderUsdc: "FAV_BAND_ORDER_USDC",
+  barbellCheapOrderUsdc: "BARBELL_CHEAP_ORDER_USDC",
+  reverseCheapOrderUsdc: "REVERSE_CHEAP_ORDER_USDC",
+  customOrderUsdc: "CUSTOM_ORDER_USDC",
   dipRevertBandMin: "DIP_REVERT_BAND_MIN",
   dipRevertBandMax: "DIP_REVERT_BAND_MAX",
   dipRevertMinDrop: "DIP_REVERT_MIN_DROP",
@@ -247,6 +255,10 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "expensiveBuyMin":
     case "expensiveBuyMax":
     case "cheapOrderUsdc":
+    case "favBandOrderUsdc":
+    case "barbellCheapOrderUsdc":
+    case "reverseCheapOrderUsdc":
+    case "customOrderUsdc":
     case "barbellHedgeRatio":
     case "favBandAskMin":
     case "favBandAskMax":
@@ -402,7 +414,7 @@ const BARBELL_KEYS: readonly EditableConfigKey[] = [
   "expensiveBuyMin",
   "expensiveBuyMax",
   "enableExpensiveHedge",
-  "cheapOrderUsdc",
+  "barbellCheapOrderUsdc",
   "barbellHedgeRatio",
   "expensiveOrderUsdc",
   "expensiveOrderType",
@@ -416,7 +428,7 @@ const REVERSE_KEYS: readonly EditableConfigKey[] = [
   "expensiveBuyMax",
   "enableExpensiveHedge",
   "requireCheapFillBeforeExpensive",
-  "cheapOrderUsdc",
+  "reverseCheapOrderUsdc",
   "expensiveOrderUsdc",
   "expensiveOrderType",
   "reverseCancelCheapOffBand",
@@ -430,7 +442,7 @@ const REVERSE_KEYS: readonly EditableConfigKey[] = [
  */
 
 const FAV_BAND_KEYS: readonly EditableConfigKey[] = [
-  "cheapOrderUsdc",
+  "favBandOrderUsdc",
   "favBandAskMin",
   "favBandAskMax",
   "favBandMinElapsedSec",
@@ -473,6 +485,11 @@ const EDGE_LEAD_KEYS: readonly EditableConfigKey[] = [
   "edgeAskSumMax",
 ];
 
+/** Custom (graph) : budget des ordres computeSize des graphs custom. */
+const CUSTOM_KEYS: readonly EditableConfigKey[] = [
+  "customOrderUsdc",
+];
+
 /**
  * SIM keys (simulatedCapital, fill probability, seed) stay in EDITABLE_CONFIG_KEYS
  * for backtest presets/sanitizePatch, but are omitted from live keysForStrategy.
@@ -491,8 +508,10 @@ export function keysForStrategy(
           : strategyId === "fav-band"
             ? FAV_BAND_KEYS
             : strategyId === "dip-revert"
-              ? DIP_REVERT_KEYS
-              : ARB_KEYS; // arb + custom sans leadsWithEdge
+                    ? DIP_REVERT_KEYS
+                    : String(strategyId).startsWith("custom:")
+                      ? CUSTOM_KEYS
+                      : ARB_KEYS; // arb seul
   return [...SHARED_KEYS, ...strategyKeys];
 }
 

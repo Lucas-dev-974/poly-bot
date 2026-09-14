@@ -9,6 +9,7 @@ import {
   type RuntimeSettingsPatch,
 } from "./runtime-settings.js";
 import type { StrategyId } from "./strategy/ids.js";
+import { validateEngineBudget } from "./utils/prices.js";
 
 function envString(key: string, fallback?: string): string {
   const value = process.env[key] ?? fallback;
@@ -62,7 +63,21 @@ export interface BotConfig {
   enableExpensiveHedge: boolean;
   /** Reverse: n'émettre l'expensive qu'après un cheap fillé sur la paire. */
   requireCheapFillBeforeExpensive: boolean;
+  /**
+   * ARB-ONLY : budget de la jambe cheap arb (calibré pour des prix 0.07-0.13,
+   * où 1 USDC dépasse le plancher CLOB de 5 shares). Les autres moteurs ont
+   * leur propre clé — ne pas réutiliser celle-ci (incident 2026-09-14 :
+   * fav-band muet avec cheapOrderUsdc=1, jamais 5 shares dans la bande 0.70+).
+   */
   cheapOrderUsdc: number;
+  /** Fav-band : budget FOK favori (taille = budget / ask, plafonnée maxShares). */
+  favBandOrderUsdc: number;
+  /** Barbell : budget de la jambe cheap. */
+  barbellCheapOrderUsdc: number;
+  /** Reverse : budget de la jambe cheap (grid maker). */
+  reverseCheapOrderUsdc: number;
+  /** Custom (graph) : budget des ordres computeSize des graphs custom. */
+  customOrderUsdc: number;
   /** Trading engine: arb = 1:1 + lock; barbell = cheap/hedge ratio, no lock. */
   strategyId: StrategyId;
   /** Target hedge / cheap fill ratio for barbell. Ignored by arb. (0, 1]. */
@@ -267,6 +282,10 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     enableExpensiveHedge: true,
     requireCheapFillBeforeExpensive: true,
     cheapOrderUsdc: 1,
+    favBandOrderUsdc: 15,
+    barbellCheapOrderUsdc: 15,
+    reverseCheapOrderUsdc: 15,
+    customOrderUsdc: 15,
     strategyId: "arb",
     barbellHedgeRatio: 0.5,
     pairLockMax: 0.98,
@@ -414,6 +433,11 @@ export function loadConfig(): BotConfig {
     if (!Object.prototype.hasOwnProperty.call(overlay, "maxShareEdge")) {
       config.maxShareEdge = config.maxSharesPerOrder;
     }
+    // Migration configs par moteur (2026-09-14) : chaque moteur lit UNIQUEMENT
+    // sa propre clé de budget (favBandOrderUsdc, barbellCheapOrderUsdc,
+    // reverseCheapOrderUsdc, customOrderUsdc) — aucun héritage de
+    // cheapOrderUsdc (ARB-ONLY). Un ancien JSON sans ces clés donne les défauts
+    // 15 USDC ; c'est volontaire : 1 USDC était le bug du moteur fav-band muet.
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     throw new Error(
@@ -495,6 +519,12 @@ export function validateConfigCoherence(
     if (!(config.barbellHedgeRatio > 0 && config.barbellHedgeRatio <= 1)) {
       throw new Error("BARBELL_HEDGE_RATIO must be in (0, 1]");
     }
+    // Jambe cheap barbell : même bande de marché que l'arb, budget propre.
+    validateEngineBudget(
+      config.barbellCheapOrderUsdc,
+      config.cheapBuyMax,
+      "barbell cheap",
+    );
   }
   if (
     config.strategyId === "reverse" &&
@@ -502,6 +532,18 @@ export function validateConfigCoherence(
     config.reverseMaxGridLevels < 1
   ) {
     throw new Error("REVERSE_MAX_GRID_LEVELS must be null or >= 1");
+  }
+  if (config.strategyId === "reverse") {
+    // Jambe cheap reverse : grid maker dans la bande cheap partagée.
+    validateEngineBudget(
+      config.reverseCheapOrderUsdc,
+      config.cheapBuyMax,
+      "reverse cheap",
+    );
+  }
+  if (config.strategyId?.startsWith("custom:")) {
+    // Custom (graph) : pas de bande statique → pire cas prix 0.99.
+    validateEngineBudget(config.customOrderUsdc, 0.99, "custom graph");
   }
   if (config.minutesBeforeCloseMin > config.minutesBeforeCloseMax) {
     throw new Error("MINUTES_BEFORE_CLOSE_MIN must be <= MINUTES_BEFORE_CLOSE_MAX");
@@ -529,9 +571,18 @@ export function validateConfigCoherence(
     ) {
       throw new Error("favBandMaxElapsedSec must be >= favBandMinElapsedSec");
     }
-    if (!(config.cheapOrderUsdc > 0)) {
-      throw new Error("cheapOrderUsdc must be > 0 for fav-band");
+    if (!(config.favBandOrderUsdc > 0)) {
+      throw new Error("favBandOrderUsdc must be > 0 for fav-band");
     }
+    // Viabilité du sizing : le budget doit atteindre MIN_CLOB_SHARES au pire
+    // prix de la bande, sinon le moteur est muet silencieusement (incident
+    // 2026-09-14 : cheapOrderUsdc=1 → 1/0.85 = 1.18 shares < 5, aucune
+    // opportunité émise pendant 1h30).
+    validateEngineBudget(
+      config.favBandOrderUsdc,
+      config.favBandAskMax,
+      "fav-band",
+    );
   }
   if (config.strategyId === "dip-revert") {
     // Dip-revert is single-leg directional (no hedge, no dual-FOK).
@@ -561,6 +612,11 @@ export function validateConfigCoherence(
     if (!(config.dipRevertOrderUsdc > 0)) {
       throw new Error("dipRevertOrderUsdc must be > 0 for dip-revert");
     }
+    validateEngineBudget(
+      config.dipRevertOrderUsdc,
+      config.dipRevertBandMax,
+      "dip-revert",
+    );
     if (config.dipRevertExitTakeProfitEnabled) {
       if (
         !(config.dipRevertExitWinAsk > 0 && config.dipRevertExitWinAsk < 1)
@@ -598,6 +654,11 @@ export function validateConfigCoherence(
     if (config.edgeCheapOrderUsdc <= 0) {
       throw new Error("EDGE_CHEAP_ORDER_USDC must be > 0");
     }
+    validateEngineBudget(
+      config.edgeCheapOrderUsdc,
+      config.edgeCheapBandMax,
+      "edge-lead cheap",
+    );
     if (config.edgeCheapBandMin >= config.edgeCheapBandMax) {
       throw new Error("EDGE_CHEAP_BAND_MIN must be < EDGE_CHEAP_BAND_MAX");
     }

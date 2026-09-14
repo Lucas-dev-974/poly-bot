@@ -451,7 +451,7 @@ describe("backtest engine", () => {
         expensiveBuyMax: 0.95,
         enableExpensiveHedge: true,
         requireCheapFillBeforeExpensive: false,
-        cheapOrderUsdc: 10,
+        reverseCheapOrderUsdc: 10,
         expensiveOrderUsdc: 50,
         expensiveOrderType: "GTC",
         maxSharesPerOrder: 90,

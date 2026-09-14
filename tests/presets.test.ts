@@ -61,7 +61,7 @@ describe("strategy presets", () => {
     assert.equal(reverse.settings.cheapBuyMax, 0.1);
     assert.equal(reverse.settings.expensiveBuyMin, 0.9);
     assert.equal(reverse.settings.expensiveBuyMax, 0.95);
-    assert.equal(reverse.settings.cheapOrderUsdc, 10);
+    assert.equal(reverse.settings.reverseCheapOrderUsdc, 10);
     assert.equal(reverse.settings.expensiveOrderUsdc, 50);
     assert.equal(reverse.settings.maxSharesPerOrder, 90);
     assert.equal(reverse.settings.maxOpenPositionsPerSide, 6);

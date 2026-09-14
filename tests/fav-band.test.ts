@@ -20,7 +20,7 @@ describe("fav-band strategy", () => {
       strategyId: "fav-band",
       enableExpensiveHedge: false,
       arbAskLockOnly: true, // sticky flag must not block emission
-      cheapOrderUsdc: 15,
+      favBandOrderUsdc: 15,
       favBandAskMin: 0.7,
       favBandAskMax: 0.85,
       favBandMinElapsedSec: 200,
@@ -49,7 +49,7 @@ describe("fav-band strategy", () => {
     const config = testConfig({
       strategyId: "fav-band",
       favBandMinElapsedSec: 200,
-      cheapOrderUsdc: 15,
+      favBandOrderUsdc: 15,
     });
     const event = testEvent(1_800_000_000);
     const nowMs = (event.windowStart + 50) * 1000;
@@ -70,7 +70,7 @@ describe("fav-band strategy", () => {
       favBandAskMin: 0.7,
       favBandAskMax: 0.85,
       favBandMinElapsedSec: 0,
-      cheapOrderUsdc: 15,
+      favBandOrderUsdc: 15,
     });
     const event = testEvent();
     const nowMs = (event.windowStart + 300) * 1000;
@@ -90,7 +90,7 @@ describe("fav-band strategy", () => {
     const config = testConfig({
       strategyId: "fav-band",
       favBandMinElapsedSec: 0,
-      cheapOrderUsdc: 15,
+      favBandOrderUsdc: 15,
       maxSharesPerOrder: 40,
     });
     const event = testEvent();

@@ -59,6 +59,56 @@ describe("validateTradingConfig", () => {
     );
   });
 
+  it("rejects a fav-band budget that cannot reach MIN_CLOB_SHARES (incident 2026-09-14)", () => {
+    assert.throws(
+      () =>
+        validateConfigCoherence(
+          testConfig({ strategyId: "fav-band", favBandOrderUsdc: 1 }),
+        ),
+      /fav-band: budget 1 USDC can never reach MIN_CLOB_SHARES/,
+    );
+  });
+
+  it("rejects a dip-revert budget below the CLOB floor in its band", () => {
+    assert.throws(
+      () =>
+        validateConfigCoherence(
+          testConfig({ strategyId: "dip-revert", dipRevertOrderUsdc: 2 }),
+        ),
+      /dip-revert: budget 2 USDC can never reach/,
+    );
+  });
+
+  it("rejects an edge-lead cheap budget below the CLOB floor", () => {
+    assert.throws(
+      () =>
+        validateConfigCoherence(
+          testConfig({ strategyId: "edge-lead", edgeCheapOrderUsdc: 0.5 }),
+        ),
+      /edge-lead cheap: budget 0.5 USDC can never reach/,
+    );
+  });
+
+  it("rejects a barbell cheap budget below the CLOB floor in its cheap band", () => {
+    assert.throws(
+      () =>
+        validateConfigCoherence(
+          testConfig({ strategyId: "barbell", barbellCheapOrderUsdc: 0.3 }),
+        ),
+      /barbell cheap: budget 0.3 USDC can never reach/,
+    );
+  });
+
+  it("rejects a reverse cheap budget below the CLOB floor", () => {
+    assert.throws(
+      () =>
+        validateConfigCoherence(
+          testConfig({ strategyId: "reverse", reverseCheapOrderUsdc: 0.3 }),
+        ),
+      /reverse cheap: budget 0.3 USDC can never reach/,
+    );
+  });
+
   it("rejects barbellHedgeRatio of 0 or above 1 only for barbell", () => {
     assert.throws(
       () =>

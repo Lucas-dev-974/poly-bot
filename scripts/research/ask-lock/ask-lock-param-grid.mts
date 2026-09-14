@@ -126,8 +126,8 @@ for (const v of variants) {
   console.log(JSON.stringify(row));
 }
 
-mkdirSync(join("audits", "arb-backtest", "ask-lock"), { recursive: true });
-const outPath = join("audits", "arb-backtest", `ask-lock-grid-${Date.now()}.json`);
+mkdirSync(join("audits", "backtest", "ask-lock"), { recursive: true });
+const outPath = join("audits", "backtest", `ask-lock-grid-${Date.now()}.json`);
 writeFileSync(outPath, JSON.stringify({ windows: complete.length, rows }, null, 2));
 console.log(JSON.stringify({ phase: "done", outPath, n: rows.length }, null, 2));
 

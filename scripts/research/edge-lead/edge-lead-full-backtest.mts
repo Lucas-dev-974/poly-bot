@@ -145,8 +145,8 @@ const summary = {
   },
 };
 
-mkdirSync(join("audits", "arb-backtest", "edge-lead"), { recursive: true });
-const outPath = join("audits", "arb-backtest", `${runId}.json`);
+mkdirSync(join("audits", "backtest", "edge-lead"), { recursive: true });
+const outPath = join("audits", "backtest", `${runId}.json`);
 writeFileSync(outPath, JSON.stringify(summary, null, 2));
 console.log(JSON.stringify({ ...summary, outPath }, null, 2));
 

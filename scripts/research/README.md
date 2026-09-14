@@ -1,7 +1,7 @@
 # Research scripts
 
 Offline digs, grids, and probes. **Not** production entrypoints — run from the
-**repo root**. Outputs land in `audits/arb-backtest/<strategy>/`.
+**repo root**. Outputs land in `audits/backtest/<strategy>/`.
 
 ## Layout (one folder per strategy)
 
@@ -37,7 +37,7 @@ Imports use `../../../src/...` (three levels up to the repo root).
 
 ## Audit outputs
 
-`audits/arb-backtest/` has one sub-folder per strategy (`arb/`, `ask-lock/`,
+`audits/backtest/` has one sub-folder per strategy (`arb/`, `ask-lock/`,
 `edge-lead/`, `fav-band/`, `dip-revert/`, `momentum/`, `compare/`) plus
 `coverage/` for the shared data-coverage universe reports. Only the **newest**
 run of each identical config is kept.

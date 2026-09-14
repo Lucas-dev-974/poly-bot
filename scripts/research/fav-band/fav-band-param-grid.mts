@@ -208,9 +208,9 @@ for (const spec of specs) {
 }
 
 rows.sort((a, b) => Number(b.pnlPct) - Number(a.pnlPct));
-mkdirSync(join("audits", "arb-backtest", "fav-band"), { recursive: true });
+mkdirSync(join("audits", "backtest", "fav-band"), { recursive: true });
 const ts = Date.now();
-const outPath = join("audits", "arb-backtest", `fav-band-param-grid-${ts}.json`);
+const outPath = join("audits", "backtest", `fav-band-param-grid-${ts}.json`);
 writeFileSync(
   outPath,
   JSON.stringify(

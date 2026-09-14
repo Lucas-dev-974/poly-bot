@@ -69,7 +69,7 @@ for (const spec of specs) {
   rows.push(row);
   console.log(JSON.stringify(row));
 }
-mkdirSync(join("audits", "arb-backtest", "edge-lead"), { recursive: true });
-writeFileSync(join("audits", "arb-backtest", `edge-asksum1-combo-${Date.now()}.json`), JSON.stringify(rows, null, 2));
+mkdirSync(join("audits", "backtest", "edge-lead"), { recursive: true });
+writeFileSync(join("audits", "backtest", `edge-asksum1-combo-${Date.now()}.json`), JSON.stringify(rows, null, 2));
 try { (db as any).close?.(); } catch {}
 try { rmSync(workDb, { force: true }); } catch {}

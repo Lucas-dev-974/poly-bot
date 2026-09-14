@@ -10,8 +10,8 @@ import { DatabaseSync } from "node:sqlite";
 import { join } from "node:path";
 
 const root = process.cwd();
-const auditDir = join(root, "audits", "arb-backtest", "dip-revert");
-const coverageDir = join(root, "audits", "arb-backtest", "coverage");
+const auditDir = join(root, "audits", "backtest", "dip-revert");
+const coverageDir = join(root, "audits", "backtest", "coverage");
 const audits = readdirSync(coverageDir)
   .filter((f) => f.startsWith("audit-data-coverage-") && f.endsWith(".json"))
   .sort();

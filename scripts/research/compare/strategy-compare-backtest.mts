@@ -149,8 +149,8 @@ for (const spec of specs) {
   console.log(JSON.stringify(row));
 }
 
-mkdirSync(join("audits", "arb-backtest", "compare"), { recursive: true });
-const outPath = join("audits", "arb-backtest", `strategy-compare-${Date.now()}.json`);
+mkdirSync(join("audits", "backtest", "compare"), { recursive: true });
+const outPath = join("audits", "backtest", `strategy-compare-${Date.now()}.json`);
 writeFileSync(outPath, JSON.stringify({ windows: complete.length, rows }, null, 2));
 console.log(JSON.stringify({ phase: "done", outPath, n: rows.length }, null, 2));
 

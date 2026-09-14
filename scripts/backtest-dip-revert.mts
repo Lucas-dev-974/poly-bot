@@ -204,8 +204,8 @@ for (const spec of specs) {
 }
 
 rows.sort((a, b) => Number(b.pnlPct) - Number(a.pnlPct));
-mkdirSync(join("audits", "arb-backtest", "dip-revert"), { recursive: true });
-const outPath = join("audits", "arb-backtest", "dip-revert", `dip-revert-backtest-${Date.now()}.json`);
+mkdirSync(join("audits", "backtest", "dip-revert"), { recursive: true });
+const outPath = join("audits", "backtest", "dip-revert", `dip-revert-backtest-${Date.now()}.json`);
 writeFileSync(
   outPath,
   JSON.stringify({ criteria, windows: selected.length, ranked: rows }, null, 2),

@@ -9,7 +9,7 @@
  *   npx tsx scripts/audit-data-coverage.mts [dbPath] [minTicks] [maxGapMs]
  *   ex. npx tsx scripts/audit-data-coverage.mts data/bot-live.db 801 60000
  *
- * Sortie : JSON détaillé dans audits/arb-backtest/coverage/audit-data-coverage-<ts>.json
+ * Sortie : JSON détaillé dans audits/backtest/coverage/audit-data-coverage-<ts>.json
  * + résumé console. Ne modifie pas la base source (copie de travail via VACUUM INTO).
  */
 import { existsSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
@@ -158,8 +158,8 @@ const report = {
   })),
 };
 
-mkdirSync(join("audits", "arb-backtest", "coverage"), { recursive: true });
-const outPath = join("audits", "arb-backtest", "coverage", `audit-data-coverage-${Date.now()}.json`);
+mkdirSync(join("audits", "backtest", "coverage"), { recursive: true });
+const outPath = join("audits", "backtest", "coverage", `audit-data-coverage-${Date.now()}.json`);
 writeFileSync(outPath, JSON.stringify({ ...report, outPath }, null, 2));
 
 console.log(

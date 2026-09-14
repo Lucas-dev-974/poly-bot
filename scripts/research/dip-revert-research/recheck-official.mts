@@ -183,10 +183,10 @@ for (const spec of specs) {
 }
 
 rows.sort((a, b) => Number(b.pnlPct) - Number(a.pnlPct));
-mkdirSync(join("audits", "arb-backtest", "dip-revert"), { recursive: true });
+mkdirSync(join("audits", "backtest", "dip-revert"), { recursive: true });
 const outPath = join(
   "audits",
-  "arb-backtest",
+  "backtest",
   "dip-revert",
   `dip-revert-recheck-${Date.now()}.json`,
 );

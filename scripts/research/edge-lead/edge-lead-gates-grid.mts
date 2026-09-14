@@ -121,8 +121,8 @@ for (const spec of specs) {
 }
 
 rows.sort((a, b) => b.pnl - a.pnl);
-mkdirSync(join("audits", "arb-backtest", "edge-lead"), { recursive: true });
-const outPath = join("audits", "arb-backtest", `edge-lead-gates-${Date.now()}.json`);
+mkdirSync(join("audits", "backtest", "edge-lead"), { recursive: true });
+const outPath = join("audits", "backtest", `edge-lead-gates-${Date.now()}.json`);
 writeFileSync(outPath, JSON.stringify({ windows: selected.length, rows }, null, 2));
 console.log(JSON.stringify({ phase: "done", outPath, ranked: rows.map((r) => ({ id: r.id, pnl: r.pnl, pnlPct: r.pnlPct, covered: r.covered, uncovered: r.uncovered, fills: r.fills, rejects: r.rejects })) }, null, 2));
 

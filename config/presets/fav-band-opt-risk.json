@@ -1,0 +1,32 @@
+{
+  "id": "fav-band-opt-risk",
+  "strategyId": "fav-band",
+  "name": "Fav-band opt-risk (0.68-0.82)",
+  "description": "Best pnl/maxDd on same offline grid: band [0.68,0.82] @ minElapsed 200, no max. PnL +289 (~same as baseline) with maxDd 108 vs 113. Offline only — not applied to live.",
+  "settings": {
+    "pollIntervalMs": 1000,
+    "marketSlugPrefixes": ["btc-updown-15m"],
+    "strategyId": "fav-band",
+    "enableExpensiveHedge": false,
+    "arbAskLockOnly": false,
+    "arbAskSumMax": null,
+    "cheapOrderUsdc": 15,
+    "favBandAskMin": 0.68,
+    "favBandAskMax": 0.82,
+    "favBandMinElapsedSec": 200,
+    "favBandMaxElapsedSec": null,
+    "maxSharesPerOrder": 40,
+    "maxOpenPositionsPerSide": 1,
+    "maxExposureUsdc": 40,
+    "minutesBeforeCloseMin": 0,
+    "minutesBeforeCloseMax": 15,
+    "minMinutesBeforeCloseToBuy": null,
+    "simulatedCapital": 75,
+    "simFillProbabilityNonMarketable": 0.3,
+    "simResolveDelaySeconds": 5,
+    "simResolveRetryIntervalMs": 5000,
+    "simResolveMaxRetries": 5,
+    "simResolveFallback": "none",
+    "simMaxRetryAttempts": 20
+  }
+}

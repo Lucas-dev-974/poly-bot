@@ -156,6 +156,9 @@ ce rapport fait foi pour savoir quelles fenêtres sont exploitables.
 | `check-quota.ts`, `redeem-all.ts` | Ops live (quota relayer, redeem) |
 | `probe-ask-lock.mts`, `probe-markets.mts` | Probes CLOB / marchés |
 | `scripts/research/dip-revert-research/verify-tp.mts` | Garde de régression du wiring take-profit dip-revert |
+| `scripts/research/dip-revert-research/live-positions.mts` | Positions LIVE dip-revert : winrate, PnL, streaks (lit bot-live.db) |
+| `scripts/backtest-dip-revert-axes.mts` | Validation runner officiel des axes d'entrée dip-revert (écrit dans `dip-revert/`) |
+| `scripts/research/dip-revert-research/dip-hedge-sim.mts` | Hedge jambe inverse dip-revert : post/free/stop/parité (écrit dans `dip-revert/`) |
 
 ## Conventions
 

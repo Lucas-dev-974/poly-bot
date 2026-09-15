@@ -120,7 +120,7 @@ export function loadUniverse(dbPath = "data/bot-live.db"): Universe {
     const rows = db
       .prepare(
         `SELECT ts, outcomeIndex, bestAsk, bestBid, bestAskSize, bestBidSize,
-                bid2, bid2Size, bid3, bid3Size
+                bid2, bid2Size, bid3, bid3Size, ask2, ask2Size, ask3, ask3Size
          FROM book_snapshots WHERE eventSlug = ? ORDER BY ts`,
       )
       .all(slug) as Array<{
@@ -134,6 +134,10 @@ export function loadUniverse(dbPath = "data/bot-live.db"): Universe {
       bid2Size: number | null;
       bid3: number | null;
       bid3Size: number | null;
+      ask2: number | null;
+      ask2Size: number | null;
+      ask3: number | null;
+      ask3Size: number | null;
     }>;
     const byTs = new Map<
       number,
@@ -156,6 +160,12 @@ export function loadUniverse(dbPath = "data/bot-live.db"): Universe {
       if (r.bid3 != null) bids.push({ px: r.bid3, sz: r.bid3Size ?? 0 });
       bids.sort((x, y) => y.px - x.px);
       side.bids = bids;
+      const asks: Array<{ px: number; sz: number }> = [];
+      if (r.bestAsk != null) asks.push({ px: r.bestAsk, sz: r.bestAskSize ?? 0 });
+      if (r.ask2 != null) asks.push({ px: r.ask2, sz: r.ask2Size ?? 0 });
+      if (r.ask3 != null) asks.push({ px: r.ask3, sz: r.ask3Size ?? 0 });
+      asks.sort((x, y) => x.px - y.px);
+      (side as any).asks = asks;
     }
     const ticks: Tick[] = [];
     for (const [ts, b] of byTs) {

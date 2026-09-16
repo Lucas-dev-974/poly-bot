@@ -1,0 +1,211 @@
+[
+  {
+    "label": "hold-base",
+    "engine": "entry",
+    "fills": 107,
+    "wins": 69,
+    "losses": 38,
+    "earlyExits": 0,
+    "kills": 0,
+    "pnl": 118.05,
+    "winRate": 64.5,
+    "avgWin": 9.972,
+    "avgLoss": -15,
+    "maxDrawdown": 102.94,
+    "byDay": {
+      "2026-09-13": 107.16,
+      "2026-09-14": 24.55,
+      "2026-09-15": -13.66
+    }
+  },
+  {
+    "label": "e150+d050",
+    "engine": "entry",
+    "fills": 108,
+    "wins": 67,
+    "losses": 41,
+    "earlyExits": 0,
+    "kills": 0,
+    "pnl": 69.33,
+    "winRate": 62,
+    "avgWin": 10.214,
+    "avgLoss": -15,
+    "maxDrawdown": 120.33,
+    "byDay": {
+      "2026-09-13": 92.48,
+      "2026-09-14": -9.48,
+      "2026-09-15": -13.66
+    }
+  },
+  {
+    "label": "e150+d050+max420",
+    "engine": "entry",
+    "fills": 87,
+    "wins": 54,
+    "losses": 33,
+    "earlyExits": 0,
+    "kills": 0,
+    "pnl": 69.15,
+    "winRate": 62.1,
+    "avgWin": 10.447,
+    "avgLoss": -15,
+    "maxDrawdown": 113.41,
+    "byDay": {
+      "2026-09-13": 101.42,
+      "2026-09-14": -25.52,
+      "2026-09-15": -6.74
+    }
+  },
+  {
+    "label": "e120",
+    "engine": "entry",
+    "fills": 114,
+    "wins": 71,
+    "losses": 43,
+    "earlyExits": 0,
+    "kills": 0,
+    "pnl": 82.82,
+    "winRate": 62.3,
+    "avgWin": 10.251,
+    "avgLoss": -15,
+    "maxDrawdown": 167.37,
+    "byDay": {
+      "2026-09-13": 126.57,
+      "2026-09-14": -60.6,
+      "2026-09-15": 16.85
+    }
+  },
+  {
+    "label": "d050",
+    "engine": "entry",
+    "fills": 103,
+    "wins": 66,
+    "losses": 37,
+    "earlyExits": 0,
+    "kills": 0,
+    "pnl": 113.93,
+    "winRate": 64.1,
+    "avgWin": 10.135,
+    "avgLoss": -15,
+    "maxDrawdown": 73.77,
+    "byDay": {
+      "2026-09-13": 93.39,
+      "2026-09-14": 34.2,
+      "2026-09-15": -13.66
+    }
+  },
+  {
+    "label": "s003",
+    "engine": "entry",
+    "fills": 107,
+    "wins": 69,
+    "losses": 38,
+    "earlyExits": 0,
+    "kills": 0,
+    "pnl": 118.05,
+    "winRate": 64.5,
+    "avgWin": 9.972,
+    "avgLoss": -15,
+    "maxDrawdown": 102.94,
+    "byDay": {
+      "2026-09-13": 107.16,
+      "2026-09-14": 24.55,
+      "2026-09-15": -13.66
+    }
+  },
+  {
+    "label": "live-band0.63",
+    "engine": "entry",
+    "fills": 103,
+    "wins": 64,
+    "losses": 39,
+    "earlyExits": 0,
+    "kills": 0,
+    "pnl": 79.43,
+    "winRate": 62.1,
+    "avgWin": 10.382,
+    "avgLoss": -15,
+    "maxDrawdown": 102.21,
+    "byDay": {
+      "2026-09-13": 98.7,
+      "2026-09-14": -7.53,
+      "2026-09-15": -11.74
+    }
+  },
+  {
+    "label": "live-e480",
+    "engine": "entry",
+    "fills": 71,
+    "wins": 41,
+    "losses": 30,
+    "earlyExits": 0,
+    "kills": 0,
+    "pnl": -51.85,
+    "winRate": 57.7,
+    "avgWin": 9.711,
+    "avgLoss": -15,
+    "maxDrawdown": 153.42,
+    "byDay": {
+      "2026-09-13": -102.18,
+      "2026-09-14": 57.69,
+      "2026-09-15": -7.36
+    }
+  },
+  {
+    "label": "trail-0.15-arm4",
+    "engine": "trail",
+    "fills": 107,
+    "sells": 78,
+    "sellKills": 0,
+    "wins": 43,
+    "losses": 64,
+    "winRate": 40.2,
+    "pnl": -18.27,
+    "maxDrawdown": 92.6,
+    "holdWins": 19,
+    "sellNotional": 1111.39,
+    "byDay": {
+      "2026-09-13": 23.48,
+      "2026-09-14": -76.41,
+      "2026-09-15": 34.67
+    }
+  },
+  {
+    "label": "trail-0.12-arm4-winner",
+    "engine": "trail",
+    "fills": 108,
+    "sells": 81,
+    "sellKills": 0,
+    "wins": 42,
+    "losses": 66,
+    "winRate": 38.9,
+    "pnl": -4.68,
+    "maxDrawdown": 77.08,
+    "holdWins": 17,
+    "sellNotional": 1187.17,
+    "byDay": {
+      "2026-09-13": 16.01,
+      "2026-09-14": -51.73,
+      "2026-09-15": 31.04
+    }
+  },
+  {
+    "label": "hold-trail-ref",
+    "engine": "trail",
+    "fills": 107,
+    "sells": 0,
+    "sellKills": 0,
+    "wins": 69,
+    "losses": 38,
+    "winRate": 64.5,
+    "pnl": 118.05,
+    "maxDrawdown": 102.94,
+    "holdWins": 69,
+    "sellNotional": 0,
+    "byDay": {
+      "2026-09-13": 107.16,
+      "2026-09-14": 24.55,
+      "2026-09-15": -13.66
+    }
+  }
+]

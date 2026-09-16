@@ -1,5 +1,5 @@
 export type TabId = "story" | "arch" | "hedge" | "ui" | "ship";
-export type EngineId = "arb" | "barbell" | "edge-lead" | "reverse" | "dip-revert";
+export type EngineId = "arb" | "barbell" | "edge-lead" | "reverse" | "dip-revert" | "antiflip-revert" | "flip-confirm" | "early-conviction";
 export type PhaseId = "mid" | "done";
 
 export const TABS: { id: TabId; label: string }[] = [
@@ -49,6 +49,27 @@ export const ENGINE_META: Record<
     risk: "Élevée — un seul pari directionnel, pas de hedge, pas de défense",
     tone: "warning",
   },
+  "antiflip-revert": {
+    label: "Antiflip-revert — le favori déchu",
+    subtitle: "Le favori FLIPPE et le marché sur-réagit : l'ancien favori, replacé 0.35-0.45, re-gagne ~52% du temps.",
+    order: "Flip d'identité → FOK favori déchu (≤90s après) → hold jusqu'à la résolution",
+    risk: "Élevée — variance par trade la plus élevée du panel, sizing prudent",
+    tone: "warning",
+  },
+  "flip-confirm": {
+    label: "Flip-confirm — le nouveau favori",
+    subtitle: "Un flip PRÉCOCE est informationnel : le marché sous-ajuste d'abord, on achète le nouveau favori 0.55-0.65.",
+    order: "Flip précoce → FOK nouveau favori en [120,180]s → hold jusqu'à la résolution",
+    risk: "Élevée — les entrées après 180s s'effondrent : la fenêtre ne s'élargit pas",
+    tone: "warning",
+  },
+  "early-conviction": {
+    label: "Early-conviction — la conviction immédiate",
+    subtitle: "Un marché qui se fixe instantanément (favori ≥ 0.60 dès les 45 premières secondes) est un trend unilatéral.",
+    order: "Favori ≥ 0.60 dans les 45 premières s → FOK immédiat → hold jusqu'à la résolution",
+    risk: "Élevée — le plus simple mécaniquement ; t-stat 1.93, sous le seuil 2.0",
+    tone: "warning",
+  },
 };
 
 export const CHEAP = 10;
@@ -87,13 +108,13 @@ export const COMPARE_ROWS: [string, string, string][] = [
   ["Après défense", "cancel GTC hedge", "cancel GTC hedge (toujours)"],
 ];
 
-export const STRATEGY_COMPARE_ROWS: [string, string, string, string, string, string][] = [
-  ["Ordre d'achat", "Outsider → favori", "Outsider → favori (ratio)", "Favori → cheap (après fill edge)", "Grilles simultanées underdog + favori", "Favori seul (après chute + rebond)"],
-  ["Signal d'entrée", "Bandes cheap/favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant", "Min (sous-coté) et l'autre token, niveaux grille", "Ask favori chuté ≥ minDrop puis rebond"],
-  ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeSizingMode : shares / pUSD / dynamic", "Budget USDC par niveau de grille", "Budget USDC unique (dipRevertOrderUsdc)"],
-  ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés", "Pas de lock — asymétrie + amortissement", "Pas de lock — mean-reversion"],
-  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Vend l'edge nu si en perte soutenue (FOK SELL)", "Aucune — grilles tenues jusqu'à la clôture", "Aucune — hold jusqu'à résolution (ou take-profit optionnel)"],
-  ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu (vendu si perte)", "La plupart des underdogs expirent à 0 ¢", "Le favori chuté perd vraiment (variance)"],
+export const STRATEGY_COMPARE_ROWS: [string, string, string, string, string, string, string, string, string][] = [
+  ["Ordre d'achat", "Outsider → favori", "Outsider → favori (ratio)", "Favori → cheap (après fill edge)", "Grilles simultanées underdog + favori", "Favori seul (après chute + rebond)", "Favori déchu seul (après flip récent)", "Nouveau favori seul (après flip précoce)", "Favori seul (conviction immédiate)"],
+  ["Signal d'entrée", "Bandes cheap/favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant", "Min (sous-coté) et l'autre token, niveaux grille", "Ask favori chuté ≥ minDrop puis rebond", "Flip d'identité ≥ 240s, frais ≤ 90s, déchu 0.35-0.45", "Flip précoce, entrée en [120,180]s, favori 0.55-0.65", "Favori ≥ 0.60 dès les 45 premières s"],
+  ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeSizingMode : shares / pUSD / dynamic", "Budget USDC par niveau de grille", "Budget USDC unique (dipRevertOrderUsdc)", "Budget USDC unique (antiflipOrderUsdc)", "Budget USDC unique (flipConfirmOrderUsdc)", "Budget USDC unique (earlyConvictionOrderUsdc)"],
+  ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés", "Pas de lock — asymétrie + amortissement", "Pas de lock — mean-reversion", "Pas de lock — sur-réaction", "Pas de lock — momentum", "Pas de lock — trend précoce"],
+  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Vend l'edge nu si en perte soutenue (FOK SELL)", "Aucune — grilles tenues jusqu'à la clôture", "Aucune — hold jusqu'à résolution (ou take-profit optionnel)", "Aucune — hold jusqu'à résolution", "Aucune — hold jusqu'à résolution", "Aucune — hold jusqu'à résolution"],
+  ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu (vendu si perte)", "La plupart des underdogs expirent à 0 ¢", "Le favori chuté perd vraiment (variance)", "Le flip était un vrai changement (variance haute)", "Le flip précoce était du bruit (fenêtre étroite)", "t-stat 1.93 < 2.0 — le moins établi des trois"],
 ];
 
 export const EDGE_LEAD_PARAM_ROWS: [string, string][] = [
@@ -136,6 +157,18 @@ export const RESOLUTION_ROWS: Record<EngineId, [string, string][]> = {
     ["L'outsider gagne", "Le favori expire à 0 — perte = coût d'entrée. La chute était un signal de faiblesse réel."],
     ["Take-profit activé, ask ≥ seuil", "Vente au bid (~seuil − 1¢) : gain verrouillé avant la clôture. Désactivé par défaut — en backtest le hold intégral reste meilleur."],
   ],
+  "antiflip-revert": [
+    ["Le favori déchu re-gagne", "Déchu × 1 $ − coût (~0.43) ≈ +0.57/share. Le scénario cible (~52%) — le marché avait sur-réagi au flip."],
+    ["Le nouveau favori s'installe", "Le déchu expire à 0 — perte = coût (~0.43). Le flip était un vrai changement de régime."],
+  ],
+  "flip-confirm": [
+    ["Le nouveau favori gagne", "Nouveau favori × 1 $ − coût (~0.58) ≈ +0.42/share. Le scénario cible (~66%) — le flip précoce était informationnel."],
+    ["L'ancien favori reprend", "Le nouveau favori expire à 0 — perte = coût. Le flip précoce était du bruit (moins fréquent)."],
+  ],
+  "early-conviction": [
+    ["Le favori précoce gagne", "Favori × 1 $ − coût (~0.615) ≈ +0.385/share. Le scénario cible (~67.6%) — la conviction instantanée était fondée."],
+    ["L'outsider gagne", "Le favori expire à 0 — perte = coût. Le trend instantané s'est retourné (rare)."],
+  ],
 };
 
 export const BOT_STEPS: Record<EngineId, string[]> = {
@@ -172,6 +205,26 @@ export const BOT_STEPS: Record<EngineId, string[]> = {
     "Une seule entrée par fenêtre (les FOK ratés par profondeur sont retentés au tick suivant).",
     "Hold jusqu'à la résolution ; pas de hedge, pas de défense.",
     "Optionnel (dipRevertExitTakeProfitEnabled) : si l'ask du favori détenu atteint dipRevertExitWinAsk, FOK SELL au bid (take-profit) ; un FOK tué par la profondeur garde la position pour la résolution.",
+  ],
+  "antiflip-revert": [
+    "Suivre l'identité du favori à chaque tick (Up mène / Down mène) ; un changement = FLIP horodaté.",
+    "Si le flip survient après antiflipMinElapsedSec (240 s) et date de ≤ antiflipFlipLookbackMs (90 s)…",
+    "…et que le NOUVEAU favori cote 0.45-0.65 (incertitude) : cibler le token DÉCHU.",
+    "FOK buy du déchu si son ask ∈ [antiflipBandMin, antiflipBandMax] et ≥ antiflipDeposedAskMin (floor 0.40), spread ≤ antiflipMaxSpread.",
+    "Une seule entrée par fenêtre ; hold jusqu'à la résolution ; pas de hedge, pas de défense.",
+  ],
+  "flip-confirm": [
+    "Suivre l'identité du favori à chaque tick ; un flip PRÉCOCE est horodaté.",
+    "Entrer seulement dans la fenêtre [flipConfirmMinElapsedSec, flipConfirmMaxElapsedSec] (120-180 s), flip frais de ≤ flipConfirmFlipLookbackMs (90 s).",
+    "FOK buy du NOUVEAU favori si son ask ∈ [flipConfirmBandMin, flipConfirmBandMax] (0.55-0.65), spread ≤ flipConfirmMaxSpread.",
+    "Une seule entrée par fenêtre ; hold jusqu'à la résolution ; pas de hedge.",
+    "Les entrées après 180s sont en perte en backtest : ne pas élargir la fenêtre sans re-backtester.",
+  ],
+  "early-conviction": [
+    "Dans les earlyConvictionMaxElapsedSec (45) premières secondes : lire le favori (token au best ask le plus haut).",
+    "Si son ask ∈ [earlyConvictionAskMin, earlyConvictionAskMax] (0.60-0.80) : FOK buy immédiat (budget earlyConvictionOrderUsdc).",
+    "Une seule entrée par fenêtre ; aucun état de flip à tracker ; hold jusqu'à la résolution.",
+    "Pas de hedge. Ne pas baisser le seuil à 0.55 : le même achat à 0.55 est en perte en backtest.",
   ],
 };
 
@@ -214,6 +267,9 @@ export const NEW_FILES: [string, string][] = [
   ["src/strategy/edge-lead-strategy.ts", "Politique favori d'abord + budgets USDC"],
   ["src/strategy/reverse-strategy.ts", "Politique reverse bet — grilles maker underdog / hedge favori"],
   ["src/strategy/dip-revert-strategy.ts", "Politique dip-revert — favori chuté + rebond, FOK, hold"],
+  ["src/strategy/antiflip-revert-strategy.ts", "Politique antiflip-revert — favori déchu post-flip, FOK, hold"],
+  ["src/strategy/flip-confirm-strategy.ts", "Politique flip-confirm — nouveau favori post-flip précoce, FOK, hold"],
+  ["src/strategy/early-conviction-strategy.ts", "Politique early-conviction — favori précoce établi, FOK, hold"],
   ["src/strategy/barbell-sizing.ts", "pairLockOk toujours true"],
   ["src/strategy/registry.ts", "createStrategy(id, repos) natif + custom"],
   ["src/strategy/graph/", "DSL + interpréteur GraphStrategy"],
@@ -348,6 +404,55 @@ export const DIP_LIFE_EDGES: LifeEdge[] = [
   { from: "scan", to: "dip", label: "elapsed ≥ min + bande" },
   { from: "dip", to: "rebound", label: "ask remonte" },
   { from: "rebound", to: "filled", label: "FOK profondeur OK" },
+  { from: "filled", to: "won", label: "résolution" },
+  { from: "filled", to: "lost", label: "résolution" },
+];
+
+export const ANTIFLIP_LIFE_NODES: LifeNode[] = [
+  { id: "scan", label: "Fenêtre 15m scannée", sub: "Gamma + 2 order books", tone: "neutral" },
+  { id: "flip", label: "Flip d'identité", sub: "≥ 240s, frais ≤ 90s", tone: "warning" },
+  { id: "uncertain", label: "Nouveau favori incertain", sub: "0.45-0.65", tone: "accent" },
+  { id: "filled", label: "FOK favori déchu fillé", sub: "ask 0.35-0.45, floor 0.40", tone: "warning" },
+  { id: "won", label: "Le déchu re-gagne", sub: "redeem 1 $ (~52%)", tone: "success" },
+  { id: "lost", label: "Le nouveau s'installe", sub: "expire à 0", tone: "danger" },
+];
+
+export const ANTIFLIP_LIFE_EDGES: LifeEdge[] = [
+  { from: "scan", to: "flip", label: "identité du leader inversée" },
+  { from: "flip", to: "uncertain", label: "marché pas tranché" },
+  { from: "uncertain", to: "filled", label: "FOK déchu, profondeur OK" },
+  { from: "filled", to: "won", label: "résolution" },
+  { from: "filled", to: "lost", label: "résolution" },
+];
+
+export const FLIPCONF_LIFE_NODES: LifeNode[] = [
+  { id: "scan", label: "Fenêtre 15m scannée", sub: "Gamma + 2 order books", tone: "neutral" },
+  { id: "flip", label: "Flip précoce", sub: "frais ≤ 90s", tone: "warning" },
+  { id: "entry", label: "Fenêtre d'entrée", sub: "[120, 180]s", tone: "accent" },
+  { id: "filled", label: "FOK nouveau favori fillé", sub: "ask 0.55-0.65", tone: "warning" },
+  { id: "won", label: "Le nouveau gagne", sub: "redeem 1 $ (~66%)", tone: "success" },
+  { id: "lost", label: "L'ancien reprend", sub: "expire à 0", tone: "danger" },
+];
+
+export const FLIPCONF_LIFE_EDGES: LifeEdge[] = [
+  { from: "scan", to: "flip", label: "identité inversée tôt" },
+  { from: "flip", to: "entry", label: "elapsed dans [120,180]" },
+  { from: "entry", to: "filled", label: "FOK profondeur OK" },
+  { from: "filled", to: "won", label: "résolution" },
+  { from: "filled", to: "lost", label: "résolution" },
+];
+
+export const EARLYCONV_LIFE_NODES: LifeNode[] = [
+  { id: "scan", label: "Fenêtre 15m scannée", sub: "Gamma + 2 order books", tone: "neutral" },
+  { id: "early", label: "Conviction précoce", sub: "favori ≥ 0.60 dans les 45 premières s", tone: "accent" },
+  { id: "filled", label: "FOK favori fillé", sub: "budget USDC", tone: "warning" },
+  { id: "won", label: "Le favori gagne", sub: "redeem 1 $ (~67.6%)", tone: "success" },
+  { id: "lost", label: "L'outsider gagne", sub: "expire à 0", tone: "danger" },
+];
+
+export const EARLYCONV_LIFE_EDGES: LifeEdge[] = [
+  { from: "scan", to: "early", label: "se fixe instantanément" },
+  { from: "early", to: "filled", label: "FOK profondeur OK" },
   { from: "filled", to: "won", label: "résolution" },
   { from: "filled", to: "lost", label: "résolution" },
 ];

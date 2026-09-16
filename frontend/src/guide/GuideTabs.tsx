@@ -40,6 +40,12 @@ import {
   type EngineId,
   type PhaseId,
   hedgeTarget,
+  ANTIFLIP_LIFE_NODES,
+  ANTIFLIP_LIFE_EDGES,
+  FLIPCONF_LIFE_NODES,
+  FLIPCONF_LIFE_EDGES,
+  EARLYCONV_LIFE_NODES,
+  EARLYCONV_LIFE_EDGES,
 } from "./data";
 
 function EngineSelector(props: {
@@ -77,7 +83,13 @@ function LifecycleCard(props: { engine: EngineId }): JSX.Element {
           ? "Edge-lead"
           : props.engine === "reverse"
             ? "Reverse"
-            : "Dip-revert";
+            : props.engine === "dip-revert"
+              ? "Dip-revert"
+              : props.engine === "antiflip-revert"
+                ? "Antiflip-revert"
+                : props.engine === "flip-confirm"
+                  ? "Flip-confirm"
+                  : "Early-conviction";
 
   return (
     <GuideCard title={`Cycle de vie — ${title()}`}>
@@ -157,6 +169,49 @@ function LifecycleCard(props: { engine: EngineId }): JSX.Element {
             Pas de hedge, pas de défense : la position est tenue jusqu'à la résolution.
             Aucune stratégie existante (fav-band, edge-lead, arb/barbell) n'achète le favori
             en contrepied d'une chute.
+          </p>
+        </Show>
+        <Show when={props.engine === "antiflip-revert"}>
+          <LifecycleDiagram
+            nodes={ANTIFLIP_LIFE_NODES}
+            edges={ANTIFLIP_LIFE_EDGES}
+            markerId="life-arrow-antiflip"
+            ariaLabel="Cycle de vie d'une position antiflip-revert"
+          />
+          <p class="guide-muted guide-small">
+            L&apos;identité du favori est suivie tick par tick. Après un flip (le leader
+            change) survenant au-delà de <code>antiflipMinElapsedSec</code>, on achète le
+            token <strong>déchu</strong> dans les 90 s si son ask est dans la bande (0.35-0.45,
+            floor 0.40) et que le nouveau favori reste incertain (0.45-0.65). Une seule entrée
+            par fenêtre, pas de hedge. Contrôle causal : sans condition de flip, l&apos;edge
+            tombe de +623 $ à +147 $ — c&apos;est la fraîcheur du flip qui porte le signal.
+          </p>
+        </Show>
+        <Show when={props.engine === "flip-confirm"}>
+          <LifecycleDiagram
+            nodes={FLIPCONF_LIFE_NODES}
+            edges={FLIPCONF_LIFE_EDGES}
+            markerId="life-arrow-flipconf"
+            ariaLabel="Cycle de vie d'une position flip-confirm"
+          />
+          <p class="guide-muted guide-small">
+            Le miroir d&apos;antiflip : ici on achète le <strong>nouveau</strong> favori. Les
+            flips précoces sont informationnels, les tardifs sont du bruit : la fenêtre
+            d&apos;entrée est verrouillée sur [120, 180] s et ne doit pas être élargie
+            (entrées à 180 s+ en perte en backtest).
+          </p>
+        </Show>
+        <Show when={props.engine === "early-conviction"}>
+          <LifecycleDiagram
+            nodes={EARLYCONV_LIFE_NODES}
+            edges={EARLYCONV_LIFE_EDGES}
+            markerId="life-arrow-earlyconv"
+            ariaLabel="Cycle de vie d'une position early-conviction"
+          />
+          <p class="guide-muted guide-small">
+            Le plus simple : aucun état de flip à tracker. Si le favori cote déjà
+            ≥ 0.60 dans les 45 premières secondes, on l&apos;achète immédiatement.
+            Ne pas baisser le seuil à 0.55 : le même achat à 0.55 est en perte.
           </p>
         </Show>
       </GuideStack>
@@ -516,6 +571,170 @@ function DipRevertStory(): JSX.Element {
   );
 }
 
+function AntiflipRevertStory(): JSX.Element {
+  return (
+    <GuideStack>
+      <GuideCallout tone={ENGINE_META["antiflip-revert"].tone} title={ENGINE_META["antiflip-revert"].label}>
+        <p>{ENGINE_META["antiflip-revert"].subtitle}</p>
+        <p class="guide-muted guide-small" style={{ "margin-top": "8px" }}>
+          <strong>Ordre :</strong> {ENGINE_META["antiflip-revert"].order} ·{" "}
+          <strong>Risque :</strong> {ENGINE_META["antiflip-revert"].risk}
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">Le marché sur-réagit au retournement</h3>
+      <p>
+        Quand le favori d&apos;identité <strong>flippé</strong> (le leader change), les parieurs
+        paniquent et replacent l&apos;ancien favori à ~0.43, comme si sa cause était perdue. Mais
+        il reste la moitié de la fenêtre pour revenir : il re-gagne ~52 % du temps (backtest
+        calibré, 393 fenêtres, +623 $, t-stat 2.74). On achète donc le token déchu dans les 90 s
+        suivant le flip, pendant que le marché est encore incertain.
+      </p>
+
+      <GuideGrid columns={2}>
+        <GuideCard title="Flip frais + incertitude">
+          <p>
+            Le flip doit dater de &lt; 90 s (<code>antiflipFlipLookbackMs</code>) et le NOUVEAU
+            favori coter 0.45-0.65. Au-delà, le marché a digéré le retournement : le contrôle
+            causal montre que le même achat avec un flip ancien ne rapporte que +2.70 $.
+          </p>
+        </GuideCard>
+        <GuideCard title="Le déchu dans sa bande">
+          <p>
+            L&apos;ancien favori doit coter 0.35-0.45 avec un plancher à 0.40 : pas de loterie.
+            FOK buy au budget <code>antiflipOrderUsdc</code>, hold jusqu&apos;à la résolution.
+          </p>
+        </GuideCard>
+      </GuideGrid>
+
+      <GuideCallout tone="warning" title="Variance la plus élevée du panel">
+        <p>
+          WR 52 % avec un gain moyen 17 $ contre une perte moyenne 13 $ : on perd plus souvent
+          qu&apos;on gagne, mais le payoff asymétrique rend l&apos;espérance positive. Le sizing
+          doit rester prudent — c&apos;est le moteur le plus volatil des trois.
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">À la fin des 15 minutes</h3>
+      <GuideTable
+        headers={["Scénario", "Résultat"]}
+        rows={RESOLUTION_ROWS["antiflip-revert"]}
+        rowTone={RESOLUTION_ROWS["antiflip-revert"].map((_, i) => (i === 0 ? "success" : "danger"))}
+      />
+
+      <GuideDetails title="Les étapes — Antiflip-revert" defaultOpen>
+        <GuideStack gap={8}>
+          <For each={BOT_STEPS["antiflip-revert"]}>
+            {(step, i) => <p>{i() + 1}. {step}</p>}
+          </For>
+        </GuideStack>
+      </GuideDetails>
+    </GuideStack>
+  );
+}
+
+function FlipConfirmStory(): JSX.Element {
+  return (
+    <GuideStack>
+      <GuideCallout tone={ENGINE_META["flip-confirm"].tone} title={ENGINE_META["flip-confirm"].label}>
+        <p>{ENGINE_META["flip-confirm"].subtitle}</p>
+        <p class="guide-muted guide-small" style={{ "margin-top": "8px" }}>
+          <strong>Ordre :</strong> {ENGINE_META["flip-confirm"].order} ·{" "}
+          <strong>Risque :</strong> {ENGINE_META["flip-confirm"].risk}
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">Le flip précoce est une information</h3>
+      <p>
+        C&apos;est le miroir d&apos;antiflip, sur un autre moment. Un flip qui arrive{" "}
+        <strong>tôt</strong> dans la fenêtre vient d&apos;un vrai déséquilibre (flux, momentum) :
+        le marché l&apos;a sous-ajusté. En achetant le nouveau favori à ~0.58 alors qu&apos;il
+        gagne 66.5 % du temps, on capte le ré-ajustement (backtest calibré : +389 $, t-stat 2.44,
+        drawdown 79 $ le plus bas).
+      </p>
+
+      <GuideGrid columns={2}>
+        <GuideCard title="La fenêtre d'entrée verrouillée">
+          <p>
+            L&apos;entrée ne se fait qu&apos;entre 120 et 180 s de fenêtre, sur un flip de moins
+            de 90 s. La même logique après 180 s s&apos;effondre (−227 $) puis (−652 $) après
+            240 s : les flips tardifs sont du bruit de fin de fenêtre.
+          </p>
+        </GuideCard>
+        <GuideCard title="Robustesse vérifiée">
+          <p>
+            0 entrée sur 188 déclenchée par une égalité de prix (pas d&apos;artefact de
+            tie-break). Avec hystérésis (flip compté seulement si le nouveau mène d&apos;≥ 1
+            tick), le PnL monte à +404 $ — le signal est net, pas un fantôme.
+          </p>
+        </GuideCard>
+      </GuideGrid>
+
+      <h3 class="guide-h3">À la fin des 15 minutes</h3>
+      <GuideTable
+        headers={["Scénario", "Résultat"]}
+        rows={RESOLUTION_ROWS["flip-confirm"]}
+        rowTone={RESOLUTION_ROWS["flip-confirm"].map((_, i) => (i === 0 ? "success" : "danger"))}
+      />
+
+      <GuideDetails title="Les étapes — Flip-confirm" defaultOpen>
+        <GuideStack gap={8}>
+          <For each={BOT_STEPS["flip-confirm"]}>
+            {(step, i) => <p>{i() + 1}. {step}</p>}
+          </For>
+        </GuideStack>
+      </GuideDetails>
+    </GuideStack>
+  );
+}
+
+function EarlyConvictionStory(): JSX.Element {
+  return (
+    <GuideStack>
+      <GuideCallout tone={ENGINE_META["early-conviction"].tone} title={ENGINE_META["early-conviction"].label}>
+        <p>{ENGINE_META["early-conviction"].subtitle}</p>
+        <p class="guide-muted guide-small" style={{ "margin-top": "8px" }}>
+          <strong>Ordre :</strong> {ENGINE_META["early-conviction"].order} ·{" "}
+          <strong>Risque :</strong> {ENGINE_META["early-conviction"].risk}
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">La vitesse d&apos;établissement est l&apos;information</h3>
+      <p>
+        Dans une salle d&apos;enchères, si les enchères se stabilisent dès la première minute sur
+        un même candidat, c&apos;est que la salle est convaincue. Ici : un favori qui cote déjà
+        ≥ 0.60 dans les 45 premières secondes signale un trend unilatéral — le BTC a déjà bougé.
+        Le favori gagne 67.6 % du temps à un prix moyen 0.615 (backtest calibré : +330 $,
+        drawdown 82 $, le plus bas du panel).
+      </p>
+
+      <GuideCallout tone="warning" title="Le plus fragile statistiquement">
+        <p>
+          t-stat 1.93, sous le seuil conventionnel de 2.0 : signal prometteur mais non
+          significatif à lui seul. Et la preuve par le contre-exemple : le même achat avec un
+          seuil à 0.55 s&apos;effondre (WR 55 %, −202 $) — l&apos;edge vit dans la zone
+          « vite ET fort », pas « vite ».
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">À la fin des 15 minutes</h3>
+      <GuideTable
+        headers={["Scénario", "Résultat"]}
+        rows={RESOLUTION_ROWS["early-conviction"]}
+        rowTone={RESOLUTION_ROWS["early-conviction"].map((_, i) => (i === 0 ? "success" : "danger"))}
+      />
+
+      <GuideDetails title="Les étapes — Early-conviction" defaultOpen>
+        <GuideStack gap={8}>
+          <For each={BOT_STEPS["early-conviction"]}>
+            {(step, i) => <p>{i() + 1}. {step}</p>}
+          </For>
+        </GuideStack>
+      </GuideDetails>
+    </GuideStack>
+  );
+}
+
 export function StoryTab(): JSX.Element {
   const [engine, setEngine] = createSignal<EngineId>("arb");
   const [phase, setPhase] = createSignal<PhaseId>("mid");
@@ -560,6 +779,15 @@ export function StoryTab(): JSX.Element {
       </Show>
       <Show when={engine() === "dip-revert"}>
         <DipRevertStory />
+      </Show>
+      <Show when={engine() === "antiflip-revert"}>
+        <AntiflipRevertStory />
+      </Show>
+      <Show when={engine() === "flip-confirm"}>
+        <FlipConfirmStory />
+      </Show>
+      <Show when={engine() === "early-conviction"}>
+        <EarlyConvictionStory />
       </Show>
 
       <GuideDetails title="Comparer les cinq moteurs">

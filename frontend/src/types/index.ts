@@ -2,7 +2,7 @@
 // Garder synchronisÃ© avec le backend lors des changements.
 
 export type TradeSide = "BUY" | "SELL";
-export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band" | "dip-revert";
+export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band" | "dip-revert" | "antiflip-revert" | "flip-confirm" | "early-conviction";
 export type StrategyId = NativeStrategyId | `custom:${string}`;
 
 export interface GammaMarket {
@@ -236,6 +236,29 @@ export interface BotConfig {
   dipRevertExitTakeProfitEnabled: boolean;
   /** Dip-revert take-profit threshold on the held favorite's ask (0..1). */
   dipRevertExitWinAsk: number;
+  /** Antiflip-revert: buy the DEPOSED favorite right after a fresh identity flip. */
+  antiflipBandMin: number;
+  antiflipBandMax: number;
+  antiflipDeposedAskMin: number;
+  antiflipFlipLookbackMs: number;
+  antiflipMinElapsedSec: number;
+  antiflipMaxElapsedSec: number | null;
+  antiflipMaxSpread: number;
+  antiflipOrderUsdc: number;
+  /** Flip-confirm: buy the NEW favorite shortly after an early identity flip. */
+  flipConfirmBandMin: number;
+  flipConfirmBandMax: number;
+  flipConfirmFlipLookbackMs: number;
+  flipConfirmMinElapsedSec: number;
+  flipConfirmMaxElapsedSec: number | null;
+  flipConfirmMaxSpread: number;
+  flipConfirmOrderUsdc: number;
+  /** Early-conviction: buy the favorite already pricing >= min in the first seconds. */
+  earlyConvictionAskMin: number;
+  earlyConvictionAskMax: number;
+  earlyConvictionMaxElapsedSec: number;
+  earlyConvictionMaxSpread: number;
+  earlyConvictionOrderUsdc: number;
   readonlyLive: boolean;
   clobHost: string;
   gammaApiHost: string;

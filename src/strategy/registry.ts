@@ -8,6 +8,9 @@ import { EdgeLeadStrategy } from "./edge-lead-strategy.js";
 import { ReverseStrategy } from "./reverse-strategy.js";
 import { FavBandStrategy } from "./fav-band-strategy.js";
 import { DipRevertStrategy } from "./dip-revert-strategy.js";
+import { AntiflipRevertStrategy } from "./antiflip-revert-strategy.js";
+import { FlipConfirmStrategy } from "./flip-confirm-strategy.js";
+import { EarlyConvictionStrategy } from "./early-conviction-strategy.js";
 import type { NativeStrategyId, StrategyId } from "./ids.js";
 import type { TradingStrategy } from "./trading-strategy.js";
 
@@ -18,6 +21,9 @@ const STRATEGIES: Record<NativeStrategyId, () => TradingStrategy> = {
   reverse: () => new ReverseStrategy(),
   "fav-band": () => new FavBandStrategy(),
   "dip-revert": () => new DipRevertStrategy(),
+  "antiflip-revert": () => new AntiflipRevertStrategy(),
+  "flip-confirm": () => new FlipConfirmStrategy(),
+  "early-conviction": () => new EarlyConvictionStrategy(),
 };
 
 export type StrategyRepos = Pick<Repositories, "strategyGraphs">;
@@ -32,7 +38,10 @@ export function leadsWithEdgeFor(
     id === "barbell" ||
     id === "reverse" ||
     id === "fav-band" ||
-    id === "dip-revert"
+    id === "dip-revert" ||
+    id === "antiflip-revert" ||
+    id === "flip-confirm" ||
+    id === "early-conviction"
   )
     return false;
   if (!id.startsWith("custom:")) return undefined;

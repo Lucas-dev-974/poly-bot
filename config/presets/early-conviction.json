@@ -1,0 +1,32 @@
+{
+  "id": "early-conviction",
+  "strategyId": "early-conviction",
+  "name": "Early-conviction (favori déjà établi <45s, hold resolve)",
+  "description": "Strategie directionnelle la plus simple : un marché qui se fixe INSTANTANÉMENT est un trend unilatéral. On achète le favori (0.60-0.80) dès les 45 premières secondes, hold jusqu'à resolution, sans hedge, sans tracker de flip. Backtest calibré 393 fenêtres : +$330, WR 67.6%, DD $82 le plus bas. t-stat 1.93 : signal prometteur mais sous le seuil 2.0. Ne pas baisser le seuil à 0.55 (le même achat à 0.55 s'effondre : -202).",
+  "settings": {
+    "pollIntervalMs": 1000,
+    "marketSlugPrefixes": ["btc-updown-15m"],
+    "strategyId": "early-conviction",
+    "enableExpensiveHedge": false,
+    "arbAskLockOnly": false,
+    "arbAskSumMax": null,
+    "earlyConvictionAskMin": 0.60,
+    "earlyConvictionAskMax": 0.80,
+    "earlyConvictionMaxElapsedSec": 45,
+    "earlyConvictionMaxSpread": 0.05,
+    "earlyConvictionOrderUsdc": 15,
+    "maxSharesPerOrder": 30,
+    "maxOpenPositionsPerSide": 1,
+    "maxExposureUsdc": 450,
+    "minutesBeforeCloseMin": 0,
+    "minutesBeforeCloseMax": 15,
+    "minMinutesBeforeCloseToBuy": null,
+    "simulatedCapital": 500,
+    "simFillProbabilityNonMarketable": 0.3,
+    "simResolveDelaySeconds": 5,
+    "simResolveRetryIntervalMs": 5000,
+    "simResolveMaxRetries": 5,
+    "simResolveFallback": "none",
+    "simMaxRetryAttempts": 20
+  }
+}

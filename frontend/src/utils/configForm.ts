@@ -73,6 +73,26 @@ export type ConfigFormState = {
   dipRevertOrderUsdc: string;
   dipRevertExitTakeProfitEnabled: boolean;
   dipRevertExitWinAsk: string;
+  antiflipBandMin: string;
+  antiflipBandMax: string;
+  antiflipDeposedAskMin: string;
+  antiflipFlipLookbackMs: string;
+  antiflipMinElapsedSec: string;
+  antiflipMaxElapsedSec: string;
+  antiflipMaxSpread: string;
+  antiflipOrderUsdc: string;
+  flipConfirmBandMin: string;
+  flipConfirmBandMax: string;
+  flipConfirmFlipLookbackMs: string;
+  flipConfirmMinElapsedSec: string;
+  flipConfirmMaxElapsedSec: string;
+  flipConfirmMaxSpread: string;
+  flipConfirmOrderUsdc: string;
+  earlyConvictionAskMin: string;
+  earlyConvictionAskMax: string;
+  earlyConvictionMaxElapsedSec: string;
+  earlyConvictionMaxSpread: string;
+  earlyConvictionOrderUsdc: string;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -167,6 +187,32 @@ export function configToForm(config: BotConfig): ConfigFormState {
     dipRevertOrderUsdc: String(config.dipRevertOrderUsdc ?? 15),
     dipRevertExitTakeProfitEnabled: config.dipRevertExitTakeProfitEnabled === true,
     dipRevertExitWinAsk: String(config.dipRevertExitWinAsk ?? 0.85),
+    antiflipBandMin: String(config.antiflipBandMin ?? 0.35),
+    antiflipBandMax: String(config.antiflipBandMax ?? 0.45),
+    antiflipDeposedAskMin: String(config.antiflipDeposedAskMin ?? 0.4),
+    antiflipFlipLookbackMs: String(config.antiflipFlipLookbackMs ?? 90000),
+    antiflipMinElapsedSec: String(config.antiflipMinElapsedSec ?? 240),
+    antiflipMaxElapsedSec:
+      config.antiflipMaxElapsedSec == null || config.antiflipMaxElapsedSec === undefined
+        ? ""
+        : String(config.antiflipMaxElapsedSec),
+    antiflipMaxSpread: String(config.antiflipMaxSpread ?? 0.05),
+    antiflipOrderUsdc: String(config.antiflipOrderUsdc ?? 15),
+    flipConfirmBandMin: String(config.flipConfirmBandMin ?? 0.55),
+    flipConfirmBandMax: String(config.flipConfirmBandMax ?? 0.65),
+    flipConfirmFlipLookbackMs: String(config.flipConfirmFlipLookbackMs ?? 90000),
+    flipConfirmMinElapsedSec: String(config.flipConfirmMinElapsedSec ?? 120),
+    flipConfirmMaxElapsedSec:
+      config.flipConfirmMaxElapsedSec == null || config.flipConfirmMaxElapsedSec === undefined
+        ? ""
+        : String(config.flipConfirmMaxElapsedSec),
+    flipConfirmMaxSpread: String(config.flipConfirmMaxSpread ?? 0.05),
+    flipConfirmOrderUsdc: String(config.flipConfirmOrderUsdc ?? 15),
+    earlyConvictionAskMin: String(config.earlyConvictionAskMin ?? 0.6),
+    earlyConvictionAskMax: String(config.earlyConvictionAskMax ?? 0.8),
+    earlyConvictionMaxElapsedSec: String(config.earlyConvictionMaxElapsedSec ?? 45),
+    earlyConvictionMaxSpread: String(config.earlyConvictionMaxSpread ?? 0.05),
+    earlyConvictionOrderUsdc: String(config.earlyConvictionOrderUsdc ?? 15),
   };
 }
 
@@ -292,9 +338,41 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     dipRevertOrderUsdc: parseNum(form.dipRevertOrderUsdc, "Dip-revert order USDC"),
     dipRevertExitTakeProfitEnabled: form.dipRevertExitTakeProfitEnabled === true,
     dipRevertExitWinAsk: parseNum(form.dipRevertExitWinAsk, "Dip-revert take-profit ask"),
+    antiflipBandMin: parseNum(form.antiflipBandMin, "Antiflip band min"),
+    antiflipBandMax: parseNum(form.antiflipBandMax, "Antiflip band max"),
+    antiflipDeposedAskMin: parseNum(form.antiflipDeposedAskMin, "Antiflip deposed ask floor"),
+    antiflipFlipLookbackMs: parseNum(form.antiflipFlipLookbackMs, "Antiflip flip lookback ms"),
+    antiflipMinElapsedSec: parseNum(form.antiflipMinElapsedSec, "Antiflip min elapsed"),
+    antiflipMaxElapsedSec:
+      form.antiflipMaxElapsedSec.trim() === ""
+        ? null
+        : parseNum(form.antiflipMaxElapsedSec, "Antiflip max elapsed"),
+    antiflipMaxSpread: parseNum(form.antiflipMaxSpread, "Antiflip max spread"),
+    antiflipOrderUsdc: parseNum(form.antiflipOrderUsdc, "Antiflip order USDC"),
+    flipConfirmBandMin: parseNum(form.flipConfirmBandMin, "Flip-confirm band min"),
+    flipConfirmBandMax: parseNum(form.flipConfirmBandMax, "Flip-confirm band max"),
+    flipConfirmFlipLookbackMs: parseNum(form.flipConfirmFlipLookbackMs, "Flip-confirm lookback ms"),
+    flipConfirmMinElapsedSec: parseNum(form.flipConfirmMinElapsedSec, "Flip-confirm min elapsed"),
+    flipConfirmMaxElapsedSec:
+      form.flipConfirmMaxElapsedSec.trim() === ""
+        ? null
+        : parseNum(form.flipConfirmMaxElapsedSec, "Flip-confirm max elapsed"),
+    flipConfirmMaxSpread: parseNum(form.flipConfirmMaxSpread, "Flip-confirm max spread"),
+    flipConfirmOrderUsdc: parseNum(form.flipConfirmOrderUsdc, "Flip-confirm order USDC"),
+    earlyConvictionAskMin: parseNum(form.earlyConvictionAskMin, "Early-conviction ask min"),
+    earlyConvictionAskMax: parseNum(form.earlyConvictionAskMax, "Early-conviction ask max"),
+    earlyConvictionMaxElapsedSec: parseNum(form.earlyConvictionMaxElapsedSec, "Early-conviction max elapsed"),
+    earlyConvictionMaxSpread: parseNum(form.earlyConvictionMaxSpread, "Early-conviction max spread"),
+    earlyConvictionOrderUsdc: parseNum(form.earlyConvictionOrderUsdc, "Early-conviction order USDC"),
   };
 
-  if (next.strategyId === "fav-band" || next.strategyId === "dip-revert") {
+  if (
+    next.strategyId === "fav-band" ||
+    next.strategyId === "dip-revert" ||
+    next.strategyId === "antiflip-revert" ||
+    next.strategyId === "flip-confirm" ||
+    next.strategyId === "early-conviction"
+  ) {
     next.enableExpensiveHedge = false;
     next.arbAskLockOnly = false;
   }
@@ -470,6 +548,90 @@ export function validateConfigForm(
         } else if (Number.isFinite(hi) && tpAsk <= hi) {
           errors.push("Dip-revert: take-profit ask doit être > ask max (bande d'entrée)");
         }
+      }
+    }
+    if (form.strategyId === "antiflip-revert") {
+      const lo = Number(form.antiflipBandMin);
+      const hi = Number(form.antiflipBandMax);
+      const floor = Number(form.antiflipDeposedAskMin);
+      const lookback = Number(form.antiflipFlipLookbackMs);
+      const elapsed = Number(form.antiflipMinElapsedSec);
+      const spread = Number(form.antiflipMaxSpread);
+      const budget = Number(form.antiflipOrderUsdc);
+      if (!Number.isFinite(lo) || !Number.isFinite(hi) || lo >= hi) {
+        errors.push("Antiflip: ask min doit être < ask max");
+      }
+      if (form.antiflipDeposedAskMin.trim() !== "" && (!Number.isFinite(floor) || floor < lo || floor > hi)) {
+        errors.push("Antiflip: floor du déchu doit être dans la bande (ou vide)");
+      }
+      if (!Number.isFinite(lookback) || lookback <= 0) {
+        errors.push("Antiflip: lookback de flip doit être > 0 ms");
+      }
+      if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed > 900) {
+        errors.push("Antiflip: min elapsed entre 0 et 900");
+      }
+      if (form.antiflipMaxElapsedSec.trim() !== "") {
+        const maxE = Number(form.antiflipMaxElapsedSec);
+        if (!Number.isFinite(maxE) || maxE < elapsed) {
+          errors.push("Antiflip: max elapsed invalide");
+        }
+      }
+      if (!Number.isFinite(spread) || spread < 0) {
+        errors.push("Antiflip: max spread doit être >= 0");
+      }
+      if (!Number.isFinite(budget) || budget <= 0) {
+        errors.push("Antiflip: budget doit être > 0");
+      }
+    }
+    if (form.strategyId === "flip-confirm") {
+      const lo = Number(form.flipConfirmBandMin);
+      const hi = Number(form.flipConfirmBandMax);
+      const lookback = Number(form.flipConfirmFlipLookbackMs);
+      const elapsed = Number(form.flipConfirmMinElapsedSec);
+      const spread = Number(form.flipConfirmMaxSpread);
+      const budget = Number(form.flipConfirmOrderUsdc);
+      if (!Number.isFinite(lo) || !Number.isFinite(hi) || lo >= hi) {
+        errors.push("Flip-confirm: ask min doit être < ask max");
+      }
+      if (!Number.isFinite(lookback) || lookback <= 0) {
+        errors.push("Flip-confirm: lookback de flip doit être > 0 ms");
+      }
+      if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed > 900) {
+        errors.push("Flip-confirm: min elapsed entre 0 et 900");
+      }
+      if (form.flipConfirmMaxElapsedSec.trim() !== "") {
+        const maxE = Number(form.flipConfirmMaxElapsedSec);
+        if (!Number.isFinite(maxE) || maxE < elapsed) {
+          errors.push("Flip-confirm: max elapsed invalide");
+        }
+      }
+      if (!Number.isFinite(spread) || spread < 0) {
+        errors.push("Flip-confirm: max spread doit être >= 0");
+      }
+      if (!Number.isFinite(budget) || budget <= 0) {
+        errors.push("Flip-confirm: budget doit être > 0");
+      }
+    }
+    if (form.strategyId === "early-conviction") {
+      const lo = Number(form.earlyConvictionAskMin);
+      const hi = Number(form.earlyConvictionAskMax);
+      const maxElapsed = Number(form.earlyConvictionMaxElapsedSec);
+      const spread = Number(form.earlyConvictionMaxSpread);
+      const budget = Number(form.earlyConvictionOrderUsdc);
+      if (!Number.isFinite(lo) || !Number.isFinite(hi) || lo >= hi) {
+        errors.push("Early-conviction: ask min doit être < ask max");
+      }
+      if (Number.isFinite(lo) && lo < 0.5) {
+        errors.push("Early-conviction: ask min doit être >= 0.5");
+      }
+      if (!Number.isFinite(maxElapsed) || maxElapsed <= 0 || maxElapsed > 900) {
+        errors.push("Early-conviction: max elapsed entre 0 (exclu) et 900");
+      }
+      if (!Number.isFinite(spread) || spread < 0) {
+        errors.push("Early-conviction: max spread doit être >= 0");
+      }
+      if (!Number.isFinite(budget) || budget <= 0) {
+        errors.push("Early-conviction: budget doit être > 0");
       }
     }
     // Edge-lead : validations dédiées. Les champs arb/barbell (cheap/hedge
@@ -771,14 +933,78 @@ export function fieldErrors(
       }
       if (!Number.isFinite(spread) || spread < 0) result.dipRevertMaxSpread = ">= 0";
       if (!Number.isFinite(budget) || budget <= 0) result.dipRevertOrderUsdc = "> 0";
-      if (form.dipRevertExitTakeProfitEnabled) {
-        const tpAsk = Number(form.dipRevertExitWinAsk);
-        if (!Number.isFinite(tpAsk) || tpAsk <= 0 || tpAsk >= 1) {
-          result.dipRevertExitWinAsk = "Entre 0 et 1";
-        } else if (Number.isFinite(hi) && tpAsk <= hi) {
-          result.dipRevertExitWinAsk = "Doit être > ask max";
+    }
+    if (form.strategyId === "antiflip-revert") {
+      const lo = Number(form.antiflipBandMin);
+      const hi = Number(form.antiflipBandMax);
+      const floor = Number(form.antiflipDeposedAskMin);
+      const lookback = Number(form.antiflipFlipLookbackMs);
+      const elapsed = Number(form.antiflipMinElapsedSec);
+      const spread = Number(form.antiflipMaxSpread);
+      const budget = Number(form.antiflipOrderUsdc);
+      if (!Number.isFinite(lo)) result.antiflipBandMin = "Nombre invalide";
+      if (!Number.isFinite(hi)) result.antiflipBandMax = "Nombre invalide";
+      if (Number.isFinite(lo) && Number.isFinite(hi) && lo >= hi) {
+        result.antiflipBandMin = "Doit être < ask max";
+      }
+      if (form.antiflipDeposedAskMin.trim() !== "" && (!Number.isFinite(floor) || floor < lo || floor > hi)) {
+        result.antiflipDeposedAskMin = "Dans la bande (ou vide)";
+      }
+      if (!Number.isFinite(lookback) || lookback <= 0) result.antiflipFlipLookbackMs = "> 0 ms";
+      if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed > 900) {
+        result.antiflipMinElapsedSec = "Entre 0 et 900";
+      }
+      if (form.antiflipMaxElapsedSec.trim() !== "") {
+        const maxE = Number(form.antiflipMaxElapsedSec);
+        if (!Number.isFinite(maxE) || (Number.isFinite(elapsed) && maxE < elapsed)) {
+          result.antiflipMaxElapsedSec = "Vide ou >= min elapsed";
         }
       }
+      if (!Number.isFinite(spread) || spread < 0) result.antiflipMaxSpread = ">= 0";
+      if (!Number.isFinite(budget) || budget <= 0) result.antiflipOrderUsdc = "> 0";
+    }
+    if (form.strategyId === "flip-confirm") {
+      const lo = Number(form.flipConfirmBandMin);
+      const hi = Number(form.flipConfirmBandMax);
+      const lookback = Number(form.flipConfirmFlipLookbackMs);
+      const elapsed = Number(form.flipConfirmMinElapsedSec);
+      const spread = Number(form.flipConfirmMaxSpread);
+      const budget = Number(form.flipConfirmOrderUsdc);
+      if (!Number.isFinite(lo)) result.flipConfirmBandMin = "Nombre invalide";
+      if (!Number.isFinite(hi)) result.flipConfirmBandMax = "Nombre invalide";
+      if (Number.isFinite(lo) && Number.isFinite(hi) && lo >= hi) {
+        result.flipConfirmBandMin = "Doit être < ask max";
+      }
+      if (!Number.isFinite(lookback) || lookback <= 0) result.flipConfirmFlipLookbackMs = "> 0 ms";
+      if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed > 900) {
+        result.flipConfirmMinElapsedSec = "Entre 0 et 900";
+      }
+      if (form.flipConfirmMaxElapsedSec.trim() !== "") {
+        const maxE = Number(form.flipConfirmMaxElapsedSec);
+        if (!Number.isFinite(maxE) || (Number.isFinite(elapsed) && maxE < elapsed)) {
+          result.flipConfirmMaxElapsedSec = "Vide ou >= min elapsed";
+        }
+      }
+      if (!Number.isFinite(spread) || spread < 0) result.flipConfirmMaxSpread = ">= 0";
+      if (!Number.isFinite(budget) || budget <= 0) result.flipConfirmOrderUsdc = "> 0";
+    }
+    if (form.strategyId === "early-conviction") {
+      const lo = Number(form.earlyConvictionAskMin);
+      const hi = Number(form.earlyConvictionAskMax);
+      const maxElapsed = Number(form.earlyConvictionMaxElapsedSec);
+      const spread = Number(form.earlyConvictionMaxSpread);
+      const budget = Number(form.earlyConvictionOrderUsdc);
+      if (!Number.isFinite(lo)) result.earlyConvictionAskMin = "Nombre invalide";
+      if (!Number.isFinite(hi)) result.earlyConvictionAskMax = "Nombre invalide";
+      if (Number.isFinite(lo) && Number.isFinite(hi) && lo >= hi) {
+        result.earlyConvictionAskMin = "Doit être < ask max";
+      }
+      if (Number.isFinite(lo) && lo < 0.5) result.earlyConvictionAskMin = ">= 0.5";
+      if (!Number.isFinite(maxElapsed) || maxElapsed <= 0 || maxElapsed > 900) {
+        result.earlyConvictionMaxElapsedSec = "Entre 0 (exclu) et 900";
+      }
+      if (!Number.isFinite(spread) || spread < 0) result.earlyConvictionMaxSpread = ">= 0";
+      if (!Number.isFinite(budget) || budget <= 0) result.earlyConvictionOrderUsdc = "> 0";
     }
   } catch (error) {
     // ignore — validateConfigForm handles this

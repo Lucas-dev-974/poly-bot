@@ -15,14 +15,17 @@ describe("strategy presets", () => {
     const presets = listStrategyPresets();
     const ids = presets.map((preset) => preset.id).sort();
     assert.deepEqual(ids, [
+      "antiflip-revert",
       "ask-lock",
       "conservative",
       "coverage-max",
       "dip-revert",
+      "early-conviction",
       "edge-lead",
       "fav-band",
       "fav-band-opt",
       "fav-band-opt-risk",
+      "flip-confirm",
       "lock-harvest",
       "reverse",
     ]);
@@ -101,6 +104,18 @@ describe("strategy presets", () => {
     assert.deepEqual(
       presetsForStrategy("dip-revert").map((preset) => preset.id),
       ["dip-revert"],
+    );
+    assert.deepEqual(
+      presetsForStrategy("antiflip-revert").map((preset) => preset.id),
+      ["antiflip-revert"],
+    );
+    assert.deepEqual(
+      presetsForStrategy("flip-confirm").map((preset) => preset.id),
+      ["flip-confirm"],
+    );
+    assert.deepEqual(
+      presetsForStrategy("early-conviction").map((preset) => preset.id),
+      ["early-conviction"],
     );
   });
 

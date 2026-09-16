@@ -81,7 +81,7 @@ function NumberInput(props: {
 
 /* ---------- définition des sections ---------- */
 
-type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "fav" | "dip" | "risk" | "window";
+type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "fav" | "dip" | "antiflip" | "flipconf" | "earlyconv" | "risk" | "window";
 
 interface SectionDef {
   id: SectionId;
@@ -98,6 +98,9 @@ const SECTIONS: SectionDef[] = [
   { id: "edge", label: "Jambe edge", icon: "▴", desc: "Bande de confirmation edge-lead" },
   { id: "fav", label: "Entrée fav-band", icon: "★", desc: "FOK favori mid-band, hold résolution" },
   { id: "dip", label: "Entrée dip-revert", icon: "↶", desc: "FOK favori dip + rebond, hold résolution" },
+  { id: "antiflip", label: "Entrée antiflip-revert", icon: "⇄", desc: "FOK favori déchu post-flip, hold résolution" },
+  { id: "flipconf", label: "Entrée flip-confirm", icon: "⇛", desc: "FOK nouveau favori post-flip précoce" },
+  { id: "earlyconv", label: "Entrée early-conviction", icon: "⚡", desc: "FOK favori déjà établi <45s" },
   { id: "risk", label: "Risque", icon: "◆", desc: "Limites de taille, positions et exposition" },
   { id: "window", label: "Fenêtre", icon: "◷", desc: "Plage de trading avant clôture" },
 ];
@@ -141,6 +144,12 @@ export function SettingsModal(props: {
   );
   const isFavBand = createMemo(() => form().strategyId === "fav-band");
   const isDip = createMemo(() => form().strategyId === "dip-revert");
+  const isAntiflip = createMemo(() => form().strategyId === "antiflip-revert");
+  const isFlipConfirm = createMemo(() => form().strategyId === "flip-confirm");
+  const isEarlyConviction = createMemo(() => form().strategyId === "early-conviction");
+  const isDirectionalHold = createMemo(
+    () => isFavBand() || isDip() || isAntiflip() || isFlipConfirm() || isEarlyConviction(),
+  );
   const errors = createMemo(() =>
     validateConfigForm(form(), false, {
       leadsWithEdge: selectedCustom()?.leadsWithEdge,
@@ -184,18 +193,21 @@ export function SettingsModal(props: {
         arbAskLockMinElapsedSec: null,
         arbAskLockMaxImbalance: null,
         enableExpensiveHedge:
-          preset.strategyId === "fav-band" || preset.strategyId === "dip-revert"
+          preset.strategyId === "fav-band" || preset.strategyId === "dip-revert" || preset.strategyId === "antiflip-revert" || preset.strategyId === "flip-confirm" || preset.strategyId === "early-conviction"
             ? false
             : props.config.enableExpensiveHedge,
         ...preset.settings,
         strategyId: preset.strategyId,
-        ...(preset.strategyId === "fav-band" || preset.strategyId === "dip-revert"
+        ...(preset.strategyId === "fav-band" || preset.strategyId === "dip-revert" || preset.strategyId === "antiflip-revert" || preset.strategyId === "flip-confirm" || preset.strategyId === "early-conviction"
           ? { enableExpensiveHedge: false }
           : {}),
       }),
     );
     if (preset.strategyId === "fav-band") setActiveSection("fav");
     else if (preset.strategyId === "dip-revert") setActiveSection("dip");
+    else if (preset.strategyId === "antiflip-revert") setActiveSection("antiflip");
+    else if (preset.strategyId === "flip-confirm") setActiveSection("flipconf");
+    else if (preset.strategyId === "early-conviction") setActiveSection("earlyconv");
     else if (preset.strategyId === "edge-lead") setActiveSection("edge");
     setSaveError(null);
   }
@@ -272,11 +284,23 @@ export function SettingsModal(props: {
                 } else if (id === "dip-revert") {
                   update("enableExpensiveHedge", false);
                   setActiveSection("dip");
+                } else if (id === "antiflip-revert") {
+                  update("enableExpensiveHedge", false);
+                  setActiveSection("antiflip");
+                } else if (id === "flip-confirm") {
+                  update("enableExpensiveHedge", false);
+                  setActiveSection("flipconf");
+                } else if (id === "early-conviction") {
+                  update("enableExpensiveHedge", false);
+                  setActiveSection("earlyconv");
                 } else if (id === "edge-lead") {
                   setActiveSection("edge");
                 } else if (
                   activeSection() === "fav" ||
                   activeSection() === "dip" ||
+                  activeSection() === "antiflip" ||
+                  activeSection() === "flipconf" ||
+                  activeSection() === "earlyconv" ||
                   activeSection() === "edge"
                 ) {
                   setActiveSection("presets");
@@ -332,10 +356,10 @@ export function SettingsModal(props: {
                     when={
                       !(
                         usesEdge() &&
-                        (s.id === "cheap" || s.id === "hedge" || s.id === "fav" || s.id === "dip")
+                        (s.id === "cheap" || s.id === "hedge" || s.id === "fav" || s.id === "dip" || s.id === "antiflip" || s.id === "flipconf" || s.id === "earlyconv")
                       ) &&
                       !(
-                        (isFavBand() || isDip()) &&
+                        isDirectionalHold() &&
                         (s.id === "cheap" || s.id === "hedge" || s.id === "edge")
                       ) &&
                       !(
@@ -344,18 +368,28 @@ export function SettingsModal(props: {
                       ) &&
                       !(
                         !usesEdge() &&
-                        !isFavBand() &&
-                        !isDip() &&
+                        !isDirectionalHold() &&
                         s.id === "edge"
                       ) &&
                       !(
                         !isFavBand() &&
-                        !isDip() &&
                         s.id === "fav"
                       ) &&
                       !(
                         !isDip() &&
                         s.id === "dip"
+                      ) &&
+                      !(
+                        !isAntiflip() &&
+                        s.id === "antiflip"
+                      ) &&
+                      !(
+                        !isFlipConfirm() &&
+                        s.id === "flipconf"
+                      ) &&
+                      !(
+                        !isEarlyConviction() &&
+                        s.id === "earlyconv"
                       )
                     }
                   >
@@ -1120,6 +1154,307 @@ export function SettingsModal(props: {
                         </Field>
                       </div>
                     </Show>
+                  </div>
+                  <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
+                    Risque / exposition : onglet Risque (max shares, max exposure).
+                    Fenêtre de trading : onglet Fenêtre.
+                  </p>
+                </div>
+              </Show>
+
+              {/* ---- Entrée antiflip-revert ---- */}
+              <Show when={activeSection() === "antiflip"}>
+                <div class="cfg-section">
+                  <h4>Entrée antiflip-revert</h4>
+                  <p class="cfg-section__desc">
+                    Stratégie directionnelle de sur-réaction : quand le favori{" "}
+                    <strong>FLIPPE</strong> (identité du leader inversée), le marché
+                    sur-réagit. On achète l&apos;<strong>ANCIEN favori</strong> (le déchu)
+                    dans les 90s suivant le flip, hold jusqu&apos;à la résolution — pas de
+                    hedge. Le flip doit être frais et le nouveau favori incertain
+                    (0.45-0.65). Backtest calibré : +$623, WR 52.2 %, t-stat 2.74.
+                  </p>
+                  <div class="cfg-grid">
+                    <Field
+                      label="Ask déchu min"
+                      hint="Borne basse de la bande d'entrée du favori déchu (défaut 0.35)."
+                    >
+                      <NumberInput
+                        value={form().antiflipBandMin}
+                        min={0.2}
+                        max={0.6}
+                        step={0.01}
+                        onInput={(v) => update("antiflipBandMin", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Ask déchu max"
+                      hint="Borne haute (défaut 0.45). Au-delà, le déchu n'est pas assez replacé : pas de sur-réaction à capter."
+                    >
+                      <NumberInput
+                        value={form().antiflipBandMax}
+                        min={0.25}
+                        max={0.65}
+                        step={0.01}
+                        onInput={(v) => update("antiflipBandMax", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Floor déchu (opt)"
+                      hint="Plancher de prix du déchu (défaut 0.40). Vide = désactivé. Évite d'acheter des loteries à 0.20 qui ne rebondissent pas."
+                    >
+                      <NumberInput
+                        value={form().antiflipDeposedAskMin}
+                        min={0.05}
+                        max={0.6}
+                        step={0.01}
+                        onInput={(v) => update("antiflipDeposedAskMin", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Flip lookback (ms)"
+                      hint="Fenêtre max depuis le flip pour entrer (défaut 90000 = 90s). Au-delà, le marché a digéré le retournement : l'edge disparaît."
+                    >
+                      <NumberInput
+                        value={form().antiflipFlipLookbackMs}
+                        min={1000}
+                        max={300000}
+                        step={1000}
+                        onInput={(v) => update("antiflipFlipLookbackMs", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Min elapsed (sec)"
+                      hint="Le flip doit survenir après N secondes de fenêtre (défaut 240). Les flips précoces appartiennent à flip-confirm."
+                    >
+                      <NumberInput
+                        value={form().antiflipMinElapsedSec}
+                        min={0}
+                        max={900}
+                        step={1}
+                        onInput={(v) => update("antiflipMinElapsedSec", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Max elapsed (sec, opt)"
+                      hint="Vide = jusqu'à la close / minutesBeforeClose."
+                    >
+                      <NumberInput
+                        value={form().antiflipMaxElapsedSec}
+                        min={0}
+                        max={900}
+                        step={1}
+                        onInput={(v) => update("antiflipMaxElapsedSec", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Max spread"
+                      hint="Spread max du token déchu à l'entrée (défaut 0.05). Liquidité."
+                    >
+                      <NumberInput
+                        value={form().antiflipMaxSpread}
+                        min={0}
+                        max={0.2}
+                        step={0.005}
+                        onInput={(v) => update("antiflipMaxSpread", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Order size (USDC)"
+                      hint="Budget FOK sur le déchu (défaut 15). Taille = budget / ask, plafonnée par max shares. WR 52% : variance par trade élevée, sizing prudent."
+                    >
+                      <NumberInput
+                        value={form().antiflipOrderUsdc}
+                        min={0.1}
+                        step={0.1}
+                        onInput={(v) => update("antiflipOrderUsdc", v)}
+                      />
+                    </Field>
+                  </div>
+                  <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
+                    Risque / exposition : onglet Risque (max shares, max exposure).
+                    Fenêtre de trading : onglet Fenêtre.
+                  </p>
+                </div>
+              </Show>
+
+              {/* ---- Entrée flip-confirm ---- */}
+              <Show when={activeSection() === "flipconf"}>
+                <div class="cfg-section">
+                  <h4>Entrée flip-confirm</h4>
+                  <p class="cfg-section__desc">
+                    Stratégie directionnelle momentum : un flip d&apos;identité{" "}
+                    <strong>PRÉCOCE</strong> est informationnel (vrai déséquilibre). On
+                    achète le <strong>NOUVEAU favori</strong> (0.55-0.65) dans la fenêtre
+                    d&apos;entrée [120s, 180s], flip frais de moins de 90s, hold jusqu&apos;à
+                    la résolution — pas de hedge. Backtest calibré : +$389, WR 66.5 %,
+                    t-stat 2.44. Les entrées après 180s s&apos;effondrent (flips tardifs =
+                    bruit) : ne pas élargir la fenêtre.
+                  </p>
+                  <div class="cfg-grid">
+                    <Field
+                      label="Ask nouveau favori min"
+                      hint="Borne basse de la bande d'entrée du nouveau favori (défaut 0.55)."
+                    >
+                      <NumberInput
+                        value={form().flipConfirmBandMin}
+                        min={0.4}
+                        max={0.8}
+                        step={0.01}
+                        onInput={(v) => update("flipConfirmBandMin", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Ask nouveau favori max"
+                      hint="Borne haute (défaut 0.65). Au-delà, le nouveau favori est déjà certitude : le ré-ajustement a eu lieu."
+                    >
+                      <NumberInput
+                        value={form().flipConfirmBandMax}
+                        min={0.45}
+                        max={0.9}
+                        step={0.01}
+                        onInput={(v) => update("flipConfirmBandMax", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Flip lookback (ms)"
+                      hint="Le flip doit dater de moins de N ms avant l'entrée (défaut 90000 = 90s)."
+                    >
+                      <NumberInput
+                        value={form().flipConfirmFlipLookbackMs}
+                        min={1000}
+                        max={300000}
+                        step={1000}
+                        onInput={(v) => update("flipConfirmFlipLookbackMs", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Min elapsed (sec)"
+                      hint="Début de la fenêtre d'entrée (défaut 120)."
+                    >
+                      <NumberInput
+                        value={form().flipConfirmMinElapsedSec}
+                        min={0}
+                        max={900}
+                        step={1}
+                        onInput={(v) => update("flipConfirmMinElapsedSec", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Max elapsed (sec, opt)"
+                      hint="Fin de la fenêtre d'entrée (défaut 180). Les entrées après 180s sont en perte : ne pas élargir sans re-backtester."
+                    >
+                      <NumberInput
+                        value={form().flipConfirmMaxElapsedSec}
+                        min={0}
+                        max={900}
+                        step={1}
+                        onInput={(v) => update("flipConfirmMaxElapsedSec", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Max spread"
+                      hint="Spread max du favori à l'entrée (défaut 0.05). Liquidité."
+                    >
+                      <NumberInput
+                        value={form().flipConfirmMaxSpread}
+                        min={0}
+                        max={0.2}
+                        step={0.005}
+                        onInput={(v) => update("flipConfirmMaxSpread", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Order size (USDC)"
+                      hint="Budget FOK sur le nouveau favori (défaut 15)."
+                    >
+                      <NumberInput
+                        value={form().flipConfirmOrderUsdc}
+                        min={0.1}
+                        step={0.1}
+                        onInput={(v) => update("flipConfirmOrderUsdc", v)}
+                      />
+                    </Field>
+                  </div>
+                  <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
+                    Risque / exposition : onglet Risque (max shares, max exposure).
+                    Fenêtre de trading : onglet Fenêtre.
+                  </p>
+                </div>
+              </Show>
+
+              {/* ---- Entrée early-conviction ---- */}
+              <Show when={activeSection() === "earlyconv"}>
+                <div class="cfg-section">
+                  <h4>Entrée early-conviction</h4>
+                  <p class="cfg-section__desc">
+                    Stratégie la plus simple, sans mémoire : un marché qui se fixe{" "}
+                    <strong>instantanément</strong> est un trend unilatéral. On achète le{" "}
+                    <strong>favori</strong> (0.60-0.80) dès les 45 premières secondes,
+                    hold jusqu&apos;à la résolution — pas de hedge, aucun état de flip à
+                    tracker. Backtest calibré : +$330, WR 67.6 %, DD $82 le plus bas.
+                    t-stat 1.93 : sous le seuil 2.0, signal prometteur mais moins établi.
+                  </p>
+                  <div class="cfg-grid">
+                    <Field
+                      label="Ask favori min"
+                      hint="Seuil de conviction (défaut 0.60). Ne pas baisser à 0.55 : le même achat à 0.55 s'effondre (WR 55 %, -202)."
+                    >
+                      <NumberInput
+                        value={form().earlyConvictionAskMin}
+                        min={0.5}
+                        max={0.9}
+                        step={0.01}
+                        onInput={(v) => update("earlyConvictionAskMin", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Ask favori max"
+                      hint="Borne haute (défaut 0.80). Au-delà, la certitude est déjà payée trop cher (EV négative)."
+                    >
+                      <NumberInput
+                        value={form().earlyConvictionAskMax}
+                        min={0.55}
+                        max={0.95}
+                        step={0.01}
+                        onInput={(v) => update("earlyConvictionAskMax", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Max elapsed (sec)"
+                      hint="Fenêtre de détection : [0, N] secondes (défaut 45). Au-delà, l'entrée appartient à d'autres moteurs (fav-band, dip-revert)."
+                    >
+                      <NumberInput
+                        value={form().earlyConvictionMaxElapsedSec}
+                        min={1}
+                        max={900}
+                        step={1}
+                        onInput={(v) => update("earlyConvictionMaxElapsedSec", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Max spread"
+                      hint="Spread max du favori à l'entrée (défaut 0.05). Liquidité."
+                    >
+                      <NumberInput
+                        value={form().earlyConvictionMaxSpread}
+                        min={0}
+                        max={0.2}
+                        step={0.005}
+                        onInput={(v) => update("earlyConvictionMaxSpread", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Order size (USDC)"
+                      hint="Budget FOK sur le favori (défaut 15)."
+                    >
+                      <NumberInput
+                        value={form().earlyConvictionOrderUsdc}
+                        min={0.1}
+                        step={0.1}
+                        onInput={(v) => update("earlyConvictionOrderUsdc", v)}
+                      />
+                    </Field>
                   </div>
                   <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
                     Risque / exposition : onglet Risque (max shares, max exposure).

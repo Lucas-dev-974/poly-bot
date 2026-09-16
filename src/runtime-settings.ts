@@ -77,6 +77,26 @@ export const EDITABLE_CONFIG_KEYS = [
   "dipRevertOrderUsdc",
   "dipRevertExitTakeProfitEnabled",
   "dipRevertExitWinAsk",
+  "antiflipBandMin",
+  "antiflipBandMax",
+  "antiflipDeposedAskMin",
+  "antiflipFlipLookbackMs",
+  "antiflipMinElapsedSec",
+  "antiflipMaxElapsedSec",
+  "antiflipMaxSpread",
+  "antiflipOrderUsdc",
+  "flipConfirmBandMin",
+  "flipConfirmBandMax",
+  "flipConfirmFlipLookbackMs",
+  "flipConfirmMinElapsedSec",
+  "flipConfirmMaxElapsedSec",
+  "flipConfirmMaxSpread",
+  "flipConfirmOrderUsdc",
+  "earlyConvictionAskMin",
+  "earlyConvictionAskMax",
+  "earlyConvictionMaxElapsedSec",
+  "earlyConvictionMaxSpread",
+  "earlyConvictionOrderUsdc",
   "favBandOrderUsdc",
   "barbellCheapOrderUsdc",
   "reverseCheapOrderUsdc",
@@ -161,6 +181,26 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   dipRevertOrderUsdc: "DIP_REVERT_ORDER_USDC",
   dipRevertExitTakeProfitEnabled: "DIP_REVERT_EXIT_TAKE_PROFIT_ENABLED",
   dipRevertExitWinAsk: "DIP_REVERT_EXIT_WIN_ASK",
+  antiflipBandMin: "ANTIFLIP_BAND_MIN",
+  antiflipBandMax: "ANTIFLIP_BAND_MAX",
+  antiflipDeposedAskMin: "ANTIFLIP_DEPOSED_ASK_MIN",
+  antiflipFlipLookbackMs: "ANTIFLIP_FLIP_LOOKBACK_MS",
+  antiflipMinElapsedSec: "ANTIFLIP_MIN_ELAPSED_SEC",
+  antiflipMaxElapsedSec: "ANTIFLIP_MAX_ELAPSED_SEC",
+  antiflipMaxSpread: "ANTIFLIP_MAX_SPREAD",
+  antiflipOrderUsdc: "ANTIFLIP_ORDER_USDC",
+  flipConfirmBandMin: "FLIP_CONFIRM_BAND_MIN",
+  flipConfirmBandMax: "FLIP_CONFIRM_BAND_MAX",
+  flipConfirmFlipLookbackMs: "FLIP_CONFIRM_FLIP_LOOKBACK_MS",
+  flipConfirmMinElapsedSec: "FLIP_CONFIRM_MIN_ELAPSED_SEC",
+  flipConfirmMaxElapsedSec: "FLIP_CONFIRM_MAX_ELAPSED_SEC",
+  flipConfirmMaxSpread: "FLIP_CONFIRM_MAX_SPREAD",
+  flipConfirmOrderUsdc: "FLIP_CONFIRM_ORDER_USDC",
+  earlyConvictionAskMin: "EARLY_CONVICTION_ASK_MIN",
+  earlyConvictionAskMax: "EARLY_CONVICTION_ASK_MAX",
+  earlyConvictionMaxElapsedSec: "EARLY_CONVICTION_MAX_ELAPSED_SEC",
+  earlyConvictionMaxSpread: "EARLY_CONVICTION_MAX_SPREAD",
+  earlyConvictionOrderUsdc: "EARLY_CONVICTION_ORDER_USDC",
 };
 
 const FORBIDDEN_KEYS = new Set([
@@ -271,6 +311,24 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "dipRevertMaxSpread":
     case "dipRevertOrderUsdc":
     case "dipRevertExitWinAsk":
+    case "antiflipBandMin":
+    case "antiflipBandMax":
+    case "antiflipDeposedAskMin":
+    case "antiflipFlipLookbackMs":
+    case "antiflipMinElapsedSec":
+    case "antiflipMaxSpread":
+    case "antiflipOrderUsdc":
+    case "flipConfirmBandMin":
+    case "flipConfirmBandMax":
+    case "flipConfirmFlipLookbackMs":
+    case "flipConfirmMinElapsedSec":
+    case "flipConfirmMaxSpread":
+    case "flipConfirmOrderUsdc":
+    case "earlyConvictionAskMin":
+    case "earlyConvictionAskMax":
+    case "earlyConvictionMaxElapsedSec":
+    case "earlyConvictionMaxSpread":
+    case "earlyConvictionOrderUsdc":
     case "pairLockMax":
     case "expensiveOrderUsdc":
     case "maxSharesPerOrder":
@@ -308,6 +366,8 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "arbAskLockMaxImbalance":
     case "favBandMaxElapsedSec":
     case "dipRevertMaxElapsedSec":
+    case "antiflipMaxElapsedSec":
+    case "flipConfirmMaxElapsedSec":
       return parseNullableNumber(value, key);
     case "enableExpensiveHedge":
     case "arbAskLockOnly":
@@ -464,6 +524,41 @@ const DIP_REVERT_KEYS: readonly EditableConfigKey[] = [
   "dipRevertExitWinAsk",
 ];
 
+/** Antiflip-revert : bande du déchu, floor, lookback de flip, budget. */
+const ANTIFLIP_KEYS: readonly EditableConfigKey[] = [
+  "antiflipBandMin",
+  "antiflipBandMax",
+  "antiflipDeposedAskMin",
+  "antiflipFlipLookbackMs",
+  "antiflipMinElapsedSec",
+  "antiflipMaxElapsedSec",
+  "antiflipMaxSpread",
+  "antiflipOrderUsdc",
+  "enableExpensiveHedge",
+];
+
+/** Flip-confirm : bande du nouveau favori, lookback de flip, fenêtre d'entrée. */
+const FLIP_CONFIRM_KEYS: readonly EditableConfigKey[] = [
+  "flipConfirmBandMin",
+  "flipConfirmBandMax",
+  "flipConfirmFlipLookbackMs",
+  "flipConfirmMinElapsedSec",
+  "flipConfirmMaxElapsedSec",
+  "flipConfirmMaxSpread",
+  "flipConfirmOrderUsdc",
+  "enableExpensiveHedge",
+];
+
+/** Early-conviction : bande de conviction précoce, budget. */
+const EARLY_CONVICTION_KEYS: readonly EditableConfigKey[] = [
+  "earlyConvictionAskMin",
+  "earlyConvictionAskMax",
+  "earlyConvictionMaxElapsedSec",
+  "earlyConvictionMaxSpread",
+  "earlyConvictionOrderUsdc",
+  "enableExpensiveHedge",
+];
+
 const EDGE_LEAD_KEYS: readonly EditableConfigKey[] = [
   "edgeBandMin",
   "edgeBandMax",
@@ -508,7 +603,13 @@ export function keysForStrategy(
           : strategyId === "fav-band"
             ? FAV_BAND_KEYS
             : strategyId === "dip-revert"
-                    ? DIP_REVERT_KEYS
+              ? DIP_REVERT_KEYS
+              : strategyId === "antiflip-revert"
+                ? ANTIFLIP_KEYS
+                : strategyId === "flip-confirm"
+                  ? FLIP_CONFIRM_KEYS
+                  : strategyId === "early-conviction"
+                    ? EARLY_CONVICTION_KEYS
                     : String(strategyId).startsWith("custom:")
                       ? CUSTOM_KEYS
                       : ARB_KEYS; // arb seul

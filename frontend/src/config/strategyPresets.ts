@@ -7,6 +7,9 @@ import askLock from "../../../config/presets/ask-lock.json";
 import lockHarvest from "../../../config/presets/lock-harvest.json";
 import favBand from "../../../config/presets/fav-band.json";
 import dipRevert from "../../../config/presets/dip-revert.json";
+import antiflipRevert from "../../../config/presets/antiflip-revert.json";
+import flipConfirm from "../../../config/presets/flip-confirm.json";
+import earlyConviction from "../../../config/presets/early-conviction.json";
 
 export type { NativeStrategyId, StrategyId };
 
@@ -26,6 +29,9 @@ export const STRATEGY_ENGINE_OPTIONS: Array<{ id: NativeStrategyId; label: strin
   { id: "edge-lead", label: "Edge-lead (edge d'abord, puis cheap)" },
   { id: "fav-band", label: "Fav-band (FOK favori mid-band, hold resolve)" },
   { id: "dip-revert", label: "Dip-revert (FOK favori dip + rebond, hold resolve)" },
+  { id: "antiflip-revert", label: "Antiflip-revert (FOK favori déchu post-flip, hold resolve)" },
+  { id: "flip-confirm", label: "Flip-confirm (FOK nouveau favori post-flip précoce)" },
+  { id: "early-conviction", label: "Early-conviction (FOK favori déjà établi <45s)" },
   { id: "reverse", label: "Reverse bet (underdog 7-10¢ + hedge favori)" },
 ];
 
@@ -38,6 +44,9 @@ export const STRATEGY_PRESETS: StrategyPreset[] = [
   reverse as StrategyPreset,
   favBand as StrategyPreset,
   dipRevert as StrategyPreset,
+  antiflipRevert as StrategyPreset,
+  flipConfirm as StrategyPreset,
+  earlyConviction as StrategyPreset,
 ];
 
 export function presetsForStrategy(id: string): StrategyPreset[] {

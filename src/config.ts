@@ -264,6 +264,46 @@ export interface BotConfig {
   dipRevertExitTakeProfitEnabled: boolean;
   /** Dip-revert take-profit threshold on the held favorite's ask (0..1). */
   dipRevertExitWinAsk: number;
+  /**
+   * Antiflip-revert: buy the DEPOSED favorite right after an identity flip
+   * (empirical edge: the market overreacts; old favorite re-wins ~52% at
+   * ~0.43). Flip must be fresh (<= flipLookbackMs) and the new favorite
+   * uncertain (0.45-0.65); deposed ask must be in [bandMin, bandMax] and
+   * >= deposedAskMin. Hold to resolve, no hedge.
+   */
+  antiflipBandMin: number;
+  antiflipBandMax: number;
+  antiflipDeposedAskMin: number;
+  antiflipFlipLookbackMs: number;
+  antiflipMinElapsedSec: number;
+  /** Optional upper elapsed cap (null = until close / minutesBeforeClose). */
+  antiflipMaxElapsedSec: number | null;
+  antiflipMaxSpread: number;
+  antiflipOrderUsdc: number;
+  /**
+   * Flip-confirm: buy the NEW favorite shortly after an early identity flip.
+   * Entry window [flipConfirmMinElapsedSec, flipConfirmMaxElapsedSec] (the
+   * FLIP itself only has to be <= flipConfirmFlipLookbackMs old); favorite
+   * ask must be in [bandMin, bandMax]. Hold to resolve, no hedge.
+   */
+  flipConfirmBandMin: number;
+  flipConfirmBandMax: number;
+  flipConfirmFlipLookbackMs: number;
+  flipConfirmMinElapsedSec: number;
+  /** Optional upper elapsed cap (null = until close / minutesBeforeClose). */
+  flipConfirmMaxElapsedSec: number | null;
+  flipConfirmMaxSpread: number;
+  flipConfirmOrderUsdc: number;
+  /**
+   * Early-conviction: buy the favorite when it ALREADY prices >= askMin
+   * within the first [0, maxElapsedSec] seconds of the window (a market that
+   * fixes instantly is a one-way trend). Hold to resolve, no hedge.
+   */
+  earlyConvictionAskMin: number;
+  earlyConvictionAskMax: number;
+  earlyConvictionMaxElapsedSec: number;
+  earlyConvictionMaxSpread: number;
+  earlyConvictionOrderUsdc: number;
 }
 
 /**
@@ -348,6 +388,26 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     dipRevertOrderUsdc: 15,
     dipRevertExitTakeProfitEnabled: false,
     dipRevertExitWinAsk: 0.85,
+    antiflipBandMin: 0.35,
+    antiflipBandMax: 0.45,
+    antiflipDeposedAskMin: 0.40,
+    antiflipFlipLookbackMs: 90_000,
+    antiflipMinElapsedSec: 240,
+    antiflipMaxElapsedSec: null,
+    antiflipMaxSpread: 0.05,
+    antiflipOrderUsdc: 15,
+    flipConfirmBandMin: 0.55,
+    flipConfirmBandMax: 0.65,
+    flipConfirmFlipLookbackMs: 90_000,
+    flipConfirmMinElapsedSec: 120,
+    flipConfirmMaxElapsedSec: 180,
+    flipConfirmMaxSpread: 0.05,
+    flipConfirmOrderUsdc: 15,
+    earlyConvictionAskMin: 0.60,
+    earlyConvictionAskMax: 0.80,
+    earlyConvictionMaxElapsedSec: 45,
+    earlyConvictionMaxSpread: 0.05,
+    earlyConvictionOrderUsdc: 15,
   };
 }
 
@@ -629,6 +689,108 @@ export function validateConfigCoherence(
         );
       }
     }
+  }
+  if (config.strategyId === "antiflip-revert") {
+    // Single-leg directional (no hedge, no dual-FOK).
+    config.arbAskLockOnly = false;
+    config.enableExpensiveHedge = false;
+    if (config.antiflipBandMin >= config.antiflipBandMax) {
+      throw new Error("antiflipBandMin must be < antiflipBandMax");
+    }
+    if (
+      config.antiflipDeposedAskMin != null &&
+      (config.antiflipDeposedAskMin < config.antiflipBandMin ||
+        config.antiflipDeposedAskMin > config.antiflipBandMax)
+    ) {
+      throw new Error(
+        "antiflipDeposedAskMin must be null or within [antiflipBandMin, antiflipBandMax]",
+      );
+    }
+    if (config.antiflipFlipLookbackMs <= 0) {
+      throw new Error("antiflipFlipLookbackMs must be > 0");
+    }
+    if (config.antiflipMinElapsedSec < 0) {
+      throw new Error("antiflipMinElapsedSec must be >= 0");
+    }
+    if (
+      config.antiflipMaxElapsedSec != null &&
+      config.antiflipMaxElapsedSec < config.antiflipMinElapsedSec
+    ) {
+      throw new Error("antiflipMaxElapsedSec must be >= antiflipMinElapsedSec");
+    }
+    if (config.antiflipMaxSpread < 0) {
+      throw new Error("antiflipMaxSpread must be >= 0");
+    }
+    if (!(config.antiflipOrderUsdc > 0)) {
+      throw new Error("antiflipOrderUsdc must be > 0 for antiflip-revert");
+    }
+    validateEngineBudget(
+      config.antiflipOrderUsdc,
+      config.antiflipBandMax,
+      "antiflip-revert",
+    );
+  }
+  if (config.strategyId === "flip-confirm") {
+    // Single-leg directional (no hedge, no dual-FOK).
+    config.arbAskLockOnly = false;
+    config.enableExpensiveHedge = false;
+    if (config.flipConfirmBandMin >= config.flipConfirmBandMax) {
+      throw new Error("flipConfirmBandMin must be < flipConfirmBandMax");
+    }
+    if (config.flipConfirmFlipLookbackMs <= 0) {
+      throw new Error("flipConfirmFlipLookbackMs must be > 0");
+    }
+    if (config.flipConfirmMinElapsedSec < 0) {
+      throw new Error("flipConfirmMinElapsedSec must be >= 0");
+    }
+    if (
+      config.flipConfirmMaxElapsedSec != null &&
+      config.flipConfirmMaxElapsedSec < config.flipConfirmMinElapsedSec
+    ) {
+      throw new Error(
+        "flipConfirmMaxElapsedSec must be >= flipConfirmMinElapsedSec",
+      );
+    }
+    if (config.flipConfirmMaxSpread < 0) {
+      throw new Error("flipConfirmMaxSpread must be >= 0");
+    }
+    if (!(config.flipConfirmOrderUsdc > 0)) {
+      throw new Error("flipConfirmOrderUsdc must be > 0 for flip-confirm");
+    }
+    validateEngineBudget(
+      config.flipConfirmOrderUsdc,
+      config.flipConfirmBandMax,
+      "flip-confirm",
+    );
+  }
+  if (config.strategyId === "early-conviction") {
+    // Single-leg directional (no hedge, no dual-FOK).
+    config.arbAskLockOnly = false;
+    config.enableExpensiveHedge = false;
+    if (config.earlyConvictionAskMin >= config.earlyConvictionAskMax) {
+      throw new Error("earlyConvictionAskMin must be < earlyConvictionAskMax");
+    }
+    if (config.earlyConvictionAskMin < 0.5) {
+      throw new Error(
+        "earlyConvictionAskMin must be >= 0.5 (a 'favorite' below 0.5 is not a favorite)",
+      );
+    }
+    if (
+      !(config.earlyConvictionMaxElapsedSec > 0 && config.earlyConvictionMaxElapsedSec <= 900)
+    ) {
+      throw new Error("earlyConvictionMaxElapsedSec must be in (0, 900]");
+    }
+    if (config.earlyConvictionMaxSpread < 0) {
+      throw new Error("earlyConvictionMaxSpread must be >= 0");
+    }
+    if (!(config.earlyConvictionOrderUsdc > 0)) {
+      throw new Error("earlyConvictionOrderUsdc must be > 0 for early-conviction");
+    }
+    validateEngineBudget(
+      config.earlyConvictionOrderUsdc,
+      config.earlyConvictionAskMax,
+      "early-conviction",
+    );
   }
   const validateEdge =
     opts?.leadsWithEdge === true || config.strategyId === "edge-lead";

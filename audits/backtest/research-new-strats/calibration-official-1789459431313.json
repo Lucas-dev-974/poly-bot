@@ -1,0 +1,36 @@
+{
+  "phase": "calibration-sim-vs-official",
+  "generatedAt": "2026-09-15T08:03:51.311Z",
+  "universe": "393 fenêtres complètes (801+/60s)",
+  "official": {
+    "engine": "fav-band (runner officiel)",
+    "config": {
+      "strategyId": "fav-band",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": null,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 30,
+      "maxExposureUsdc": 450,
+      "simulatedCapital": 500,
+      "minutesBeforeCloseMin": 0,
+      "minutesBeforeCloseMax": 15
+    },
+    "windows": 393,
+    "fills": 386,
+    "tradedWindows": 386,
+    "pnl": 308.57,
+    "winRate": 77.5,
+    "unresolvedWindows": 0,
+    "rejects": 2
+  },
+  "simRef": {
+    "engine": "FAVBAND-REPRO sim (discovery-sim2)",
+    "fills": 387,
+    "pnl": 293.15,
+    "winRate": 77.3,
+    "avgEntryPrice": 0.734
+  },
+  "note": "La sim discovery (même loader/mécanique que dip-sim, calibrée ±1% fills) reproduit fav-band sur le même univers. Si fills/PnL/WR sont dans le même ordre de grandeur, les résultats ANTIFLIP/FIRSTFAV/FLIPCONFIRM des discovery-sim ont un statut de backtest calibré (ranking fiable)."
+}

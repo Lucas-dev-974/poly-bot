@@ -1,0 +1,60 @@
+{
+  "phase": "new-strategy-final",
+  "label": "early-conviction",
+  "family": "firstfav",
+  "config": {
+    "label": "early-conviction",
+    "family": "firstfav",
+    "minElapsedSec": 0,
+    "maxElapsedSec": 45,
+    "bandMin": 0.6,
+    "bandMax": 0.8,
+    "maxSpread": 0.05,
+    "orderUsdc": 15,
+    "maxShares": 30
+  },
+  "result": {
+    "config": {
+      "label": "early-conviction",
+      "family": "firstfav",
+      "minElapsedSec": 0,
+      "maxElapsedSec": 45,
+      "bandMin": 0.6,
+      "bandMax": 0.8,
+      "maxSpread": 0.05,
+      "orderUsdc": 15,
+      "maxShares": 30
+    },
+    "label": "early-conviction",
+    "family": "firstfav",
+    "fills": 219,
+    "wins": 148,
+    "losses": 71,
+    "pnl": 330.41,
+    "winRate": 67.6,
+    "maxDrawdown": 82.16,
+    "evPerShare": 0.06,
+    "avgEntryPrice": 0.615,
+    "avgWin": 9.428,
+    "avgLoss": -15,
+    "shares": 5343.12,
+    "notionalUsdc": 3285,
+    "byDay": {
+      "2026-09-08": -22.44,
+      "2026-09-09": 82.32,
+      "2026-09-10": 17.53,
+      "2026-09-11": 33.72,
+      "2026-09-12": 30.52,
+      "2026-09-13": 105.16,
+      "2026-09-14": 87.16,
+      "2026-09-15": -3.56
+    },
+    "variance": {
+      "stdDaily": 42.83,
+      "ratio": 0.13,
+      "nDays": 8,
+      "nNegDays": 2
+    },
+    "tStat": 1.93
+  }
+}

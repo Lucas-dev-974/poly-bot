@@ -1,0 +1,62 @@
+{
+  "phase": "new-strategy-final",
+  "label": "flip-confirm",
+  "family": "flipconfirm",
+  "config": {
+    "label": "flip-confirm",
+    "family": "flipconfirm",
+    "minElapsedSec": 120,
+    "maxElapsedSec": 180,
+    "bandMin": 0.55,
+    "bandMax": 0.65,
+    "maxSpread": 0.05,
+    "orderUsdc": 15,
+    "maxShares": 30,
+    "flipLookbackMs": 90000
+  },
+  "result": {
+    "config": {
+      "label": "flip-confirm",
+      "family": "flipconfirm",
+      "minElapsedSec": 120,
+      "maxElapsedSec": 180,
+      "bandMin": 0.55,
+      "bandMax": 0.65,
+      "maxSpread": 0.05,
+      "orderUsdc": 15,
+      "maxShares": 30,
+      "flipLookbackMs": 90000
+    },
+    "label": "flip-confirm",
+    "family": "flipconfirm",
+    "fills": 188,
+    "wins": 125,
+    "losses": 63,
+    "pnl": 389.35,
+    "winRate": 66.5,
+    "maxDrawdown": 79.41,
+    "evPerShare": 0.08,
+    "avgEntryPrice": 0.581,
+    "avgWin": 10.675,
+    "avgLoss": -15,
+    "shares": 4854.66,
+    "notionalUsdc": 2820,
+    "byDay": {
+      "2026-09-08": 75.05,
+      "2026-09-09": 54.81,
+      "2026-09-10": 131.94,
+      "2026-09-11": -7.13,
+      "2026-09-12": -3.69,
+      "2026-09-13": 16.43,
+      "2026-09-14": 54.76,
+      "2026-09-15": 67.19
+    },
+    "variance": {
+      "stdDaily": 43.22,
+      "ratio": 0.111,
+      "nDays": 8,
+      "nNegDays": 2
+    },
+    "tStat": 2.44
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "phase": "new-strategies-backtest-report",
+  "generatedAt": "2026-09-15T08:21:11.772Z",
+  "sourceDb": "data/bot-live.db",
+  "universe": {
+    "windows": 393,
+    "criteria": "801+ ticks (book_snapshots, both outcomes), gap<=60s, résolution connue",
+    "period": "2026-09-08T06:30:00.000Z → 2026-09-15T03:45:00.000Z"
+  },
+  "calibration": {
+    "official": {
+      "engine": "fav-band (runner officiel)",
+      "config": {
+        "strategyId": "fav-band",
+        "favBandAskMin": 0.7,
+        "favBandAskMax": 0.85,
+        "favBandMinElapsedSec": 200,
+        "favBandMaxElapsedSec": null,
+        "favBandOrderUsdc": 15,
+        "maxSharesPerOrder": 30,
+        "maxExposureUsdc": 450,
+        "simulatedCapital": 500,
+        "minutesBeforeCloseMin": 0,
+        "minutesBeforeCloseMax": 15
+      },
+      "windows": 393,
+      "fills": 386,
+      "tradedWindows": 386,
+      "pnl": 308.57,
+      "winRate": 77.5,
+      "unresolvedWindows": 0,
+      "rejects": 2
+    },
+    "simRef": {
+      "engine": "FAVBAND-REPRO sim (discovery-sim2)",
+      "fills": 387,
+      "pnl": 293.15,
+      "winRate": 77.3,
+      "avgEntryPrice": 0.734
+    },
+    "verdict": "Sim ≡ runner officiel sur le même univers (387 vs 386 fills, $293 vs $309, WR 77.3% vs 77.5%) — statut backtest calibré."
+  },
+  "strategies": [
+    {
+      "config": {
+        "label": "antiflip-revert",
+        "family": "antiflip",
+        "minElapsedSec": 240,
+        "maxElapsedSec": null,
+        "bandMin": 0.35,
+        "bandMax": 0.45,
+        "maxSpread": 0.05,
+        "orderUsdc": 15,
+        "maxShares": 30,
+        "flipLookbackMs": 90000,
+        "deposedAskMin": 0.4
+      },
+      "label": "antiflip-revert",
+      "family": "antiflip",
+      "fills": 232,
+      "wins": 121,
+      "losses": 111,
+      "pnl": 622.8,
+      "winRate": 52.2,
+      "maxDrawdown": 103.2,
+      "evPerShare": 0.09,
+      "avgEntryPrice": 0.432,
+      "avgWin": 16.971,
+      "avgLoss": -12.889,
+      "shares": 6960,
+      "notionalUsdc": 3007.2,
+      "byDay": {
+        "2026-09-08": -4.2,
+        "2026-09-09": 266.4,
+        "2026-09-10": 153.3,
+        "2026-09-11": -12.3,
+        "2026-09-12": 3.9,
+        "2026-09-13": 13.2,
+        "2026-09-14": 181.8,
+        "2026-09-15": 20.7
+      },
+      "variance": {
+        "stdDaily": 99.89,
+        "ratio": 0.16,
+        "nDays": 8,
+        "nNegDays": 2
+      },
+      "tStat": 2.74
+    },
+    {
+      "config": {
+        "label": "early-conviction",
+        "family": "firstfav",
+        "minElapsedSec": 0,
+        "maxElapsedSec": 45,
+        "bandMin": 0.6,
+        "bandMax": 0.8,
+        "maxSpread": 0.05,
+        "orderUsdc": 15,
+        "maxShares": 30
+      },
+      "label": "early-conviction",
+      "family": "firstfav",
+      "fills": 219,
+      "wins": 148,
+      "losses": 71,
+      "pnl": 330.41,
+      "winRate": 67.6,
+      "maxDrawdown": 82.16,
+      "evPerShare": 0.06,
+      "avgEntryPrice": 0.615,
+      "avgWin": 9.428,
+      "avgLoss": -15,
+      "shares": 5343.12,
+      "notionalUsdc": 3285,
+      "byDay": {
+        "2026-09-08": -22.44,
+        "2026-09-09": 82.32,
+        "2026-09-10": 17.53,
+        "2026-09-11": 33.72,
+        "2026-09-12": 30.52,
+        "2026-09-13": 105.16,
+        "2026-09-14": 87.16,
+        "2026-09-15": -3.56
+      },
+      "variance": {
+        "stdDaily": 42.83,
+        "ratio": 0.13,
+        "nDays": 8,
+        "nNegDays": 2
+      },
+      "tStat": 1.93
+    },
+    {
+      "config": {
+        "label": "flip-confirm",
+        "family": "flipconfirm",
+        "minElapsedSec": 120,
+        "maxElapsedSec": 180,
+        "bandMin": 0.55,
+        "bandMax": 0.65,
+        "maxSpread": 0.05,
+        "orderUsdc": 15,
+        "maxShares": 30,
+        "flipLookbackMs": 90000
+      },
+      "label": "flip-confirm",
+      "family": "flipconfirm",
+      "fills": 188,
+      "wins": 125,
+      "losses": 63,
+      "pnl": 389.35,
+      "winRate": 66.5,
+      "maxDrawdown": 79.41,
+      "evPerShare": 0.08,
+      "avgEntryPrice": 0.581,
+      "avgWin": 10.675,
+      "avgLoss": -15,
+      "shares": 4854.66,
+      "notionalUsdc": 2820,
+      "byDay": {
+        "2026-09-08": 75.05,
+        "2026-09-09": 54.81,
+        "2026-09-10": 131.94,
+        "2026-09-11": -7.13,
+        "2026-09-12": -3.69,
+        "2026-09-13": 16.43,
+        "2026-09-14": 54.76,
+        "2026-09-15": 67.19
+      },
+      "variance": {
+        "stdDaily": 43.22,
+        "ratio": 0.111,
+        "nDays": 8,
+        "nNegDays": 2
+      },
+      "tStat": 2.44
+    }
+  ]
+}

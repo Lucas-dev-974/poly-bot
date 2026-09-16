@@ -1,0 +1,209 @@
+{
+  "phase": "final-sim",
+  "generatedAt": "2026-09-15T08:01:42.926Z",
+  "universeSize": 393,
+  "splitHalfBoundary": "2026-09-11T01:45:00.000Z",
+  "strategies": {
+    "antiflip-revert": {
+      "full": {
+        "label": "antiflip-revert",
+        "family": "antiflip",
+        "fills": 232,
+        "wins": 121,
+        "losses": 111,
+        "pnl": 622.8,
+        "winRate": 52.2,
+        "maxDrawdown": 103.2,
+        "evPerShare": 0.09,
+        "avgEntryPrice": 0.432,
+        "avgWin": 16.971,
+        "avgLoss": -12.889,
+        "byDay": {
+          "2026-09-08": -4.2,
+          "2026-09-09": 266.4,
+          "2026-09-10": 153.3,
+          "2026-09-11": -12.3,
+          "2026-09-12": 3.9,
+          "2026-09-13": 13.2,
+          "2026-09-14": 181.8,
+          "2026-09-15": 20.7
+        }
+      },
+      "oldHalf": {
+        "label": "antiflip-revert",
+        "family": "antiflip",
+        "fills": 126,
+        "wins": 67,
+        "losses": 59,
+        "pnl": 380.4,
+        "winRate": 53.2,
+        "maxDrawdown": 103.2,
+        "evPerShare": 0.1,
+        "avgEntryPrice": 0.431,
+        "avgWin": 17.037,
+        "avgLoss": -12.9,
+        "byDay": {
+          "2026-09-08": -4.2,
+          "2026-09-09": 266.4,
+          "2026-09-10": 153.3,
+          "2026-09-11": -35.1
+        }
+      },
+      "newHalf": {
+        "label": "antiflip-revert",
+        "family": "antiflip",
+        "fills": 106,
+        "wins": 54,
+        "losses": 52,
+        "pnl": 242.4,
+        "winRate": 50.9,
+        "maxDrawdown": 83.1,
+        "evPerShare": 0.08,
+        "avgEntryPrice": 0.433,
+        "avgWin": 16.889,
+        "avgLoss": -12.877,
+        "byDay": {
+          "2026-09-11": 22.8,
+          "2026-09-12": 3.9,
+          "2026-09-13": 13.2,
+          "2026-09-14": 181.8,
+          "2026-09-15": 20.7
+        }
+      }
+    },
+    "early-conviction": {
+      "full": {
+        "label": "early-conviction",
+        "family": "firstfav",
+        "fills": 219,
+        "wins": 148,
+        "losses": 71,
+        "pnl": 330.41,
+        "winRate": 67.6,
+        "maxDrawdown": 82.16,
+        "evPerShare": 0.06,
+        "avgEntryPrice": 0.615,
+        "avgWin": 9.428,
+        "avgLoss": -15,
+        "byDay": {
+          "2026-09-08": -22.44,
+          "2026-09-09": 82.32,
+          "2026-09-10": 17.53,
+          "2026-09-11": 33.72,
+          "2026-09-12": 30.52,
+          "2026-09-13": 105.16,
+          "2026-09-14": 87.16,
+          "2026-09-15": -3.56
+        }
+      },
+      "oldHalf": {
+        "label": "early-conviction",
+        "family": "firstfav",
+        "fills": 108,
+        "wins": 70,
+        "losses": 38,
+        "pnl": 95.84,
+        "winRate": 64.8,
+        "maxDrawdown": 80.81,
+        "evPerShare": 0.04,
+        "avgEntryPrice": 0.614,
+        "avgWin": 9.512,
+        "avgLoss": -15,
+        "byDay": {
+          "2026-09-08": -22.44,
+          "2026-09-09": 82.32,
+          "2026-09-10": 17.53,
+          "2026-09-11": 18.44
+        }
+      },
+      "newHalf": {
+        "label": "early-conviction",
+        "family": "firstfav",
+        "fills": 111,
+        "wins": 78,
+        "losses": 33,
+        "pnl": 234.57,
+        "winRate": 70.3,
+        "maxDrawdown": 82.16,
+        "evPerShare": 0.09,
+        "avgEntryPrice": 0.616,
+        "avgWin": 9.353,
+        "avgLoss": -15,
+        "byDay": {
+          "2026-09-11": 15.28,
+          "2026-09-12": 30.52,
+          "2026-09-13": 105.16,
+          "2026-09-14": 87.16,
+          "2026-09-15": -3.56
+        }
+      }
+    },
+    "flip-confirm": {
+      "full": {
+        "label": "flip-confirm",
+        "family": "flipconfirm",
+        "fills": 188,
+        "wins": 125,
+        "losses": 63,
+        "pnl": 389.35,
+        "winRate": 66.5,
+        "maxDrawdown": 79.41,
+        "evPerShare": 0.08,
+        "avgEntryPrice": 0.581,
+        "avgWin": 10.675,
+        "avgLoss": -15,
+        "byDay": {
+          "2026-09-08": 75.05,
+          "2026-09-09": 54.81,
+          "2026-09-10": 131.94,
+          "2026-09-11": -7.13,
+          "2026-09-12": -3.69,
+          "2026-09-13": 16.43,
+          "2026-09-14": 54.76,
+          "2026-09-15": 67.19
+        }
+      },
+      "oldHalf": {
+        "label": "flip-confirm",
+        "family": "flipconfirm",
+        "fills": 94,
+        "wins": 65,
+        "losses": 29,
+        "pnl": 259.07,
+        "winRate": 69.1,
+        "maxDrawdown": 66.92,
+        "evPerShare": 0.11,
+        "avgEntryPrice": 0.582,
+        "avgWin": 10.678,
+        "avgLoss": -15,
+        "byDay": {
+          "2026-09-08": 75.05,
+          "2026-09-09": 54.81,
+          "2026-09-10": 131.94,
+          "2026-09-11": -2.73
+        }
+      },
+      "newHalf": {
+        "label": "flip-confirm",
+        "family": "flipconfirm",
+        "fills": 94,
+        "wins": 60,
+        "losses": 34,
+        "pnl": 130.28,
+        "winRate": 63.8,
+        "maxDrawdown": 79.41,
+        "evPerShare": 0.05,
+        "avgEntryPrice": 0.58,
+        "avgWin": 10.671,
+        "avgLoss": -15,
+        "byDay": {
+          "2026-09-11": -4.4,
+          "2026-09-12": -3.69,
+          "2026-09-13": 16.43,
+          "2026-09-14": 54.76,
+          "2026-09-15": 67.19
+        }
+      }
+    }
+  }
+}

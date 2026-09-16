@@ -13,6 +13,9 @@
 
 | Stratégie | Univers | Meilleure config | PnL | PnL % | Notes |
 |---|---|---|---:|---:|---|
+| **antiflip-revert** (new) | 393 fenêtres | minElapsed 240s / flip ≤ 90s / déchu 0.35–0.45 | **+$623** | +21 % notional | WR 52.2 %, t-stat 2.7 — favori déchu post-flip |
+| **flip-confirm** (new) | 393 fenêtres | entrée [120,180]s post-flip, nouveau fav 0.55–0.65 | **+$389** | +14 % | WR 66.5 %, t-stat 2.4 — retournement médian confirmé |
+| **early-conviction** (new) | 393 fenêtres | fav ≥ 0.60 dans les 45 premières s | **+$330** | +10 % | WR 67.6 %, t-stat 1.9 — conviction immédiate |
 | **dip-revert** | 321–326 fenêtres | `maxElapsedSec=420` | **+$305** | +61 % | TP optionnel dégrade (off par défaut) |
 | **fav-band** | 301 fenêtres | band 0.70–0.85, min 200 s | **+$299** | +398 % | 35 variantes gridées |
 | **edge-lead** | 301 fenêtres | ref (gates) | −$19…−$46 | −38…−92 % | grids d'amélioration tous négatifs |
@@ -131,6 +134,57 @@ Scripts : `scripts/research/compare/{strategy-compare-backtest,long-universe-com
 de comparer sur un univers fixé. Le long-universe (601 ticks) est le plus
 représentatif ; ask-lock y est le seul stablement positif.
 
+## 📁 antiflip-revert/ — favori déchu après flip récent (2026-09-15)
+
+Scripts : `scripts/research/antiflip-revert/` (discovery rounds 1–4, verify-claims)
+
+| Fichier | Contenu |
+|---|---|
+| `antiflip-revert-2026-09-15.md` | Rapport : **+$623** (WR 52.2 %, t 2.74), contrôle causal (sans flip +$147 / flip récent +$623), split-half OLD +$380 / NEW +$242, robustesse tie-break (hystérésis +$651), profil d'entrée par elapsed |
+| `strat-antiflip-revert-…json` | Résultat final + config (minElapsed 240s, flip ≤ 90s, déchu 0.35–0.45 floor 0.40) |
+| `discovery-sim…json` (4 rounds) | Création du signal + sculpting + contrôles causaux |
+| `verify-claims-…json` | Contre-vérification indépendante + test tie-break/hystérésis |
+
+## 📁 flip-confirm/ — retournement confirmé, entrée [120,180]s (2026-09-15)
+
+Scripts : `scripts/research/flip-confirm/` (discovery rounds 3 & 6)
+
+| Fichier | Contenu |
+|---|---|
+| `flip-confirm-2026-09-15.md` | Rapport : **+$389** (WR 66.5 %, t 2.44), split-half OLD +$259 / NEW +$130, hystérésis +$404 |
+| `strat-flip-confirm-…json` | Résultat final + config (entrée [120,180]s post-flip, nouveau fav 0.55–0.65) |
+| `discovery-sim3/6-…json` | Création + fenêtrage (hors [120,180] : m180 −$227, m240 −$652) |
+
+## 📁 early-conviction/ — conviction immédiate ≤ 45s (2026-09-15)
+
+Scripts : `scripts/research/early-conviction/` (discovery rounds 2 & 4)
+
+| Fichier | Contenu |
+|---|---|
+| `early-conviction-2026-09-15.md` | Rapport : **+$330** (WR 67.6 %, t 1.93 — sous le seuil 2.0), split-half OLD +$96 / NEW +$235, DD $82 le plus bas |
+| `strat-early-conviction-…json` | Résultat final + config (fav ≥ 0.60 ≤ 0.80 dans les 45 premières s) |
+| `discovery-sim2/4-…json` | Création + sculpting de la bande/seuil |
+
+## 📁 research-new-strats/ — travail transverse (3 stratégies, 2026-09-15)
+
+Scripts : `scripts/research/research-new-strats/` (univers partagé `universe.mts`,
+sims `discovery-sim*.mts`, sim finale `final-sim.mts`, calibration runner
+`calibrate-official.mts`, rapport `write-report.mts`, overlap-check.mts)
+
+| Fichier | Contenu |
+|---|---|
+| `new-strategies-report-…json/.md` | **Rapport consolidé** des 3 stratégies : antiflip-revert **+$623** (WR 52.2 %), flip-confirm **+$389** (WR 66.5 %), early-conviction **+$330** (WR 67.6 %) ; axes morts documentés (cheap-leader, late-lock, lotto, whipsaw, winstreak, fav-streak dominé) |
+| `calibration-official-…json` | Sonde fav-band sim vs runner officiel sur le même univers : 387 vs 386 fills, $293 vs $309, WR 77.3 % vs 77.5 % — la sim est calibrée (écart 0.26 % fills) |
+| `final-sim-…json` | Run final des 3 stratégies sur univers aligné officiel + split-half OLD/NEW (toutes positives des deux côtés) |
+| `discovery-sim…-…json` (6 rounds) | Discovery rounds 1–6 (copiés par stratégie dans leurs dossiers) |
+| `calibration-analysis-…json` | Cartographie de miscalibration per-tick (repère : recent-flip WR 49.7 %, stable 75.7 %) — attention chiffres per-tick gonflés, usage découverte uniquement |
+
+**Verdict** : 3 signaux directionnels hold-to-resolution survivent aux contrôles
+causaux, au split-half, à la contre-vérification indépendante et au test de
+tie-break/hystérésis ; calibrés contre le runner officiel. Chevauchement
+antiflip↔flip-confirm = 129 fenêtres communes — ne pas additionner les PnL.
+Implémentation en moteurs natifs = wiring complet (cf. skill `new-strategy-wiring`).
+
 ## 📁 coverage/ — univers de données partagé
 
 Script : `scripts/audit-data-coverage.mts`
@@ -159,6 +213,13 @@ ce rapport fait foi pour savoir quelles fenêtres sont exploitables.
 | `scripts/research/dip-revert-research/live-positions.mts` | Positions LIVE dip-revert : winrate, PnL, streaks (lit bot-live.db) |
 | `scripts/backtest-dip-revert-axes.mts` | Validation runner officiel des axes d'entrée dip-revert (écrit dans `dip-revert/`) |
 | `scripts/research/dip-revert-research/dip-hedge-sim.mts` | Hedge jambe inverse dip-revert : post/free/stop/parité (écrit dans `dip-revert/`) |
+| `scripts/research/research-new-strats/final-sim.mts` | Sim finale des 3 nouvelles stratégies + split-half (écrit dans `research-new-strats/`) |
+| `scripts/research/research-new-strats/write-report.mts` | Rapport assemblé des 3 nouvelles stratégies (JSON+MD dans `research-new-strats/`) |
+| `scripts/research/research-new-strats/calibrate-official.mts` | Calibration sim ↔ runner officiel (sonde fav-band, work-DB VACUUM INTO) |
+| `scripts/research/research-new-strats/overlap-check.mts` | Chevauchement fenêtres/côtés entre les 3 stratégies |
+| `scripts/research/antiflip-revert/` | Scripts antiflip (discovery 1–4 + verify-claims) → écrit dans `antiflip-revert/` |
+| `scripts/research/flip-confirm/` | Scripts flip-confirm (discovery 3 & 6) → écrit dans `flip-confirm/` |
+| `scripts/research/early-conviction/` | Scripts early-conviction (discovery 2 & 4) → écrit dans `early-conviction/` |
 
 ## Conventions
 

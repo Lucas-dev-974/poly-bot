@@ -1,0 +1,49 @@
+{
+  "criteria": {
+    "minTicks": 801,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 485,
+  "ranked": [
+    {
+      "label": "antiflip-revert",
+      "strategyId": "antiflip-revert",
+      "ms": 34970,
+      "pnl": 568.8,
+      "capitalEnd": 1068.8,
+      "fills": 287,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 49.8,
+      "wins": 143,
+      "losses": 144
+    },
+    {
+      "label": "flip-confirm",
+      "strategyId": "flip-confirm",
+      "ms": 27971,
+      "pnl": 251.58,
+      "capitalEnd": 751.58,
+      "fills": 231,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 62.8,
+      "wins": 145,
+      "losses": 86
+    },
+    {
+      "label": "early-conviction",
+      "strategyId": "early-conviction",
+      "ms": 26290,
+      "pnl": 320.64,
+      "capitalEnd": 820.64,
+      "fills": 275,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 66.2,
+      "wins": 182,
+      "losses": 93
+    }
+  ]
+}

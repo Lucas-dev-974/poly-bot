@@ -16,6 +16,7 @@
 | **antiflip-revert** (new) | 393 fenêtres | minElapsed 240s / flip ≤ 90s / déchu 0.35–0.45 | **+$623** | +21 % notional | WR 52.2 %, t-stat 2.7 — favori déchu post-flip |
 | **flip-confirm** (new) | 393 fenêtres | entrée [120,180]s post-flip, nouveau fav 0.55–0.65 | **+$389** | +14 % | WR 66.5 %, t-stat 2.4 — retournement médian confirmé |
 | **early-conviction** (new) | 393 fenêtres | fav ≥ 0.60 dans les 45 premières s | **+$330** | +10 % | WR 67.6 %, t-stat 1.9 — conviction immédiate |
+| **dip-guard** (new, 2026-09-16) | 494 fenêtres | INVERSÉ : favori quand underdog 0.35–0.40, TP 0.85 | **+$434** | +6.0 % notional | WR 75 %, split-half positif — sens user (underdog) mort, miroir positif |
 | **dip-revert** | 321–326 fenêtres | `maxElapsedSec=420` | **+$305** | +61 % | TP optionnel dégrade (off par défaut) |
 | **fav-band** | 301 fenêtres | band 0.70–0.85, min 200 s | **+$299** | +398 % | 35 variantes gridées |
 | **edge-lead** | 301 fenêtres | ref (gates) | −$19…−$46 | −38…−92 % | grids d'amélioration tous négatifs |
@@ -30,7 +31,17 @@
 
 ---
 
-## 📁 arb/ — moteur arb (couverture 1:1)
+## 📁 model-ia/ — étude de faisabilité modèle IA (2026-09-16)
+
+Scripts : `scripts/research/ml-feasibility/` (probe-dataset, probe-universe)
+
+| Fichier | Contenu | Résultat |
+|---|---|---|
+| `model-ia/RAPPORT-ml-feasibility.md` | Faisabilité d'un modèle IA (liquidité, prix, patterns, outcome) sur données enregistrées | **Faisable** : 655 fenêtres, 510 complètes+résolues, équilibre 320/331, ~14 features carnet/tick. Marché en cours ✅, prochain marché ⚠️. Baseline à battre = calibration de l'ask. ≈ 2 sessions. |
+| `model-ia/SPEC-next-market.md` | Spécification modèle IA « next-market » (prédiction outcome du prochain marché, features trans-fenêtres, logistique TS pur, walk-forward par jour, 5 gates GO/NO-GO, collecte 4 semaines) | **Spec v1 prête** : n requis mesuré (0,53 → n=2173, 0,55 → n=778), collecte ~80 fenêtres/jour, P0 (baselines sur 510 fenêtres) = seule phase non conditionnée. |
+| `model-ia/SPEC-patterns.md` | Spécification modèle IA « patterns » (tâche A : patterns intra-marché SAX/shapelets sur prix/liquidité ; tâche B : séquences d'outcome type up>up>down ; découverte non supervisée → confirmation supervisée pooled) | **Spec v1 prête** : probe streaks mesuré (UUU→57,4 % Down n=68, continuité 48,3 % n=644 = hasard ; MDE ±15-17 pts par bucket), critère de redécouverte des 4 moteurs, 6 gates. P0 (découverte sur 510 fenêtres) = 2 sessions. |
+
+---
 
 Scripts : `scripts/arb-audit-backtest.mts`
 
@@ -165,6 +176,35 @@ Scripts : `scripts/research/early-conviction/` (discovery rounds 2 & 4)
 | `strat-early-conviction-…json` | Résultat final + config (fav ≥ 0.60 ≤ 0.80 dans les 45 premières s) |
 | `discovery-sim2/4-…json` | Création + sculpting de la bande/seuil |
 
+## 📁 dip-guard/ — underdog 0.30–0.40 + stop/trailing (2026-09-16, INVERSÉ POSITIF)
+
+Scripts : `scripts/research/dip-guard/` (universe.mts étendu côté BID + dip-guard-sim.mts)
+
+| Fichier | Contenu |
+|---|---|
+| `dip-guard-2026-09-16.md` | Round 1 : entrée underdog ask 0.30–0.40 ≤ 300s, stop bid ≤ 0.20, trailing armé à 0.50 → **−$457 base** (WR 33 %), HOLD-ref −$664, 16/16 configs négatives |
+| `dip-guard-optim-2026-09-16.md` | Round 2 optimisation : axe par axe (timing, favMax, TP, **direction inversée**) → le miroir **acheter le favori quand l'underdog cote 0.35–0.40** fait **+$434 (WR 75 %, DD $82)** avec TP 0.85, split-half OLD +$272 / NEW +$161 |
+| `dip-guard-sim-…json` | Round 1 : grille 16 configs · Round 2 : grille 34 configs + split-half |
+
+**Verdict round 2** : le signal user (acheter l'underdog) est mort confirmé
+(29 configs négatives) ; son miroir inversé est un candidat sérieux
+(+6.0 % du notional, EV +3.8¢/share, 7 j positifs / 9). Stops destructeurs
+sur la jambe favori ; TP 0.85 = meilleur exit (DD −55 % vs hold). Avant
+implémentation : verify-claims indépendant + overlap vs antiflip-revert
+(familles proches) + calibration runner officiel.
+
+### Round 3 — validation (2026-09-16) : `dip-guard-validation-2026-09-16.md`
+
+Les 3 contrôles passés : verify-claims indépendant **MATCH exact** (3/3
+configs, t-stat empirique **2.17**), overlap quantifié (48–59 % fenêtres
+partagées avec les 3 stratégies retenues — **PnL non additifs**,
+early-conviction quasi-doublon 96 % même côté, antiflip 121 opposés),
+calibration runner officiel **0 % drift** (fav-band sonde 487/487 fills,
+$117.84 vs $117.24). PnL/notional corrigé : **+60 %**. Le miroir inversé
+est **validé** — décision suivante : implémentation moteur OU confrontation
+multi-moteurs avec antiflip-revert (dip-guard a le meilleur PnL %/dollar,
+antiflip le PnL absolu max).
+
 ## 📁 research-new-strats/ — travail transverse (3 stratégies, 2026-09-15)
 
 Scripts : `scripts/research/research-new-strats/` (univers partagé `universe.mts`,
@@ -220,6 +260,7 @@ ce rapport fait foi pour savoir quelles fenêtres sont exploitables.
 | `scripts/research/antiflip-revert/` | Scripts antiflip (discovery 1–4 + verify-claims) → écrit dans `antiflip-revert/` |
 | `scripts/research/flip-confirm/` | Scripts flip-confirm (discovery 3 & 6) → écrit dans `flip-confirm/` |
 | `scripts/research/early-conviction/` | Scripts early-conviction (discovery 2 & 4) → écrit dans `early-conviction/` |
+| `scripts/research/dip-guard/{dip-guard-sim,verify-claims,overlap-check,calibrate-official}.mts` | Dip-guard : discovery+optimisation (34 configs + split-half), contre-vérification indépendante, overlap multi-stratégies, calibration runner officiel (sonde fav-band) → écrit dans `dip-guard/` |
 
 ## Conventions
 

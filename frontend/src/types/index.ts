@@ -223,6 +223,14 @@ export interface BotConfig {
   favBandAskMax: number;
   favBandMinElapsedSec: number;
   favBandMaxElapsedSec: number | null;
+  /** Hedge-inverse (default off): resting GTC on the opposite token after the favorite fill. */
+  favBandInverseEnabled: boolean;
+  /** Hedge-inverse: resting GTC limit on the opposite token (0..0.5). */
+  favBandInverseAskMax: number;
+  /** Hedge-inverse: shares of the opposite token per filled favorite share. */
+  favBandInverseShareRatio: number;
+  /** Hedge-inverse: budget cap (USDC) for the opposite-token GTC. */
+  favBandInverseOrderUsdc: number;
   /** Dip-revert: buy favorite after intra-window dip + stabilization. */
   dipRevertBandMin: number;
   dipRevertBandMax: number;

@@ -241,6 +241,22 @@ export interface BotConfig {
   /** Optional upper elapsed cap (null = until close / minutesBeforeClose). */
   favBandMaxElapsedSec: number | null;
   /**
+   * Hedge-inverse (default off): once the favorite leg is filled, post a
+   * resting GTC BUY at favBandInverseAskMax on the OPPOSITE token. The order
+   * fills INCREMENTALLY while the inverse ask dips to/below the limit
+   * (partial fills persist, never cancelled). Size = favBandInverseShareRatio
+   * × filled favorite shares (e.g. 2 = double the favorite shares), capped by
+   * maxSharesPerOrder and the inverse budget. The leg rides the cheap-GTC
+   * pipeline (no arb hedge gates).
+   */
+  favBandInverseEnabled: boolean;
+  /** Hedge-inverse: resting GTC limit on the opposite token (0..0.5). */
+  favBandInverseAskMax: number;
+  /** Hedge-inverse: shares of the opposite token per filled favorite share. */
+  favBandInverseShareRatio: number;
+  /** Hedge-inverse: budget cap (USDC) for the opposite-token FOK buy. */
+  favBandInverseOrderUsdc: number;
+  /**
    * Dip-revert: buy favorite after an intra-window dip + stabilization.
    * Ask must be in [dipRevertBandMin, dipRevertBandMax]; the favorite must
    * have dropped >= dipRevertMinDrop over dipRevertDropLookbackMs then
@@ -378,6 +394,10 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     favBandAskMax: 0.85,
     favBandMinElapsedSec: 200,
     favBandMaxElapsedSec: null,
+    favBandInverseEnabled: false,
+    favBandInverseAskMax: 0.2,
+    favBandInverseShareRatio: 2,
+    favBandInverseOrderUsdc: 15,
     dipRevertBandMin: 0.55,
     dipRevertBandMax: 0.65,
     dipRevertMinDrop: 0.03,
@@ -643,6 +663,37 @@ export function validateConfigCoherence(
       config.favBandAskMax,
       "fav-band",
     );
+    if (config.favBandInverseEnabled) {
+      if (
+        !(
+          config.favBandInverseAskMax > 0 && config.favBandInverseAskMax < 0.5
+        )
+      ) {
+        throw new Error(
+          "favBandInverseAskMax must be in (0, 0.5) — above 0.5 the opposite token is no longer the cheap side",
+        );
+      }
+      if (!(config.favBandInverseShareRatio > 0)) {
+        throw new Error("favBandInverseShareRatio must be > 0");
+      }
+      if (!(config.favBandInverseOrderUsdc > 0)) {
+        throw new Error("favBandInverseOrderUsdc must be > 0");
+      }
+      // Budget viability: 5 shares × askMax at the inverse trigger ceiling.
+      validateEngineBudget(
+        config.favBandInverseOrderUsdc,
+        config.favBandInverseAskMax,
+        "fav-band inverse",
+      );
+      // The inverse leg is a SECOND leg per pair: with the directional entry
+      // already occupying side slot 1, maxOpenPositionsPerSide = 1 would make
+      // the feature silently unreachable (appendOpportunity side-count guard).
+      if (config.maxOpenPositionsPerSide < 2) {
+        throw new Error(
+          "favBandInverseEnabled requires maxOpenPositionsPerSide >= 2 (favorite leg + inverse leg)",
+        );
+      }
+    }
   }
   if (config.strategyId === "dip-revert") {
     // Dip-revert is single-leg directional (no hedge, no dual-FOK).

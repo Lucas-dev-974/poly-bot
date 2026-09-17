@@ -1015,6 +1015,63 @@ export function SettingsModal(props: {
                       />
                     </Field>
                   </div>
+                  <div class="cfg-section" style={{ "margin-top": "1rem" }}>
+                    <h4>Hedge inverse (optionnel)</h4>
+                    <p class="cfg-section__desc">
+                      Après le fill du favori, un <strong>GTC reposé</strong> est posté à la
+                      limite sur le token <strong>opposé</strong>. Il se remplit
+                      <strong> incrémentalement</strong> quand l&apos;ask de l&apos;inverse
+                      descend à la limite (fills partiels persistants, jamais annulé).
+                      Exemple : favori acheté 0.70 → GTC à 0.20 sur l&apos;inverse pour
+                      2× les shares du favori.
+                    </p>
+                    <div class="cfg-grid">
+                      <label class="cfg-check" title="Active la jambe inverse (GTC reposé sur le token opposé).">
+                        <input
+                          type="checkbox"
+                          checked={form().favBandInverseEnabled}
+                          onChange={(e) => update("favBandInverseEnabled", e.currentTarget.checked)}
+                        />
+                        <span>Hedge inverse activé</span>
+                      </label>
+                      <Show when={form().favBandInverseEnabled}>
+                        <Field
+                          label="Limite GTC inverse"
+                          hint="Prix de pose du GTC sur le token opposé (défaut 0.20). Ne se remplit que si l'ask inverse descend à ce niveau."
+                        >
+                          <NumberInput
+                            value={form().favBandInverseAskMax}
+                            min={0.01}
+                            max={0.49}
+                            step={0.01}
+                            onInput={(v) => update("favBandInverseAskMax", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Ratio shares inverse"
+                          hint="Shares de l'inverse par share du favori fillé (défaut 2 = le double). Plafonné par le budget et max shares."
+                        >
+                          <NumberInput
+                            value={form().favBandInverseShareRatio}
+                            min={0.1}
+                            step={0.1}
+                            onInput={(v) => update("favBandInverseShareRatio", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Budget inverse (USDC)"
+                          hint="Plafond USDC de l'ordre GTC inverse (défaut 15). Doit permettre ≥ 5 shares au pire prix."
+                        >
+                          <NumberInput
+                            value={form().favBandInverseOrderUsdc}
+                            min={0.1}
+                            step={0.1}
+                            onInput={(v) => update("favBandInverseOrderUsdc", v)}
+                          />
+                        </Field>
+                      </Show>
+                    </div>
+                  </div>
                   <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
                     Risque / exposition : onglet Risque (max shares, max exposure).
                     Fenêtre de trading : onglet Fenêtre.

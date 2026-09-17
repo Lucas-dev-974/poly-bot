@@ -67,6 +67,10 @@ export const EDITABLE_CONFIG_KEYS = [
   "favBandAskMax",
   "favBandMinElapsedSec",
   "favBandMaxElapsedSec",
+  "favBandInverseEnabled",
+  "favBandInverseAskMax",
+  "favBandInverseShareRatio",
+  "favBandInverseOrderUsdc",
   "dipRevertBandMin",
   "dipRevertBandMax",
   "dipRevertMinDrop",
@@ -167,6 +171,10 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   favBandAskMax: "FAV_BAND_ASK_MAX",
   favBandMinElapsedSec: "FAV_BAND_MIN_ELAPSED_SEC",
   favBandMaxElapsedSec: "FAV_BAND_MAX_ELAPSED_SEC",
+  favBandInverseEnabled: "FAV_BAND_INVERSE_ENABLED",
+  favBandInverseAskMax: "FAV_BAND_INVERSE_ASK_MAX",
+  favBandInverseShareRatio: "FAV_BAND_INVERSE_SHARE_RATIO",
+  favBandInverseOrderUsdc: "FAV_BAND_INVERSE_ORDER_USDC",
   favBandOrderUsdc: "FAV_BAND_ORDER_USDC",
   barbellCheapOrderUsdc: "BARBELL_CHEAP_ORDER_USDC",
   reverseCheapOrderUsdc: "REVERSE_CHEAP_ORDER_USDC",
@@ -303,6 +311,9 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "favBandAskMin":
     case "favBandAskMax":
     case "favBandMinElapsedSec":
+    case "favBandInverseAskMax":
+    case "favBandInverseShareRatio":
+    case "favBandInverseOrderUsdc":
     case "dipRevertBandMin":
     case "dipRevertBandMax":
     case "dipRevertMinDrop":
@@ -379,6 +390,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "reverseDefendEnabled":
     case "reverseHedgeCapToFilledCheap":
     case "dipRevertExitTakeProfitEnabled":
+    case "favBandInverseEnabled":
       return parseBoolean(value, key);
     case "reverseMaxGridLevels":
       return parseNullableNumber(value, key);
@@ -507,6 +519,10 @@ const FAV_BAND_KEYS: readonly EditableConfigKey[] = [
   "favBandAskMax",
   "favBandMinElapsedSec",
   "favBandMaxElapsedSec",
+  "favBandInverseEnabled",
+  "favBandInverseAskMax",
+  "favBandInverseShareRatio",
+  "favBandInverseOrderUsdc",
   "enableExpensiveHedge",
 ];
 

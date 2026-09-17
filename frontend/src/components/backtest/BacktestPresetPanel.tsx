@@ -67,7 +67,7 @@ export function BacktestPresetPanel(props: {
   const tabErrorCount = createMemo((): Record<PresetTab, number> => {
     const fe = props.fieldErrors;
     const counts: Record<PresetTab, number> = { cheap: 0, hedge: 0, edge: 0, risk: 0, window: 0, zones: 0 };
-    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax", "arbAskSumMax", "arbAskLockMinElapsedSec", "arbAskLockMaxImbalance", "favBandAskMin", "favBandAskMax", "favBandMinElapsedSec", "favBandMaxElapsedSec", "favBandOrderUsdc", "barbellCheapOrderUsdc", "reverseCheapOrderUsdc", "customOrderUsdc"];
+    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax", "arbAskSumMax", "arbAskLockMinElapsedSec", "arbAskLockMaxImbalance", "favBandAskMin", "favBandAskMax", "favBandMinElapsedSec", "favBandMaxElapsedSec", "favBandOrderUsdc", "favBandInverseAskMax", "favBandInverseShareRatio", "favBandInverseOrderUsdc", "barbellCheapOrderUsdc", "reverseCheapOrderUsdc", "customOrderUsdc"];
     const hedgeKeys: Array<keyof ConfigFormState> = ["expensiveBuyMin", "expensiveBuyMax", "expensiveOrderUsdc", "expensiveOrderType", "barbellHedgeRatio", "enableExpensiveHedge", "requireCheapFillBeforeExpensive"];
     const edgeKeys: Array<keyof ConfigFormState> = ["edgeBandMin", "edgeBandMax", "edgeConfirmSamples", "edgeMaxDownTick", "edgeCheapBandMin", "edgeCheapBandMax", "edgeSizingMode", "edgeSharesEdge", "edgeSharesCheap", "edgeOrderUsdc", "maxShareEdge", "edgeCheapOrderUsdc", "edgeSellExpensiveEnabled", "edgeSellExpensiveAfterMin", "edgeSellExpensiveLossPct", "edgeSellExpensiveLossWindowMs"];
     const riskKeys: Array<keyof ConfigFormState> = ["maxSharesPerOrder", "maxShareEdge", "maxOpenPositionsPerSide", "maxExposureUsdc", "simulatedCapital", "marketSlugPrefixes", "pollIntervalMs"];
@@ -187,6 +187,19 @@ export function BacktestPresetPanel(props: {
                   <Num label="Min elapsed sec" tip="Attendre N sec depuis windowStart." value={form().favBandMinElapsedSec} step={1} err={props.fieldErrors.favBandMinElapsedSec} onInput={(v) => props.onUpdate("favBandMinElapsedSec", v)} />
                   <Num label="Max elapsed sec" tip="Vide = off." value={form().favBandMaxElapsedSec} step={1} err={props.fieldErrors.favBandMaxElapsedSec} onInput={(v) => props.onUpdate("favBandMaxElapsedSec", v)} />
                   <Num label="Order USDC" tip="Budget FOK favori." value={form().favBandOrderUsdc} step={1} err={props.fieldErrors.favBandOrderUsdc} onInput={(v) => props.onUpdate("favBandOrderUsdc", v)} />
+                  <label class="bt-pf bt-pf-check">
+                    <input
+                      type="checkbox"
+                      checked={form().favBandInverseEnabled}
+                      onChange={(e) => props.onUpdate("favBandInverseEnabled", e.currentTarget.checked)}
+                    />
+                    <span class="bt-pf-label" title="Après le fill du favori, post d'un GTC reposé à la limite sur le token opposé, fill incrémental.">Hedge inverse (GTC)</span>
+                  </label>
+                  <Show when={form().favBandInverseEnabled}>
+                    <Num label="Inverse limite" tip="Prix du GTC reposé sur le token opposé (ex. 0.20). Fill incrémental si l'ask descend à ce niveau." value={form().favBandInverseAskMax} step={0.01} err={props.fieldErrors.favBandInverseAskMax} onInput={(v) => props.onUpdate("favBandInverseAskMax", v)} />
+                    <Num label="Inverse ratio" tip="Shares de l'inverse par share du favori fillé (2 = le double)." value={form().favBandInverseShareRatio} step={0.1} err={props.fieldErrors.favBandInverseShareRatio} onInput={(v) => props.onUpdate("favBandInverseShareRatio", v)} />
+                    <Num label="Inverse USDC" tip="Plafond budget du GTC inverse (≥ 5 shares au pire prix)." value={form().favBandInverseOrderUsdc} step={1} err={props.fieldErrors.favBandInverseOrderUsdc} onInput={(v) => props.onUpdate("favBandInverseOrderUsdc", v)} />
+                  </Show>
                 </Show>
                 <Show when={sid() !== "fav-band"}>
                   <Num label="Cheap min" tip="Ask / prix minimum de la bande cheap (underdog). En dessous : pas d'ordre cheap." value={form().cheapBuyMin} step={0.01} err={props.fieldErrors.cheapBuyMin} onInput={(v) => props.onUpdate("cheapBuyMin", v)} />

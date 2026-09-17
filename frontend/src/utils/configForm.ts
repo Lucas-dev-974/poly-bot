@@ -63,6 +63,10 @@ export type ConfigFormState = {
   favBandAskMax: string;
   favBandMinElapsedSec: string;
   favBandMaxElapsedSec: string;
+  favBandInverseEnabled: boolean;
+  favBandInverseAskMax: string;
+  favBandInverseShareRatio: string;
+  favBandInverseOrderUsdc: string;
   dipRevertBandMin: string;
   dipRevertBandMax: string;
   dipRevertMinDrop: string;
@@ -174,6 +178,10 @@ export function configToForm(config: BotConfig): ConfigFormState {
       config.favBandMaxElapsedSec == null || config.favBandMaxElapsedSec === undefined
         ? ""
         : String(config.favBandMaxElapsedSec),
+    favBandInverseEnabled: config.favBandInverseEnabled === true,
+    favBandInverseAskMax: String(config.favBandInverseAskMax ?? 0.2),
+    favBandInverseShareRatio: String(config.favBandInverseShareRatio ?? 2),
+    favBandInverseOrderUsdc: String(config.favBandInverseOrderUsdc ?? 15),
     dipRevertBandMin: String(config.dipRevertBandMin ?? 0.55),
     dipRevertBandMax: String(config.dipRevertBandMax ?? 0.65),
     dipRevertMinDrop: String(config.dipRevertMinDrop ?? 0.03),
@@ -319,6 +327,10 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
       form.favBandMaxElapsedSec.trim() === ""
         ? null
         : parseNum(form.favBandMaxElapsedSec, "Fav-band max elapsed"),
+    favBandInverseEnabled: form.favBandInverseEnabled === true,
+    favBandInverseAskMax: parseNum(form.favBandInverseAskMax, "Fav-band inverse ask max"),
+    favBandInverseShareRatio: parseNum(form.favBandInverseShareRatio, "Fav-band inverse share ratio"),
+    favBandInverseOrderUsdc: parseNum(form.favBandInverseOrderUsdc, "Fav-band inverse order USDC"),
     dipRevertBandMin: parseNum(form.dipRevertBandMin, "Dip-revert band min"),
     dipRevertBandMax: parseNum(form.dipRevertBandMax, "Dip-revert band max"),
     dipRevertMinDrop: parseNum(form.dipRevertMinDrop, "Dip-revert min drop"),
@@ -506,6 +518,31 @@ export function validateConfigForm(
         const maxE = Number(form.favBandMaxElapsedSec);
         if (!Number.isFinite(maxE) || maxE < elapsed) {
           errors.push("Fav-band: max elapsed invalide");
+        }
+      }
+      if (form.favBandInverseEnabled) {
+        const invAsk = Number(form.favBandInverseAskMax);
+        const invRatio = Number(form.favBandInverseShareRatio);
+        const invBudget = Number(form.favBandInverseOrderUsdc);
+        const maxPos = Number(form.maxOpenPositionsPerSide);
+        if (!Number.isFinite(invAsk) || invAsk <= 0 || invAsk >= 0.5) {
+          errors.push("Fav-band inverse: ask max entre 0 et 0.5");
+        }
+        if (!Number.isFinite(invRatio) || invRatio <= 0) {
+          errors.push("Fav-band inverse: ratio doit être > 0");
+        }
+        if (!Number.isFinite(invBudget) || invBudget <= 0) {
+          errors.push("Fav-band inverse: budget doit être > 0");
+        } else if (
+          Number.isFinite(invAsk) &&
+          invAsk > 0 &&
+          invAsk < 0.5 &&
+          Math.floor((invBudget / invAsk) * 100) / 100 < 5
+        ) {
+          errors.push("Fav-band inverse: budget insuffisant (min 5 shares au pire prix)");
+        }
+        if (Number.isFinite(maxPos) && maxPos < 2) {
+          errors.push("Fav-band inverse: max positions par côté doit être ≥ 2");
         }
       }
     }
@@ -904,6 +941,33 @@ export function fieldErrors(
         const maxE = Number(form.favBandMaxElapsedSec);
         if (!Number.isFinite(maxE) || (Number.isFinite(elapsed) && maxE < elapsed)) {
           result.favBandMaxElapsedSec = "Vide ou >= min elapsed";
+        }
+      }
+      if (form.favBandInverseEnabled) {
+        const invAsk = Number(form.favBandInverseAskMax);
+        const invRatio = Number(form.favBandInverseShareRatio);
+        const invBudget = Number(form.favBandInverseOrderUsdc);
+        const maxPos = Number(form.maxOpenPositionsPerSide);
+        if (!Number.isFinite(invAsk)) {
+          result.favBandInverseAskMax = "Nombre invalide";
+        } else if (invAsk <= 0 || invAsk >= 0.5) {
+          result.favBandInverseAskMax = "Entre 0 et 0.5";
+        }
+        if (!Number.isFinite(invRatio) || invRatio <= 0) {
+          result.favBandInverseShareRatio = "> 0";
+        }
+        if (!Number.isFinite(invBudget)) {
+          result.favBandInverseOrderUsdc = "Nombre invalide";
+        } else if (
+          Number.isFinite(invAsk) &&
+          invAsk > 0 &&
+          invAsk < 0.5 &&
+          Math.floor((invBudget / invAsk) * 100) / 100 < 5
+        ) {
+          result.favBandInverseOrderUsdc = `Min ${Math.ceil(5 * invAsk * 100) / 100} USDC (5 shares)`;
+        }
+        if (Number.isFinite(maxPos) && maxPos < 2) {
+          result.maxOpenPositionsPerSide = "≥ 2 (jambe inverse)";
         }
       }
     }

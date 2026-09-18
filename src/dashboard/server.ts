@@ -8,6 +8,11 @@ import { type BotConfig, toPublicConfig } from "../config.js";
 import type { Repositories } from "../db/index.js";
 import { bus, type BotEvent } from "./events.js";
 import { getRelayerQuota } from "../relayer-quota.js";
+import {
+  getOnChainPusdBalance,
+  validateWithdrawRequest,
+  withdrawViaRelayer,
+} from "../withdraw.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { Trader } from "../trader.js";
 import {
@@ -263,6 +268,21 @@ export class DashboardServer {
 
       if (url.pathname === "/api/redeem" && req.method === "POST") {
         void this.handleRedeem(req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/wallet/withdraw/quote" && req.method === "GET") {
+        void this.handleWalletWithdrawQuote(res);
+        return;
+      }
+
+      if (url.pathname === "/api/wallet/withdraw" && req.method === "POST") {
+        void this.handleWalletWithdraw(req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/wallet/withdrawals" && req.method === "GET") {
+        this.handleWalletWithdrawals(url, res);
         return;
       }
 
@@ -1148,6 +1168,146 @@ export class DashboardServer {
   private handleBotControlState(res: import("node:http").ServerResponse): void {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ enabled: !this.isPausedFn?.() }));
+  }
+
+  /** GET /api/wallet/withdraw/quote — wallet state for the withdraw dialog. */
+  private async handleWalletWithdrawQuote(
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    const funder = this.config.funderAddress ?? null;
+    if (!funder) {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          funder: null,
+          onChainPusd: null,
+          clobAvailable: null,
+          ready: false,
+          reason: "FUNDER_ADDRESS non configuré",
+        }),
+      );
+      return;
+    }
+    const onChainPusd = await getOnChainPusdBalance(this.config);
+    const clobAvailable = this.trader
+      ? await this.trader.getAvailableCollateral().catch(() => null)
+      : null;
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        funder,
+        onChainPusd,
+        clobAvailable,
+        ready: onChainPusd !== null,
+        reason: onChainPusd === null ? "Solde pUSD indisponible (RPC)" : null,
+      }),
+    );
+  }
+
+  /** POST /api/wallet/withdraw — gasless pUSD transfer via the relayer. */
+  private async handleWalletWithdraw(
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return;
+    }
+    let to = "";
+    let amount = 0;
+    try {
+      const parsed = JSON.parse(await this.readBody(req)) as {
+        amountUsd?: unknown;
+        to?: unknown;
+      };
+      to = typeof parsed.to === "string" ? parsed.to : "";
+      const onChainPusd = await getOnChainPusdBalance(this.config);
+      if (onChainPusd === null) {
+        res.writeHead(503, { "Content-Type": "application/json" });
+        res.end(
+          JSON.stringify({
+            ok: false,
+            error: "Solde pUSD indisponible : retrait impossible pour l'instant",
+          }),
+        );
+        return;
+      }
+      const validation = validateWithdrawRequest({
+        amountUsd: parsed.amountUsd,
+        to: parsed.to,
+        funder: this.config.funderAddress,
+        onChainPusd,
+      });
+      if (!validation.ok) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: validation.error }));
+        return;
+      }
+      amount = validation.amount;
+      to = validation.to;
+      bus.emit({
+        type: "withdrawal",
+        status: "pending",
+        to,
+        amount,
+      });
+      const result = await withdrawViaRelayer(this.config, {
+        to: validation.to,
+        amountUsd: validation.amount,
+      });
+      this.repos?.withdrawals.insert({
+        to,
+        amount,
+        txHash: result.txHash,
+        source: "manual",
+        success: 1,
+      });
+      bus.emit({
+        type: "withdrawal",
+        status: "success",
+        to,
+        amount,
+        txHash: result.txHash,
+      });
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          ok: true,
+          txHash: result.txHash,
+          transactionId: result.transactionId,
+        }),
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (to) {
+        this.repos?.withdrawals.insert({
+          to,
+          amount,
+          txHash: null,
+          source: "manual",
+          success: 0,
+          errorMessage: message,
+        });
+        bus.emit({ type: "withdrawal", status: "failed", to, amount, message });
+      }
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: message }));
+    }
+  }
+
+  /** GET /api/wallet/withdrawals — manual withdrawal history (newest first). */
+  private handleWalletWithdrawals(
+    url: URL,
+    res: import("node:http").ServerResponse,
+  ): void {
+    const limit = Math.min(
+      100,
+      Math.max(1, Number(url.searchParams.get("limit") ?? 20)),
+    );
+    const withdrawals = this.repos?.withdrawals.recent(limit) ?? [];
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ withdrawals }));
   }
 
   private async handleBotControl(

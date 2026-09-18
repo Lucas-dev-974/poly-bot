@@ -25,6 +25,14 @@ export type BotEvent =
   | { type: "resolution"; message: string; data?: Record<string, unknown> }
   | { type: "polymarketPositions"; positions: PolymarketPosition[] }
   | { type: "relayerQuota"; quota: RelayerQuotaState }
+  | {
+      type: "withdrawal";
+      status: "pending" | "success" | "failed";
+      to: string;
+      amount: number;
+      txHash?: string;
+      message?: string;
+    }
   | { type: "botControl"; enabled: boolean }
   | { type: "error"; message: string }
   | { type: "log"; message: string; data?: Record<string, unknown> };

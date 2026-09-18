@@ -9,6 +9,7 @@ import { fmtUsd } from "../../utils/format";
 
 export function Header(props: {
   liveBalance: () => { availableCollateral: number; positionsValue: number } | null;
+  onOpenWallet?: () => void;
 }): JSX.Element {
   const m = createMemo(() => mode());
 
@@ -50,7 +51,18 @@ export function Header(props: {
       </a>
       {badge()}
       <BotToggle />
-      
+      <Show when={props.onOpenWallet}>
+        {(fn) => (
+          <button
+            class="btn wallet-btn"
+            onClick={() => fn()()}
+            title="Retirer du pUSD vers un wallet externe"
+          >
+            Wallet
+          </button>
+        )}
+      </Show>
+
       <QuotaBadge />
       {capital()}
     </header>

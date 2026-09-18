@@ -1,4 +1,4 @@
-import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, MarketHistoryResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, StrategyId, WalletTradesResponse } from "../types";
+import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, MarketHistoryResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, StrategyId, WalletQuote, WalletTradesResponse, WithdrawalRow, WithdrawResponse } from "../types";
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
@@ -159,6 +159,17 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }),
+  walletWithdrawQuote: () => request<WalletQuote>("/api/wallet/withdraw/quote"),
+  walletWithdraw: (body: { amountUsd: number; to: string }) =>
+    request<WithdrawResponse>("/api/wallet/withdraw", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }),
+  walletWithdrawals: (limit = 20) =>
+    request<{ withdrawals: WithdrawalRow[] }>(
+      `/api/wallet/withdrawals?limit=${limit}`,
+    ),
   closePosition: (body: ClosePositionRequest) =>
     request<ClosePositionResponse>("/api/open-positions/close", {
       method: "POST",

@@ -747,6 +747,51 @@ export class RedeemRepository {
   }
 }
 
+export interface WithdrawalRow {
+  ts: number;
+  to: string;
+  amount: number;
+  txHash: string | null;
+  source: "manual";
+  success: number;
+  errorMessage: string | null;
+}
+
+export class WithdrawalRepository {
+  constructor(private readonly db: Database) {}
+
+  insert(
+    row: Pick<WithdrawalRow, "to" | "amount" | "source" | "success"> &
+      Partial<Omit<WithdrawalRow, "to" | "amount" | "source" | "success">>,
+  ): void {
+    this.db.run(
+      `INSERT INTO withdrawals (ts, "to", amount, txHash, source, success, errorMessage)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        row.ts ?? Date.now(),
+        row.to,
+        row.amount,
+        row.txHash ?? null,
+        row.source,
+        row.success,
+        row.errorMessage ?? null,
+      ],
+    );
+  }
+
+  recent(limit = 20): WithdrawalRow[] {
+    return this.db.all<WithdrawalRow>(
+      `SELECT ts, "to", amount, txHash, source, success, errorMessage
+       FROM withdrawals ORDER BY ts DESC, id DESC LIMIT ?`,
+      [limit],
+    );
+  }
+
+  prune(beforeTs: number): void {
+    this.db.run("DELETE FROM withdrawals WHERE ts < ?", [beforeTs]);
+  }
+}
+
 export interface MarketSnapshotRow {
   ts: number;
   eventSlug: string;

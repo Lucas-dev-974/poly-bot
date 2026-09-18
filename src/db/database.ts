@@ -146,6 +146,17 @@ export class Database {
         errorMessage TEXT
       );
 
+      CREATE TABLE IF NOT EXISTS withdrawals (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ts INTEGER NOT NULL,
+        "to" TEXT NOT NULL,
+        amount REAL NOT NULL,
+        txHash TEXT,
+        source TEXT NOT NULL,
+        success INTEGER NOT NULL,
+        errorMessage TEXT
+      );
+
       CREATE TABLE IF NOT EXISTS strategy_graphs (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -382,6 +393,7 @@ export class Database {
       DELETE FROM bot_state;
       DELETE FROM orders;
       DELETE FROM redeems;
+      DELETE FROM withdrawals;
       DELETE FROM stats_snapshots;
       DELETE FROM market_snapshots;
       DELETE FROM book_snapshots;

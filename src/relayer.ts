@@ -32,8 +32,8 @@ let loggedRelayerAuthMode = false;
 /** CTF (Conditional Tokens Framework) — ERC-1155 position token contract. */
 const CTF: Address = "0x4D97DCd97eC945f40cF65F87097ACe5EA0476045";
 
-/** pUSD (V2 collateral proxy). */
-const PUSD: Address = "0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB";
+/** pUSD (V2 collateral proxy) — exported for the withdraw flow. */
+export const PUSD: Address = "0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB";
 
 /** CtfCollateralAdapter — standard (non-neg-risk) split/merge/redeem. */
 const CTF_COLLATERAL_ADAPTER: Address =
@@ -129,8 +129,9 @@ export interface RedeemResult {
 
 /**
  * Build an authenticated RelayClient for deposit-wallet (WALLET) batches.
+ * Exported for sibling flows that reuse the relayer (e.g. pUSD withdrawals).
  */
-function createRelayClient(config: BotConfig): RelayClient {
+export function createRelayClient(config: BotConfig): RelayClient {
   if (!config.privateKey) {
     throw new Error("PRIVATE_KEY is required for relayer actions");
   }

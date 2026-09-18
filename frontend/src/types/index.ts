@@ -303,6 +303,31 @@ export interface RelayerQuotaState {
   lastError: string | null;
 }
 
+export interface WalletQuote {
+  funder: string | null;
+  onChainPusd: number | null;
+  clobAvailable: number | null;
+  ready: boolean;
+  reason: string | null;
+}
+
+export interface WithdrawalRow {
+  ts: number;
+  to: string;
+  amount: number;
+  txHash: string | null;
+  source: string;
+  success: number;
+  errorMessage: string | null;
+}
+
+export interface WithdrawResponse {
+  ok: boolean;
+  txHash?: string;
+  transactionId?: string;
+  error?: string;
+}
+
 export interface PolymarketPosition {
   title: string;
   slug: string;

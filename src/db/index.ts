@@ -15,6 +15,7 @@ import {
   PostedOrderRepository,
   RedeemRepository,
   RetryRepository,
+  WithdrawalRepository,
   StatsSnapshotRepository,
   WindowClaimRepository,
   BacktestPositionRepository,
@@ -37,6 +38,7 @@ export interface Repositories {
   botState: BotStateRepository;
   orders: OrderRepository;
   redeems: RedeemRepository;
+  withdrawals: WithdrawalRepository;
   statsSnapshots: StatsSnapshotRepository;
   marketSnapshots: MarketSnapshotRepository;
   bookSnapshots: BookSnapshotRepository;
@@ -63,6 +65,7 @@ export function createRepositories(db: Database): Repositories {
     botState: new BotStateRepository(db),
     orders: new OrderRepository(db),
     redeems: new RedeemRepository(db),
+    withdrawals: new WithdrawalRepository(db),
     statsSnapshots: new StatsSnapshotRepository(db),
     marketSnapshots: new MarketSnapshotRepository(db),
     bookSnapshots: new BookSnapshotRepository(db),

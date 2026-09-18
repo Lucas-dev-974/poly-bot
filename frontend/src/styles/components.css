@@ -1252,3 +1252,132 @@ select.cfg-input {
   border-bottom: 1px solid var(--border);
 }
 
+
+/* ---- Wallet modal (retrait pUSD) ---- */
+.wallet-btn {
+  cursor: pointer;
+}
+
+.wallet-funder {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+
+.wallet-funder a {
+  color: var(--accent);
+}
+
+.wallet-balances {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.wallet-balances > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wallet-balances .label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wallet-balances .value {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.wallet-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.wallet-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.wallet-form input {
+  background: var(--panel-alt, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: inherit;
+  font-size: 13px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.wallet-amount-row {
+  display: flex;
+  gap: 6px;
+}
+
+.wallet-amount-row input {
+  flex: 1;
+}
+
+.wallet-error {
+  color: #e5484d;
+  font-size: 12px;
+  margin: 4px 0 0;
+}
+
+.wallet-warn {
+  color: #f5a623;
+  font-size: 12px;
+  margin: 4px 0 0;
+}
+
+.wallet-pending {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 10px 0 0;
+}
+
+.wallet-history {
+  border-top: 1px solid var(--border);
+  margin-top: 14px;
+  padding-top: 10px;
+}
+
+.wallet-history h4 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wallet-history-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  padding: 3px 0;
+}
+
+.wallet-history-row .wallet-ts {
+  color: var(--muted);
+  min-width: 130px;
+}
+
+.wallet-history-row a {
+  color: #46a758;
+  text-decoration: none;
+}
+
+.wallet-history-row .wallet-fail {
+  color: #e5484d;
+  cursor: help;
+}

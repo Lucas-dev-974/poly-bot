@@ -11,6 +11,7 @@ import { PolymarketPositions } from "./components/panels/PolymarketPositions";
 import { Logs } from "./components/panels/Logs";
 import { ConfirmModal } from "./components/modals/ConfirmModal";
 import { SettingsModal } from "./components/modals/SettingsModal";
+import { WalletModal } from "./components/modals/WalletModal";
 import { useEventSource } from "./hooks/useEventSource";
 import { useInterval } from "./hooks/useInterval";
 import { api } from "./api/client";
@@ -38,6 +39,7 @@ export function App(): JSX.Element {
   const [confirmDiscardSettings, setConfirmDiscardSettings] = createSignal(false);
   const [closeTarget, setCloseTarget] = createSignal<SimulatedPosition | null>(null);
   const [closingId, setClosingId] = createSignal<string | null>(null);
+  const [walletOpen, setWalletOpen] = createSignal(false);
 
   // SSE → stores + signaux locaux (balance)
   useEventSource((event: BotEvent) => {
@@ -178,7 +180,7 @@ export function App(): JSX.Element {
 
   return (
     <>
-      <Header liveBalance={liveBalance} />
+      <Header liveBalance={liveBalance} onOpenWallet={() => setWalletOpen(true)} />
       <ConfigBar onConfigure={() => setSettingsOpen(true)} />
       <div class="grid">
         <PolymarketPositions onRedeem={handleRedeem} />
@@ -228,6 +230,7 @@ export function App(): JSX.Element {
           />
         )}
       </Show>
+      <WalletModal open={walletOpen()} onClose={() => setWalletOpen(false)} />
       <ConfirmModal
         open={confirmDiscardSettings()}
         title="Abandonner les modifications ?"

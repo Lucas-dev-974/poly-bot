@@ -5,6 +5,7 @@ import type {
 } from "./types.js";
 import { log } from "./logger.js";
 import { asStrategyId, type StrategyId } from "./strategy/ids.js";
+import { MIN_CLOB_SHARES } from "./utils/prices.js";
 import type {
   KeyRepository,
   PairRepository,
@@ -787,7 +788,26 @@ export class TradeTracker {
       } else {
         // Partial sale of a larger leg: split into a sold remainder and keep
         // the rest open (still an assumed directional position).
-        position.size = Math.round((position.size - closeSize) * 100) / 100;
+        const leftover = Math.round((position.size - closeSize) * 100) / 100;
+        // Same dust rule as closePositionAsSold: a sub-MIN_CLOB_SHARES
+        // remainder can never be sold again (CLOB minimum), so merge it
+        // into the sold leg (booked at the sale price, like the
+        // phantom-reconcile path) instead of leaving a ghost open leg.
+        if (leftover < MIN_CLOB_SHARES) {
+          const mergedSize = Math.round((closeSize + leftover) * 100) / 100;
+          position.status = "sold";
+          position.resolvedAt = nowMs;
+          position.size = mergedSize;
+          position.cost = Math.round(position.fillPrice * mergedSize * 100) / 100;
+          position.sellPrice = sellPrice;
+          position.pnl = round2(mergedSize * (sellPrice - position.fillPrice));
+          this.positionsRepo?.insert(position);
+          this.resolvePosition(position);
+          closedCount++;
+          remaining = 0;
+          break;
+        }
+        position.size = leftover;
         position.cost = Math.round(position.fillPrice * position.size * 100) / 100;
         // Persist the shrunk remainder (INSERT OR REPLACE). Without this a
         // restart reloads the original size/cost → inflated exposure and an
@@ -856,7 +876,26 @@ export class TradeTracker {
       } else {
         // Partial sale of a larger leg: split into a sold remainder and keep
         // the rest open.
-        position.size = Math.round((position.size - closeSize) * 100) / 100;
+        const leftover = Math.round((position.size - closeSize) * 100) / 100;
+        // Same dust rule as closePositionAsSold: a sub-MIN_CLOB_SHARES
+        // remainder can never be sold again (CLOB minimum), so merge it
+        // into the sold leg (booked at the sale price, like the
+        // phantom-reconcile path) instead of leaving a ghost open leg.
+        if (leftover < MIN_CLOB_SHARES) {
+          const mergedSize = Math.round((closeSize + leftover) * 100) / 100;
+          position.status = "sold";
+          position.resolvedAt = nowMs;
+          position.size = mergedSize;
+          position.cost = Math.round(position.fillPrice * mergedSize * 100) / 100;
+          position.sellPrice = sellPrice;
+          position.pnl = round2(mergedSize * (sellPrice - position.fillPrice));
+          this.positionsRepo?.insert(position);
+          this.resolvePosition(position);
+          closedCount++;
+          remaining = 0;
+          break;
+        }
+        position.size = leftover;
         position.cost = Math.round(position.fillPrice * position.size * 100) / 100;
         this.positionsRepo?.insert(position);
         const sold: SimulatedPosition = {
@@ -917,22 +956,45 @@ export class TradeTracker {
       position.pnl = round2(proceeds - position.cost);
       this.resolvePosition(position);
     } else {
-      position.size = Math.round((position.size - closeSize) * 100) / 100;
-      position.cost = Math.round(position.fillPrice * position.size * 100) / 100;
-      this.positionsRepo?.insert(position);
-      const sold: SimulatedPosition = {
-        ...position,
-        id: `${position.id}:sold-${nowMs}`,
-        size: closeSize,
-        cost: Math.round(position.fillPrice * closeSize * 100) / 100,
-        status: "sold",
-        resolvedAt: nowMs,
-        sellPrice,
-        pnl: round2(proceeds - Math.round(position.fillPrice * closeSize * 100) / 100),
-      };
-      this.openPositions.push(sold);
-      this.positionsRepo?.insert(sold);
-      this.resolvePosition(sold);
+      const leftover = Math.round((position.size - closeSize) * 100) / 100;
+      // The CLOB rejects sell orders below MIN_CLOB_SHARES, so a remainder
+      // that small can never be sold again — the row would stick open until
+      // market resolution (observed live: 5.075758 sold as 5.07 leaving a
+      // 0.006-share ghost stuck in "Positions ouvertes"). Sellable remainders
+      // stay open for a second close; unsellable dust merges into the sold
+      // row (booked at the sale price, like the phantom-reconcile path)
+      // so the position leaves the open list immediately.
+      if (leftover < MIN_CLOB_SHARES) {
+        const mergedSize = Math.round((closeSize + leftover) * 100) / 100;
+        // Overwrite the ORIGINAL row (INSERT OR REPLACE): pushing a
+        // separate :sold- child AND keeping the mutated open row would
+        // double-count the leg after a restart (both rows reloaded).
+        position.status = "sold";
+        position.resolvedAt = nowMs;
+        position.size = mergedSize;
+        position.cost = Math.round(position.fillPrice * mergedSize * 100) / 100;
+        position.sellPrice = sellPrice;
+        position.pnl = round2(mergedSize * (sellPrice - position.fillPrice));
+        this.positionsRepo?.insert(position);
+        this.resolvePosition(position);
+      } else {
+        position.size = leftover;
+        position.cost = Math.round(position.fillPrice * position.size * 100) / 100;
+        this.positionsRepo?.insert(position);
+        const sold: SimulatedPosition = {
+          ...position,
+          id: `${position.id}:sold-${nowMs}`,
+          size: closeSize,
+          cost: Math.round(position.fillPrice * closeSize * 100) / 100,
+          status: "sold",
+          resolvedAt: nowMs,
+          sellPrice,
+          pnl: round2(proceeds - Math.round(position.fillPrice * closeSize * 100) / 100),
+        };
+        this.openPositions.push(sold);
+        this.positionsRepo?.insert(sold);
+        this.resolvePosition(sold);
+      }
     }
     const pair = this.pairs.get(pairId);
     if (pair && pair.status !== "resolved") {

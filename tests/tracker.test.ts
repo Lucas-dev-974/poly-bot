@@ -274,4 +274,76 @@ describe("TradeTracker", () => {
     assert.equal(tracker.getCheapSizeForPair(pairId), 30);
     assert.equal(tracker.getRestingExposure(), 1);
   });
+
+  it("closePositionAsSold merges sub-minimum dust into the sold row", () => {
+    const dir = mkdtempSync(join(tmpdir(), "arb-tracker-dust-"));
+    const db = new Database(join(dir, "t.db"), true);
+    db.init();
+    const repos = createRepositories(db);
+    const tracker = new TradeTracker(repos.positions, repos.pairs, repos.keys);
+    const pairId = "btc-updown-15m-1000:1900";
+    repos.pairs.upsert({
+      id: pairId,
+      eventSlug: "btc-updown-15m-1000",
+      eventTitle: "BTC",
+      windowEnd: 1900,
+      cheapLegs: [],
+      expensiveLegs: [],
+      status: "partial",
+    });
+    // Live case: 5.075758 shares entered, FOK close sells 5.07 (2-decimal
+    // rounding), leaving 0.005758 shares the CLOB can never sell.
+    tracker.addOpenPosition(
+      pos({
+        id: "live:abc",
+        kind: "cheap",
+        status: "open",
+        size: 5.075758,
+        fillPrice: 0.08,
+        cost: 0.41,
+      }),
+    );
+    const closed = tracker.closePositionAsSold("live:abc", 0.33, 5.07, 1000);
+
+    assert.equal(closed, 1);
+    // No open row survives the close.
+    assert.equal(tracker.getOpenPositions().length, 0);
+    // The single DB row carries the whole size as sold.
+    const rows = repos.positions.open();
+    assert.equal(rows.length, 0);
+    const resolved = repos.positions
+      .recentResolved(10)
+      .find((p) => p.id === "live:abc");
+    assert.ok(resolved);
+    assert.equal(resolved.status, "sold");
+    assert.equal(resolved.size, 5.08); // 5.07 + 0.005758 merged dust
+    // In-memory tracker sees the same single resolved row.
+    assert.equal(tracker.getResolvedPositions().length, 1);
+    assert.equal(tracker.getFilledCheapSizeForPair(pairId), 0);
+  });
+
+  it("closePositionAsSold keeps a sellable remainder open for a second close", () => {
+    const tracker = new TradeTracker();
+    tracker.addOpenPosition(
+      pos({
+        id: "live:abc",
+        kind: "cheap",
+        status: "open",
+        size: 15.08,
+        fillPrice: 0.08,
+        cost: 1.21,
+      }),
+    );
+    const closed = tracker.closePositionAsSold("live:abc", 0.33, 10, 1000);
+
+    assert.equal(closed, 1);
+    const open = tracker.getOpenPositions();
+    // The 5.08 remainder (>= MIN_CLOB_SHARES) stays open and sellable.
+    assert.equal(open.length, 1);
+    assert.equal(open[0].id, "live:abc");
+    assert.equal(open[0].size, 5.08);
+    // The sold part is resolved with its own pnl.
+    assert.equal(tracker.getResolvedPositions().length, 1);
+    assert.equal(tracker.getResolvedPositions()[0].id, "live:abc:sold-1000");
+  });
 });

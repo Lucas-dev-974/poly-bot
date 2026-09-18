@@ -1,0 +1,26 @@
+{
+  "phase": "overlap-check dip-guard",
+  "generatedAt": "2026-09-16T09:46:43.482Z",
+  "universe": 494,
+  "dipGuardSize": 478,
+  "pairs": [
+    {
+      "other": "antiflip-revert",
+      "shared": 282,
+      "sameSide": 161,
+      "oppositeSide": 121
+    },
+    {
+      "other": "early-conviction",
+      "shared": 275,
+      "sameSide": 265,
+      "oppositeSide": 10
+    },
+    {
+      "other": "flip-confirm",
+      "shared": 229,
+      "sameSide": 140,
+      "oppositeSide": 89
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "phase": "calibration dip-guard-sim vs official runner (fav-band probe)",
+  "generatedAt": "2026-09-16T09:47:17.661Z",
+  "universe": "494 fenêtres complètes (801+/60s)",
+  "official": {
+    "engine": "fav-band (runner officiel)",
+    "config": {
+      "strategyId": "fav-band",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": null,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 30,
+      "maxExposureUsdc": 450,
+      "simulatedCapital": 500,
+      "minutesBeforeCloseMin": 0,
+      "minutesBeforeCloseMax": 15
+    },
+    "windows": 494,
+    "fills": 487,
+    "tradedWindows": 487,
+    "pnl": 117.84,
+    "winRate": 74.7,
+    "unresolvedWindows": 0,
+    "rejects": 3
+  },
+  "simProbe": {
+    "engine": "fav-band (sim dip-guard, même univers)",
+    "fills": 487,
+    "pnl": 117.24,
+    "winRate": 74.7,
+    "avgEntryPrice": 0.734
+  },
+  "drift": {
+    "fillsPct": 0,
+    "pnlDelta": 0.6,
+    "wrDelta": 0
+  },
+  "calibrated": true,
+  "note": "Si fills/PnL/WR sont dans le même ordre de grandeur (attente repo ±1-2% fills, même direction), la sim dip-guard a un statut de backtest calibré : les chiffres INVERT (+$434, WR 75%) sont fiables pour le ranking."
+}

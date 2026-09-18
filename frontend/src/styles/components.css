@@ -294,6 +294,12 @@
   color: var(--muted);
 }
 
+.logs-notify {
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
 .orders-total {
   margin-top: 10px;
   font-size: 13px;

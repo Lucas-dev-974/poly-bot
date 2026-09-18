@@ -26,6 +26,7 @@ import {
   startRedeem,
 } from "./stores/polyStore";
 import { addLog } from "./stores/logStore";
+import { notifyError } from "./utils/notifications";
 import { fmtUsd } from "./utils/format";
 import type { BalanceSnapshot, BotEvent, SimulatedPosition } from "./types";
 
@@ -132,11 +133,9 @@ export function App(): JSX.Element {
       });
     } catch (e) {
       failRedeem(conditionId);
-      addLog(
-        "Erreur lors de la clôture : " + (e instanceof Error ? e.message : String(e)),
-        undefined,
-        true,
-      );
+      const message = e instanceof Error ? e.message : String(e);
+      addLog("Erreur lors de la clôture : " + message, undefined, true);
+      notifyError("Redeem échoué : " + p.outcome, message);
     }
   }
 
@@ -161,11 +160,9 @@ export function App(): JSX.Element {
       });
       await syncPositions();
     } catch (e) {
-      addLog(
-        "Erreur fermeture manuelle : " + (e instanceof Error ? e.message : String(e)),
-        undefined,
-        true,
-      );
+      const message = e instanceof Error ? e.message : String(e);
+      addLog("Erreur fermeture manuelle : " + message, undefined, true);
+      notifyError("Clôture manuelle échouée", message);
     } finally {
       setClosingId(null);
     }

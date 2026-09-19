@@ -157,6 +157,15 @@ export class Database {
         errorMessage TEXT
       );
 
+      CREATE TABLE IF NOT EXISTS market_rules (
+        prefix            TEXT PRIMARY KEY,
+        recordingEnabled  INTEGER NOT NULL DEFAULT 1,
+        tradingEnabled    INTEGER NOT NULL DEFAULT 1,
+        addedBy           TEXT NOT NULL DEFAULT 'user',
+        createdAt         INTEGER NOT NULL,
+        updatedAt         INTEGER NOT NULL
+      );
+
       CREATE TABLE IF NOT EXISTS strategy_graphs (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -399,6 +408,7 @@ export class Database {
       DELETE FROM book_snapshots;
       DELETE FROM opportunity_snapshots;
       DELETE FROM market_resolutions;
+      DELETE FROM market_rules;
       DELETE FROM backtest_runs;
       DELETE FROM backtest_trades;
       DELETE FROM backtest_positions;

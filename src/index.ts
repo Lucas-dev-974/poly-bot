@@ -33,6 +33,9 @@ async function main(): Promise<void> {
   }
   bus.setEventRepository(repos.events);
   bus.setOrderRepository(repos.orders);
+  // Seed idempotent : les familles configurées existent dans market_rules
+  // (recording=1 / trading=1) — migration sans changement de comportement.
+  repos.marketRules.ensureDefaults(config.marketSlugPrefixes);
 
   const trader = new Trader(config);
   await trader.init();
@@ -48,6 +51,7 @@ async function main(): Promise<void> {
     const dashboard = new DashboardServer(config.dashboardPort, config, repos);
     dashboard.start();
     dashboard.setTracker(bot.tracker);
+    dashboard.setMarketRuleStore(bot.rules);
     dashboard.setTrader(trader);
     dashboard.setResetHandler(() => {
       db?.reset();

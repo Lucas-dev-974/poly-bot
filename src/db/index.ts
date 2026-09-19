@@ -7,6 +7,7 @@ import {
   KeyRepository,
   LedgerRepository,
   MarketResolutionRepository,
+  MarketRuleRepository,
   MarketSnapshotRepository,
   OpportunitySnapshotRepository,
   OrderRepository,
@@ -44,6 +45,7 @@ export interface Repositories {
   bookSnapshots: BookSnapshotRepository;
   opportunitySnapshots: OpportunitySnapshotRepository;
   marketResolutions: MarketResolutionRepository;
+  marketRules: MarketRuleRepository;
   backtestRuns: BacktestRunRepository;
   backtestTrades: BacktestTradeRepository;
   backtestPositions: BacktestPositionRepository;
@@ -71,6 +73,7 @@ export function createRepositories(db: Database): Repositories {
     bookSnapshots: new BookSnapshotRepository(db),
     opportunitySnapshots: new OpportunitySnapshotRepository(db),
     marketResolutions: new MarketResolutionRepository(db),
+    marketRules: new MarketRuleRepository(db),
     backtestRuns: new BacktestRunRepository(db),
     backtestTrades: new BacktestTradeRepository(db),
     backtestPositions: new BacktestPositionRepository(db),

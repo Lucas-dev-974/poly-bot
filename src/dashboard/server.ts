@@ -40,6 +40,12 @@ import {
   getStrategyChartSeries,
   listStrategyChartWindows,
 } from "./strategy-chart-api.js";
+import {
+  prefixesWithLiveExposure,
+  toggleTradingBlockReason,
+  type MarketRuleStore,
+} from "../market-rules.js";
+import type { MarketRuleRow } from "../db/repositories.js";
 
 /**
  * Always prefer the Vite build output (dist/dashboard/public).
@@ -87,6 +93,7 @@ export class DashboardServer {
         | { ok: false; error: string }
       >)
     | null = null;
+  private marketRulesStore: MarketRuleStore | null = null;
   private readonly backtestJob: BacktestJob;
 
   constructor(
@@ -99,6 +106,11 @@ export class DashboardServer {
 
   setTracker(tracker: TradeTracker): void {
     this.tracker = tracker;
+  }
+
+  /** Store partagé avec le bot (même process) — obligatoire pour /toggle. */
+  setMarketRuleStore(store: MarketRuleStore): void {
+    this.marketRulesStore = store;
   }
 
   setTrader(trader: Trader): void {
@@ -298,6 +310,21 @@ export class DashboardServer {
 
       if (url.pathname === "/api/bot/control" && req.method === "GET") {
         this.handleBotControlState(res);
+        return;
+      }
+
+      if (url.pathname === "/api/market-rules" && req.method === "GET") {
+        this.handleMarketRules(res);
+        return;
+      }
+
+      if (url.pathname === "/api/market-rules/add" && req.method === "POST") {
+        void this.handleMarketRuleAdd(req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/market-rules/toggle" && req.method === "POST") {
+        void this.handleMarketRuleToggle(req, res);
         return;
       }
 
@@ -1173,6 +1200,147 @@ export class DashboardServer {
   private handleBotControlState(res: import("node:http").ServerResponse): void {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ enabled: !this.isPausedFn?.() }));
+  }
+
+  /** Validation format d'une famille 15m (le scanner hardcode tag_slug=15M). */
+  static isValidMarketPrefix(prefix: string): boolean {
+    return /^[a-z0-9]+(-[a-z0-9]+)*-updown-15m$/.test(prefix);
+  }
+
+  /** GET /api/market-rules — règles + univers configuré + suggestions découvertes. */
+  private handleMarketRules(res: import("node:http").ServerResponse): void {
+    const rules = this.repos?.marketRules.list() ?? [];
+    const configPrefixes = [...this.config.marketSlugPrefixes];
+    // Familles vues dans market_snapshots (90 j), absentes de l'univers configuré.
+    const discovered = this.repos?.marketRules.discovered(
+      configPrefixes,
+      Date.now() - 90 * 24 * 3600_000,
+    ).map((row) => ({
+      prefix: row.prefix,
+      lastSeenTs: row.lastSeenTs,
+      slugCount: row.slugCount,
+    })) ?? [];
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ rules, configPrefixes, discovered }));
+  }
+
+  /** POST /api/market-rules/add — ajoute une famille à l'univers scanné. */
+  private async handleMarketRuleAdd(
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return;
+    }
+    try {
+      const parsed = JSON.parse(await this.readBody(req)) as { prefix?: unknown };
+      const prefix = typeof parsed.prefix === "string" ? parsed.prefix.trim() : "";
+      if (!DashboardServer.isValidMarketPrefix(prefix)) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({
+          ok: false,
+          error: "Format de famille invalide (attendu ex. sol-updown-15m, 15m uniquement)",
+        }));
+        return;
+      }
+      if (!this.repos) {
+        res.writeHead(503, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "Persistence disabled" }));
+        return;
+      }
+      const existing = this.repos.marketRules.get(prefix);
+      const rule: MarketRuleRow = existing
+        ? this.repos.marketRules.setFlags(prefix, {}, "user")
+        : this.repos.marketRules.setFlags(prefix, { recordingEnabled: true, tradingEnabled: true }, "user");
+      // Univers scanné : mutation via le chemin runtime-settings existant
+      // (hot-apply + persistance bot-settings.json + événement config SSE).
+      if (!this.config.marketSlugPrefixes.includes(prefix)) {
+        const leadsWithEdge = leadsWithEdgeFor(this.config.strategyId, this.repos);
+        const changed = await applyRuntimeSettings(
+          this.config,
+          sanitizePatch({ marketSlugPrefixes: [...this.config.marketSlugPrefixes, prefix] }),
+          undefined,
+          leadsWithEdge,
+        );
+        this.configHandler?.(changed);
+      }
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: true, rule }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: message }));
+    }
+  }
+
+  /** POST /api/market-rules/toggle — recording/trading d'une famille. */
+  private async handleMarketRuleToggle(
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return;
+    }
+    try {
+      const parsed = JSON.parse(await this.readBody(req)) as {
+        prefix?: unknown;
+        field?: unknown;
+        enabled?: unknown;
+      };
+      const prefix = typeof parsed.prefix === "string" ? parsed.prefix : "";
+      const field = parsed.field === "recording" || parsed.field === "trading" ? parsed.field : null;
+      const enabled = parsed.enabled === true;
+      if (!prefix || !field) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "prefix and field (recording|trading) are required" }));
+        return;
+      }
+      if (!this.repos) {
+        res.writeHead(503, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "Persistence disabled" }));
+        return;
+      }
+      if (!this.repos.marketRules.get(prefix)) {
+        res.writeHead(404, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: `Famille inconnue: ${prefix}` }));
+        return;
+      }
+      let warning: string | null = null;
+      if (field === "trading" && !enabled) {
+        const exposure = prefixesWithLiveExposure(
+          this.tracker?.getOpenPositions() ?? [],
+          this.tracker?.getAllPostedOrders() ?? [],
+        );
+        const reason = toggleTradingBlockReason(prefix, exposure);
+        if (reason) {
+          res.writeHead(409, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ ok: false, error: reason }));
+          return;
+        }
+      }
+      if (field === "recording" && !enabled) {
+        warning =
+          "Enregistrement désactivé : les fenêtres de cette famille seront incomplètes pour le backtest.";
+      }
+      if (!this.marketRulesStore) {
+        res.writeHead(503, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "Market rules store not initialized" }));
+        return;
+      }
+      const patch = field === "recording" ? { recording: enabled } : { trading: enabled };
+      this.marketRulesStore.setFlags(prefix, patch, this.repos);
+      const rule = this.repos.marketRules.get(prefix);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: true, rule, warning }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: message }));
+    }
   }
 
   /** GET /api/wallet/withdraw/quote — wallet state for the withdraw dialog. */

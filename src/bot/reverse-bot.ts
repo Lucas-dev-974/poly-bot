@@ -16,6 +16,7 @@ import { LiveOrderLifecycle } from "./live-order-lifecycle.js";
 import { OpportunityExecutor } from "./opportunity-executor.js";
 import { RestingManager } from "./resting-manager.js";
 import { TickSnapshots } from "./tick-snapshots.js";
+import { MarketRuleStore, splitEventsByRules } from "../market-rules.js";
 
 const TOTAL_ATTEMPTS_KEY = "totalAttempts";
 const PAUSED_KEY = "botPaused";
@@ -49,6 +50,8 @@ export class ReverseBot {
   private readonly balance: BalanceGuard;
   private readonly executor: OpportunityExecutor;
   private readonly snapshots: TickSnapshots;
+  /** Règles par famille (market_rules) — rempli dans init(), partagé avec le dashboard. */
+  readonly rules = new MarketRuleStore();
 
   constructor(
     private readonly config: BotConfig,
@@ -104,6 +107,9 @@ export class ReverseBot {
 
   async init(): Promise<void> {
     this.tracker.loadFromDb();
+    if (this.repos) {
+      this.rules.loadFromDb(this.repos);
+    }
     this.totalAttempts = this.repos?.botState.get(TOTAL_ATTEMPTS_KEY) ?? 0;
     this.paused = (this.repos?.botState.get(PAUSED_KEY) ?? 0) === 1;
     await this.trader.init();
@@ -276,24 +282,31 @@ export class ReverseBot {
       await this.lifecycle.pollOrderFills();
       this.assertTickActive(session);
       // Keep scanning + market data persistence even while paused; only trading is gated.
-      const events = await this.scanner.scan();
+      const scanned = await this.scanner.scan();
       this.assertTickActive(session);
+      // Règles par famille : recording/trading (table market_rules, défaut = tout ON).
+      const flagged = splitEventsByRules(scanned, (p) => this.rules.get(p));
+      const events = flagged.filter((f) => f.recording).map((f) => f.event);
       eventCount = events.length;
       const tickTs = Date.now();
       this.snapshots.insertMarketSnapshots(events, tickTs);
       bus.emit({
         type: "scan",
-        count: events.length,
-        slugs: events.map((event) => event.slug),
+        count: scanned.length,
+        slugs: scanned.map((event) => event.slug),
       });
-      if (events.length === 0) {
+      if (scanned.length === 0) {
         log("No active markets in window");
         return;
       }
 
-      for (const event of events) {
+      for (const item of flagged) {
+        if (!item.recording && !item.trading) continue; // famille 0/0 : pas même de fetch CLOB
         this.assertTickActive(session);
-        await this.processEvent(event, tickTs, session);
+        await this.processEvent(item.event, tickTs, session, {
+          recording: item.recording,
+          trading: item.trading,
+        });
       }
     } catch (error) {
       if (error instanceof TickSupersededError) {
@@ -325,10 +338,15 @@ export class ReverseBot {
     event: UpDownEvent,
     tickTs: number,
     session: number,
+    flags: { recording: boolean; trading: boolean },
   ): Promise<void> {
+    // Trading-off seul : les books restent nécessaires à la gestion des ordres
+    // reposés (manageLiveResting), on fetch donc toujours sauf famille 0/0.
     const books = await this.scanner.getTokenBooks(event);
     this.assertTickActive(session);
-    this.snapshots.insertBooks(event, books, tickTs);
+    if (flags.recording) {
+      this.snapshots.insertBooks(event, books, tickTs);
+    }
     // Resting management continues outside the entry window (open GTCs still need care).
     if (!this.paused) {
       await this.resting.manageLiveResting(event, books);
@@ -342,6 +360,7 @@ export class ReverseBot {
     // be seconds stale after several CLOB book fetches. Snapshots keep tickTs so both
     // outcomes share one bot-tick timestamp.
     const nowMs = Date.now();
+    if (!flags.trading) return; // trading off : stop AVANT la fenêtre de trading
     if (!this.scanner.inTradingWindow(event, nowMs / 1000)) {
       return;
     }

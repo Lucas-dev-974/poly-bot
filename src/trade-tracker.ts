@@ -504,6 +504,15 @@ export class TradeTracker {
     return result;
   }
 
+  /** Tous les ordres GTC reposés (toute fenêtre) — garde toggle trading par famille. */
+  getAllPostedOrders(): Array<{ key: string } & PostedOrderContext> {
+    const result: Array<{ key: string } & PostedOrderContext> = [];
+    for (const [key, order] of this.postedOrders) {
+      result.push({ key, ...this.toContext(order) });
+    }
+    return result;
+  }
+
   private toContext(order: PostedOrderEntry): PostedOrderContext {
     const { cost: _cost, orderId: _orderId, ...context } = order;
     return context;

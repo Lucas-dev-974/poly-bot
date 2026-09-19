@@ -11,6 +11,15 @@ export function matchesSlugPrefixes(slug: string, prefixes: string[]): boolean {
   return prefixes.some((prefix) => slug.startsWith(prefix));
 }
 
+/**
+ * Famille (préfixe) d'un slug up/down : le slug se termine toujours par
+ * -<windowStart epoch-sec> à 10 chiffres (miroir de parseWindowStart).
+ * Ex. "btc-updown-15m-1758000000" -> "btc-updown-15m".
+ */
+export function prefixOfSlug(slug: string): string {
+  return slug.replace(/-\d{10}$/, "");
+}
+
 export function tickSizeFromMarket(market: GammaMarket): string {
   const tick = market.orderPriceMinTickSize ?? 0.01;
   if (tick >= 0.1) return "0.1";

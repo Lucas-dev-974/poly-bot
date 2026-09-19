@@ -643,3 +643,31 @@ export interface BacktestPositionRow {
   strategyId: string | null;
   sellPrice: number | null;
 }
+
+export interface MarketRuleRow {
+  prefix: string;
+  recordingEnabled: number; // 0|1
+  tradingEnabled: number; // 0|1
+  addedBy: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface DiscoveredPrefix {
+  prefix: string;
+  lastSeenTs: number;
+  slugCount: number;
+}
+
+export interface MarketRulesResponse {
+  rules: MarketRuleRow[];
+  configPrefixes: string[];
+  discovered: DiscoveredPrefix[];
+}
+
+export interface ToggleMarketRuleResponse {
+  ok: boolean;
+  rule?: MarketRuleRow;
+  warning?: string | null;
+  error?: string;
+}

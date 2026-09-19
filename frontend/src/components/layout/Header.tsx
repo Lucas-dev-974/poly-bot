@@ -10,6 +10,7 @@ import { fmtUsd } from "../../utils/format";
 export function Header(props: {
   liveBalance: () => { availableCollateral: number; positionsValue: number } | null;
   onOpenWallet?: () => void;
+  onOpenRecording?: () => void;
 }): JSX.Element {
   const m = createMemo(() => mode());
 
@@ -59,6 +60,17 @@ export function Header(props: {
             title="Retirer du pUSD vers un wallet externe"
           >
             Wallet
+          </button>
+        )}
+      </Show>
+      <Show when={props.onOpenRecording}>
+        {(fn) => (
+          <button
+            class="btn wallet-btn"
+            onClick={() => fn()()}
+            title="Enregistrement et trading par famille de marchés"
+          >
+            Enregistrements
           </button>
         )}
       </Show>

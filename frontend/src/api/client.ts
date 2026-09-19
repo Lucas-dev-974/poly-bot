@@ -1,4 +1,4 @@
-import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, EngineStatsRow, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, MarketHistoryResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, StrategyId, WalletQuote, WalletTradesResponse, WithdrawalRow, WithdrawResponse } from "../types";
+import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, EngineStatsRow, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, MarketHistoryResponse, MarketRuleRow, MarketRulesResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, StrategyId, ToggleMarketRuleResponse, WalletQuote, WalletTradesResponse, WithdrawalRow, WithdrawResponse } from "../types";
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
@@ -172,6 +172,27 @@ export const api = {
     ),
   statsByEngine: () =>
     request<{ engines: EngineStatsRow[] }>("/api/stats/by-engine"),
+  marketRules: () =>
+    request<MarketRulesResponse>("/api/market-rules"),
+  addMarketRule: (body: { prefix: string }) =>
+    request<{ ok: boolean; rule?: MarketRuleRow; error?: string }>(
+      "/api/market-rules/add",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      },
+    ),
+  toggleMarketRule: (body: {
+    prefix: string;
+    field: "recording" | "trading";
+    enabled: boolean;
+  }) =>
+    request<ToggleMarketRuleResponse>("/api/market-rules/toggle", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }),
   closePosition: (body: ClosePositionRequest) =>
     request<ClosePositionResponse>("/api/open-positions/close", {
       method: "POST",

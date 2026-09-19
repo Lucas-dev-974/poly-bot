@@ -56,6 +56,7 @@ export function BacktestPage(): JSX.Element {
   const [cutGaps, setCutGaps] = createSignal(true);
   const [dateKey, setDateKey] = createSignal("all");
   const [prefix, setPrefix] = createSignal("");
+  const [timeframe, setTimeframe] = createSignal("");
   const [engine, setEngine] = createSignal<StrategyId>("arb");
   const [customEngines, setCustomEngines] = createSignal<StrategyEngineSummary[]>([]);
   const [historyEngineOnly, setHistoryEngineOnly] = createSignal(true);
@@ -127,11 +128,33 @@ export function BacktestPage(): JSX.Element {
     return [...seen].sort();
   });
 
+  /**
+   * Timeframes (durées) réellement présents, ex. ["15m","5m"]. Dériver du
+   * préfixe de famille = un seul endroit de vérité (le slug).
+   */
+  const timeframes = createMemo(() => {
+    const seen = new Set<string>();
+    for (const p of prefixes()) {
+      const m = p.match(/-updown-(\d+)([mh])$/);
+      if (m) seen.add(`${m[1]}${m[2]}`);
+    }
+    return [...seen].sort(byDurationAsc);
+  });
+
+  /** Familles du timeframe sélectionné ("" = tous). */
+  const prefixesForTimeframe = createMemo(() => {
+    const tf = timeframe();
+    if (!tf) return prefixes();
+    return prefixes().filter((p) => p.endsWith(`-updown-${tf}`));
+  });
+
   const filtered = createMemo(() => {
     const key = dateKey();
     const p = prefix();
+    const tf = timeframe();
     return windows().filter((w) => {
       if (key !== "all" && dayKey(w.windowStart) !== key) return false;
+      if (tf && !w.eventSlug.includes(`-updown-${tf}-`)) return false;
       if (p && !w.eventSlug.startsWith(p)) return false;
       return true;
     });
@@ -468,13 +491,21 @@ export function BacktestPage(): JSX.Element {
     const range = dateRange(dateKey(), filtered());
     try {
       const settings = formToSettings(current);
+      // Timeframe seul → toutes les familles de cette durée ; préfixe précis
+      // → une famille unique. Le run côté job filtre déjà sur ces listes.
+      const tf = timeframe();
+      const prefixes = prefix()
+        ? [prefix()]
+        : tf
+          ? prefixesForTimeframe()
+          : undefined;
       const body = {
         strategyId: current.strategyId,
         completeOnly: completeOnly(),
         completeness: completenessPayload(),
         from: range?.from,
         to: range?.to,
-        prefixes: prefix() ? [prefix()] : undefined,
+        prefixes,
         presetId: presetId() || undefined,
         settings,
       };
@@ -667,11 +698,27 @@ export function BacktestPage(): JSX.Element {
             <For each={dates()}>{(d) => <option value={d}>{d}</option>}</For>
           </select>
         </label>
+        <label title="Durée de fenêtre (dérivée des données enregistrées)">
+          Timeframe
+          <select
+            value={timeframe()}
+            onChange={(e) => {
+              setTimeframe(e.currentTarget.value);
+              // Un préfixe d'un autre timeframe ne matcherait rien : reset.
+              setPrefix("");
+            }}
+          >
+            <option value="">Tous</option>
+            <For each={timeframes()}>
+              {(tf) => <option value={tf}>{tf}</option>}
+            </For>
+          </select>
+        </label>
         <label>
           Marché
           <select value={prefix()} onChange={(e) => setPrefix(e.currentTarget.value)}>
             <option value="">Tous</option>
-            <For each={prefixes()}>
+            <For each={prefixesForTimeframe()}>
               {(p) => <option value={p}>{p}</option>}
             </For>
           </select>
@@ -690,7 +737,7 @@ export function BacktestPage(): JSX.Element {
         <div class="bt-rules">
           <label
             class={`bt-rule${minTicksOn() ? "" : " is-off"}`}
-            title="Minimum de ticks (les deux outcomes) dans la fenêtre 15 min"
+            title="Minimum de ticks (les deux outcomes) dans la fenêtre"
           >
             <input
               type="checkbox"
@@ -1000,6 +1047,16 @@ function dayKey(windowStart: number): string {
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+/** Tri des timeframes par durée croissante ("5m" avant "15m" avant "1h"). */
+function byDurationAsc(a: string, b: string): number {
+  const toSec = (tf: string): number => {
+    const m = tf.match(/^(\d+)([mh])$/);
+    if (!m) return Number.MAX_SAFE_INTEGER;
+    return Number(m[1]) * (m[2] === "h" ? 3600 : 60);
+  };
+  return toSec(a) - toSec(b);
 }
 
 function dateRange(

@@ -1,4 +1,4 @@
-import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, MarketHistoryResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, StrategyId, WalletQuote, WalletTradesResponse, WithdrawalRow, WithdrawResponse } from "../types";
+import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, EngineStatsRow, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, MarketHistoryResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, StrategyId, WalletQuote, WalletTradesResponse, WithdrawalRow, WithdrawResponse } from "../types";
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
@@ -170,6 +170,8 @@ export const api = {
     request<{ withdrawals: WithdrawalRow[] }>(
       `/api/wallet/withdrawals?limit=${limit}`,
     ),
+  statsByEngine: () =>
+    request<{ engines: EngineStatsRow[] }>("/api/stats/by-engine"),
   closePosition: (body: ClosePositionRequest) =>
     request<ClosePositionResponse>("/api/open-positions/close", {
       method: "POST",

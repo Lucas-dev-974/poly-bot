@@ -181,6 +181,37 @@ export class PositionRepository {
     `);
     return row ?? { pnl: 0, wins: 0, losses: 0 };
   }
+
+  /**
+   * Stats agrégées par moteur (strategyId), mêmes sémantiques que
+   * getAggregateStats : realizedPnl sur status != 'open' (inclut sold),
+   * wins/losses sur won/lost, exposition sur les positions ouvertes.
+   * Les lignes antérieures à la migration (strategyId NULL) sortent
+   * sous '(sans moteur)'.
+   */
+  engineStats(): EngineStatsRow[] {
+    return this.db.all<EngineStatsRow>(`
+      SELECT
+        COALESCE(strategyId, '(sans moteur)') AS engine,
+        COALESCE(SUM(CASE WHEN status != 'open' THEN COALESCE(pnl, 0) ELSE 0 END), 0) AS realizedPnl,
+        COUNT(CASE WHEN status = 'won' THEN 1 END) AS wins,
+        COUNT(CASE WHEN status = 'lost' THEN 1 END) AS losses,
+        COALESCE(SUM(CASE WHEN status = 'open' THEN cost ELSE 0 END), 0) AS openExposure,
+        COUNT(CASE WHEN status = 'open' THEN 1 END) AS openCount
+      FROM positions
+      GROUP BY COALESCE(strategyId, '(sans moteur)')
+      ORDER BY engine ASC
+    `);
+  }
+}
+
+export interface EngineStatsRow {
+  engine: string;
+  realizedPnl: number;
+  wins: number;
+  losses: number;
+  openExposure: number;
+  openCount: number;
 }
 
 export class PairRepository {

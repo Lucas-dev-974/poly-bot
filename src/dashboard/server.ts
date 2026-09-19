@@ -286,6 +286,11 @@ export class DashboardServer {
         return;
       }
 
+      if (url.pathname === "/api/stats/by-engine" && req.method === "GET") {
+        this.handleStatsByEngine(res);
+        return;
+      }
+
       if (url.pathname === "/api/bot/control" && req.method === "POST") {
         void this.handleBotControl(req, res);
         return;
@@ -1308,6 +1313,13 @@ export class DashboardServer {
     const withdrawals = this.repos?.withdrawals.recent(limit) ?? [];
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ withdrawals }));
+  }
+
+  /** GET /api/stats/by-engine — P&L / wins / losses agrégés par moteur. */
+  private handleStatsByEngine(res: import("node:http").ServerResponse): void {
+    const engines = this.repos?.positions.engineStats() ?? [];
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ engines }));
   }
 
   private async handleBotControl(

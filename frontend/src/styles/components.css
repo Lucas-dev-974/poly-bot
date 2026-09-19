@@ -1253,6 +1253,22 @@ select.cfg-input {
 }
 
 
+/* ---- Performance panel: engine filter ---- */
+.perf-filter {
+  margin-bottom: 10px;
+}
+
+.perf-filter__select {
+  width: 100%;
+  font-size: 12px;
+  padding: 5px 8px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 /* ---- Wallet modal (retrait pUSD) ---- */
 .wallet-btn {
   cursor: pointer;

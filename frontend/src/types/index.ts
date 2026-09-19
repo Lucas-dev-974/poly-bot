@@ -328,6 +328,16 @@ export interface WithdrawResponse {
   error?: string;
 }
 
+/** Stats agrégées par moteur (GET /api/stats/by-engine). */
+export interface EngineStatsRow {
+  engine: string;
+  realizedPnl: number;
+  wins: number;
+  losses: number;
+  openExposure: number;
+  openCount: number;
+}
+
 export interface PolymarketPosition {
   title: string;
   slug: string;

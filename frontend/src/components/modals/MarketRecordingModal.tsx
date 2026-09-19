@@ -22,7 +22,6 @@ export function MarketRecordingModal(props: {
   onClose: () => void;
 }): JSX.Element {
   const [data, setData] = createSignal<MarketRulesResponse | null>(null);
-  const [loading, setLoading] = createSignal(false);
   const [newPrefix, setNewPrefix] = createSignal("");
   const [adding, setAdding] = createSignal(false);
   const [pendingToggle, setPendingToggle] = createSignal<string | null>(null); // `${prefix}:${field}`
@@ -162,10 +161,10 @@ export function MarketRecordingModal(props: {
               <span>Trading</span>
             </div>
             <Show
-              when={!loading() && data() && data()!.rules.length > 0}
+              when={data() && data()!.rules.length > 0}
               fallback={
                 <p class="market-rules-empty">
-                  {loading() ? "Chargement…" : "Aucune famille enregistrée."}
+                  {data() ? "Aucune famille enregistrée." : "Chargement…"}
                 </p>
               }
             >

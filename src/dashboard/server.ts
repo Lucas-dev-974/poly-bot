@@ -1245,15 +1245,24 @@ export class DashboardServer {
         }));
         return;
       }
-      if (!this.repos) {
+      if (!this.repos || !this.marketRulesStore) {
         res.writeHead(503, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ ok: false, error: "Persistence disabled" }));
         return;
       }
       const existing = this.repos.marketRules.get(prefix);
-      const rule: MarketRuleRow = existing
-        ? this.repos.marketRules.setFlags(prefix, {}, "user")
-        : this.repos.marketRules.setFlags(prefix, { recordingEnabled: true, tradingEnabled: true }, "user");
+      // Idempotent : ajouter une famille déjà connue ne réactive JAMAIS des
+      // toggles explicitement désactivés — on renvoie la règle existante.
+      if (existing) {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: true, rule: existing }));
+        return;
+      }
+      const rule: MarketRuleRow = this.repos.marketRules.setFlags(
+        prefix,
+        { recordingEnabled: true, tradingEnabled: true },
+        "user",
+      );
       // Univers scanné : mutation via le chemin runtime-settings existant
       // (hot-apply + persistance bot-settings.json + événement config SSE).
       if (!this.config.marketSlugPrefixes.includes(prefix)) {

@@ -46,7 +46,12 @@ export class MarketRuleStore {
     });
   }
 
-  /** Ajoute une famille (INSERT OR IGNORE) + cache. Idempotent. */
+  /**
+   * Ajoute une famille : règle par défaut (INSERT OR IGNORE) + cache.
+   * Idempotent — ne réactive jamais une famille déjà connue. La mutation de
+   * l'univers scanné (marketSlugPrefixes) reste du ressort de l'appelant
+   * (route /add), qui la fait via applyRuntimeSettings.
+   */
   addPrefix(prefix: string, repos: Repositories): void {
     repos.marketRules.ensureDefaults([prefix]);
     if (!this.flags.has(prefix)) {

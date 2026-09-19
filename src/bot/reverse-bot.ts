@@ -348,6 +348,7 @@ export class ReverseBot {
       this.snapshots.insertBooks(event, books, tickTs);
     }
     // Resting management continues outside the entry window (open GTCs still need care).
+    // Trading-off seul : les ordres reposés restent gérés (manageLiveResting).
     if (!this.paused) {
       await this.resting.manageLiveResting(event, books);
       this.assertTickActive(session);

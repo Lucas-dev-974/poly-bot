@@ -1,10 +1,25 @@
-import { parseWindowStart, WINDOW_SECONDS } from "../utils/market.js";
+import { parseWindowStart, windowSecondsFromSlug, WINDOW_SECONDS } from "../utils/market.js";
 
 export const EXPECTED_TICKS = 900;
 export const WINDOW_MS = WINDOW_SECONDS * 1000;
 export const MIN_TICKS = 855;
 export const MAX_GAP_MS = 2000;
 export const MAX_EDGE_GAP_MS = 2000;
+
+/**
+ * Ticks attendus pour une durée de fenêtre au tick bot 1 Hz (900 pour 15m,
+ * 300 pour 5m). 1 tick par seconde → ticks = durée en secondes. Les
+ * constantes ci-dessus restent les valeurs 15m de repli pour les slugs
+ * sans durée lisible.
+ */
+export function expectedTicksForDuration(durationSec: number): number {
+  return Math.max(1, Math.round(durationSec));
+}
+
+/** Seuil par défaut ≈ 95 % de l'attendu (miroir de MIN_TICKS = 855/900). */
+export function minTicksForDuration(durationSec: number): number {
+  return Math.round(expectedTicksForDuration(durationSec) * 0.95);
+}
 
 export interface CompletenessStats {
   tickCount: number;
@@ -153,7 +168,9 @@ export function windowBoundsFromSlug(
 ): { windowStart: number; windowEnd: number } | null {
   const windowStart = parseWindowStart(slug);
   if (windowStart === null) return null;
-  return { windowStart, windowEnd: windowStart + WINDOW_SECONDS };
+  // Durée dérivée du slug (multi-timeframe) ; repli 15m si format legacy.
+  const durationSec = windowSecondsFromSlug(slug) ?? WINDOW_SECONDS;
+  return { windowStart, windowEnd: windowStart + durationSec };
 }
 
 function parseRule(

@@ -115,6 +115,18 @@ export function BacktestPage(): JSX.Element {
     return [...keys].sort().reverse();
   });
 
+  /**
+   * Familles réellement présentes dans les fenêtres listées (multi-timeframe) :
+   * dérivée des données au lieu d'options btc/eth-15m hardcodées.
+   */
+  const prefixes = createMemo(() => {
+    const seen = new Set<string>();
+    for (const w of windows()) {
+      seen.add(w.eventSlug.replace(/-\d{10}$/, ""));
+    }
+    return [...seen].sort();
+  });
+
   const filtered = createMemo(() => {
     const key = dateKey();
     const p = prefix();
@@ -659,8 +671,9 @@ export function BacktestPage(): JSX.Element {
           Marché
           <select value={prefix()} onChange={(e) => setPrefix(e.currentTarget.value)}>
             <option value="">Tous</option>
-            <option value="btc-updown-15m">BTC</option>
-            <option value="eth-updown-15m">ETH</option>
+            <For each={prefixes()}>
+              {(p) => <option value={p}>{p}</option>}
+            </For>
           </select>
         </label>
         <label class="bt-check" title="Ne garder que les fenêtres qui passent les règles ci-contre">

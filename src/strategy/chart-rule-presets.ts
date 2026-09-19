@@ -27,6 +27,9 @@ export type EdgeLeadChartRulePreset = {
 /** Trois règles qui reproduisent le moteur edge-lead natif. */
 export function edgeLeadChartRules(durationSec = 900): EdgeLeadChartRulePreset[] {
   const end = Math.max(durationSec, 1);
+  // La zone de vente (moteur: edgeSellExpensiveAfterMin=8 min sur 15m) suit la
+  // durée de la fenêtre — 8/15 ≈ 53 % de la fenêtre restants avant la clôture.
+  const sellStartSec = Math.max(0, end - Math.round(end * 0.47));
   return [
     {
       id: "el-buy-fav",
@@ -57,12 +60,12 @@ export function edgeLeadChartRules(durationSec = 900): EdgeLeadChartRulePreset[]
     },
     {
       id: "el-sell-fav",
-      startSec: 8 * 60,
+      startSec: sellStartSec,
       endSec: end,
       token: "favorite",
       direction: "down",
       action: "sell",
-      minElapsedSec: 8 * 60,
+      minElapsedSec: sellStartSec,
       lossPct: 10,
       lossWindowMs: 10_000,
       afterFill: "favorite",

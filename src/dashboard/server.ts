@@ -1202,10 +1202,17 @@ export class DashboardServer {
     res.end(JSON.stringify({ enabled: !this.isPausedFn?.() }));
   }
 
-  /** Validation format d'une famille 15m (le scanner hardcode tag_slug=15M). */
+  /**
+   * Validation du format d'une famille de slugs up/down. Multi-timeframe :
+   * la durée vient du préfixe lui-même (15m, 5m, 1h…), le scanner dérive
+   * son tag Gamma de la durée et chaque slug porte ses bornes.
+   */
   static isValidMarketPrefix(prefix: string): boolean {
-    return /^[a-z0-9]+(-[a-z0-9]+)*-updown-15m$/.test(prefix);
+    return /^[a-z0-9]+(-[a-z0-9]+)*-updown-(\d+)([mh])$/.test(prefix);
   }
+
+  /** Format attendu, affiché dans le message d'erreur de /add. */
+  static readonly MARKET_PREFIX_FORMAT = "<asset>-updown-<n>{m|h} (ex. btc-updown-15m, sol-updown-5m)";
 
   /** GET /api/market-rules — règles + univers configuré + suggestions découvertes. */
   private handleMarketRules(res: import("node:http").ServerResponse): void {
@@ -1241,7 +1248,7 @@ export class DashboardServer {
         res.writeHead(400, { "Content-Type": "application/json" });
         res.end(JSON.stringify({
           ok: false,
-          error: "Format de famille invalide (attendu ex. sol-updown-15m, 15m uniquement)",
+          error: `Format de famille invalide (attendu : ${DashboardServer.MARKET_PREFIX_FORMAT})`,
         }));
         return;
       }

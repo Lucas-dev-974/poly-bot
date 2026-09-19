@@ -12,7 +12,8 @@ import {
   splitEventsByRules,
   toggleTradingBlockReason,
 } from "../src/market-rules.js";
-import { prefixOfSlug } from "../src/utils/market.js";
+import { prefixOfSlug, windowSecondsFromSlug } from "../src/utils/market.js";
+import { MarketScanner } from "../src/market-scanner.js";
 import { testEvent } from "./helpers.js";
 
 function withDb<T>(fn: (repos: ReturnType<typeof createRepositories>) => T): T {
@@ -33,8 +34,44 @@ describe("prefixOfSlug", () => {
     assert.equal(prefixOfSlug("sol-updown-15m-1758123456"), "sol-updown-15m");
   });
 
+  it("extrait la famille d'un slug 5m (multi-timeframe)", () => {
+    assert.equal(prefixOfSlug("btc-updown-5m-1781178900"), "btc-updown-5m");
+  });
+
   it("laisse un slug sans suffixe epoch intact", () => {
     assert.equal(prefixOfSlug("btc-updown-15m"), "btc-updown-15m");
+  });
+});
+
+describe("windowSecondsFromSlug (durée dérivée du slug)", () => {
+  it("dérive les durées minutes et heures", () => {
+    assert.equal(windowSecondsFromSlug("btc-updown-15m-1758000000"), 900);
+    assert.equal(windowSecondsFromSlug("btc-updown-5m-1781178900"), 300);
+    assert.equal(windowSecondsFromSlug("xrp-updown-1h-1758000000"), 3600);
+    assert.equal(windowSecondsFromSlug("doge-updown-4h-1758000000"), 14400);
+  });
+
+  it("retourne null pour un slug sans durée lisible (legacy)", () => {
+    assert.equal(windowSecondsFromSlug("btc-updown-15m"), null);
+    assert.equal(windowSecondsFromSlug("un-autre-marche-1758000000"), null);
+    assert.equal(windowSecondsFromSlug("btc-updown-0m-1758000000"), null);
+  });
+});
+
+describe("MarketScanner.tagsFromPrefixes", () => {
+  it("dérive un tag Gamma par durée distincte", () => {
+    assert.deepEqual(
+      MarketScanner.tagsFromPrefixes(["btc-updown-15m", "eth-updown-15m"]),
+      ["15M"],
+    );
+    assert.deepEqual(
+      MarketScanner.tagsFromPrefixes(["btc-updown-15m", "sol-updown-5m"]),
+      ["15M", "5M"],
+    );
+    assert.deepEqual(MarketScanner.tagsFromPrefixes(["btc-updown-1h"]), ["60M"]);
+    assert.deepEqual(MarketScanner.tagsFromPrefixes([]), []);
+    // Préfixes hors format updown ignorés (pas de tag dérivable).
+    assert.deepEqual(MarketScanner.tagsFromPrefixes(["bitcoin"]), []);
   });
 });
 

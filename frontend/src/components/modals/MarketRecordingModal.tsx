@@ -9,7 +9,8 @@ import type {
 } from "../../types";
 
 const STORAGE_KEY = "market-recording.lastPrefix";
-const PREFIX_RE = /^[a-z0-9]+(-[a-z0-9]+)*-updown-15m$/;
+// Multi-timeframe : la durée fait partie du préfixe (15m, 5m, 1h…).
+const PREFIX_RE = /^[a-z0-9]+(-[a-z0-9]+)*-updown-\d+[mh]$/;
 
 function isValidPrefix(prefix: string): boolean {
   return PREFIX_RE.test(prefix);
@@ -99,7 +100,7 @@ export function MarketRecordingModal(props: {
   const newPrefixError = (): string | null => {
     const v = newPrefix().trim();
     if (!v) return null; // neutre
-    if (!isValidPrefix(v)) return "Format attendu : <asset>-updown-15m (15m uniquement)";
+    if (!isValidPrefix(v)) return "Format attendu : <asset>-updown-<n>m|h (ex. btc-updown-15m, sol-updown-5m)";
     const d = data();
     if (d?.configPrefixes.includes(v)) return "Famille déjà configurée";
     return null;
@@ -121,7 +122,7 @@ export function MarketRecordingModal(props: {
             <input
               type="text"
               class="cfg-input"
-              placeholder="sol-updown-15m"
+              placeholder="sol-updown-5m"
               value={newPrefix()}
               onInput={(e) => setNewPrefix(e.currentTarget.value)}
             />

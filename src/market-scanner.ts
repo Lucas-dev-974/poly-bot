@@ -8,6 +8,7 @@ import {
   matchesSlugPrefixes,
   parseWindowStart,
   rankedLevels,
+  windowSecondsFromSlug,
   withSeriesVolume24hr,
   WINDOW_SECONDS,
 } from "./utils/market.js";
@@ -35,23 +36,35 @@ async function fetchJson<T>(url: URL): Promise<T> {
 export class MarketScanner {
   constructor(private readonly config: BotConfig) {}
 
+  /**
+   * Tags Gamma dérivés de l'univers configuré (ex. btc-updown-15m → "15M").
+   * Multi-timeframe : un fetch par tag distinct, puis fusion locale.
+   */
+  static tagsFromPrefixes(prefixes: string[]): string[] {
+    const tags = new Set<string>();
+    for (const prefix of prefixes) {
+      const match = prefix.match(/-updown-(\d+)([mh])$/);
+      if (!match) continue;
+      const seconds = Number(match[1]) * (match[2] === "h" ? 3600 : 60);
+      if (seconds > 0) tags.add(`${seconds / 60}M`);
+    }
+    return [...tags];
+  }
+
   async scan(): Promise<UpDownEvent[]> {
-    const url = new URL("/events", this.config.gammaApiHost);
-    url.searchParams.set("tag_slug", "15M");
-    url.searchParams.set("active", "true");
-    url.searchParams.set("closed", "false");
-    url.searchParams.set("limit", "50");
+    const tags = MarketScanner.tagsFromPrefixes(this.config.marketSlugPrefixes);
+    if (tags.length === 0) {
+      return [];
+    }
+    // end_date_min : Gamma laisse les anciennes fenêtres active=true/closed=false
+    // sur 5m/15m (66/100 stale constatés à l'audit) — sans ce filtre, les
+    // fenêtres vivantes peuvent sortir de la première page.
+    const nowSec = Math.floor(Date.now() / 1000);
+    const pages = await Promise.all(
+      tags.map((tag) => this.fetchTagPage(tag, nowSec)),
+    );
+    const events = pages.flat();
 
-    const events = await fetchJson<
-      Array<{
-        title: string;
-        slug: string;
-        markets: GammaMarket[];
-        series?: Array<{ volume24hr?: number | string | null }>;
-      }>
-    >(url);
-
-    const now = Math.floor(Date.now() / 1000);
     const results: UpDownEvent[] = [];
 
     for (const event of events) {
@@ -63,8 +76,10 @@ export class MarketScanner {
       const windowStart = parseWindowStart(event.slug);
       if (!windowStart) continue;
 
-      const windowEnd = windowStart + WINDOW_SECONDS;
-      if (now < windowStart || now > windowEnd) continue;
+      // La durée vient du SLUG (multi-timeframe), pas d'une constante.
+      const durationSec = windowSecondsFromSlug(event.slug) ?? WINDOW_SECONDS;
+      const windowEnd = windowStart + durationSec;
+      if (nowSec < windowStart || nowSec > windowEnd) continue;
 
       // Recording covers the full active window. Trading window is applied later.
       results.push({
@@ -77,6 +92,32 @@ export class MarketScanner {
     }
 
     return results;
+  }
+
+  private async fetchTagPage(
+    tag: string,
+    nowSec: number,
+  ): Promise<
+    Array<{
+      title: string;
+      slug: string;
+      markets: GammaMarket[];
+      series?: Array<{ volume24hr?: number | string | null }>;
+    }>
+  > {
+    const url = new URL("/events", this.config.gammaApiHost);
+    url.searchParams.set("tag_slug", tag);
+    url.searchParams.set("active", "true");
+    url.searchParams.set("closed", "false");
+    url.searchParams.set("end_date_min", new Date(nowSec * 1000).toISOString());
+    url.searchParams.set("limit", "50");
+    try {
+      return await fetchJson(url);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      log("Gamma scan failed for tag", { tag, error: message });
+      return [];
+    }
   }
 
   /** True when minutes-left is inside the configured trading entry window. */

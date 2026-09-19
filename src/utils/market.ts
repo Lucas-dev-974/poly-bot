@@ -2,6 +2,24 @@ import type { GammaMarket } from "../types.js";
 
 export const WINDOW_SECONDS = 15 * 60;
 
+/**
+ * Durée (secondes) d'une fenêtre up/down dérivée de son SLUG, plus une
+ * constante : le slug porte sa durée ({asset}-updown-{n}{m|h}-{startTs}).
+ * Miroir backend de parseSlugWindow (frontend). null si format inconnu
+ * (slug legacy sans durée lisible → repli WINDOW_SECONDS côté appelants).
+ */
+export function windowSecondsFromSlug(slug: string): number | null {
+  const match = slug.match(/-(\d+)([mh])-(\d{10})$/);
+  if (!match) return null;
+  const duration = Number(match[1]) * (match[2] === "h" ? 3600 : 60);
+  return duration > 0 && Number.isFinite(duration) ? duration : null;
+}
+
+/** Tag Gamma correspondant à une durée de fenêtre en secondes (ex. 900 → "15M"). */
+export function gammaTagFromSeconds(durationSec: number): string {
+  return `${durationSec / 60}M`;
+}
+
 export function parseWindowStart(slug: string): number | null {
   const match = slug.match(/-(\d{10})$/);
   return match ? Number(match[1]) : null;

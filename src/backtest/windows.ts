@@ -3,12 +3,13 @@ import type { BookSnapshotRow } from "../db/repositories.js";
 import type { TokenBook } from "../types.js";
 import {
   DEFAULT_COMPLETENESS,
-  EXPECTED_TICKS,
   evaluateCompleteness,
   isCompleteFromStats,
+  minTicksForDuration,
   windowBoundsFromSlug,
   type CompletenessCriteria,
 } from "./completeness.js";
+import { windowSecondsFromSlug as durationFromSlug } from "../utils/market.js";
 import { l1Spread } from "../utils/market.js";
 import type { BacktestSeriesPoint, BacktestWindowMeta } from "./types.js";
 
@@ -69,8 +70,15 @@ export function listBacktestWindows(
   for (const [eventSlug, ticks] of ticksBySlug) {
     const bounds = windowBoundsFromSlug(eventSlug);
     if (!bounds) continue;
+    // Complétude par durée : expectedTicks vient du slug (300 pour 5m,
+    // 900 pour 15m) et le seuil minTicks par défaut suit la même règle.
+    const durationSec = durationFromSlug(eventSlug) ?? 900;
+    const criteria: CompletenessCriteria = {
+      ...DEFAULT_COMPLETENESS,
+      minTicks: minTicksForDuration(durationSec),
+    };
     const meta = titles.get(eventSlug);
-    const stats = evaluateCompleteness(bounds.windowStart, bounds.windowEnd, ticks);
+    const stats = evaluateCompleteness(bounds.windowStart, bounds.windowEnd, ticks, criteria);
     windows.push({
       eventSlug,
       eventTitle: meta?.eventTitle ?? eventSlug,
@@ -78,7 +86,7 @@ export function listBacktestWindows(
       windowEnd: bounds.windowEnd,
       complete: stats.complete,
       tickCount: stats.tickCount,
-      expectedTicks: EXPECTED_TICKS,
+      expectedTicks: durationSec,
       maxGapMs: stats.maxGapMs,
       coveragePct: stats.coveragePct,
       gapCount: stats.gapCount,

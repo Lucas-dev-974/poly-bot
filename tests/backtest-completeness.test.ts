@@ -5,6 +5,8 @@ import {
   MIN_TICKS,
   completenessFromSearchParams,
   evaluateCompleteness,
+  expectedTicksForDuration,
+  minTicksForDuration,
   parseCompletenessCriteria,
   windowBoundsFromSlug,
 } from "../src/backtest/completeness.js";
@@ -91,9 +93,41 @@ describe("backtest completeness", () => {
     assert.deepEqual(bounds, { windowStart: start, windowEnd: end });
   });
 
-  it("MIN_TICKS is 95% of expected", () => {
+  it("parses 5m slug bounds (multi-timeframe)", () => {
+    const start5m = 1_799_999_000;
+    const bounds = windowBoundsFromSlug(`btc-updown-5m-${start5m}`);
+    assert.deepEqual(bounds, { windowStart: start5m, windowEnd: start5m + 300 });
+  });
+
+  it("expected/min ticks follow the slug duration", () => {
+    assert.equal(expectedTicksForDuration(900), 900);
+    assert.equal(expectedTicksForDuration(300), 300);
+    assert.equal(expectedTicksForDuration(3600), 3600);
+    assert.equal(minTicksForDuration(900), 855);
+    assert.equal(minTicksForDuration(300), 285);
+  });
+
+  it("MIN_TICKS is 95% of expected (15m constants preserved)", () => {
     assert.equal(EXPECTED_TICKS, 900);
     assert.equal(MIN_TICKS, 855);
+  });
+
+  it("a 5m window is complete at its own scale, not the 15m scale", () => {
+    const s = 1_800_000_000;
+    const e = s + 300;
+    const ticks = Array.from({ length: 300 }, (_, i) => s * 1000 + i * 1000);
+    const stats = evaluateCompleteness(s, e, ticks, {
+      minTicks: minTicksForDuration(300),
+      maxGapMs: 2000,
+      maxEdgeGapMs: 2000,
+    });
+    assert.equal(stats.tickCount, 300);
+    assert.equal(stats.complete, true);
+    // 300 ticks jugés contre les critères 15m par défaut seraient incomplets.
+    assert.equal(
+      evaluateCompleteness(s, e, ticks, { minTicks: 855, maxGapMs: 2000, maxEdgeGapMs: 2000 }).complete,
+      false,
+    );
   });
 
   it("parseCompletenessCriteria defaults and disables rules", () => {

@@ -71,6 +71,11 @@ export const EDITABLE_CONFIG_KEYS = [
   "favBandInverseAskMax",
   "favBandInverseShareRatio",
   "favBandInverseOrderUsdc",
+  "favBandWhipsawEnabled",
+  "favBandWhipsawPauseAfterLosses",
+  "favBandWhipsawPauseWindows",
+  "favBandWhipsawMaxScore",
+  "favBandWhipsawMaxIntraFlips",
   "dipRevertBandMin",
   "dipRevertBandMax",
   "dipRevertMinDrop",
@@ -101,6 +106,17 @@ export const EDITABLE_CONFIG_KEYS = [
   "earlyConvictionMaxElapsedSec",
   "earlyConvictionMaxSpread",
   "earlyConvictionOrderUsdc",
+  "openEntryLeanTrigger",
+  "openEntryMaxElapsedSec",
+  "openEntryFairAskSumMax",
+  "openEntryMaxSpread",
+  "openEntryOrderUsdc",
+  "openEntrySlStructFlipDist",
+  "openEntrySlStructConfirmSec",
+  "openEntrySlStructDist",
+  "openEntrySlLateAfterSec",
+  "openEntrySlLateDist",
+  "openEntrySlEnabled",
   "favBandOrderUsdc",
   "barbellCheapOrderUsdc",
   "reverseCheapOrderUsdc",
@@ -175,6 +191,11 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   favBandInverseAskMax: "FAV_BAND_INVERSE_ASK_MAX",
   favBandInverseShareRatio: "FAV_BAND_INVERSE_SHARE_RATIO",
   favBandInverseOrderUsdc: "FAV_BAND_INVERSE_ORDER_USDC",
+  favBandWhipsawEnabled: "FAV_BAND_WHIPSAW_ENABLED",
+  favBandWhipsawPauseAfterLosses: "FAV_BAND_WHIPSAW_PAUSE_AFTER_LOSSES",
+  favBandWhipsawPauseWindows: "FAV_BAND_WHIPSAW_PAUSE_WINDOWS",
+  favBandWhipsawMaxScore: "FAV_BAND_WHIPSAW_MAX_SCORE",
+  favBandWhipsawMaxIntraFlips: "FAV_BAND_WHIPSAW_MAX_INTRA_FLIPS",
   favBandOrderUsdc: "FAV_BAND_ORDER_USDC",
   barbellCheapOrderUsdc: "BARBELL_CHEAP_ORDER_USDC",
   reverseCheapOrderUsdc: "REVERSE_CHEAP_ORDER_USDC",
@@ -209,6 +230,17 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   earlyConvictionMaxElapsedSec: "EARLY_CONVICTION_MAX_ELAPSED_SEC",
   earlyConvictionMaxSpread: "EARLY_CONVICTION_MAX_SPREAD",
   earlyConvictionOrderUsdc: "EARLY_CONVICTION_ORDER_USDC",
+  openEntryLeanTrigger: "OPEN_ENTRY_LEAN_TRIGGER",
+  openEntryMaxElapsedSec: "OPEN_ENTRY_MAX_ELAPSED_SEC",
+  openEntryFairAskSumMax: "OPEN_ENTRY_FAIR_ASK_SUM_MAX",
+  openEntryMaxSpread: "OPEN_ENTRY_MAX_SPREAD",
+  openEntryOrderUsdc: "OPEN_ENTRY_ORDER_USDC",
+  openEntrySlStructFlipDist: "OPEN_ENTRY_SL_STRUCT_FLIP_DIST",
+  openEntrySlStructConfirmSec: "OPEN_ENTRY_SL_STRUCT_CONFIRM_SEC",
+  openEntrySlStructDist: "OPEN_ENTRY_SL_STRUCT_DIST",
+  openEntrySlLateAfterSec: "OPEN_ENTRY_SL_LATE_AFTER_SEC",
+  openEntrySlLateDist: "OPEN_ENTRY_SL_LATE_DIST",
+  openEntrySlEnabled: "OPEN_ENTRY_SL_ENABLED",
 };
 
 const FORBIDDEN_KEYS = new Set([
@@ -314,6 +346,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "favBandInverseAskMax":
     case "favBandInverseShareRatio":
     case "favBandInverseOrderUsdc":
+    case "favBandWhipsawPauseWindows":
     case "dipRevertBandMin":
     case "dipRevertBandMax":
     case "dipRevertMinDrop":
@@ -340,6 +373,16 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "earlyConvictionMaxElapsedSec":
     case "earlyConvictionMaxSpread":
     case "earlyConvictionOrderUsdc":
+    case "openEntryLeanTrigger":
+    case "openEntryMaxElapsedSec":
+    case "openEntryFairAskSumMax":
+    case "openEntryMaxSpread":
+    case "openEntryOrderUsdc":
+    case "openEntrySlStructFlipDist":
+    case "openEntrySlStructConfirmSec":
+    case "openEntrySlStructDist":
+    case "openEntrySlLateAfterSec":
+    case "openEntrySlLateDist":
     case "pairLockMax":
     case "expensiveOrderUsdc":
     case "maxSharesPerOrder":
@@ -376,6 +419,9 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "arbAskLockMinElapsedSec":
     case "arbAskLockMaxImbalance":
     case "favBandMaxElapsedSec":
+    case "favBandWhipsawPauseAfterLosses":
+    case "favBandWhipsawMaxScore":
+    case "favBandWhipsawMaxIntraFlips":
     case "dipRevertMaxElapsedSec":
     case "antiflipMaxElapsedSec":
     case "flipConfirmMaxElapsedSec":
@@ -391,6 +437,8 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "reverseHedgeCapToFilledCheap":
     case "dipRevertExitTakeProfitEnabled":
     case "favBandInverseEnabled":
+    case "favBandWhipsawEnabled":
+    case "openEntrySlEnabled":
       return parseBoolean(value, key);
     case "reverseMaxGridLevels":
       return parseNullableNumber(value, key);
@@ -523,6 +571,11 @@ const FAV_BAND_KEYS: readonly EditableConfigKey[] = [
   "favBandInverseAskMax",
   "favBandInverseShareRatio",
   "favBandInverseOrderUsdc",
+  "favBandWhipsawEnabled",
+  "favBandWhipsawPauseAfterLosses",
+  "favBandWhipsawPauseWindows",
+  "favBandWhipsawMaxScore",
+  "favBandWhipsawMaxIntraFlips",
   "enableExpensiveHedge",
 ];
 
@@ -572,6 +625,22 @@ const EARLY_CONVICTION_KEYS: readonly EditableConfigKey[] = [
   "earlyConvictionMaxElapsedSec",
   "earlyConvictionMaxSpread",
   "earlyConvictionOrderUsdc",
+  "enableExpensiveHedge",
+];
+
+/** Open-entry : lean d'ouverture, fair gate, échelle de SL, budget. */
+const OPEN_ENTRY_KEYS: readonly EditableConfigKey[] = [
+  "openEntryLeanTrigger",
+  "openEntryMaxElapsedSec",
+  "openEntryFairAskSumMax",
+  "openEntryMaxSpread",
+  "openEntryOrderUsdc",
+  "openEntrySlStructFlipDist",
+  "openEntrySlStructConfirmSec",
+  "openEntrySlStructDist",
+  "openEntrySlLateAfterSec",
+  "openEntrySlLateDist",
+  "openEntrySlEnabled",
   "enableExpensiveHedge",
 ];
 
@@ -626,9 +695,11 @@ export function keysForStrategy(
                   ? FLIP_CONFIRM_KEYS
                   : strategyId === "early-conviction"
                     ? EARLY_CONVICTION_KEYS
-                    : String(strategyId).startsWith("custom:")
-                      ? CUSTOM_KEYS
-                      : ARB_KEYS; // arb seul
+                    : strategyId === "open-entry"
+                      ? OPEN_ENTRY_KEYS
+                      : String(strategyId).startsWith("custom:")
+                        ? CUSTOM_KEYS
+                        : ARB_KEYS; // arb seul
   return [...SHARED_KEYS, ...strategyKeys];
 }
 

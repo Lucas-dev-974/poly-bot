@@ -11,6 +11,7 @@ import { DipRevertStrategy } from "./dip-revert-strategy.js";
 import { AntiflipRevertStrategy } from "./antiflip-revert-strategy.js";
 import { FlipConfirmStrategy } from "./flip-confirm-strategy.js";
 import { EarlyConvictionStrategy } from "./early-conviction-strategy.js";
+import { OpenEntryStrategy } from "./open-entry-strategy.js";
 import type { NativeStrategyId, StrategyId } from "./ids.js";
 import type { TradingStrategy } from "./trading-strategy.js";
 
@@ -24,6 +25,7 @@ const STRATEGIES: Record<NativeStrategyId, () => TradingStrategy> = {
   "antiflip-revert": () => new AntiflipRevertStrategy(),
   "flip-confirm": () => new FlipConfirmStrategy(),
   "early-conviction": () => new EarlyConvictionStrategy(),
+  "open-entry": () => new OpenEntryStrategy(),
 };
 
 export type StrategyRepos = Pick<Repositories, "strategyGraphs">;
@@ -41,7 +43,8 @@ export function leadsWithEdgeFor(
     id === "dip-revert" ||
     id === "antiflip-revert" ||
     id === "flip-confirm" ||
-    id === "early-conviction"
+    id === "early-conviction" ||
+    id === "open-entry"
   )
     return false;
   if (!id.startsWith("custom:")) return undefined;

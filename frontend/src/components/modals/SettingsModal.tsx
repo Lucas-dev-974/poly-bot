@@ -81,7 +81,7 @@ function NumberInput(props: {
 
 /* ---------- définition des sections ---------- */
 
-type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "fav" | "dip" | "antiflip" | "flipconf" | "earlyconv" | "risk" | "window";
+type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "fav" | "dip" | "antiflip" | "flipconf" | "earlyconv" | "openentry" | "risk" | "window";
 
 interface SectionDef {
   id: SectionId;
@@ -101,6 +101,7 @@ const SECTIONS: SectionDef[] = [
   { id: "antiflip", label: "Entrée antiflip-revert", icon: "⇄", desc: "FOK favori déchu post-flip, hold résolution" },
   { id: "flipconf", label: "Entrée flip-confirm", icon: "⇛", desc: "FOK nouveau favori post-flip précoce" },
   { id: "earlyconv", label: "Entrée early-conviction", icon: "⚡", desc: "FOK favori déjà établi <45s" },
+  { id: "openentry", label: "Entrée open-entry", icon: "⚑", desc: "FOK favori émergent <300s, SL dual-scale" },
   { id: "risk", label: "Risque", icon: "◆", desc: "Limites de taille, positions et exposition" },
   { id: "window", label: "Fenêtre", icon: "◷", desc: "Plage de trading avant clôture" },
 ];
@@ -147,8 +148,9 @@ export function SettingsModal(props: {
   const isAntiflip = createMemo(() => form().strategyId === "antiflip-revert");
   const isFlipConfirm = createMemo(() => form().strategyId === "flip-confirm");
   const isEarlyConviction = createMemo(() => form().strategyId === "early-conviction");
+  const isOpenEntry = createMemo(() => form().strategyId === "open-entry");
   const isDirectionalHold = createMemo(
-    () => isFavBand() || isDip() || isAntiflip() || isFlipConfirm() || isEarlyConviction(),
+    () => isFavBand() || isDip() || isAntiflip() || isFlipConfirm() || isEarlyConviction() || isOpenEntry(),
   );
   const errors = createMemo(() =>
     validateConfigForm(form(), false, {
@@ -193,12 +195,12 @@ export function SettingsModal(props: {
         arbAskLockMinElapsedSec: null,
         arbAskLockMaxImbalance: null,
         enableExpensiveHedge:
-          preset.strategyId === "fav-band" || preset.strategyId === "dip-revert" || preset.strategyId === "antiflip-revert" || preset.strategyId === "flip-confirm" || preset.strategyId === "early-conviction"
+          preset.strategyId === "fav-band" || preset.strategyId === "dip-revert" || preset.strategyId === "antiflip-revert" || preset.strategyId === "flip-confirm" || preset.strategyId === "early-conviction" || preset.strategyId === "open-entry"
             ? false
             : props.config.enableExpensiveHedge,
         ...preset.settings,
         strategyId: preset.strategyId,
-        ...(preset.strategyId === "fav-band" || preset.strategyId === "dip-revert" || preset.strategyId === "antiflip-revert" || preset.strategyId === "flip-confirm" || preset.strategyId === "early-conviction"
+        ...(preset.strategyId === "fav-band" || preset.strategyId === "dip-revert" || preset.strategyId === "antiflip-revert" || preset.strategyId === "flip-confirm" || preset.strategyId === "early-conviction" || preset.strategyId === "open-entry"
           ? { enableExpensiveHedge: false }
           : {}),
       }),
@@ -208,6 +210,7 @@ export function SettingsModal(props: {
     else if (preset.strategyId === "antiflip-revert") setActiveSection("antiflip");
     else if (preset.strategyId === "flip-confirm") setActiveSection("flipconf");
     else if (preset.strategyId === "early-conviction") setActiveSection("earlyconv");
+    else if (preset.strategyId === "open-entry") setActiveSection("openentry");
     else if (preset.strategyId === "edge-lead") setActiveSection("edge");
     setSaveError(null);
   }
@@ -293,6 +296,9 @@ export function SettingsModal(props: {
                 } else if (id === "early-conviction") {
                   update("enableExpensiveHedge", false);
                   setActiveSection("earlyconv");
+                } else if (id === "open-entry") {
+                  update("enableExpensiveHedge", false);
+                  setActiveSection("openentry");
                 } else if (id === "edge-lead") {
                   setActiveSection("edge");
                 } else if (
@@ -301,6 +307,7 @@ export function SettingsModal(props: {
                   activeSection() === "antiflip" ||
                   activeSection() === "flipconf" ||
                   activeSection() === "earlyconv" ||
+                  activeSection() === "openentry" ||
                   activeSection() === "edge"
                 ) {
                   setActiveSection("presets");
@@ -1072,7 +1079,76 @@ export function SettingsModal(props: {
                       </Show>
                     </div>
                   </div>
-                  <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
+                  
+                  <div class="cfg-section" style={{ "margin-top": "1rem" }}>
+                    <h4>Filtre whipsaw</h4>
+                    <p class="cfg-section__desc">
+                      Détection de régime agité (flips du favori, range d&apos;ask, série de pertes).
+                      Backtest BTC 15m : la <strong>pause après pertes</strong> aide le drawdown ;
+                      les gates score/flips en dur baissent souvent le PnL — laisse-les vides sauf besoin.
+                    </p>
+                    <div class="cfg-grid">
+                      <label class="cfg-check" title="Active pause / score / flips sur les entrées fav-band.">
+                        <input
+                          type="checkbox"
+                          checked={form().favBandWhipsawEnabled}
+                          onChange={(e) => update("favBandWhipsawEnabled", e.currentTarget.checked)}
+                        />
+                        <span>Filtre whipsaw activé</span>
+                      </label>
+                      <Show when={form().favBandWhipsawEnabled}>
+                        <Field
+                          label="Pause après N pertes"
+                          hint="Après N lost d'affilée, skip les prochaines fenêtres (vide = pause off). Défaut recherche : 3."
+                        >
+                          <NumberInput
+                            value={form().favBandWhipsawPauseAfterLosses}
+                            min={1}
+                            max={20}
+                            step={1}
+                            onInput={(v) => update("favBandWhipsawPauseAfterLosses", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Fenêtres de pause"
+                          hint="Cooldownree de pause = N x 15 min (horloge), defaut 8. Independant du multi-marches."
+                        >
+                          <NumberInput
+                            value={form().favBandWhipsawPauseWindows}
+                            min={1}
+                            max={48}
+                            step={1}
+                            onInput={(v) => update("favBandWhipsawPauseWindows", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Score max (0–100)"
+                          hint="Skip si score ≥ seuil. Vide = gate off (recommandé)."
+                        >
+                          <NumberInput
+                            value={form().favBandWhipsawMaxScore}
+                            min={0}
+                            max={100}
+                            step={1}
+                            onInput={(v) => update("favBandWhipsawMaxScore", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Max flips intra-fenêtre"
+                          hint="Skip si flips favori ≥ N dans la fenêtre. Vide = gate off (recommandé)."
+                        >
+                          <NumberInput
+                            value={form().favBandWhipsawMaxIntraFlips}
+                            min={1}
+                            max={20}
+                            step={1}
+                            onInput={(v) => update("favBandWhipsawMaxIntraFlips", v)}
+                          />
+                        </Field>
+                      </Show>
+                    </div>
+                  </div>
+<p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
                     Risque / exposition : onglet Risque (max shares, max exposure).
                     Fenêtre de trading : onglet Fenêtre.
                   </p>
@@ -1510,6 +1586,166 @@ export function SettingsModal(props: {
                         min={0.1}
                         step={0.1}
                         onInput={(v) => update("earlyConvictionOrderUsdc", v)}
+                      />
+                    </Field>
+                  </div>
+                  <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
+                    Risque / exposition : onglet Risque (max shares, max exposure).
+                    Fenêtre de trading : onglet Fenêtre.
+                  </p>
+                </div>
+              </Show>
+
+              {/* ---- Entrée open-entry ---- */}
+              <Show when={activeSection() === "openentry"}>
+                <div class="cfg-section">
+                  <h4>Entrée open-entry</h4>
+                  <p class="cfg-section__desc">
+                    À l&apos;ouverture (t≈0.5s) le marché est <strong>fair</strong>{" "}
+                    (somme des asks ≈ 1.01) et sans inclinaison mesurable —
+                    l&apos;edge vit dans le <strong>favori qui émerge</strong>{" "}
+                    (écart up/down de 0.10 à p50 6 s). On achète le 1er favori
+                    menant de 0.15 dans les 300 premières secondes, marché ouvert
+                    fair (askSum ≤ 1.02). Sortie : SL à double échelle (structurel
+                    = flip adverse confirmé + dégât prix ; tardif &gt; 300 s = petit
+                    dégât suffit), hold to resolution sinon. Backtest calibré
+                    runner officiel : hold $365 / SL $330 — les SL réduisent le
+                    drawdown mais coûtent de l&apos;espérance à sizing runner (L1) ;
+                    activez-les si la volatilité du PnL compte plus que la moyenne.
+                  </p>
+                  <div class="cfg-grid">
+                    <Field
+                      label="Lean trigger"
+                      hint="Écart up/down min du favori (défaut 0.15). Trop bas = signal noyé dans le bruit (0.12 isolé : t=0.06)."
+                    >
+                      <NumberInput
+                        value={form().openEntryLeanTrigger}
+                        min={0.01}
+                        max={0.5}
+                        step={0.01}
+                        onInput={(v) => update("openEntryLeanTrigger", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Max elapsed (sec)"
+                      hint="Fenêtre d'entrée : [0, N] secondes (défaut 300). Le trigger est atteint à p50 ~20s."
+                    >
+                      <NumberInput
+                        value={form().openEntryMaxElapsedSec}
+                        min={1}
+                        max={900}
+                        step={1}
+                        onInput={(v) => update("openEntryMaxElapsedSec", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Fair ask sum max"
+                      hint="Somme des asks au 1er tick (défaut 1.02). Marché ouvert fair — pas d'arbitrage d'ouverture."
+                    >
+                      <NumberInput
+                        value={form().openEntryFairAskSumMax}
+                        min={1.001}
+                        max={1.2}
+                        step={0.01}
+                        onInput={(v) => update("openEntryFairAskSumMax", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Max spread"
+                      hint="Spread max du favori à l'entrée (défaut 0.04). Liquidité."
+                    >
+                      <NumberInput
+                        value={form().openEntryMaxSpread}
+                        min={0}
+                        max={0.2}
+                        step={0.005}
+                        onInput={(v) => update("openEntryMaxSpread", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Order size (USDC)"
+                      hint="Budget FOK sur le favori (défaut 15)."
+                    >
+                      <NumberInput
+                        value={form().openEntryOrderUsdc}
+                        min={0.1}
+                        step={0.1}
+                        onInput={(v) => update("openEntryOrderUsdc", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="SL actif"
+                      hint="Stop-loss dual-scale on/off (défaut on). Off = hold intégral."
+                    >
+                      <select
+                        class="cfg-input"
+                        value={form().openEntrySlEnabled ? "on" : "off"}
+                        onChange={(e) =>
+                          update("openEntrySlEnabled", e.currentTarget.value === "on")
+                        }
+                      >
+                        <option value="on">On (SL dual-scale)</option>
+                        <option value="off">Off (hold intégral)</option>
+                      </select>
+                    </Field>
+                    <Field
+                      label="SL struct : flip dist"
+                      hint="L'autre jambe mène de >= X (défaut 0.20) pour armer le SL structurel."
+                    >
+                      <NumberInput
+                        value={form().openEntrySlStructFlipDist}
+                        min={0.01}
+                        max={1}
+                        step={0.01}
+                        onInput={(v) => update("openEntrySlStructFlipDist", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="SL struct : confirm (sec)"
+                      hint="Le flip doit durer >= N secondes (défaut 20) — coupe les faux retournements."
+                    >
+                      <NumberInput
+                        value={form().openEntrySlStructConfirmSec}
+                        min={0}
+                        max={900}
+                        step={1}
+                        onInput={(v) => update("openEntrySlStructConfirmSec", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="SL struct : dégât"
+                      hint="ET le prix tenu a perdu >= X (défaut 0.10) — jamais le flip seul."
+                    >
+                      <NumberInput
+                        value={form().openEntrySlStructDist}
+                        min={0.01}
+                        max={1}
+                        step={0.01}
+                        onInput={(v) => update("openEntrySlStructDist", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="SL tardif : après (sec)"
+                      hint="Passé N secondes (défaut 300), un petit dégât suffit."
+                    >
+                      <NumberInput
+                        value={form().openEntrySlLateAfterSec}
+                        min={1}
+                        max={900}
+                        step={1}
+                        onInput={(v) => update("openEntrySlLateAfterSec", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="SL tardif : dégât"
+                      hint="Petit dégât tardif (défaut 0.06, ≤ dégât structurel). La thèse a eu le temps de se vérifier."
+                    >
+                      <NumberInput
+                        value={form().openEntrySlLateDist}
+                        min={0.01}
+                        max={1}
+                        step={0.01}
+                        onInput={(v) => update("openEntrySlLateDist", v)}
                       />
                     </Field>
                   </div>

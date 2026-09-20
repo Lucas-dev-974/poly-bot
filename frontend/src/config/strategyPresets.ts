@@ -10,6 +10,7 @@ import dipRevert from "../../../config/presets/dip-revert.json";
 import antiflipRevert from "../../../config/presets/antiflip-revert.json";
 import flipConfirm from "../../../config/presets/flip-confirm.json";
 import earlyConviction from "../../../config/presets/early-conviction.json";
+import openEntry from "../../../config/presets/open-entry.json";
 
 export type { NativeStrategyId, StrategyId };
 
@@ -32,6 +33,7 @@ export const STRATEGY_ENGINE_OPTIONS: Array<{ id: NativeStrategyId; label: strin
   { id: "antiflip-revert", label: "Antiflip-revert (FOK favori déchu post-flip, hold resolve)" },
   { id: "flip-confirm", label: "Flip-confirm (FOK nouveau favori post-flip précoce)" },
   { id: "early-conviction", label: "Early-conviction (FOK favori déjà établi <45s)" },
+  { id: "open-entry", label: "Open-entry (favori émergent <300s, SL dual-scale)" },
   { id: "reverse", label: "Reverse bet (underdog 7-10¢ + hedge favori)" },
 ];
 
@@ -47,6 +49,7 @@ export const STRATEGY_PRESETS: StrategyPreset[] = [
   antiflipRevert as StrategyPreset,
   flipConfirm as StrategyPreset,
   earlyConviction as StrategyPreset,
+  openEntry as StrategyPreset,
 ];
 
 export function presetsForStrategy(id: string): StrategyPreset[] {

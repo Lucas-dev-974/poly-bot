@@ -1,12 +1,12 @@
 {
   "name": "polymarket-reverse-arbitrage-bot",
   "version": "2.0.0",
-  "description": "Polymarket 15m Up/Down B1 arb — maker cheap GTC, then 1:1 hedge after fill only if fill+hedge ≤ PAIR_LOCK_MAX",
+  "description": "Polymarket 15m Up/Down B1 arb â€” maker cheap GTC, then 1:1 hedge after fill only if fill+hedge â‰¤ PAIR_LOCK_MAX",
   "type": "module",
   "scripts": {
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
-    "test": "node --import tsx --test tests/prices.test.ts tests/config.test.ts tests/resolver.test.ts tests/strategy.test.ts tests/tracker.test.ts tests/runtime-settings.test.ts tests/order-lifecycle.test.ts tests/order-status.test.ts tests/trader.test.ts tests/presets.test.ts tests/trading-strategy.test.ts tests/edge-lead.test.ts tests/reverse.test.ts tests/strategy-graph-parity.test.ts tests/strategy-graphs.test.ts tests/strategy-graph-temporal.test.ts tests/strategy-chart-rules.test.ts tests/backtest-completeness.test.ts tests/backtest-fill.test.ts tests/backtest-engine.test.ts tests/stacked-chart-overlay.test.ts tests/market-trades.test.ts tests/market-utils.test.ts tests/snapshots.test.ts tests/dip-revert.test.ts tests/new-strats.test.ts tests/withdraw.test.ts tests/engine-stats.test.ts tests/market-rules.test.ts",
+    "test": "node --import tsx --test tests/prices.test.ts tests/config.test.ts tests/resolver.test.ts tests/strategy.test.ts tests/tracker.test.ts tests/runtime-settings.test.ts tests/order-lifecycle.test.ts tests/order-status.test.ts tests/trader.test.ts tests/presets.test.ts tests/trading-strategy.test.ts tests/edge-lead.test.ts tests/reverse.test.ts tests/strategy-graph-parity.test.ts tests/strategy-graphs.test.ts tests/strategy-graph-temporal.test.ts tests/strategy-chart-rules.test.ts tests/backtest-completeness.test.ts tests/backtest-fill.test.ts tests/backtest-engine.test.ts tests/stacked-chart-overlay.test.ts tests/market-trades.test.ts tests/market-utils.test.ts tests/snapshots.test.ts tests/dip-revert.test.ts tests/new-strats.test.ts tests/withdraw.test.ts tests/engine-stats.test.ts tests/market-rules.test.ts tests/open-entry.test.ts tests/fav-band.test.ts tests/whipsaw.test.ts",
     "live:all": "concurrently -n backend,frontend -c blue,green \"npm start\" \"npm --prefix frontend run dev\"",
     "dev:all": "concurrently -n backend,frontend -c blue,green \"npm run dev\" \"npm --prefix frontend run dev\"",
     "build": "tsc",

@@ -257,6 +257,21 @@ export interface BotConfig {
   /** Hedge-inverse: budget cap (USDC) for the opposite-token FOK buy. */
   favBandInverseOrderUsdc: number;
   /**
+   * Whipsaw filter (default off). When enabled, fav-band may skip entries
+   * based on pause-after-losses, max intra-window flips, and/or max score.
+   * Score = flips + ask-range + prior winner flip rate + loss streak (0–100).
+   * Research 2026-09-20: pause helps DD; hard score/flips gates often hurt PnL.
+   */
+  favBandWhipsawEnabled: boolean;
+  /** Pause after N consecutive fav-band losses (null = pause off). */
+  favBandWhipsawPauseAfterLosses: number | null;
+  /** Windows to skip after a pause trigger (default 8). */
+  favBandWhipsawPauseWindows: number;
+  /** Skip entry when score >= this (null = score gate off). */
+  favBandWhipsawMaxScore: number | null;
+  /** Skip entry when intra-window favorite flips >= this (null = off). */
+  favBandWhipsawMaxIntraFlips: number | null;
+  /**
    * Dip-revert: buy favorite after an intra-window dip + stabilization.
    * Ask must be in [dipRevertBandMin, dipRevertBandMax]; the favorite must
    * have dropped >= dipRevertMinDrop over dipRevertDropLookbackMs then
@@ -320,6 +335,26 @@ export interface BotConfig {
   earlyConvictionMaxElapsedSec: number;
   earlyConvictionMaxSpread: number;
   earlyConvictionOrderUsdc: number;
+  /**
+   * Open-entry: buy the EMERGING favorite (|up-down| ask lead >= trigger)
+   * within the first [0, maxElapsedSec] seconds of a FAIR open (askSum <=
+   * fairAskSumMax at the current tick). Dual-scale stop-loss via the defend
+   * pipeline: structural (opposite leads >= flipDist for >= confirmSec AND
+   * held ask <= entry - dist) and late (after slLateAfterSec, held ask <=
+   * entry - slLateDist). Hold to resolve otherwise, no hedge.
+   */
+  openEntryLeanTrigger: number;
+  openEntryMaxElapsedSec: number;
+  openEntryFairAskSumMax: number;
+  openEntryMaxSpread: number;
+  openEntryOrderUsdc: number;
+  openEntrySlStructFlipDist: number;
+  openEntrySlStructConfirmSec: number;
+  openEntrySlStructDist: number;
+  openEntrySlLateAfterSec: number;
+  openEntrySlLateDist: number;
+  /** Stop-loss dual-scale actif (défaut true = config backtestée). False = hold intégral. */
+  openEntrySlEnabled: boolean;
 }
 
 /**
@@ -398,6 +433,11 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     favBandInverseAskMax: 0.2,
     favBandInverseShareRatio: 2,
     favBandInverseOrderUsdc: 15,
+    favBandWhipsawEnabled: false,
+    favBandWhipsawPauseAfterLosses: 3,
+    favBandWhipsawPauseWindows: 8,
+    favBandWhipsawMaxScore: null,
+    favBandWhipsawMaxIntraFlips: null,
     dipRevertBandMin: 0.55,
     dipRevertBandMax: 0.65,
     dipRevertMinDrop: 0.03,
@@ -428,6 +468,17 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     earlyConvictionMaxElapsedSec: 45,
     earlyConvictionMaxSpread: 0.05,
     earlyConvictionOrderUsdc: 15,
+    openEntryLeanTrigger: 0.15,
+    openEntryMaxElapsedSec: 300,
+    openEntryFairAskSumMax: 1.02,
+    openEntryMaxSpread: 0.04,
+    openEntryOrderUsdc: 15,
+    openEntrySlStructFlipDist: 0.2,
+    openEntrySlStructConfirmSec: 20,
+    openEntrySlStructDist: 0.1,
+    openEntrySlLateAfterSec: 300,
+    openEntrySlLateDist: 0.06,
+    openEntrySlEnabled: true,
   };
 }
 
@@ -694,6 +745,30 @@ export function validateConfigCoherence(
         );
       }
     }
+
+    if (config.favBandWhipsawEnabled) {
+      if (
+        config.favBandWhipsawPauseAfterLosses != null &&
+        !(config.favBandWhipsawPauseAfterLosses >= 1)
+      ) {
+        throw new Error("favBandWhipsawPauseAfterLosses must be >= 1 when set");
+      }
+      if (!(config.favBandWhipsawPauseWindows >= 1)) {
+        throw new Error("favBandWhipsawPauseWindows must be >= 1");
+      }
+      if (
+        config.favBandWhipsawMaxScore != null &&
+        (config.favBandWhipsawMaxScore < 0 || config.favBandWhipsawMaxScore > 100)
+      ) {
+        throw new Error("favBandWhipsawMaxScore must be in [0, 100] when set");
+      }
+      if (
+        config.favBandWhipsawMaxIntraFlips != null &&
+        !(config.favBandWhipsawMaxIntraFlips >= 1)
+      ) {
+        throw new Error("favBandWhipsawMaxIntraFlips must be >= 1 when set");
+      }
+    }
   }
   if (config.strategyId === "dip-revert") {
     // Dip-revert is single-leg directional (no hedge, no dual-FOK).
@@ -841,6 +916,85 @@ export function validateConfigCoherence(
       config.earlyConvictionOrderUsdc,
       config.earlyConvictionAskMax,
       "early-conviction",
+    );
+  }
+  if (config.strategyId === "open-entry") {
+    // Single-leg directional (no hedge, no dual-FOK).
+    config.arbAskLockOnly = false;
+    config.enableExpensiveHedge = false;
+    if (
+      !(config.openEntryLeanTrigger > 0 && config.openEntryLeanTrigger <= 0.5)
+    ) {
+      throw new Error("openEntryLeanTrigger must be in (0, 0.5]");
+    }
+    if (
+      !(
+        config.openEntryMaxElapsedSec > 0 &&
+        config.openEntryMaxElapsedSec <= 900
+      )
+    ) {
+      throw new Error("openEntryMaxElapsedSec must be in (0, 900]");
+    }
+    if (
+      !(
+        config.openEntryFairAskSumMax > 1 &&
+        config.openEntryFairAskSumMax <= 1.2
+      )
+    ) {
+      throw new Error("openEntryFairAskSumMax must be in (1, 1.2]");
+    }
+    if (config.openEntryMaxSpread < 0) {
+      throw new Error("openEntryMaxSpread must be >= 0");
+    }
+    if (!(config.openEntryOrderUsdc > 0)) {
+      throw new Error("openEntryOrderUsdc must be > 0 for open-entry");
+    }
+    if (
+      !(
+        config.openEntrySlStructFlipDist > 0 &&
+        config.openEntrySlStructFlipDist <= 1
+      )
+    ) {
+      throw new Error("openEntrySlStructFlipDist must be in (0, 1]");
+    }
+    if (
+      !(
+        config.openEntrySlStructConfirmSec >= 0 &&
+        config.openEntrySlStructConfirmSec <= 900
+      )
+    ) {
+      throw new Error("openEntrySlStructConfirmSec must be in [0, 900]");
+    }
+    if (
+      !(
+        config.openEntrySlStructDist > 0 &&
+        config.openEntrySlStructDist <= 1
+      )
+    ) {
+      throw new Error("openEntrySlStructDist must be in (0, 1]");
+    }
+    if (
+      !(
+        config.openEntrySlLateAfterSec > 0 &&
+        config.openEntrySlLateAfterSec <= 900
+      )
+    ) {
+      throw new Error("openEntrySlLateAfterSec must be in (0, 900]");
+    }
+    if (
+      !(
+        config.openEntrySlLateDist > 0 &&
+        config.openEntrySlLateDist <= config.openEntrySlStructDist
+      )
+    ) {
+      throw new Error(
+        "openEntrySlLateDist must be in (0, openEntrySlStructDist] (the late stop is the TIGHTER one)",
+      );
+    }
+    validateEngineBudget(
+      config.openEntryOrderUsdc,
+      (config.openEntryFairAskSumMax - 1) / 2 + 0.5,
+      "open-entry",
     );
   }
   const validateEdge =

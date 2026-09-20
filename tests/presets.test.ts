@@ -27,6 +27,7 @@ describe("strategy presets", () => {
       "fav-band-opt-risk",
       "flip-confirm",
       "lock-harvest",
+      "open-entry",
       "reverse",
     ]);
 
@@ -116,6 +117,10 @@ describe("strategy presets", () => {
     assert.deepEqual(
       presetsForStrategy("early-conviction").map((preset) => preset.id),
       ["early-conviction"],
+    );
+    assert.deepEqual(
+      presetsForStrategy("open-entry").map((preset) => preset.id),
+      ["open-entry"],
     );
   });
 

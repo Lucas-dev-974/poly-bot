@@ -856,17 +856,17 @@ export function validateConfigForm(
     if (form.favBandWhipsawEnabled) {
       if (form.favBandWhipsawPauseAfterLosses.trim() !== "") {
         const n = Number(form.favBandWhipsawPauseAfterLosses);
-        if (!Number.isFinite(n) || n < 1) errors.push("Whipsaw: pause après N pertes doit être ≥ 1 (ou vide = off)");
+        if (!Number.isFinite(n) || n < 1) errors.push("Whipsaw: pause apres N pertes doit etre >= 1 (ou vide = off)");
       }
       const pw = Number(form.favBandWhipsawPauseWindows);
-      if (!Number.isFinite(pw) || pw < 1) errors.push("Whipsaw: fenêtres de pause ≥ 1");
+      if (!Number.isFinite(pw) || pw < 1) errors.push("Whipsaw: fenetres de pause >= 1");
       if (form.favBandWhipsawMaxScore.trim() !== "") {
         const s = Number(form.favBandWhipsawMaxScore);
         if (!Number.isFinite(s) || s < 0 || s > 100) errors.push("Whipsaw: score max dans [0, 100] (ou vide = off)");
       }
       if (form.favBandWhipsawMaxIntraFlips.trim() !== "") {
         const f = Number(form.favBandWhipsawMaxIntraFlips);
-        if (!Number.isFinite(f) || f < 1) errors.push("Whipsaw: max flips ≥ 1 (ou vide = off)");
+        if (!Number.isFinite(f) || f < 1) errors.push("Whipsaw: max flips >= 1 (ou vide = off)");
       }
     }
   } catch (error) {

@@ -1,0 +1,263 @@
+{
+  "generatedAt": "2026-09-20T03:40:21.437Z",
+  "universe": {
+    "prefix": "btc-updown-15m",
+    "completeResolvedWindows": 767,
+    "criteria": {
+      "minTicks": 601,
+      "maxGapMs": 60000
+    },
+    "sizing": {
+      "orderUsdc": 15,
+      "maxShares": 5
+    },
+    "elapsed": [
+      200,
+      600
+    ]
+  },
+  "note": "Tick sim FOK@ask hold-to-resolve. Pause=after N losses skip next K windows then reset streak.",
+  "ranking": [
+    {
+      "label": "POCKET 0.70-0.74",
+      "trades": 665,
+      "wins": 492,
+      "losses": 173,
+      "wr": 74,
+      "pnl": 85.85,
+      "maxDd": 50.55,
+      "pnlPerDd": 1.7,
+      "band": [
+        0.7,
+        0.74
+      ],
+      "opts": {}
+    },
+    {
+      "label": "POCKET + pause3/8w",
+      "trades": 616,
+      "wins": 457,
+      "losses": 159,
+      "wr": 74.2,
+      "pnl": 85.25,
+      "maxDd": 40.75,
+      "pnlPerDd": 2.09,
+      "band": [
+        0.7,
+        0.74
+      ],
+      "opts": {
+        "pauseAfter": 3,
+        "pauseWindows": 8
+      }
+    },
+    {
+      "label": "LIVE + pause3/4w",
+      "trades": 631,
+      "wins": 432,
+      "losses": 199,
+      "wr": 68.5,
+      "pnl": 81.35,
+      "maxDd": 35.4,
+      "pnlPerDd": 2.3,
+      "band": [
+        0.6,
+        0.74
+      ],
+      "opts": {
+        "pauseAfter": 3,
+        "pauseWindows": 4
+      }
+    },
+    {
+      "label": "POCKET + pause3/4w",
+      "trades": 639,
+      "wins": 472,
+      "losses": 167,
+      "wr": 73.9,
+      "pnl": 78.05,
+      "maxDd": 46.75,
+      "pnlPerDd": 1.67,
+      "band": [
+        0.7,
+        0.74
+      ],
+      "opts": {
+        "pauseAfter": 3,
+        "pauseWindows": 4
+      }
+    },
+    {
+      "label": "OPT + pause3/8w",
+      "trades": 685,
+      "wins": 519,
+      "losses": 166,
+      "wr": 75.8,
+      "pnl": 76.6,
+      "maxDd": 49.65,
+      "pnlPerDd": 1.54,
+      "band": [
+        0.7,
+        0.85
+      ],
+      "opts": {
+        "pauseAfter": 3,
+        "pauseWindows": 8
+      }
+    },
+    {
+      "label": "OPT 0.70-0.85",
+      "trades": 739,
+      "wins": 558,
+      "losses": 181,
+      "wr": 75.5,
+      "pnl": 74.75,
+      "maxDd": 58.65,
+      "pnlPerDd": 1.27,
+      "band": [
+        0.7,
+        0.85
+      ],
+      "opts": {}
+    },
+    {
+      "label": "LIVE 0.60-0.74",
+      "trades": 688,
+      "wins": 468,
+      "losses": 220,
+      "wr": 68,
+      "pnl": 74,
+      "maxDd": 42.6,
+      "pnlPerDd": 1.74,
+      "band": [
+        0.6,
+        0.74
+      ],
+      "opts": {}
+    },
+    {
+      "label": "OPT + pause3/4w",
+      "trades": 711,
+      "wins": 536,
+      "losses": 175,
+      "wr": 75.4,
+      "pnl": 65.95,
+      "maxDd": 55.75,
+      "pnlPerDd": 1.18,
+      "band": [
+        0.7,
+        0.85
+      ],
+      "opts": {
+        "pauseAfter": 3,
+        "pauseWindows": 4
+      }
+    },
+    {
+      "label": "OPT + pause3/4 + score<60",
+      "trades": 436,
+      "wins": 330,
+      "losses": 106,
+      "wr": 75.7,
+      "pnl": 33.1,
+      "maxDd": 53.7,
+      "pnlPerDd": 0.62,
+      "band": [
+        0.7,
+        0.85
+      ],
+      "opts": {
+        "pauseAfter": 3,
+        "pauseWindows": 4,
+        "maxScore": 60
+      }
+    },
+    {
+      "label": "OPT + score<50",
+      "trades": 275,
+      "wins": 211,
+      "losses": 64,
+      "wr": 76.7,
+      "pnl": 28.65,
+      "maxDd": 34.15,
+      "pnlPerDd": 0.84,
+      "band": [
+        0.7,
+        0.85
+      ],
+      "opts": {
+        "maxScore": 50
+      }
+    },
+    {
+      "label": "POCKET + score<50",
+      "trades": 225,
+      "wins": 166,
+      "losses": 59,
+      "wr": 73.8,
+      "pnl": 24.25,
+      "maxDd": 30.75,
+      "pnlPerDd": 0.79,
+      "band": [
+        0.7,
+        0.74
+      ],
+      "opts": {
+        "maxScore": 50
+      }
+    },
+    {
+      "label": "OPT + flips<2",
+      "trades": 265,
+      "wins": 203,
+      "losses": 62,
+      "wr": 76.6,
+      "pnl": 18.45,
+      "maxDd": 36.35,
+      "pnlPerDd": 0.51,
+      "band": [
+        0.7,
+        0.85
+      ],
+      "opts": {
+        "maxFlips": 2
+      }
+    },
+    {
+      "label": "POCKET + flips<2",
+      "trades": 214,
+      "wins": 157,
+      "losses": 57,
+      "wr": 73.4,
+      "pnl": 16.15,
+      "maxDd": 30.45,
+      "pnlPerDd": 0.53,
+      "band": [
+        0.7,
+        0.74
+      ],
+      "opts": {
+        "maxFlips": 2
+      }
+    },
+    {
+      "label": "POCKET + pause3/4 + flips<2",
+      "trades": 211,
+      "wins": 154,
+      "losses": 57,
+      "wr": 73,
+      "pnl": 12.15,
+      "maxDd": 33.1,
+      "pnlPerDd": 0.37,
+      "band": [
+        0.7,
+        0.74
+      ],
+      "opts": {
+        "pauseAfter": 3,
+        "pauseWindows": 4,
+        "maxFlips": 2
+      }
+    }
+  ]
+}

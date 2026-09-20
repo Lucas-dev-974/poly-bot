@@ -536,3 +536,94 @@ describe("fav-band hedge-inverse end-to-end (backtest runner)", () => {
     assert.equal(result.unresolvedWindows, 0);
   });
 });
+
+describe("fav-band whipsaw filter", () => {
+  it("skips entry when max intra flips exceeded", () => {
+    const strategy = new FavBandStrategy();
+    const config = testConfig({
+      strategyId: "fav-band",
+      enableExpensiveHedge: false,
+      favBandOrderUsdc: 15,
+      favBandAskMin: 0.7,
+      favBandAskMax: 0.85,
+      favBandMinElapsedSec: 0,
+      maxSharesPerOrder: 40,
+      favBandWhipsawEnabled: true,
+      favBandWhipsawPauseAfterLosses: null,
+      favBandWhipsawMaxScore: null,
+      favBandWhipsawMaxIntraFlips: 2,
+    });
+    const event = testEvent(1_800_000_000);
+    const nowMs = (event.windowStart + 250) * 1000;
+    const tracker = new TradeTracker();
+    strategy.findOpportunities({
+      config,
+      tracker,
+      event,
+      books: books(0.75, 0.26, 100),
+      nowMs,
+    });
+    strategy.findOpportunities({
+      config,
+      tracker,
+      event,
+      books: books(0.26, 0.75, 100),
+      nowMs: nowMs + 1000,
+    });
+    strategy.findOpportunities({
+      config,
+      tracker,
+      event,
+      books: books(0.75, 0.26, 100),
+      nowMs: nowMs + 2000,
+    });
+    const opps = strategy.findOpportunities({
+      config,
+      tracker,
+      event,
+      books: books(0.75, 0.26, 100),
+      nowMs: nowMs + 3000,
+    });
+    assert.equal(opps.length, 0);
+  });
+
+  it("allows entry when whipsaw disabled despite flips", () => {
+    const strategy = new FavBandStrategy();
+    const config = testConfig({
+      strategyId: "fav-band",
+      enableExpensiveHedge: false,
+      favBandOrderUsdc: 15,
+      favBandAskMin: 0.7,
+      favBandAskMax: 0.85,
+      favBandMinElapsedSec: 0,
+      maxSharesPerOrder: 40,
+      favBandWhipsawEnabled: false,
+      favBandWhipsawMaxIntraFlips: 1,
+    });
+    const event = testEvent(1_800_000_100);
+    const nowMs = (event.windowStart + 250) * 1000;
+    const tracker = new TradeTracker();
+    strategy.findOpportunities({
+      config,
+      tracker,
+      event,
+      books: books(0.75, 0.26, 100),
+      nowMs,
+    });
+    strategy.findOpportunities({
+      config,
+      tracker,
+      event,
+      books: books(0.26, 0.75, 100),
+      nowMs: nowMs + 1000,
+    });
+    const opps = strategy.findOpportunities({
+      config,
+      tracker,
+      event,
+      books: books(0.75, 0.26, 100),
+      nowMs: nowMs + 2000,
+    });
+    assert.ok(opps.length >= 1);
+  });
+});

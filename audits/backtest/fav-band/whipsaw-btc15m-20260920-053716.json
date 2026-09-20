@@ -1,0 +1,247 @@
+{
+  "generatedAt": "2026-09-20T03:38:08.200Z",
+  "universe": {
+    "prefix": "btc-updown-15m",
+    "completeResolvedWindows": 767,
+    "criteria": {
+      "minTicks": 601,
+      "maxGapMs": 60000
+    },
+    "sizing": {
+      "orderUsdc": 15,
+      "maxShares": 5
+    },
+    "elapsed": [
+      200,
+      600
+    ],
+    "note": "Offline tick sim (FOK at ask, hold to resolve). Whipsaw score = flips + askRange + priorWinnerFlipRate + lossStreak. Not the official runBacktest path (no capital/reject model) but same universe/gates."
+  },
+  "ranking": [
+    {
+      "label": "POCKET 0.70-0.74 (no whipsaw)",
+      "trades": 665,
+      "wins": 492,
+      "losses": 173,
+      "wr": 74,
+      "pnl": 85.85,
+      "maxDd": 50.55,
+      "pnlPerDd": 1.7,
+      "avgScore": 54.3,
+      "band": [
+        0.7,
+        0.74
+      ]
+    },
+    {
+      "label": "OPT band 0.70-0.85 (no whipsaw)",
+      "trades": 739,
+      "wins": 558,
+      "losses": 181,
+      "wr": 75.5,
+      "pnl": 74.75,
+      "maxDd": 58.65,
+      "pnlPerDd": 1.27,
+      "avgScore": 53.5,
+      "band": [
+        0.7,
+        0.85
+      ]
+    },
+    {
+      "label": "LIVE band 0.60-0.74 (no whipsaw)",
+      "trades": 688,
+      "wins": 468,
+      "losses": 220,
+      "wr": 68,
+      "pnl": 74,
+      "maxDd": 42.6,
+      "pnlPerDd": 1.74,
+      "avgScore": 51.1,
+      "band": [
+        0.6,
+        0.74
+      ]
+    },
+    {
+      "label": "LIVE + skip flips>=2",
+      "trades": 249,
+      "wins": 180,
+      "losses": 69,
+      "wr": 72.3,
+      "pnl": 54.45,
+      "maxDd": 28.45,
+      "pnlPerDd": 1.91,
+      "avgScore": 36.1,
+      "band": [
+        0.6,
+        0.74
+      ]
+    },
+    {
+      "label": "LIVE + skip score>=60",
+      "trades": 470,
+      "wins": 321,
+      "losses": 149,
+      "wr": 68.3,
+      "pnl": 53.5,
+      "maxDd": 44.95,
+      "pnlPerDd": 1.19,
+      "avgScore": 43.9,
+      "band": [
+        0.6,
+        0.74
+      ]
+    },
+    {
+      "label": "LIVE + skip score>=50",
+      "trades": 298,
+      "wins": 208,
+      "losses": 90,
+      "wr": 69.8,
+      "pnl": 49,
+      "maxDd": 32.3,
+      "pnlPerDd": 1.52,
+      "avgScore": 37.1,
+      "band": [
+        0.6,
+        0.74
+      ]
+    },
+    {
+      "label": "OPT + skip score>=60",
+      "trades": 447,
+      "wins": 340,
+      "losses": 107,
+      "wr": 76.1,
+      "pnl": 41.9,
+      "maxDd": 42.45,
+      "pnlPerDd": 0.99,
+      "avgScore": 43.8,
+      "band": [
+        0.7,
+        0.85
+      ]
+    },
+    {
+      "label": "POCKET + pause streak>=3",
+      "trades": 71,
+      "wins": 57,
+      "losses": 14,
+      "wr": 80.3,
+      "pnl": 31.3,
+      "maxDd": 14.9,
+      "pnlPerDd": 2.1,
+      "avgScore": 56.3,
+      "band": [
+        0.7,
+        0.74
+      ]
+    },
+    {
+      "label": "OPT + pause streak>=3",
+      "trades": 78,
+      "wins": 63,
+      "losses": 15,
+      "wr": 80.8,
+      "pnl": 29.85,
+      "maxDd": 15.55,
+      "pnlPerDd": 1.92,
+      "avgScore": 55.4,
+      "band": [
+        0.7,
+        0.85
+      ]
+    },
+    {
+      "label": "OPT + skip score>=50",
+      "trades": 275,
+      "wins": 211,
+      "losses": 64,
+      "wr": 76.7,
+      "pnl": 28.65,
+      "maxDd": 34.15,
+      "pnlPerDd": 0.84,
+      "avgScore": 36.7,
+      "band": [
+        0.7,
+        0.85
+      ]
+    },
+    {
+      "label": "OPT + skip flips>=2",
+      "trades": 265,
+      "wins": 203,
+      "losses": 62,
+      "wr": 76.6,
+      "pnl": 18.45,
+      "maxDd": 36.35,
+      "pnlPerDd": 0.51,
+      "avgScore": 37.1,
+      "band": [
+        0.7,
+        0.85
+      ]
+    },
+    {
+      "label": "POCKET + flips<2",
+      "trades": 214,
+      "wins": 157,
+      "losses": 57,
+      "wr": 73.4,
+      "pnl": 16.15,
+      "maxDd": 30.45,
+      "pnlPerDd": 0.53,
+      "avgScore": 37.1,
+      "band": [
+        0.7,
+        0.74
+      ]
+    },
+    {
+      "label": "OPT + flips<2 + streak<3",
+      "trades": 113,
+      "wins": 88,
+      "losses": 25,
+      "wr": 77.9,
+      "pnl": 16,
+      "maxDd": 22.6,
+      "pnlPerDd": 0.71,
+      "avgScore": 37.2,
+      "band": [
+        0.7,
+        0.85
+      ]
+    },
+    {
+      "label": "LIVE + pause streak>=3",
+      "trades": 72,
+      "wins": 50,
+      "losses": 22,
+      "wr": 69.4,
+      "pnl": 14.85,
+      "maxDd": 13.05,
+      "pnlPerDd": 1.14,
+      "avgScore": 52.4,
+      "band": [
+        0.6,
+        0.74
+      ]
+    },
+    {
+      "label": "OPT + score<50 + streak<3",
+      "trades": 59,
+      "wins": 43,
+      "losses": 16,
+      "wr": 72.9,
+      "pnl": -4.5,
+      "maxDd": 19.65,
+      "pnlPerDd": -0.23,
+      "avgScore": 36.7,
+      "band": [
+        0.7,
+        0.85
+      ]
+    }
+  ]
+}

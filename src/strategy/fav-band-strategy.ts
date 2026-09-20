@@ -2,6 +2,11 @@ import type { TradeOpportunity } from "../types.js";
 import { computeSize, MIN_CLOB_SHARES } from "../utils/prices.js";
 import { appendOpportunity, pickEdgeToken } from "./edge-lead-strategy.js";
 import { round2 } from "./predicates.js";
+import {
+  computeWhipsawScore,
+  favBandLossStreak,
+  priorWinnerFlipRate,
+} from "./whipsaw.js";
 import type {
   CheapOrderAction,
   DefendContext,
@@ -14,26 +19,23 @@ import type {
   TradingStrategy,
 } from "./trading-strategy.js";
 
+type WindowBookStats = {
+  slug: string;
+  windowStart: number;
+  lastFavIdx: number | null;
+  flips: number;
+  askMin: number;
+  askMax: number;
+  samples: number;
+};
+
+/** Nominal BTC/ETH updown window length used to convert "pause windows" to ms. */
+const WHIPSAW_PAUSE_WINDOW_MS = 15 * 60 * 1000;
+
 /**
- * Fav-band — NEW directional strategy (not ask-lock, not edge-lead).
- *
- * Empirical edge on BTC 15m: after ~200s into the window, the market's
- * favorite (higher ask) in [favBandAskMin, favBandAskMax] (default 0.70–0.85)
- * wins often enough that buying the ask and holding to resolution is +EV,
- * while higher "certainty" favorites (0.90+) are overpriced.
- *
- * Single-leg FOK BUY on the favorite. Hold to resolve.
- * Optional hedge-inverse (favBandInverseEnabled, default off): once the
- * favorite leg is FILLED, post a resting GTC BUY at favBandInverseAskMax on
- * the OPPOSITE token. The order fills INCREMENTALLY while the inverse ask
- * dips to/below the limit; partial fills persist and the order is never
- * cancelled (a flip only stops NEW fills — the limit never crosses back up).
- * Sizing = ratio × filled favorite shares (e.g. 2 = double the favorite
- * shares), capped by budget and maxSharesPerOrder. The leg rides the
- * cheap-GTC pipeline; it can only fill while the favorite stays above
- * 1 − limit, i.e. in the states the band entry is designed for.
- * Distinct from edge-lead (no confirm buffer, no cheap follow-up) and from
- * ask-lock (no dual-FOK arb).
+ * Fav-band — directional FOK buy of the favorite in a calibrated ask band
+ * after min elapsed; hold to resolve. Optional inverse GTC + optional whipsaw
+ * filter (pause after losses / max flips / max score).
  */
 export class FavBandStrategy implements TradingStrategy {
   readonly id = "fav-band" as const;
@@ -41,9 +43,17 @@ export class FavBandStrategy implements TradingStrategy {
     "Fav-band: FOK buy favorite when ask in calibrated mid-band after min elapsed; hold to resolve (optional resting inverse GTC)";
   readonly leadsWithEdge = false;
 
+  private bookStats: WindowBookStats | null = null;
+  private recentWinners: number[] = [];
+  private lastResolvedSeen = 0;
+  /** Wall-clock pause end (avoids multi-market / band-gate pause bugs). */
+  private pauseUntilMs = 0;
+  private prevLossStreak = 0;
+
   findOpportunities(ctx: StrategyContext): TradeOpportunity[] {
     const { config, tracker, event, books } = ctx;
     const opportunities: TradeOpportunity[] = [];
+    const nowMs = ctx.nowMs ?? Date.now();
 
     if (books.filter((b) => b.bestAsk !== null).length < 2) {
       return opportunities;
@@ -55,19 +65,21 @@ export class FavBandStrategy implements TradingStrategy {
     const pairId = `${event.slug}:${event.windowEnd}`;
     const favFilled = tracker.getFilledCheapSizeForPair(pairId);
 
-    // Hedge-inverse gate FIRST: once the favorite leg is filled, the entry
-    // band/elapsed gates no longer apply — the inverse GTC only looks at the
-    // opposite token (the favorite can have walked out of the band after the
-    // fill; the resting order then simply keeps working or never fills).
     if (favFilled > 0) {
-      // Anti-restack: a posted/working inverse GTC (or any posted cheap leg)
-      // on this pair means the order is already on the book — emitting again
-      // would stack a second order each tick (tradeKey includes the price,
-      // so a stale key never dedupes it).
       if (tracker.getPostedOrdersForPair(pairId, "cheap").length === 0) {
         this.appendInverse(ctx, opportunities, fav, pairId, favFilled);
       }
       return opportunities;
+    }
+
+    // Whipsaw book/resolution sync runs even outside the ask band so pause
+    // and flip stats stay coherent across polls and markets.
+    this.syncResolvedWinners(tracker.getResolvedPositions());
+    const stats = this.updateBookStats(event.slug, event.windowStart, fav);
+
+    if (config.favBandWhipsawEnabled) {
+      const lossStreak = favBandLossStreak(tracker.getResolvedPositions());
+      this.maybeTriggerPause(config, lossStreak, nowMs);
     }
 
     const ask = fav.bestAsk;
@@ -75,7 +87,6 @@ export class FavBandStrategy implements TradingStrategy {
       return opportunities;
     }
 
-    const nowMs = ctx.nowMs ?? Date.now();
     const elapsedSec = nowMs / 1000 - event.windowStart;
     if (elapsedSec < config.favBandMinElapsedSec) {
       return opportunities;
@@ -87,11 +98,37 @@ export class FavBandStrategy implements TradingStrategy {
       return opportunities;
     }
 
-    // One directional entry per window: no posted/working cheap leg on this
-    // pair (avoids stacking when the ask walks inside the band and minting
-    // new tradeKeys per price).
     if (tracker.countLegsByKind(pairId, "cheap") > 0) {
       return opportunities;
+    }
+
+    if (config.favBandWhipsawEnabled) {
+      if (nowMs < this.pauseUntilMs) {
+        return opportunities;
+      }
+
+      const lossStreak = favBandLossStreak(tracker.getResolvedPositions());
+      const askRange =
+        stats.samples > 0 ? stats.askMax - stats.askMin : null;
+      const score = computeWhipsawScore({
+        intraFlips: stats.flips,
+        askRange,
+        priorWinnerFlipRate: priorWinnerFlipRate(this.recentWinners),
+        lossStreak,
+      });
+
+      if (
+        config.favBandWhipsawMaxIntraFlips != null &&
+        stats.flips >= config.favBandWhipsawMaxIntraFlips
+      ) {
+        return opportunities;
+      }
+      if (
+        config.favBandWhipsawMaxScore != null &&
+        score >= config.favBandWhipsawMaxScore
+      ) {
+        return opportunities;
+      }
     }
 
     const size = computeSize(
@@ -101,14 +138,11 @@ export class FavBandStrategy implements TradingStrategy {
     );
     if (size === null || size < MIN_CLOB_SHARES) return opportunities;
 
-    // Depth preflight: need known size on the ask.
     if (fav.bestAskSize != null && fav.bestAskSize < size * 0.8) {
       return opportunities;
     }
 
     const before = opportunities.length;
-    // kind "cheap" = single BUY leg in the bot's order pipeline (not underdog).
-    // orderType FOK lifts the live ask. Must stay independent of arbAskLockOnly.
     appendOpportunity(
       tracker,
       opportunities,
@@ -119,21 +153,91 @@ export class FavBandStrategy implements TradingStrategy {
       size,
       config.maxOpenPositionsPerSide,
     );
-    // Force FOK take of the live ask (no resting maker below).
     for (let i = before; i < opportunities.length; i++) {
       opportunities[i] = { ...opportunities[i], orderType: "FOK" };
     }
     return opportunities;
   }
 
-  /**
-   * Hedge-inverse leg: a resting GTC BUY at the limit on the OPPOSITE token,
-   * sized at ratio × the filled favorite shares. Emitted as a cheap-kind GTC
-   * so it flows through the shared bot/backtest pipeline (postResting /
-   * matchResting, partial fills persist) without touching the arb hedge
-   * gates. Posted WITHOUT any marketable take-ask: the ask must come DOWN to
-   * the limit for a maker fill (incremental), never chased.
-   */
+  private updateBookStats(
+    slug: string,
+    windowStart: number,
+    fav: NonNullable<ReturnType<typeof pickEdgeToken>>,
+  ): WindowBookStats {
+    const favIdx = fav.outcomeIndex;
+    const ask = fav.bestAsk as number;
+    if (
+      !this.bookStats ||
+      this.bookStats.slug !== slug ||
+      this.bookStats.windowStart !== windowStart
+    ) {
+      this.bookStats = {
+        slug,
+        windowStart,
+        lastFavIdx: favIdx,
+        flips: 0,
+        askMin: ask,
+        askMax: ask,
+        samples: 1,
+      };
+      return this.bookStats;
+    }
+    const s = this.bookStats;
+    if (s.lastFavIdx != null && s.lastFavIdx !== favIdx) {
+      s.flips += 1;
+    }
+    s.lastFavIdx = favIdx;
+    s.askMin = Math.min(s.askMin, ask);
+    s.askMax = Math.max(s.askMax, ask);
+    s.samples += 1;
+    return s;
+  }
+
+  private syncResolvedWinners(
+    resolved: ReturnType<StrategyContext["tracker"]["getResolvedPositions"]>,
+  ): void {
+    const fav = resolved
+      .filter((p) => p.strategyId === "fav-band")
+      .filter((p) => p.resolvedAt != null)
+      .slice()
+      .sort((a, b) => (a.resolvedAt ?? 0) - (b.resolvedAt ?? 0));
+    for (const p of fav) {
+      const ts = p.resolvedAt ?? 0;
+      if (ts <= this.lastResolvedSeen) continue;
+      this.lastResolvedSeen = ts;
+      const winner =
+        p.status === "lost"
+          ? p.outcomeIndex === 0
+            ? 1
+            : 0
+          : p.outcomeIndex;
+      this.recentWinners.push(winner);
+      if (this.recentWinners.length > 6) this.recentWinners.shift();
+    }
+  }
+
+  private maybeTriggerPause(
+    config: StrategyContext["config"],
+    lossStreak: number,
+    nowMs: number,
+  ): void {
+    const after = config.favBandWhipsawPauseAfterLosses;
+    if (after == null) {
+      this.prevLossStreak = lossStreak;
+      return;
+    }
+    // Already in an active pause: do not re-arm on the same streak plateau.
+    if (nowMs < this.pauseUntilMs) {
+      this.prevLossStreak = lossStreak;
+      return;
+    }
+    if (lossStreak >= after && lossStreak > this.prevLossStreak) {
+      const windows = Math.max(1, config.favBandWhipsawPauseWindows);
+      this.pauseUntilMs = nowMs + windows * WHIPSAW_PAUSE_WINDOW_MS;
+    }
+    this.prevLossStreak = lossStreak;
+  }
+
   private appendInverse(
     ctx: StrategyContext,
     opportunities: TradeOpportunity[],
@@ -149,10 +253,6 @@ export class FavBandStrategy implements TradingStrategy {
     );
     if (!inverse || inverse.bestAsk === null) return;
 
-    // Ratio sizing on the REAL filled favorite shares, capped by budget and
-    // maxSharesPerOrder; the same computeSize floors as the entry leg apply
-    // (MIN_CLOB_SHARES / min notional). Sized on the LIMIT price (a maker
-    // order never pays more than its limit).
     const budgetCapSize = computeSize(
       config.favBandInverseOrderUsdc,
       config.favBandInverseAskMax,
@@ -174,14 +274,9 @@ export class FavBandStrategy implements TradingStrategy {
       size,
       config.maxOpenPositionsPerSide,
     );
-    // Deliberately NO orderType override: default GTC resting maker at the
-    // limit, incremental fills via matchResting (backtest) / pollOrderFills
-    // (live). The order is never cancelled: cheapOrderAction returns "keep".
   }
 
   cheapOrderAction(_ctx: RestingCheapContext): CheapOrderAction {
-    // Inverse GTC rests untouched: no take-ask chase, no cancel. Fills are
-    // incremental; the window close drops it with the pair.
     return "keep";
   }
 

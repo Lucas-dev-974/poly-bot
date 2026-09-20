@@ -1,0 +1,53 @@
+{
+  "note": "Offline probe — live band vs tested preset, current universe",
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 887,
+  "rows": [
+    {
+      "label": "LIVE band-060-074_min200_max600 (sizing live 5sh/15exp)",
+      "ms": 87280,
+      "pnl": 90.05,
+      "capitalStart": 75,
+      "fills": 797,
+      "rejects": 15,
+      "windows": 887,
+      "trades": 797,
+      "wins": 543,
+      "losses": 254,
+      "wr": 68.1,
+      "maxDd": 42.65
+    },
+    {
+      "label": "LIVE band + sizing grid (40sh/40exp)",
+      "ms": 65296,
+      "pnl": 399.4,
+      "capitalStart": 75,
+      "fills": 795,
+      "rejects": 30,
+      "windows": 887,
+      "trades": 795,
+      "wins": 542,
+      "losses": 253,
+      "wr": 68.2,
+      "maxDd": 192.23
+    },
+    {
+      "label": "TESTED preset fav-band-opt (070-085, min200, max600)",
+      "ms": 56592,
+      "pnl": 467.93,
+      "capitalStart": 75,
+      "fills": 856,
+      "rejects": 4,
+      "windows": 887,
+      "trades": 856,
+      "wins": 652,
+      "losses": 204,
+      "wr": 76.2,
+      "maxDd": 237.67
+    }
+  ]
+}

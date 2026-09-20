@@ -201,6 +201,8 @@ export async function runBacktest(params: {
 
   const unresolvedWindows = windowResults.filter((w) => w.unresolved).length;
   const realized = tracker.getRealizedPnl();
+  const wins = tracker.getCumulativeWins();
+  const losses = tracker.getCumulativeLosses();
 
   return {
     runId,
@@ -215,6 +217,9 @@ export async function runBacktest(params: {
     rejectCount: trades.filter((t) => !t.filled).length,
     coveredPairs: tracker.getCoveredCount(),
     uncoveredPairs: tracker.getUncoveredCount(),
+    wins,
+    losses,
+    winRate: wins + losses > 0 ? round2(wins / (wins + losses)) : null,
     windows: windowResults,
   };
 }

@@ -22,6 +22,11 @@ export function ConfigBar(props: { onConfigure?: () => void }): JSX.Element {
               <>
                 Dip <b>{c().dipRevertBandMin}–{c().dipRevertBandMax}</b> · {c().dipRevertOrderUsdc} USDC
               </>
+            ) : c().strategyId === "open-entry" ? (
+              <>
+                Lean <b>{c().openEntryLeanTrigger}</b> ≤ {c().openEntryMaxElapsedSec}s · fair ≤ {c().openEntryFairAskSumMax} · {c().openEntryOrderUsdc} USDC
+                {c().openEntrySlEnabled === false ? " · SL off" : " · SL on"}
+              </>
             ) : c().strategyId === "barbell" ? (
               <>
                 Cheap <b>{c().cheapBuyMin}–{c().cheapBuyMax}</b> · {c().barbellCheapOrderUsdc} USDC
@@ -44,13 +49,15 @@ export function ConfigBar(props: { onConfigure?: () => void }): JSX.Element {
             Moteur <b>{c().strategyId}</b>
             {c().strategyId === "edge-lead"
               ? ` · edge ${c().edgeBandMin}–${c().edgeBandMax}`
-              : c().strategyId === "barbell"
-                ? ` · ratio ${c().barbellHedgeRatio ?? 0.5}`
-                : c().strategyId === "reverse"
-                  ? " · grilles maker"
-                  : c().strategyId.startsWith("custom:")
-                    ? ""
-                    : ` · lock ${c().pairLockMax}`}
+              : c().strategyId === "open-entry"
+                ? " · SL dual-scale ou hold"
+                : c().strategyId === "barbell"
+                  ? ` · ratio ${c().barbellHedgeRatio ?? 0.5}`
+                  : c().strategyId === "reverse"
+                    ? " · grilles maker"
+                    : c().strategyId.startsWith("custom:")
+                      ? ""
+                      : ` · lock ${c().pairLockMax}`}
           </span>
           <Show when={c().strategyId !== "edge-lead"}>
             <span>

@@ -46,6 +46,8 @@ import {
   FLIPCONF_LIFE_EDGES,
   EARLYCONV_LIFE_NODES,
   EARLYCONV_LIFE_EDGES,
+  OPENENTRY_LIFE_NODES,
+  OPENENTRY_LIFE_EDGES,
 } from "./data";
 
 function EngineSelector(props: {
@@ -69,6 +71,9 @@ function EngineSelector(props: {
       <GuidePill active={props.engine() === "dip-revert"} onClick={() => props.setEngine("dip-revert")}>
         Dip-revert — favori chuté
       </GuidePill>
+      <GuidePill active={props.engine() === "open-entry"} onClick={() => props.setEngine("open-entry")}>
+        Open-entry — favori émergent
+      </GuidePill>
     </GuideRow>
   );
 }
@@ -89,7 +94,9 @@ function LifecycleCard(props: { engine: EngineId }): JSX.Element {
                 ? "Antiflip-revert"
                 : props.engine === "flip-confirm"
                   ? "Flip-confirm"
-                  : "Early-conviction";
+                  : props.engine === "open-entry"
+                    ? "Open-entry"
+                    : "Early-conviction";
 
   return (
     <GuideCard title={`Cycle de vie — ${title()}`}>
@@ -212,6 +219,20 @@ function LifecycleCard(props: { engine: EngineId }): JSX.Element {
             Le plus simple : aucun état de flip à tracker. Si le favori cote déjà
             ≥ 0.60 dans les 45 premières secondes, on l&apos;achète immédiatement.
             Ne pas baisser le seuil à 0.55 : le même achat à 0.55 est en perte.
+          </p>
+        </Show>
+        <Show when={props.engine === "open-entry"}>
+          <LifecycleDiagram
+            nodes={OPENENTRY_LIFE_NODES}
+            edges={OPENENTRY_LIFE_EDGES}
+            markerId="life-arrow-openentry"
+            ariaLabel="Cycle de vie d'une position open-entry"
+          />
+          <p class="guide-muted guide-small">
+            Pas d&apos;inclinaison à t=0 (marché fair) : l&apos;edge est le favori qui
+            ÉMERGE. La fair-ness d&apos;ouverture est mémorisée au premier tick
+            deux-côtés ; les SL à double échelle sont activables/désactivables
+            (openEntrySlEnabled) — hold intégral sinon.
           </p>
         </Show>
       </GuideStack>
@@ -735,6 +756,70 @@ function EarlyConvictionStory(): JSX.Element {
   );
 }
 
+function OpenEntryStory(): JSX.Element {
+  return (
+    <GuideStack>
+      <GuideCallout tone={ENGINE_META["open-entry"].tone} title={ENGINE_META["open-entry"].label}>
+        <p>{ENGINE_META["open-entry"].subtitle}</p>
+        <p class="guide-muted guide-small" style={{ "margin-top": "8px" }}>
+          <strong>Ordre :</strong> {ENGINE_META["open-entry"].order} ·{" "}
+          <strong>Risque :</strong> {ENGINE_META["open-entry"].risk}
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">L'information n'est pas dans la première seconde</h3>
+      <p>
+        Sondez d'abord : au premier tick (0.5 s en médiane) le carnet est{" "}
+        <strong>fair</strong> — la somme des deux asks vaut ≈ 1.01, et l'écart
+        up/down n'existe quasiment jamais (aucune occurrence de lean ≥ 0.25).
+        L'entrée « dès la première seconde » n'a donc rien à lire. Mais le
+        marché <strong>se penche vite</strong> : un favori mène de 0.10 à
+        p50 6 secondes. Open-entry achète ce favori <strong>émergent</strong> —
+        le premier tick où il mène de 0.15, dans les 300 premières secondes
+        d'une ouverture fair (askSum ≤ 1.02 mémorisé au premier tick deux-côtés).
+      </p>
+
+      <h3 class="guide-h3">Une échelle de stop, pas un TP</h3>
+      <p>
+        C'est le seul moteur du guide avec une <strong>sortie défensive à double
+        échelle</strong> : tôt dans la fenêtre, la thèse n'est cassée que par un
+        changement <strong>structurel</strong> (l'autre billet mène de 0.20 depuis
+        20 s <em>et</em> le prix tenu a perdu 0.10) ; tard (après 300 s), un petit
+        dégât (0.06) suffit — la thèse a eu le temps de se vérifier. Sinon, hold
+        jusqu'à la résolution. Le take-profit pur reste mort ici (4ᵉ audit du
+        repo qui le confirme).
+      </p>
+
+      <GuideCallout tone="warning" title="Volatilité vs espérance">
+        <p>
+          Sur le runner officiel (830 fenêtres), le hold intégral bat les SL en
+          espérance ($365 vs $330) mais perd en volatilité (WR 63 % vs 35 %,
+          pertes par trade lissées par la coupe). Les SL ne se justifient que si
+          un PnL régulier compte plus que la moyenne — d'où le switch
+          openEntrySlEnabled. Et une asymétrie à retenir : les mêmes SL
+          <strong> dégradent</strong> early-conviction ($361 vs $437) — ils ne
+          sont validés QUE pour cette entrée émergente, moins chère et plus tôt.
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">À la fin des 15 minutes</h3>
+      <GuideTable
+        headers={["Scénario", "Résultat"]}
+        rows={RESOLUTION_ROWS["open-entry"]}
+        rowTone={RESOLUTION_ROWS["open-entry"].map((_, i) => (i === 0 ? "success" : i === 1 ? "info" : "danger"))}
+      />
+
+      <GuideDetails title="Les étapes — Open-entry" defaultOpen>
+        <GuideStack gap={8}>
+          <For each={BOT_STEPS["open-entry"]}>
+            {(step, i) => <p>{i() + 1}. {step}</p>}
+          </For>
+        </GuideStack>
+      </GuideDetails>
+    </GuideStack>
+  );
+}
+
 export function StoryTab(): JSX.Element {
   const [engine, setEngine] = createSignal<EngineId>("arb");
   const [phase, setPhase] = createSignal<PhaseId>("mid");
@@ -789,10 +874,13 @@ export function StoryTab(): JSX.Element {
       <Show when={engine() === "early-conviction"}>
         <EarlyConvictionStory />
       </Show>
+      <Show when={engine() === "open-entry"}>
+        <OpenEntryStory />
+      </Show>
 
-      <GuideDetails title="Comparer les cinq moteurs">
+      <GuideDetails title="Comparer les moteurs">
         <GuideTable
-          headers={["Règle", "Arb", "Barbell", "Edge-lead", "Reverse", "Dip-revert"]}
+          headers={["Règle", "Arb", "Barbell", "Edge-lead", "Reverse", "Dip-revert", "Antiflip", "Flip-confirm", "Early-conviction", "Open-entry"]}
           rows={STRATEGY_COMPARE_ROWS}
           rowTone={STRATEGY_COMPARE_ROWS.map((_, i) =>
             i === 0 || i === 2 ? "info" : "neutral",

@@ -17,6 +17,7 @@
 | **flip-confirm** (new) | 393 fenêtres | entrée [120,180]s post-flip, nouveau fav 0.55–0.65 | **+$389** | +14 % | WR 66.5 %, t-stat 2.4 — retournement médian confirmé |
 | **early-conviction** (new) | 393 fenêtres | fav ≥ 0.60 dans les 45 premières s | **+$330** | +10 % | WR 67.6 %, t-stat 1.9 — conviction immédiate |
 | **dip-guard** (new, 2026-09-16) | 494 fenêtres | INVERSÉ : favori quand underdog 0.35–0.40, TP 0.85 | **+$434** | +6.0 % notional | WR 75 %, split-half positif — sens user (underdog) mort, miroir positif |
+| **open-entry** (implémenté, 2026-09-19) | 724 fenêtres / runner 830 | lean ≥0.15 ≤300s, fair open ≤1.02 ; SL dual-scale (switch) | hold **$365** / SL $330 (runner officiel) | +6 % notional (sim) | hold bat les SL à sizing L1 ; SL = volatilité ↓. Rapport recherche + implémentation dans `open-entry/` |
 | **dip-revert** | 321–326 fenêtres | `maxElapsedSec=420` | **+$305** | +61 % | TP optionnel dégrade (off par défaut) |
 | **fav-band** | 301 fenêtres | band 0.70–0.85, min 200 s | **+$299** | +398 % | 35 variantes gridées |
 | **edge-lead** | 301 fenêtres | ref (gates) | −$19…−$46 | −38…−92 % | grids d'amélioration tous négatifs |
@@ -93,11 +94,20 @@ Script : `scripts/research/fav-band/fav-band-param-grid.mts`
 | Fichier | Contenu |
 |---|---|
 | `fav-band-param-grid-…json` | **35 variantes** / 301 fenêtres. Top PnL : **band-070-085_min200_max600 +$299 (+398 %)**, 300 fills. Top PnL/DD : **band-068-082_min200** (+$289) |
+| `live-audit-1789807461060.md` | **Audit positions LIVE** (392 pos., 13→19/09) : WR strict 69.7 %, PnL +$50.82. Finding : config live bande [0.60,0.74] **jamais backtestée** — la zone < 0.70 perd −$47.89 (159 trades) ; jour 09-19 rouge −$40.21 (whipsaw + sizing déridé en séance 7→15 sh) ; flip-slippage FOK confirmé (fill 0.46, outcome favorable) ; 73 closes manuels. Script : `scripts/research/fav-band/live-positions.mts` |
+
+| `live-band-vs-tested-…json` + `live-band-perday-…json` | **Bande LIVE chiffrée sur l'univers ACTUEL** (887 fenêtres, runner officiel, 19/09) : LIVE [0.60-0.74] sizing live (5sh/15exp) **+$90.05 / WR 68.1 % / DD 42.7** ; LIVE à sizing grid +$399.40 / WR 68.2 % ; preset testé 070-085_max600 **+$467.93 / WR 76.2 % / DD 237.7** → la bande live sous-performe de −15 % de PnL et −8 pts WR à sizing égal (PnL/DD comparable 2.08 vs 1.97). Par jour UTC (config live) : jours rouges sim 09-10 (−4.8), 09-15 (−25.2), 09-19 (−29.7) → le whipsaw est un régime, pas un bug. Scripts : `scripts/research/fav-band-research/probe-live-band*.mts` |
 
 **Verdict** : fav-band est le 2ᵉ meilleur moteur de l'univers ; bande
 0.70–0.85 avec min elapsed 200 s. (Le backtest croisé dip-revert
 (`dip-revert-backtest-…json`) donnait fav-band +$205 / WR 76.6 % sur 321
-fenêtres — cohérent.)
+fenêtres — cohérent.) **Live 19/09** : moteur rentable sur 6 jours (5
+positifs), mais la config hot-appliquée (bande étendue à 0.60, sizing
+déridé) n'a aucun chiffre backtest derrière elle — retour à
+band-070-085_min200_max600 recommandé, minElapsed 300 à backtester.
+**Rapport d'audit complet (code + wiring + backtest + live + runs du jour)**
+: `RAPPORT-fav-band-audit.md` à la racine (findings F1–F9, recommandations R1–R5
+; note : `tests/fav-band.test.ts` absent du script `npm test`).
 
 ## 📁 dip-revert/ — moteur dip-revert (favori chuté + rebond)
 
@@ -205,6 +215,42 @@ est **validé** — décision suivante : implémentation moteur OU confrontation
 multi-moteurs avec antiflip-revert (dip-guard a le meilleur PnL %/dollar,
 antiflip le PnL absolu max).
 
+## 📁 open-entry/ — entrée premières secondes + SL contextuels (recherche, 2026-09-19)
+
+Scripts : `scripts/research/open-entry/` (universe.mts, probe-open.mts, open-sim.mts,
+open-grid1..4, verify-and-overlap.mts, recheck-ec-official.mts, ec-hold-ref.mts)
+
+| Fichier | Contenu |
+|---|---|
+| `rapport-open-entry.md` | **Rapport complet** : audit données (premier tick deux-côtés p50 0.51 s, marché ouvert fair p50 1.01, lean instantané 0 occurrence) + 4 grilles + verify-claims (511/511 exact) + calibration runner officiel (ec hold 485 fills / $469 / WR 65.6 % ↔ sim 418/$1.05-per-fill/WR 65.8 %) + overlap (≈ early-conviction 478/511 même côté, disjoint dip-revert 0) |
+| `open-entry-research-…json` | Données brutes des grilles (g1-g4), calibration, overlap, verdict |
+| `ec-recheck-official-…json` | Run runner officiel early-conviction hold (830 fenêtres, 0 rejects) — ancrage de calibration |
+
+**Verdict** : la valeur d'ouverture n'est pas dans la première seconde (marché
+fair, pas d'inclinaison instantanée) mais dans le **favori émergent** (diff
+≥0.15 atteinte à p50 6 s). Meilleur candidat sim runner-fidèle : **lean +
+SL struct (flip ≥0.20 ×20s + dégât 0.10) + SL tardif (>300s, −0.06) = +$471,
+t 2.88, vr 0.105, old/new positifs tous deux** ; le hold nu = $351 (la valeur
+vient de l'échelle de SL, pas de l'entrée). TP pur re-confirmé mort ($24-39).
+Sur l'entrée early-conviction native à sizing runner, les SL **dégradent**
+($361 vs $437 hold) → **ne pas brancher les SL sur early-conviction** ;
+candidat = nouveau moteur `open-entry` (lean), PnL NON additifs avec
+early-conviction. Univers 724 fenêtres = 11 jours d'un seul actif (un régime).
+
+### Implémentation moteur (2026-09-19) : `IMPLEMENTATION-open-entry.md`
+
+Moteur natif `open-entry` livré de bout en bout (backend + frontend + guide +
+preset + 16 tests + **panneau preset backtest** : onglets Entrée/SL dédiés,
+ConfigBar résumé lean/fair/SL). Fair gate mémorisée au 1er tick deux-côtés
+(fix de dilution : 827 fills → 555). Validation runner officielle avec
+contrôle exits-OFF via `openEntrySlEnabled` : **hold $365.22 (WR 63.4 %) >
+SL ON $329.73 (WR 34.6 %)** — à sizing runner (exits L1-only au bid), les
+SL coûtent de l'espérance ; leur valeur = volatilité (lissée) + profondeur
+L2/L3 que le runner ne peut pas vendre. Switch laissé à l'utilisateur
+(défaut ON = config backtestée). Overlap early-conviction 478/511 même
+côté — PnL non additifs, un seul des deux par marché. Builds backend
+448/448 + frontend verts, `<Show>` balancés 37/37, 21/21 et 34/34.
+
 ## 📁 research-new-strats/ — travail transverse (3 stratégies, 2026-09-15)
 
 Scripts : `scripts/research/research-new-strats/` (univers partagé `universe.mts`,
@@ -261,6 +307,7 @@ ce rapport fait foi pour savoir quelles fenêtres sont exploitables.
 | `scripts/research/flip-confirm/` | Scripts flip-confirm (discovery 3 & 6) → écrit dans `flip-confirm/` |
 | `scripts/research/early-conviction/` | Scripts early-conviction (discovery 2 & 4) → écrit dans `early-conviction/` |
 | `scripts/research/dip-guard/{dip-guard-sim,verify-claims,overlap-check,calibrate-official}.mts` | Dip-guard : discovery+optimisation (34 configs + split-half), contre-vérification indépendante, overlap multi-stratégies, calibration runner officiel (sonde fav-band) → écrit dans `dip-guard/` |
+| `scripts/research/open-entry/*.mts` | Open-entry : probe premières secondes, sim de découverte (1 trade/fenêtre, exits sur le carnet tenu), grilles 1-4 (calibrée runner), verify-claims + overlap, recheck runner officiel early-conviction → écrit dans `open-entry/` |
 
 ## Conventions
 

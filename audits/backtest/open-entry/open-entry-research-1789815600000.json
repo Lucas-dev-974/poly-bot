@@ -1,0 +1,54 @@
+{
+  "phase": "open-entry-research",
+  "date": "2026-09-19",
+  "db": "data/bot-live.db",
+  "universe": { "criteria": { "minTicks": 801, "maxGapMs": 60000 }, "btc15mWindows": 931, "complete": 730, "withResolution": 724 },
+  "openProbe": {
+    "firstTwoSidedTickAgeSec": { "p50": 0.51, "p90": 0.93, "p99": 2.39, "max": 23.3, "within1s": 705, "n": 724 },
+    "askSumAtFirstTick": { "p50": 1.01, "p90": 1.05, "le1.02": 514, "n": 724 },
+    "spreadP50": 0.01,
+    "askSizeL1P50": 30,
+    "favoriteDiff0.10AgeSec": { "p50": 6.09, "p90": 53.06 },
+    "instantLean0.25AtFirstTick": 0
+  },
+  "grids": {
+    "g1_size10_3levels": [
+      { "label": "HOLD-ref entry momentum 0.15/90s", "fills": 438, "wr": 0.621, "pnl": 72, "t": 0.71, "dd": 62, "old": 76, "new": -4 },
+      { "label": "slStruct f0.20/c20/d0.10", "fills": 438, "wr": 0.502, "pnl": 147, "t": 1.89, "dd": 34, "old": 102, "new": 46 },
+      { "label": "slLate after300/d0.06", "fills": 438, "wr": 0.368, "pnl": 135, "t": 2.14, "dd": 34, "old": 64, "new": 72 },
+      { "label": "tp 0.85 avant600", "fills": 438, "wr": 0.685, "pnl": 39, "t": 0.44 },
+      { "label": "trigger 0.20", "fills": 395, "wr": 0.646, "pnl": 88, "t": 0.92 },
+      { "label": "window 60s", "fills": 390, "wr": 0.633, "pnl": 113, "t": 1.19 }
+    ],
+    "g2_combos": [
+      { "label": "LATE + STRUCT f0.20", "fills": 438, "wr": 0.368, "pnl": 153, "t": 2.49, "pf": 1.32, "vr": 0.102, "old": 72, "new": 81 },
+      { "label": "win180 + LATE", "fills": 502, "wr": 0.369, "pnl": 171, "t": 2.55, "pf": 1.3, "vr": 0.115 }
+    ],
+    "g3_comboFinale": [
+      { "label": "COMBO win300 STRUCT+LATE", "fills": 511, "wr": 0.372, "pnl": 203, "t": 3.08, "pf": 1.37, "dd": 34, "vr": 0.1, "old": 119, "new": 84 },
+      { "label": "win300 exits-off (diagnostic)", "fills": 511, "wr": 0.634, "pnl": 151, "t": 1.38, "dd": 75 }
+    ],
+    "g4_runnerFidele": [
+      { "label": "ec hold OFFICIEL (exits off)", "fills": 418, "wr": 0.658, "pnl": 437.39, "t": 1.84, "pf": 1.2, "vr": 0.086, "perFill": 1.046 },
+      { "label": "ec + SL struct+late", "fills": 418, "wr": 0.38, "pnl": 361.0, "t": 2.45, "pf": 1.32, "vr": 0.101 },
+      { "label": "lean hold (runner-cal)", "fills": 511, "wr": 0.634, "pnl": 350.97, "t": 1.3, "pf": 1.13, "vr": 0.2 },
+      { "label": "lean + struct+late", "fills": 511, "wr": 0.372, "pnl": 471.21, "t": 2.88, "pf": 1.34, "vr": 0.105 }
+    ]
+  },
+  "officialRunnerCalibration": {
+    "ecHold": { "universe": 830, "fills": 485, "rejects": 0, "wr": 0.656, "pnl": 468.84, "perFill": 0.967, "out": "audits/backtest/open-entry/ec-recheck-official-1789814563224.json" },
+    "simVsRunner": { "fillRatio": "418/485 = ratio univers 724/830 = 87%", "wrDelta": "0.2pt", "perFillDelta": "+8% (sim, pas de caps capital/exposure)" }
+  },
+  "verifyClaims": { "fills": 511, "mismatches": 0, "pnlDelta": 0.0 },
+  "overlap": {
+    "earlyConviction": { "traded": 494, "sameSide": 478, "opposite": 16 },
+    "favBand": { "traded": 503, "sameSide": 365, "opposite": 138 },
+    "dipRevert": { "traded": 0 }
+  },
+  "verdict": {
+    "best": "lean entry (diff>=0.15 dans [0,300s], marche ouvert fair askSum<=1.02) + SL struct (autre mene >=0.20 depuis >=20s ET bid<=entry-0.10) + SL tardif (>300s, bid<=entry-0.06) : PnL $471, WR 37%, t 2.88, vr 0.105 (sizing runner-fidele, 10-15$/trade)",
+    "runnerNative": "early-conviction hold reste le meilleur moteur NATIF existant ($469 runner officiel, exits degrades pour cette entree)",
+    "dead": ["TP pur (0.85/0.90 avant 600/720s) : $24-39 vs $72-150 ref, confirme tous les audits precedents", "entree instantanee t=0 : jamais de lean >=0.25 au premier tick", "trig 0.12 hors combo : t=0.06"]
+  },
+  "reserves": ["11 jours d'un seul actif = un regime", "exits L1-only (limite du runner) rendent les SL conservateurs : la valeur residuelle des SL en live peut etre superieure", "t 2.88-3.08 solide mais un seul regime", "sim ≠ runner en magnitude (per-fill +8%)"]
+}

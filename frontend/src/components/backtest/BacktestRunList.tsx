@@ -2,7 +2,7 @@ import { For, Show } from "solid-js";
 import type { JSX } from "solid-js";
 import { STRATEGY_PRESETS } from "../../config/strategyPresets";
 import type { BacktestProgress, BacktestRunSummary, StrategyId } from "../../types";
-import { dateTimeStr, fmtUsd } from "../../utils/format";
+import { dateTimeStr, fmtUsd, pct } from "../../utils/format";
 import { runEngineId } from "../../utils/backtest-preset";
 
 const ENGINE_SHORT: Partial<Record<string, string>> = {
@@ -98,6 +98,11 @@ export function BacktestRunList(props: {
                   </Show>
                   <Show when={pnl() != null}>
                     <div class={`bt-run-pnl ${(pnl() ?? 0) >= 0 ? "ok" : "err"}`}>{fmtUsd(pnl())}</div>
+                  </Show>
+                  <Show when={run.result?.winRate != null}>
+                    <div class="bt-run-wr" title={`Winrate strict : ${run.result?.wins ?? 0} gagnées / ${(run.result?.wins ?? 0) + (run.result?.losses ?? 0)} résolues`}>
+                      WR {pct(run.result?.winRate ?? 0)}
+                    </div>
                   </Show>
                 </div>
                 <button

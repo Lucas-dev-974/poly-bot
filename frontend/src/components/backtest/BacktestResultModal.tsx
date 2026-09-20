@@ -2,7 +2,7 @@ import { For, Show, createMemo } from "solid-js";
 import type { JSX } from "solid-js";
 import type { BacktestPositionRow, BacktestResult, BacktestRunSummary } from "../../types";
 import { groupedSettings, runCompletenessLabel, runPresetLabel, settingsForRun } from "../../utils/backtest-preset";
-import { dateTimeStr, fmtUsd } from "../../utils/format";
+import { dateTimeStr, fmtUsd, pct } from "../../utils/format";
 
 export function BacktestResultModal(props: {
   open: boolean;
@@ -26,6 +26,19 @@ export function BacktestResultModal(props: {
   onClose: () => void;
 }): JSX.Element {
   const settings = createMemo(() => settingsForRun(props.run));
+  // Fallback vieux runs : derive le WR strict des positions déjà chargées.
+  const derivedWinRate = createMemo(() => {
+    const rows = props.positions.filter((p) => p.side === "BUY" && p.status !== "open" && p.pnl != null);
+    if (rows.length === 0) return null;
+    const wins = rows.filter((p) => p.pnl! > 0).length;
+    return { wins, losses: rows.length - wins, wr: wins / rows.length };
+  });
+  const wr = createMemo(() => {
+    if (props.result?.winRate != null) {
+      return { wins: props.result.wins ?? 0, losses: props.result.losses ?? 0, wr: props.result.winRate };
+    }
+    return derivedWinRate();
+  });
   const groups = createMemo(() => {
     const s = settings();
     if (!s) return [];
@@ -75,6 +88,13 @@ export function BacktestResultModal(props: {
               <span>Unresolved {result().unresolvedWindows}</span>
               <span>Fills {result().fillCount}</span>
               <span>Rejects {result().rejectCount}</span>
+              <Show when={wr()}>
+                {(w) => (
+                  <span title={`Winrate strict des positions résolues (sold incl.) : ${w().wins} gagnées / ${w().losses} perdantes`}>
+                    WR {pct(w().wr)} ({w().wins}W/{w().losses}L)
+                  </span>
+                )}
+              </Show>
               <span>Couvert {result().coveredPairs}</span>
               <span>Découvert {result().uncoveredPairs}</span>
             </div>

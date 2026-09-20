@@ -1,0 +1,22 @@
+{
+  "criteria": {
+    "minTicks": 801,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 830,
+  "ranked": [
+    {
+      "label": "ec-hold-official",
+      "ms": 66614,
+      "pnl": 468.84,
+      "fills": 485,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 65.6,
+      "wins": 318,
+      "losses": 167,
+      "capitalEnd": 968.84
+    }
+  ]
+}

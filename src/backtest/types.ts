@@ -70,6 +70,12 @@ export interface BacktestResult {
   rejectCount: number;
   coveredPairs: number;
   uncoveredPairs: number;
+  /** Résolutions gagnées (status won). Absent sur les vieux runs persistés. */
+  wins?: number;
+  /** Résolutions perdues (status lost). Absent sur les vieux runs. */
+  losses?: number;
+  /** Winrate strict = wins / (wins + losses). Absent si aucune résolution. */
+  winRate?: number | null;
   windows: BacktestWindowResult[];
 }
 

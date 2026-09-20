@@ -335,6 +335,14 @@ body:has(.bt-page) {
   margin-top: 2px;
 }
 
+.bt-run-wr {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  margin-top: 1px;
+}
+
 .bt-run .btn {
   flex-shrink: 0;
   font-size: 11px;

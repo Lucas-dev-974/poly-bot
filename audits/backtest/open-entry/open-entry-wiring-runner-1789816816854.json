@@ -1,0 +1,37 @@
+{
+  "criteria": {
+    "minTicks": 801,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 830,
+  "ranked": [
+    {
+      "label": "open-entry-wired",
+      "ms": 64521,
+      "pnl": 329.73,
+      "fills": 918,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 34.6,
+      "wins": 192,
+      "losses": 363,
+      "capitalEnd": 829.73
+    },
+    {
+      "label": "open-entry-hold-ref",
+      "ms": 65492,
+      "pnl": 365.22,
+      "fills": 555,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 63.4,
+      "wins": 352,
+      "losses": 203,
+      "capitalEnd": 865.22
+    }
+  ],
+  "sells": {
+    "defend": 363
+  }
+}

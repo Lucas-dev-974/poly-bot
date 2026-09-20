@@ -64,7 +64,8 @@ async function main(): Promise<void> {
       () => bot.isPaused(),
     );
     dashboard.setClosePositionHandler((id) => bot.closePositionManual(id));
-  }
+        dashboard.setBot(bot);
+      }
 
   autoRedeemer = new AutoRedeemer(config, trader, repos.redeems);
   autoRedeemer.start();

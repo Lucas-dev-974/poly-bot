@@ -62,6 +62,17 @@ const WHIPSAW_PAUSE_WINDOW_MS = 15 * 60 * 1000;
 /** Exit-chain states idle longer than this are purged (pairs never return). */
 const EXIT_STATE_STALE_MS = 30 * 60 * 1000;
 
+/** Whipsaw pause status for external consumption (dashboard). */
+export type FavBandWhipsawStatus = {
+  enabled: boolean;
+  active: boolean;
+  remainingMs: number;
+  pauseUntilMs: number;
+  lossStreak: number;
+  pauseAfterLosses: number | null;
+  pauseWindows: number;
+};
+
 /**
  * Fav-band — directional FOK buy of the favorite in a calibrated ask band
  * after min elapsed; hold to resolve. Optional inverse GTC + optional whipsaw
@@ -521,6 +532,30 @@ export class FavBandStrategy implements TradingStrategy {
     if (!state || state.exited) return;
     state.exited = true;
     state.switchPending = true;
+  }
+
+  /** Get current whipsaw pause status for the dashboard. */
+  getWhipsawStatus(config: StrategyContext["config"], nowMs: number, lossStreak: number): FavBandWhipsawStatus {
+    const enabled = config.favBandWhipsawEnabled === true;
+    const active = enabled && nowMs < this.pauseUntilMs;
+    const remainingMs = active ? Math.max(0, this.pauseUntilMs - nowMs) : 0;
+    return {
+      enabled,
+      active,
+      remainingMs,
+      pauseUntilMs: this.pauseUntilMs,
+      lossStreak,
+      pauseAfterLosses: config.favBandWhipsawPauseAfterLosses ?? null,
+      pauseWindows: config.favBandWhipsawPauseWindows ?? 8,
+    };
+  }
+
+  /** Manually reset the whipsaw pause cooldown (for manual override via dashboard). */
+  resetWhipsawPause(lossStreak: number = 0): void {
+    this.pauseUntilMs = 0;
+    // Set prevLossStreak to current lossStreak so that maybeTriggerPause won't
+    // re-arm immediately on the next tick (condition: lossStreak > prevLossStreak).
+    this.prevLossStreak = lossStreak;
   }
 
   cheapOrderAction(_ctx: RestingCheapContext): CheapOrderAction {

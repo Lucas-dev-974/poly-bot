@@ -1,4 +1,4 @@
-import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, EngineStatsRow, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, MarketHistoryResponse, MarketRuleRow, MarketRulesResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, StrategyId, ToggleMarketRuleResponse, WalletQuote, WalletTradesResponse, WithdrawalRow, WithdrawResponse } from "../types";
+import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, EngineStatsRow, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, MarketHistoryResponse, MarketRuleRow, MarketRulesResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, StrategyId, ToggleMarketRuleResponse, WalletQuote, WalletTradesResponse, WithdrawalRow, WithdrawResponse, FavBandWhipsawStatus } from "../types";
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
@@ -95,6 +95,10 @@ export interface BotControlResponse {
   ok: boolean;
   enabled?: boolean;
   error?: string;
+}
+
+export interface StrategyStatusResponse {
+  status: FavBandWhipsawStatus | null;
 }
 
 export const api = {
@@ -337,4 +341,9 @@ export const api = {
       `/api/strategy/${encodeURIComponent(id)}/activate`,
       { method: "POST" },
     ),
+  strategyStatus: () => request<StrategyStatusResponse>("/api/strategy/status"),
+  strategyStatusReset: () =>
+    request<{ ok: boolean; error?: string }>("/api/strategy/status/reset", {
+      method: "POST",
+    }),
 };

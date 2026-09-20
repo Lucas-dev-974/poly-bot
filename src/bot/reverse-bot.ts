@@ -17,6 +17,9 @@ import { OpportunityExecutor } from "./opportunity-executor.js";
 import { RestingManager } from "./resting-manager.js";
 import { TickSnapshots } from "./tick-snapshots.js";
 import { MarketRuleStore, splitEventsByRules } from "../market-rules.js";
+import { favBandLossStreak } from "../strategy/whipsaw.js";
+import type { FavBandWhipsawStatus } from "../strategy/fav-band-strategy.js";
+import type { FavBandStrategy } from "../strategy/fav-band-strategy.js";
 
 const TOTAL_ATTEMPTS_KEY = "totalAttempts";
 const PAUSED_KEY = "botPaused";
@@ -139,6 +142,26 @@ export class ReverseBot {
     return this.resting.closePositionManual(positionId);
   }
 
+  /** Get the current strategy status for the dashboard (fav-band whipsaw pause). */
+  getStrategyStatus(): FavBandWhipsawStatus | null {
+    if (this.config.strategyId !== "fav-band") return null;
+    const strategy = this.strategy as FavBandStrategy;
+    const resolved = this.tracker.getResolvedPositions();
+    const lossStreak = favBandLossStreak(resolved);
+    const nowMs = Date.now();
+    return strategy.getWhipsawStatus(this.config, nowMs, lossStreak);
+  }
+
+  /** Manually reset the whipsaw pause cooldown (fav-band only). */
+  resetWhipsawPause(): void {
+    if (this.config.strategyId === "fav-band") {
+      const strategy = this.strategy as FavBandStrategy;
+      const resolved = this.tracker.getResolvedPositions();
+      const lossStreak = favBandLossStreak(resolved);
+      strategy.resetWhipsawPause(lossStreak);
+    }
+  }
+
   async run(): Promise<void> {
     log("Reverse bot starting", {
       strategy: this.strategy.label,
@@ -163,6 +186,16 @@ export class ReverseBot {
       setInterval(() => void this.resolver?.resolveDue(), 5_000);
     }
     setInterval(() => this.snapshots.emitStats(this.totalAttempts), 5_000);
+
+    // Emit whipsaw status for fav-band strategy (dashboard indicator)
+    if (this.config.strategyId === "fav-band") {
+      setInterval(() => {
+        const status = this.getStrategyStatus();
+        if (status) {
+          bus.emit({ type: "strategyStatus", status });
+        }
+      }, 5_000);
+    }
 
     this.snapshots.pruneData();
     setInterval(() => this.snapshots.pruneData(), 3600_000); // 1h

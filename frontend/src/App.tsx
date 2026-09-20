@@ -9,6 +9,7 @@ import { Performance } from "./components/panels/Performance";
 import { ResolvedPositions } from "./components/panels/ResolvedPositions";
 import { PolymarketPositions } from "./components/panels/PolymarketPositions";
 import { Logs } from "./components/panels/Logs";
+import { WhipsawStatus } from "./components/panels/WhipsawStatus";
 import { ConfirmModal } from "./components/modals/ConfirmModal";
 import { SettingsModal } from "./components/modals/SettingsModal";
 import { WalletModal } from "./components/modals/WalletModal";
@@ -189,18 +190,19 @@ export function App(): JSX.Element {
       />
       <ConfigBar onConfigure={() => setSettingsOpen(true)} />
       <div class="grid">
-        <PolymarketPositions onRedeem={handleRedeem} />
-        <OpenPositions
-          now={now()}
-          onClosePosition={handleClosePosition}
-          closingId={closingId()}
-        />
-        <ActiveMarkets now={now()} />
-        <RecentOrders now={now()} />
-        <Performance />
-        <ResolvedPositions />
-        <Logs />
-      </div>
+              <PolymarketPositions onRedeem={handleRedeem} />
+              <OpenPositions
+                now={now()}
+                onClosePosition={handleClosePosition}
+                closingId={closingId()}
+              />
+              <ActiveMarkets now={now()} />
+              <RecentOrders now={now()} />
+              <Performance />
+              <ResolvedPositions />
+              <Logs />
+              <WhipsawStatus />
+            </div>
       <ConfirmModal
         open={redeemTarget() !== null}
         title={`Clôturer la position "${redeemPosition()?.title ?? ""}" ?`}

@@ -126,7 +126,12 @@ export function dispatchEvent(event: BotEvent): void {
       break;
 
     case "log":
-      addLog(event.message, event.data, false);
-      break;
-  }
-}
+          addLog(event.message, event.data, false);
+          break;
+
+        case "strategyStatus":
+          // Strategy status events are handled via REST polling in WhipsawStatus component
+          // No store update needed — the component polls /api/strategy/status directly
+          break;
+      }
+    }

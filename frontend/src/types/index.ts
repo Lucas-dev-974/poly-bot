@@ -446,7 +446,8 @@ export type BotEvent =
   | { type: "relayerQuota"; quota: RelayerQuotaState }
   | { type: "botControl"; enabled: boolean }
   | { type: "error"; message: string }
-  | { type: "log"; message: string; data?: Record<string, unknown> };
+  | { type: "log"; message: string; data?: Record<string, unknown> }
+  | { type: "strategyStatus"; status: FavBandWhipsawStatus };
 
 // Types UI enrichis
 export interface MarketView extends UpDownEvent {
@@ -709,4 +710,15 @@ export interface ToggleMarketRuleResponse {
   rule?: MarketRuleRow;
   warning?: string | null;
   error?: string;
+}
+
+/** Whipsaw pause status for the fav-band strategy (dashboard indicator). */
+export interface FavBandWhipsawStatus {
+  enabled: boolean;
+  active: boolean;
+  remainingMs: number;
+  pauseUntilMs: number;
+  lossStreak: number;
+  pauseAfterLosses: number | null;
+  pauseWindows: number;
 }

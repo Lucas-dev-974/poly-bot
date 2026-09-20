@@ -15,6 +15,7 @@ import {
 } from "../withdraw.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { Trader } from "../trader.js";
+import { ReverseBot } from "../bot/reverse-bot.js";
 import {
   applyRuntimeSettings,
   keysForStrategy,
@@ -46,6 +47,9 @@ import {
   type MarketRuleStore,
 } from "../market-rules.js";
 import type { MarketRuleRow } from "../db/repositories.js";
+import { createStrategy } from "../strategy/registry.js";
+import type { FavBandStrategy } from "../strategy/fav-band-strategy.js";
+import type { FavBandWhipsawStatus } from "../strategy/fav-band-strategy.js";
 
 /**
  * Always prefer the Vite build output (dist/dashboard/public).
@@ -137,6 +141,12 @@ export class DashboardServer {
     >,
   ): void {
     this.closePositionFn = fn;
+  }
+
+  /** Store a reference to the bot for strategy status queries. */
+  private bot: ReverseBot | null = null;
+  setBot(bot: ReverseBot): void {
+    this.bot = bot;
   }
 
   start(): void {
@@ -310,6 +320,16 @@ export class DashboardServer {
 
       if (url.pathname === "/api/bot/control" && req.method === "GET") {
         this.handleBotControlState(res);
+        return;
+      }
+
+      if (url.pathname === "/api/strategy/status" && req.method === "GET") {
+        this.handleStrategyStatus(res);
+        return;
+      }
+
+      if (url.pathname === "/api/strategy/status/reset" && req.method === "POST") {
+        this.handleStrategyStatusReset(req, res);
         return;
       }
 
@@ -1200,6 +1220,37 @@ export class DashboardServer {
   private handleBotControlState(res: import("node:http").ServerResponse): void {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ enabled: !this.isPausedFn?.() }));
+  }
+
+  private handleStrategyStatus(res: import("node:http").ServerResponse): void {
+    if (!this.bot) {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ status: null }));
+      return;
+    }
+    const status = this.bot.getStrategyStatus();
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ status }));
+  }
+
+  private handleStrategyStatusReset(
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return Promise.resolve();
+    }
+    if (!this.bot) {
+      res.writeHead(503, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Bot not initialized" }));
+      return Promise.resolve();
+    }
+    this.bot.resetWhipsawPause();
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ ok: true }));
+    return Promise.resolve();
   }
 
   /**

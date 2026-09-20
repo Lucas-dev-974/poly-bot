@@ -9,6 +9,7 @@ import type {
   UpDownEvent,
 } from "../types.js";
 import type { RelayerQuotaState } from "../relayer-quota.js";
+import type { FavBandWhipsawStatus } from "../strategy/fav-band-strategy.js";
 
 export type BotEvent =
   | { type: "config"; config: BotConfig }
@@ -35,7 +36,8 @@ export type BotEvent =
     }
   | { type: "botControl"; enabled: boolean }
   | { type: "error"; message: string }
-  | { type: "log"; message: string; data?: Record<string, unknown> };
+  | { type: "log"; message: string; data?: Record<string, unknown> }
+  | { type: "strategyStatus"; status: FavBandWhipsawStatus };
 
 export interface BalanceSnapshot {
   availableCollateral: number;

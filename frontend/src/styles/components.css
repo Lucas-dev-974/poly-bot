@@ -1634,3 +1634,121 @@ select.cfg-input {
     transform: translateY(0);
   }
 }
+
+/* ===== Whipsaw Status Panel ===== */
+.whipsaw-status {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.whipsaw-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.whipsaw-badge .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.whipsaw-badge.active {
+  background: rgba(231, 76, 60, 0.12);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.whipsaw-badge.ready {
+  background: rgba(46, 204, 113, 0.12);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.whipsaw-badge.disabled {
+  background: rgba(149, 165, 166, 0.12);
+  border-color: var(--muted);
+  color: var(--muted);
+}
+
+.whipsaw-badge.unknown {
+  background: rgba(241, 196, 15, 0.12);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.whipsaw-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.whipsaw-details .detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.whipsaw-details .detail-label {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.whipsaw-details .detail-value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.whipsaw-details .detail-row.highlight {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.whipsaw-details .countdown {
+  color: var(--red);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.whipsaw-details .status-text {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.whipsaw-disabled {
+  padding: 12px;
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.whipsaw-disabled code {
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--text);
+}

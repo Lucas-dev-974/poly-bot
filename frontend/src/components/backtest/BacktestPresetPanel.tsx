@@ -107,7 +107,7 @@ export function BacktestPresetPanel(props: {
   const tabErrorCount = createMemo((): Record<PresetTab, number> => {
     const fe = props.fieldErrors;
     const counts: Record<PresetTab, number> = { cheap: 0, hedge: 0, edge: 0, risk: 0, window: 0, zones: 0 };
-    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax", "arbAskSumMax", "arbAskLockMinElapsedSec", "arbAskLockMaxImbalance", "favBandAskMin", "favBandAskMax", "favBandMinElapsedSec", "favBandMaxElapsedSec", "favBandOrderUsdc", "favBandInverseAskMax", "favBandInverseShareRatio", "favBandInverseOrderUsdc", "barbellCheapOrderUsdc", "reverseCheapOrderUsdc", "customOrderUsdc", "openEntryLeanTrigger", "openEntryMaxElapsedSec", "openEntryFairAskSumMax", "openEntryMaxSpread", "openEntryOrderUsdc", "openEntrySlEnabled", "dipRevertBandMin", "dipRevertBandMax", "dipRevertMinDrop", "dipRevertDropLookbackMs", "dipRevertMinElapsedSec", "dipRevertMaxElapsedSec", "dipRevertMaxSpread", "dipRevertOrderUsdc", "dipRevertExitWinAsk", "antiflipBandMin", "antiflipBandMax", "antiflipDeposedAskMin", "antiflipFlipLookbackMs", "antiflipMinElapsedSec", "antiflipMaxElapsedSec", "antiflipMaxSpread", "antiflipOrderUsdc", "flipConfirmBandMin", "flipConfirmBandMax", "flipConfirmFlipLookbackMs", "flipConfirmMinElapsedSec", "flipConfirmMaxElapsedSec", "flipConfirmMaxSpread", "flipConfirmOrderUsdc", "earlyConvictionAskMin", "earlyConvictionAskMax", "earlyConvictionMaxElapsedSec", "earlyConvictionMaxSpread", "earlyConvictionOrderUsdc"];
+    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax", "arbAskSumMax", "arbAskLockMinElapsedSec", "arbAskLockMaxImbalance", "favBandAskMin", "favBandAskMax", "favBandMinElapsedSec", "favBandMaxElapsedSec", "favBandOrderUsdc", "favBandInverseAskMax", "favBandInverseShareRatio", "favBandInverseOrderUsdc", "favBandExitMinLowerHighDrop", "favBandExitConsecutive", "favBandExitLookbackMs", "favBandExitMinElapsedSec", "favBandExitSwitchOrderUsdc", "barbellCheapOrderUsdc", "reverseCheapOrderUsdc", "customOrderUsdc", "openEntryLeanTrigger", "openEntryMaxElapsedSec", "openEntryFairAskSumMax", "openEntryMaxSpread", "openEntryOrderUsdc", "openEntrySlEnabled", "dipRevertBandMin", "dipRevertBandMax", "dipRevertMinDrop", "dipRevertDropLookbackMs", "dipRevertMinElapsedSec", "dipRevertMaxElapsedSec", "dipRevertMaxSpread", "dipRevertOrderUsdc", "dipRevertExitWinAsk", "antiflipBandMin", "antiflipBandMax", "antiflipDeposedAskMin", "antiflipFlipLookbackMs", "antiflipMinElapsedSec", "antiflipMaxElapsedSec", "antiflipMaxSpread", "antiflipOrderUsdc", "flipConfirmBandMin", "flipConfirmBandMax", "flipConfirmFlipLookbackMs", "flipConfirmMinElapsedSec", "flipConfirmMaxElapsedSec", "flipConfirmMaxSpread", "flipConfirmOrderUsdc", "earlyConvictionAskMin", "earlyConvictionAskMax", "earlyConvictionMaxElapsedSec", "earlyConvictionMaxSpread", "earlyConvictionOrderUsdc"];
     const hedgeKeys: Array<keyof ConfigFormState> = ["expensiveBuyMin", "expensiveBuyMax", "expensiveOrderUsdc", "expensiveOrderType", "barbellHedgeRatio", "enableExpensiveHedge", "requireCheapFillBeforeExpensive"];
     const edgeKeys: Array<keyof ConfigFormState> = ["edgeBandMin", "edgeBandMax", "edgeConfirmSamples", "edgeMaxDownTick", "edgeCheapBandMin", "edgeCheapBandMax", "edgeSizingMode", "edgeSharesEdge", "edgeSharesCheap", "edgeOrderUsdc", "maxShareEdge", "edgeCheapOrderUsdc", "edgeSellExpensiveEnabled", "edgeSellExpensiveAfterMin", "edgeSellExpensiveLossPct", "edgeSellExpensiveLossWindowMs", "openEntrySlStructFlipDist", "openEntrySlStructConfirmSec", "openEntrySlStructDist", "openEntrySlLateAfterSec", "openEntrySlLateDist"];
     const riskKeys: Array<keyof ConfigFormState> = ["maxSharesPerOrder", "maxShareEdge", "maxOpenPositionsPerSide", "maxExposureUsdc", "simulatedCapital", "marketSlugPrefixes", "pollIntervalMs"];
@@ -254,6 +254,39 @@ export function BacktestPresetPanel(props: {
                     <Num label="Inverse limite" tip="Prix du GTC reposé sur le token opposé (ex. 0.20). Fill incrémental si l'ask descend à ce niveau." value={form().favBandInverseAskMax} step={0.01} err={props.fieldErrors.favBandInverseAskMax} onInput={(v) => props.onUpdate("favBandInverseAskMax", v)} />
                     <Num label="Inverse ratio" tip="Shares de l'inverse par share du favori fillé (2 = le double)." value={form().favBandInverseShareRatio} step={0.1} err={props.fieldErrors.favBandInverseShareRatio} onInput={(v) => props.onUpdate("favBandInverseShareRatio", v)} />
                     <Num label="Inverse USDC" tip="Plafond budget du GTC inverse (≥ 5 shares au pire prix)." value={form().favBandInverseOrderUsdc} step={1} err={props.fieldErrors.favBandInverseOrderUsdc} onInput={(v) => props.onUpdate("favBandInverseOrderUsdc", v)} />
+                  </Show>
+                  <label class="bt-pf bt-pf-check">
+                    <input
+                      type="checkbox"
+                      checked={form().favBandExitEnabled}
+                      onChange={(e) => props.onUpdate("favBandExitEnabled", e.currentTarget.checked)}
+                    />
+                    <span class="bt-pf-label" title="Après le fill du favori, si son prix imprime N paliers de plus en plus bas, vendre la position (FOK au bid) au lieu de hold résolution.">Sortie dégradation</span>
+                  </label>
+                  <Show when={form().favBandExitEnabled}>
+                    <Num label="Chute entre paliers" tip="Chute minimum entre deux paliers successifs du favori détenu (défaut 0.02 = 2¢). Un plus haut au-dessus du palier courant réinitialise la séquence." value={form().favBandExitMinLowerHighDrop} step={0.005} err={props.fieldErrors.favBandExitMinLowerHighDrop} onInput={(v) => props.onUpdate("favBandExitMinLowerHighDrop", v)} />
+                    <Num label="Paliers consécutifs" tip="Nombre de paliers de plus en plus bas avant la sortie (défaut 2)." value={form().favBandExitConsecutive} step={1} err={props.fieldErrors.favBandExitConsecutive} onInput={(v) => props.onUpdate("favBandExitConsecutive", v)} />
+                    <Num label="Lookback exit (ms)" tip="La séquence doit rester récente : sans nouveau palier dans la fenêtre, la chaîne est réinitialisée (défaut 120000 = 120 s)." value={form().favBandExitLookbackMs} step={1000} err={props.fieldErrors.favBandExitLookbackMs} onInput={(v) => props.onUpdate("favBandExitLookbackMs", v)} />
+                    <Num label="Min elapsed exit (sec)" tip="Ne sortir qu'après N secondes de fenêtre (0 = toujours actif)." value={form().favBandExitMinElapsedSec} step={1} err={props.fieldErrors.favBandExitMinElapsedSec} onInput={(v) => props.onUpdate("favBandExitMinElapsedSec", v)} />
+                    <label class="bt-pf bt-pf-check">
+                      <input
+                        type="checkbox"
+                        checked={form().favBandExitLossOnly}
+                        onChange={(e) => props.onUpdate("favBandExitLossOnly", e.currentTarget.checked)}
+                      />
+                      <span class="bt-pf-label" title="Ne sort que si l'ask détenu est sous le prix d'entrée.">Uniquement en perte</span>
+                    </label>
+                    <label class="bt-pf bt-pf-check">
+                      <input
+                        type="checkbox"
+                        checked={form().favBandExitSwitchEnabled}
+                        onChange={(e) => props.onUpdate("favBandExitSwitchEnabled", e.currentTarget.checked)}
+                      />
+                      <span class="bt-pf-label" title="Juste après la vente, FOK buy du token opposé à son ask courant (switch de côté). Requiert max positions ≥ 2.">Acheter l'inverse après la sortie</span>
+                    </label>
+                    <Show when={form().favBandExitSwitchEnabled}>
+                      <Num label="Budget switch (USDC)" tip="Plafond USDC du FOK sur le token opposé (défaut 15)." value={form().favBandExitSwitchOrderUsdc} step={1} err={props.fieldErrors.favBandExitSwitchOrderUsdc} onInput={(v) => props.onUpdate("favBandExitSwitchOrderUsdc", v)} />
+                    </Show>
                   </Show>
                 </Show>
                 <Show when={sid() === "dip-revert"}>

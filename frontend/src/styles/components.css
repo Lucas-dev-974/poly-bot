@@ -968,6 +968,27 @@ select.cfg-input {
   cursor: not-allowed;
 }
 
+/* Enregistrer rouge quand la config a des erreurs de validation */
+.btn-primary.btn-danger-solid,
+.btn-danger-solid {
+  background: var(--red, #e74c3c);
+  border-color: var(--red, #e74c3c);
+  color: #fff;
+}
+
+.btn-danger-solid:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn-primary.btn-danger-solid:disabled,
+.btn-danger-solid:disabled {
+  opacity: 0.85;
+  cursor: not-allowed;
+  background: var(--red, #e74c3c);
+  border-color: var(--red, #e74c3c);
+  color: #fff;
+}
+
 /* ===== Graphique d'historique de marché (MarketHistoryModal) ===== */
 .poly-action-cell {
   display: inline-flex;
@@ -1533,4 +1554,83 @@ select.cfg-input {
   min-width: 26px;
   text-align: left;
   color: var(--text);
+}
+
+/* ===== Toasts in-app (haut droite) ===== */
+.app-toast-host {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(380px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.app-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  opacity: 1;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  animation: app-toast-in 0.18s ease-out;
+}
+
+.app-toast--error {
+  border-color: var(--red, #e74c3c);
+  background: #2a1414;
+}
+
+.app-toast--info {
+  border-color: var(--accent, #4f8cff);
+  background: #141c2a;
+}
+
+.app-toast__msg {
+  margin: 0;
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.app-toast--error .app-toast__msg {
+  color: var(--red, #e74c3c);
+}
+
+.app-toast__close {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted, #999);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.app-toast__close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+
+@keyframes app-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

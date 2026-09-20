@@ -5,6 +5,7 @@ import { StrategyGuidePage } from "./pages/StrategyGuidePage";
 import { BacktestPage } from "./pages/BacktestPage";
 import { StrategyEditorPage } from "./pages/StrategyEditorPage";
 import { DataPage } from "./pages/DataPage";
+import { ToastHost } from "./components/toasts/ToastHost";
 import { currentRoute, type AppRoute } from "./router";
 import "./styles/variables.css";
 import "./styles/globals.css";
@@ -28,6 +29,7 @@ function Root() {
 
   return (
     <>
+      <ToastHost />
       <Show when={route() === "guide"}>
         <StrategyGuidePage />
       </Show>

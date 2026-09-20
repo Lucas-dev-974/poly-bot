@@ -3,6 +3,7 @@ import type { JSX } from "solid-js";
 import { api } from "../../api/client";
 import { STRATEGY_ENGINE_OPTIONS, STRATEGY_PRESETS, engineUsesEdge, presetsForStrategy, type StrategyPreset } from "../../config/strategyPresets";
 import { setConfig } from "../../stores/botStore";
+import { clearToasts, pushError, pushInfo, setGroupToasts } from "../../stores/toastStore";
 import type { BotConfig } from "../../types";
 import type { StrategyEngineSummary } from "../../api/client";
 import {
@@ -157,6 +158,16 @@ export function SettingsModal(props: {
       leadsWithEdge: selectedCustom()?.leadsWithEdge,
     }),
   );
+
+
+  createEffect(() => {
+    if (!props.open) {
+      // Keep settings-save toasts (success/failure) visible after close.
+      clearToasts("settings-validation");
+      return;
+    }
+    setGroupToasts("settings-validation", "error", errors());
+  });
   const dirty = createMemo(() => !formsEqual(form(), baseline()));
   const matchingPresetId = createMemo(() => {
     const current = form();
@@ -224,9 +235,13 @@ export function SettingsModal(props: {
   }
 
   async function handleSave(): Promise<void> {
-    if (errors().length > 0) return;
+    if (errors().length > 0) {
+      setGroupToasts("settings-validation", "error", errors());
+      return;
+    }
     setSaving(true);
     setSaveError(null);
+    clearToasts("settings-save");
     try {
       const patch = formToPatch(form(), props.config);
       if (Object.keys(patch).length === 0) {
@@ -241,10 +256,14 @@ export function SettingsModal(props: {
       const next = configToForm(res.config);
       setForm(next);
       setBaseline(next);
+      clearToasts("settings-validation");
+      pushInfo("Configuration enregistrée", { group: "settings-save", replaceGroup: true });
       props.onSaved();
       props.onClose();
     } catch (error) {
-      setSaveError(error instanceof Error ? error.message : String(error));
+      const msg = error instanceof Error ? error.message : String(error);
+      setSaveError(msg);
+      pushError(msg, { group: "settings-save", replaceGroup: true });
     } finally {
       setSaving(false);
     }
@@ -363,7 +382,7 @@ export function SettingsModal(props: {
                     when={
                       !(
                         usesEdge() &&
-                        (s.id === "cheap" || s.id === "hedge" || s.id === "fav" || s.id === "dip" || s.id === "antiflip" || s.id === "flipconf" || s.id === "earlyconv")
+                        (s.id === "cheap" || s.id === "hedge" || s.id === "fav" || s.id === "dip" || s.id === "antiflip" || s.id === "flipconf" || s.id === "earlyconv" || s.id === "openentry")
                       ) &&
                       !(
                         isDirectionalHold() &&
@@ -397,6 +416,10 @@ export function SettingsModal(props: {
                       !(
                         !isEarlyConviction() &&
                         s.id === "earlyconv"
+                      ) &&
+                      !(
+                        !isOpenEntry() &&
+                        s.id === "openentry"
                       )
                     }
                   >
@@ -1148,6 +1171,104 @@ export function SettingsModal(props: {
                       </Show>
                     </div>
                   </div>
+
+                  <div class="cfg-section" style={{ "margin-top": "1rem" }}>
+                    <h4>Sortie dégradation (optionnelle)</h4>
+                    <p class="cfg-section__desc">
+                      Après le fill, si le prix du favori <strong>détenu</strong> se dégrade en
+                      pic de plus en plus bas (paliers successifs chacun ≥ chute min sous le
+                      palier précédent), la position est <strong>vendue en FOK au bid</strong>
+                      {" "}au lieu d&apos;être tenue jusqu&apos;à la résolution. Option :
+                      acheter le token <strong>inverse</strong> juste après la vente (switch).
+                    </p>
+                    <div class="cfg-grid">
+                      <label class="cfg-check" title="Vend la position quand le favori détenu imprime N paliers de plus en plus bas.">
+                        <input
+                          type="checkbox"
+                          checked={form().favBandExitEnabled}
+                          onChange={(e) => update("favBandExitEnabled", e.currentTarget.checked)}
+                        />
+                        <span>Sortie dégradation activée</span>
+                      </label>
+                      <Show when={form().favBandExitEnabled}>
+                        <Field
+                          label="Chute entre paliers"
+                          hint="Chute minimum entre deux paliers consécutifs (défaut 0.02 = 2¢). Un plus haut qui remonte au-dessus du palier courant réinitialise la séquence."
+                        >
+                          <NumberInput
+                            value={form().favBandExitMinLowerHighDrop}
+                            min={0.005}
+                            step={0.005}
+                            onInput={(v) => update("favBandExitMinLowerHighDrop", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Paliers consécutifs"
+                          hint="Nombre de paliers de plus en plus bas avant de sortir (défaut 2)."
+                        >
+                          <NumberInput
+                            value={form().favBandExitConsecutive}
+                            min={2}
+                            max={10}
+                            step={1}
+                            onInput={(v) => update("favBandExitConsecutive", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Lookback (ms)"
+                          hint="Fenêtre glissante : la séquence doit rester récente (défaut 120000 = 120 s). Sans nouveau palier dans la fenêtre, la séquence est réinitialisée."
+                        >
+                          <NumberInput
+                            value={form().favBandExitLookbackMs}
+                            min={5000}
+                            step={1000}
+                            onInput={(v) => update("favBandExitLookbackMs", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Min elapsed (sec)"
+                          hint="Ne sortir qu'après N secondes de fenêtre (0 = toujours actif)."
+                        >
+                          <NumberInput
+                            value={form().favBandExitMinElapsedSec}
+                            min={0}
+                            max={900}
+                            step={1}
+                            onInput={(v) => update("favBandExitMinElapsedSec", v)}
+                          />
+                        </Field>
+                        <label class="cfg-check" title="Ne sort que si l'ask détenu est sous le prix d'entrée (une sortie au-dessus = gain, pas une dégradation).">
+                          <input
+                            type="checkbox"
+                            checked={form().favBandExitLossOnly}
+                            onChange={(e) => update("favBandExitLossOnly", e.currentTarget.checked)}
+                          />
+                          <span>Uniquement en perte</span>
+                        </label>
+                        <label class="cfg-check" title="Juste après la vente de sortie, FOK buy du token opposé à son ask courant (switch de côté).">
+                          <input
+                            type="checkbox"
+                            checked={form().favBandExitSwitchEnabled}
+                            onChange={(e) => update("favBandExitSwitchEnabled", e.currentTarget.checked)}
+                          />
+                          <span>Acheter l&apos;inverse après la sortie</span>
+                        </label>
+                        <Show when={form().favBandExitSwitchEnabled}>
+                          <Field
+                            label="Budget switch (USDC)"
+                            hint="Plafond USDC du FOK sur le token opposé (défaut 15). Requiert max positions par côté ≥ 2 (onglet Risque)."
+                          >
+                            <NumberInput
+                              value={form().favBandExitSwitchOrderUsdc}
+                              min={0.1}
+                              step={0.1}
+                              onInput={(v) => update("favBandExitSwitchOrderUsdc", v)}
+                            />
+                          </Field>
+                        </Show>
+                      </Show>
+                    </div>
+                  </div>
 <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
                     Risque / exposition : onglet Risque (max shares, max exposure).
                     Fenêtre de trading : onglet Fenêtre.
@@ -1843,17 +1964,7 @@ export function SettingsModal(props: {
                 </div>
               </Show>
 
-              {/* Erreurs */}
-              <Show when={errors().length > 0}>
-                <div class="cfg-errors">
-                  <For each={errors()}>{(msg) => <p>{msg}</p>}</For>
-                </div>
-              </Show>
-              <Show when={saveError()}>
-                <div class="cfg-errors">
-                  <p>{saveError()}</p>
-                </div>
-              </Show>
+              {/* Erreurs → toasts (ToastHost) */}
             </div>
           </div>
 
@@ -1872,7 +1983,7 @@ export function SettingsModal(props: {
                 Annuler
               </button>
               <button
-                class="btn btn-primary"
+                class={`btn btn-primary${errors().length > 0 ? " btn-danger-solid" : ""}`}
                 type="button"
                 onClick={() => void handleSave()}
                 disabled={saving() || errors().length > 0 || !dirty()}

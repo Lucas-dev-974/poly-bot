@@ -236,6 +236,22 @@ export interface BotConfig {
   favBandWhipsawPauseWindows: number;
   favBandWhipsawMaxScore: number | null;
   favBandWhipsawMaxIntraFlips: number | null;
+  /** Deterioration exit (default off): sell the held favorite when its price prints successive lower peaks. */
+  favBandExitEnabled: boolean;
+  /** Deterioration exit: minimum drop between successive peaks (e.g. 0.02). */
+  favBandExitMinLowerHighDrop: number;
+  /** Deterioration exit: consecutive lower peaks required (default 2). */
+  favBandExitConsecutive: number;
+  /** Deterioration exit: sliding sample window (default 120000 = 120 s). */
+  favBandExitLookbackMs: number;
+  /** Deterioration exit: only fire after this many seconds into the window. */
+  favBandExitMinElapsedSec: number;
+  /** Deterioration exit: only fire when the held ask is below the entry price. */
+  favBandExitLossOnly: boolean;
+  /** Deterioration exit follow-up: FOK-buy the opposite token right after the exit sell. */
+  favBandExitSwitchEnabled: boolean;
+  /** Deterioration exit follow-up: opposite-token FOK budget cap (USDC). */
+  favBandExitSwitchOrderUsdc: number;
   /** Dip-revert: buy favorite after intra-window dip + stabilization. */
   dipRevertBandMin: number;
   dipRevertBandMax: number;

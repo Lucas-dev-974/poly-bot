@@ -72,6 +72,14 @@ export type ConfigFormState = {
   favBandWhipsawPauseWindows: string;
   favBandWhipsawMaxScore: string;
   favBandWhipsawMaxIntraFlips: string;
+  favBandExitEnabled: boolean;
+  favBandExitMinLowerHighDrop: string;
+  favBandExitConsecutive: string;
+  favBandExitLookbackMs: string;
+  favBandExitMinElapsedSec: string;
+  favBandExitLossOnly: boolean;
+  favBandExitSwitchEnabled: boolean;
+  favBandExitSwitchOrderUsdc: string;
   dipRevertBandMin: string;
   dipRevertBandMax: string;
   dipRevertMinDrop: string;
@@ -199,6 +207,14 @@ export function configToForm(config: BotConfig): ConfigFormState {
     favBandInverseShareRatio: String(config.favBandInverseShareRatio ?? 2),
     favBandInverseOrderUsdc: String(config.favBandInverseOrderUsdc ?? 15),
     favBandWhipsawEnabled: config.favBandWhipsawEnabled === true,
+    favBandExitEnabled: config.favBandExitEnabled === true,
+    favBandExitMinLowerHighDrop: String(config.favBandExitMinLowerHighDrop ?? 0.02),
+    favBandExitConsecutive: String(config.favBandExitConsecutive ?? 2),
+    favBandExitLookbackMs: String(config.favBandExitLookbackMs ?? 120000),
+    favBandExitMinElapsedSec: String(config.favBandExitMinElapsedSec ?? 0),
+    favBandExitLossOnly: config.favBandExitLossOnly !== false,
+    favBandExitSwitchEnabled: config.favBandExitSwitchEnabled === true,
+    favBandExitSwitchOrderUsdc: String(config.favBandExitSwitchOrderUsdc ?? 15),
     favBandWhipsawPauseAfterLosses:
       config.favBandWhipsawPauseAfterLosses == null
         ? ""
@@ -373,6 +389,14 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     favBandInverseShareRatio: parseNum(form.favBandInverseShareRatio, "Fav-band inverse share ratio"),
     favBandInverseOrderUsdc: parseNum(form.favBandInverseOrderUsdc, "Fav-band inverse order USDC"),
     favBandWhipsawEnabled: form.favBandWhipsawEnabled === true,
+    favBandExitEnabled: form.favBandExitEnabled === true,
+    favBandExitMinLowerHighDrop: parseNum(form.favBandExitMinLowerHighDrop, "Fav-band exit min lower-high drop"),
+    favBandExitConsecutive: parseNum(form.favBandExitConsecutive, "Fav-band exit consecutive"),
+    favBandExitLookbackMs: parseNum(form.favBandExitLookbackMs, "Fav-band exit lookback ms"),
+    favBandExitMinElapsedSec: parseNum(form.favBandExitMinElapsedSec, "Fav-band exit min elapsed"),
+    favBandExitLossOnly: form.favBandExitLossOnly !== false,
+    favBandExitSwitchEnabled: form.favBandExitSwitchEnabled === true,
+    favBandExitSwitchOrderUsdc: parseNum(form.favBandExitSwitchOrderUsdc, "Fav-band exit switch order USDC"),
     favBandWhipsawPauseAfterLosses:
       form.favBandWhipsawPauseAfterLosses.trim() === ""
         ? null
@@ -614,6 +638,34 @@ export function validateConfigForm(
         }
         if (Number.isFinite(maxPos) && maxPos < 2) {
           errors.push("Fav-band inverse: max positions par côté doit être ≥ 2");
+        }
+      }
+      if (form.favBandExitEnabled) {
+        const exDrop = Number(form.favBandExitMinLowerHighDrop);
+        const exConsec = Number(form.favBandExitConsecutive);
+        const exLookback = Number(form.favBandExitLookbackMs);
+        const exElapsed = Number(form.favBandExitMinElapsedSec);
+        if (!Number.isFinite(exDrop) || exDrop <= 0) {
+          errors.push("Fav-band exit: chute entre paliers doit être > 0");
+        }
+        if (!Number.isFinite(exConsec) || exConsec < 2) {
+          errors.push("Fav-band exit: paliers consécutifs doit être ≥ 2");
+        }
+        if (!Number.isFinite(exLookback) || exLookback <= 0) {
+          errors.push("Fav-band exit: lookback doit être > 0 ms");
+        }
+        if (!Number.isFinite(exElapsed) || exElapsed < 0) {
+          errors.push("Fav-band exit: min elapsed doit être ≥ 0");
+        }
+        if (form.favBandExitSwitchEnabled) {
+          const swBudget = Number(form.favBandExitSwitchOrderUsdc);
+          if (!Number.isFinite(swBudget) || swBudget <= 0) {
+            errors.push("Fav-band exit switch: budget doit être > 0");
+          }
+          const maxPos = Number(form.maxOpenPositionsPerSide);
+          if (Number.isFinite(maxPos) && maxPos < 2) {
+            errors.push("Fav-band exit switch: max positions par côté doit être ≥ 2");
+          }
         }
       }
     }
@@ -1101,6 +1153,34 @@ export function fieldErrors(
         }
         if (Number.isFinite(maxPos) && maxPos < 2) {
           result.maxOpenPositionsPerSide = "≥ 2 (jambe inverse)";
+        }
+      }
+      if (form.favBandExitEnabled) {
+        const exDrop = Number(form.favBandExitMinLowerHighDrop);
+        const exConsec = Number(form.favBandExitConsecutive);
+        const exLookback = Number(form.favBandExitLookbackMs);
+        const exElapsed = Number(form.favBandExitMinElapsedSec);
+        if (!Number.isFinite(exDrop) || exDrop <= 0) {
+          result.favBandExitMinLowerHighDrop = "> 0";
+        }
+        if (!Number.isFinite(exConsec) || exConsec < 2) {
+          result.favBandExitConsecutive = "≥ 2";
+        }
+        if (!Number.isFinite(exLookback) || exLookback <= 0) {
+          result.favBandExitLookbackMs = "> 0 ms";
+        }
+        if (!Number.isFinite(exElapsed) || exElapsed < 0) {
+          result.favBandExitMinElapsedSec = "≥ 0";
+        }
+        if (form.favBandExitSwitchEnabled) {
+          const swBudget = Number(form.favBandExitSwitchOrderUsdc);
+          if (!Number.isFinite(swBudget) || swBudget <= 0) {
+            result.favBandExitSwitchOrderUsdc = "> 0";
+          }
+          const maxPos = Number(form.maxOpenPositionsPerSide);
+          if (Number.isFinite(maxPos) && maxPos < 2) {
+            result.maxOpenPositionsPerSide = "≥ 2 (jambe switch)";
+          }
         }
       }
     }

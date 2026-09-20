@@ -17,6 +17,7 @@ export function ConfigBar(props: { onConfigure?: () => void }): JSX.Element {
             ) : c().strategyId === "fav-band" ? (
               <>
                 Fav <b>{c().favBandAskMin}–{c().favBandAskMax}</b> · {c().favBandOrderUsdc} USDC
+                {c().favBandExitEnabled ? " · exit" : ""}
               </>
             ) : c().strategyId === "dip-revert" ? (
               <>

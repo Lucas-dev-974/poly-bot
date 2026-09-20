@@ -272,6 +272,33 @@ export interface BotConfig {
   /** Skip entry when intra-window favorite flips >= this (null = off). */
   favBandWhipsawMaxIntraFlips: number | null;
   /**
+   * Deterioration exit (default off): after the entry fill, track the HELD
+   * favorite's ask; when it prints `favBandExitConsecutive` successive lower
+   * levels (each >= favBandExitMinLowerHighDrop below the previous peak), the
+   * trend is deteriorating — SELL the whole position (FOK at the bid) instead
+   * of holding to resolution. A new high above the pre-degradation anchor
+   * resets the count.
+   */
+  favBandExitEnabled: boolean;
+  /** Deterioration exit: minimum drop between successive peaks (e.g. 0.02 = 2¢). */
+  favBandExitMinLowerHighDrop: number;
+  /** Deterioration exit: consecutive lower peaks required (default 2). */
+  favBandExitConsecutive: number;
+  /** Deterioration exit: sliding sample window (default 120000 = 120 s). */
+  favBandExitLookbackMs: number;
+  /** Deterioration exit: only fire after this many seconds into the window (0 = always). */
+  favBandExitMinElapsedSec: number;
+  /** Deterioration exit: only fire when the held ask is below the entry fill price. */
+  favBandExitLossOnly: boolean;
+  /**
+   * Deterioration exit follow-up (default off): right after the exit SELL,
+   * FOK-buy the OPPOSITE token at its current ask (switch sides), sized
+   * favBandExitSwitchOrderUsdc / ask, capped by maxSharesPerOrder.
+   */
+  favBandExitSwitchEnabled: boolean;
+  /** Deterioration exit follow-up: opposite-token FOK budget cap (USDC). */
+  favBandExitSwitchOrderUsdc: number;
+  /**
    * Dip-revert: buy favorite after an intra-window dip + stabilization.
    * Ask must be in [dipRevertBandMin, dipRevertBandMax]; the favorite must
    * have dropped >= dipRevertMinDrop over dipRevertDropLookbackMs then
@@ -438,6 +465,14 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     favBandWhipsawPauseWindows: 8,
     favBandWhipsawMaxScore: null,
     favBandWhipsawMaxIntraFlips: null,
+    favBandExitEnabled: false,
+    favBandExitMinLowerHighDrop: 0.02,
+    favBandExitConsecutive: 2,
+    favBandExitLookbackMs: 120_000,
+    favBandExitMinElapsedSec: 0,
+    favBandExitLossOnly: true,
+    favBandExitSwitchEnabled: false,
+    favBandExitSwitchOrderUsdc: 15,
     dipRevertBandMin: 0.55,
     dipRevertBandMax: 0.65,
     dipRevertMinDrop: 0.03,
@@ -767,6 +802,39 @@ export function validateConfigCoherence(
         !(config.favBandWhipsawMaxIntraFlips >= 1)
       ) {
         throw new Error("favBandWhipsawMaxIntraFlips must be >= 1 when set");
+      }
+    }
+    if (config.favBandExitEnabled) {
+      if (!(config.favBandExitMinLowerHighDrop > 0)) {
+        throw new Error("favBandExitMinLowerHighDrop must be > 0");
+      }
+      if (!(config.favBandExitConsecutive >= 2)) {
+        throw new Error("favBandExitConsecutive must be >= 2");
+      }
+      if (!(config.favBandExitLookbackMs > 0)) {
+        throw new Error("favBandExitLookbackMs must be > 0");
+      }
+      if (!(config.favBandExitMinElapsedSec >= 0)) {
+        throw new Error("favBandExitMinElapsedSec must be >= 0");
+      }
+      if (config.favBandExitSwitchEnabled) {
+        if (!(config.favBandExitSwitchOrderUsdc > 0)) {
+          throw new Error("favBandExitSwitchOrderUsdc must be > 0");
+        }
+        // The opposite token can trade anywhere in (0, 1): worst case 0.99.
+        validateEngineBudget(
+          config.favBandExitSwitchOrderUsdc,
+          0.99,
+          "fav-band exit switch",
+        );
+        // The switch leg is a SECOND leg per pair: the sold entry leg keeps
+        // counting in countLegsByKind, so with maxOpenPositionsPerSide = 1
+        // the emission would be silently blocked (appendOpportunity guard).
+        if (config.maxOpenPositionsPerSide < 2) {
+          throw new Error(
+            "favBandExitSwitchEnabled requires maxOpenPositionsPerSide >= 2 (entry leg + switch leg)",
+          );
+        }
       }
     }
   }

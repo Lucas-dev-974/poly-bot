@@ -627,3 +627,368 @@ describe("fav-band whipsaw filter", () => {
     assert.ok(opps.length >= 1);
   });
 });
+
+describe("fav-band deterioration exit", () => {
+  function filledTracker(
+    event: ReturnType<typeof testEvent>,
+    entryPrice = 0.65,
+  ): TradeTracker {
+    const tracker = new TradeTracker();
+    const pairId = `${event.slug}:${event.windowEnd}`;
+    tracker.addOpenPosition({
+      id: "fav-filled",
+      eventSlug: event.slug,
+      eventTitle: event.title,
+      tokenId: "t-up",
+      outcome: "Up",
+      outcomeIndex: 0,
+      kind: "cheap",
+      limitPrice: entryPrice,
+      fillPrice: entryPrice,
+      size: 20,
+      cost: entryPrice * 20,
+      windowEnd: event.windowEnd,
+      status: "open",
+      fillReason: "marketable",
+      pairId,
+    });
+    return tracker;
+  }
+
+  const exitConfig = testConfig({
+    strategyId: "fav-band",
+    favBandAskMin: 0.7,
+    favBandAskMax: 0.85,
+    favBandMinElapsedSec: 0,
+    favBandOrderUsdc: 15,
+    maxSharesPerOrder: 40,
+    favBandExitEnabled: true,
+    favBandExitMinLowerHighDrop: 0.02,
+    favBandExitConsecutive: 2,
+    favBandExitLookbackMs: 120_000,
+    favBandExitMinElapsedSec: 0,
+    favBandExitLossOnly: true,
+    favBandExitSwitchEnabled: false,
+  });
+
+  function defendCtx(
+    tracker: TradeTracker,
+    cheapAsk: number | null,
+    favoriteAsk: number | null,
+    event: ReturnType<typeof testEvent>,
+  ) {
+    return {
+      config: exitConfig,
+      favoriteAsk,
+      filledCheap: 20,
+      filledExpensive: 0,
+      pairId: `${event.slug}:${event.windowEnd}`,
+      cheapAsk,
+      tracker,
+      nowMs: (event.windowStart + 400) * 1000,
+    };
+  }
+
+  function lowerPeaksSeries(
+    strategy: FavBandStrategy,
+    tracker: TradeTracker,
+    event: ReturnType<typeof testEvent>,
+    peaks: number[],
+  ): void {
+    for (const ask of peaks) {
+      strategy.shouldDefend(defendCtx(tracker, ask, 0.9 - ask, event));
+    }
+  }
+
+  it("fires after consecutive lower peaks (0.65 entry → 0.60 → 0.55)", () => {
+    const strategy = new FavBandStrategy();
+    const event = testEvent(1_800_000_000);
+    const tracker = filledTracker(event, 0.65);
+    strategy.onBuyCommitted({
+      ...({} as TradeOpportunity),
+      pairId: `${event.slug}:${event.windowEnd}`,
+      token: { tokenId: "t-up" } as TradeOpportunity["token"],
+      event,
+      price: 0.65,
+    });
+    // Peaks: 0.60 fails entry-peak 0.65 by 0.05 → count 1. Peak 0.58 (bounce
+    // below 0.60) fails running max 0.60 by 0.02 → count 2 → armed. Ask 0.56
+    // (no new drop ≥ 0.02 below 0.58 keeps... actually 0.56 < 0.58 − 0.02
+    // borderline: use 0.57, noise) → trigger on the completed sequence.
+    lowerPeaksSeries(strategy, tracker, event, [0.6, 0.58, 0.57]);
+    const ctx = defendCtx(tracker, 0.57, 0.34, event);
+    assert.equal(strategy.shouldDefend(ctx), true);
+    assert.equal(strategy.defendShares(ctx), 20);
+  });
+
+  it("does not fire on a single lower peak (below consecutive threshold)", () => {
+    const strategy = new FavBandStrategy();
+    const event = testEvent();
+    const tracker = filledTracker(event, 0.65);
+    strategy.onBuyCommitted({
+      ...({} as TradeOpportunity),
+      pairId: `${event.slug}:${event.windowEnd}`,
+      token: { tokenId: "t-up" } as TradeOpportunity["token"],
+      event,
+      price: 0.65,
+    });
+    lowerPeaksSeries(strategy, tracker, event, [0.6]);
+    // 0.59 is noise relative to the running peak 0.60 (0.01 < minDrop): no
+    // second event → chain incomplete.
+    const ctx = defendCtx(tracker, 0.59, 0.32, event);
+    assert.equal(strategy.shouldDefend(ctx), false);
+  });
+
+  it("resets the chain after a full recovery above the last peak", () => {
+    const strategy = new FavBandStrategy();
+    const event = testEvent();
+    const tracker = filledTracker(event, 0.65);
+    strategy.onBuyCommitted({
+      ...({} as TradeOpportunity),
+      pairId: `${event.slug}:${event.windowEnd}`,
+      token: { tokenId: "t-up" } as TradeOpportunity["token"],
+      event,
+      price: 0.65,
+    });
+    lowerPeaksSeries(strategy, tracker, event, [0.6, 0.58]);
+    // Full recovery back to the entry price: pattern broken.
+    lowerPeaksSeries(strategy, tracker, event, [0.66]);
+    const ctx = defendCtx(tracker, 0.64, 0.27, event);
+    assert.equal(strategy.shouldDefend(ctx), false);
+  });
+
+  it("does not fire when favBandExitEnabled is false", () => {
+    const strategy = new FavBandStrategy();
+    const event = testEvent();
+    const tracker = filledTracker(event, 0.65);
+    strategy.onBuyCommitted({
+      ...({} as TradeOpportunity),
+      pairId: `${event.slug}:${event.windowEnd}`,
+      token: { tokenId: "t-up" } as TradeOpportunity["token"],
+      event,
+      price: 0.65,
+    });
+    lowerPeaksSeries(strategy, tracker, event, [0.6, 0.58, 0.57]);
+    const ctx = {
+      ...defendCtx(tracker, 0.57, 0.34, event),
+      config: { ...exitConfig, favBandExitEnabled: false },
+    };
+    assert.equal(strategy.shouldDefend(ctx), false);
+  });
+
+  it("does not fire while the held ask stays above the entry price (loss-only)", () => {
+    const strategy = new FavBandStrategy();
+    const event = testEvent();
+    const tracker = filledTracker(event, 0.65);
+    strategy.onBuyCommitted({
+      ...({} as TradeOpportunity),
+      pairId: `${event.slug}:${event.windowEnd}`,
+      token: { tokenId: "t-up" } as TradeOpportunity["token"],
+      event,
+      price: 0.65,
+    });
+    // Degradation below the running peaks but always ABOVE the entry price.
+    lowerPeaksSeries(strategy, tracker, event, [0.78, 0.74, 0.72]);
+    const ctx = defendCtx(tracker, 0.71, 0.2, event);
+    assert.equal(strategy.shouldDefend(ctx), false);
+  });
+
+  it("does not fire when the sequence is stale (outside lookback)", () => {
+    const strategy = new FavBandStrategy();
+    const event = testEvent();
+    const tracker = filledTracker(event, 0.65);
+    strategy.onBuyCommitted({
+      ...({} as TradeOpportunity),
+      pairId: `${event.slug}:${event.windowEnd}`,
+      token: { tokenId: "t-up" } as TradeOpportunity["token"],
+      event,
+      price: 0.65,
+    });
+    lowerPeaksSeries(strategy, tracker, event, [0.6, 0.58]);
+    // Jump 5 minutes: the last event is far outside the 120 s lookback and
+    // the final ask (0.59) is noise (0.01 < minDrop) — no fresh event.
+    const ctx = {
+      ...defendCtx(tracker, 0.59, 0.32, event),
+      nowMs: (event.windowStart + 700) * 1000,
+    };
+    assert.equal(strategy.shouldDefend(ctx), false);
+  });
+
+  it("is idempotent: repeated identical calls do not double count", () => {
+    const strategy = new FavBandStrategy();
+    const event = testEvent();
+    const tracker = filledTracker(event, 0.65);
+    strategy.onBuyCommitted({
+      ...({} as TradeOpportunity),
+      pairId: `${event.slug}:${event.windowEnd}`,
+      token: { tokenId: "t-up" } as TradeOpportunity["token"],
+      event,
+      price: 0.65,
+    });
+    // The runner calls shouldDefend (decision) then defendShares (re-eval)
+    // with the SAME ctx: repeating the same ask must not add events.
+    lowerPeaksSeries(strategy, tracker, event, [0.6, 0.6, 0.6, 0.58, 0.58]);
+    const ctx = defendCtx(tracker, 0.58, 0.33, event);
+    assert.equal(strategy.shouldDefend(ctx), true);
+    assert.equal(strategy.defendShares(ctx), 20);
+  });
+
+  it("validates the exit config coherence", () => {
+    assert.doesNotThrow(() =>
+      validateConfigCoherence(
+        testConfig({
+          strategyId: "fav-band",
+          favBandExitEnabled: true,
+          favBandExitSwitchEnabled: true,
+          favBandExitSwitchOrderUsdc: 15,
+          maxOpenPositionsPerSide: 2,
+        }),
+      ),
+    );
+    assert.throws(
+      () =>
+        validateConfigCoherence(
+          testConfig({
+            strategyId: "fav-band",
+            favBandExitEnabled: true,
+            favBandExitConsecutive: 1,
+          }),
+        ),
+      /favBandExitConsecutive/,
+    );
+    assert.throws(
+      () =>
+        validateConfigCoherence(
+          testConfig({
+            strategyId: "fav-band",
+            favBandExitEnabled: true,
+            favBandExitSwitchEnabled: true,
+            maxOpenPositionsPerSide: 1,
+          }),
+        ),
+      /maxOpenPositionsPerSide/,
+    );
+  });
+});
+
+describe("fav-band deterioration exit end-to-end (backtest runner)", () => {
+  const START = 1_800_000_000;
+  const END = START + 900;
+  const SLUG = `btc-updown-15m-${START}`;
+
+  function row(
+    ts: number,
+    outcomeIndex: number,
+    ask: number,
+    bid = ask - 0.01,
+    askSize = 50,
+  ): import("../src/db/repositories.js").BookSnapshotRow {
+    return {
+      ts,
+      eventSlug: SLUG,
+      tokenId: outcomeIndex === 0 ? "t-up" : "t-down",
+      outcome: outcomeIndex === 0 ? "Up" : "Down",
+      outcomeIndex,
+      bestBid: bid,
+      bestAsk: ask,
+      bestAskSize: askSize,
+    };
+  }
+
+  // Entry band [0.60, 0.85] on Up; then Up deteriorates 0.64 → 0.60 → 0.56.
+  function ticks(): import("../src/db/repositories.js").BookSnapshotRow[] {
+    const rows: import("../src/db/repositories.js").BookSnapshotRow[] = [];
+    const upAsks = [0.64, 0.64, 0.64, 0.64, 0.6, 0.6, 0.56, 0.56];
+    const downAsks = [0.36, 0.36, 0.36, 0.36, 0.4, 0.4, 0.44, 0.44];
+    for (let i = 0; i < 8; i++) {
+      const ts = (START + 200 + i) * 1000;
+      rows.push(row(ts, 0, upAsks[i]), row(ts, 1, downAsks[i]));
+    }
+    return rows;
+  }
+
+  it("sells the position on deteriorating peaks instead of riding to resolution", async () => {
+    const { runBacktest } = await import("../src/backtest/runner.js");
+    const tradeRows: Array<{
+      filled: number;
+      kind: string;
+      side: string;
+      reason: string | null;
+      size: number;
+      fillPrice: number | null;
+    }> = [];
+    const repos = {
+      bookSnapshots: {
+        bySlugAndRange: () => ticks(),
+      },
+      backtestTrades: {
+        insert: (row2: {
+          filled: number;
+          kind: string;
+          side: string;
+          reason: string | null;
+          size: number;
+          fillPrice: number | null;
+        }) => {
+          tradeRows.push(row2);
+        },
+      },
+      backtestPositions: { upsert: () => undefined },
+      marketResolutions: { get: () => undefined, upsert: () => undefined },
+    } as unknown as Repositories;
+
+    const result = await runBacktest({
+      runId: "exit-run",
+      config: testConfig({
+        strategyId: "fav-band",
+        favBandAskMin: 0.6,
+        favBandAskMax: 0.85,
+        favBandMinElapsedSec: 200,
+        favBandOrderUsdc: 15,
+        maxSharesPerOrder: 40,
+        maxExposureUsdc: 60,
+        simulatedCapital: 100,
+        minMinutesBeforeCloseToBuy: null,
+        minutesBeforeCloseMin: 0,
+        minutesBeforeCloseMax: 15,
+        favBandExitEnabled: true,
+        favBandExitMinLowerHighDrop: 0.02,
+        favBandExitConsecutive: 2,
+        favBandExitLookbackMs: 120_000,
+        favBandExitMinElapsedSec: 0,
+        favBandExitLossOnly: true,
+        favBandExitSwitchEnabled: false,
+      }),
+      windows: [
+        {
+          eventSlug: SLUG,
+          eventTitle: "BTC",
+          windowStart: START,
+          windowEnd: END,
+          complete: true,
+          tickCount: 8,
+          expectedTicks: 900,
+          maxGapMs: 1000,
+          coveragePct: 8 / 900,
+          gapCount: 0,
+          upTokenId: "t-up",
+          downTokenId: "t-down",
+          conditionId: "0xcond",
+        },
+      ],
+      repos,
+      hooks: {
+        shouldCancel: () => false,
+        onProgress: () => undefined,
+      },
+      resolveWinner: async () => ({ winnerOutcomeIndex: 0 }),
+    });
+
+    const buys = tradeRows.filter((t) => t.filled === 1 && t.side === "BUY");
+    const sells = tradeRows.filter((t) => t.filled === 1 && t.side === "SELL");
+    assert.ok(buys.length >= 1, `expected an entry fill, got ${JSON.stringify(tradeRows)}`);
+    assert.ok(sells.length >= 1, `expected a defend SELL, got ${JSON.stringify(tradeRows)}`);
+    assert.equal(sells[0].reason, "defend");
+    assert.equal(result.unresolvedWindows, 0);
+  });
+});

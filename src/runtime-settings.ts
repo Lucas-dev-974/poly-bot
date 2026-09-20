@@ -76,6 +76,14 @@ export const EDITABLE_CONFIG_KEYS = [
   "favBandWhipsawPauseWindows",
   "favBandWhipsawMaxScore",
   "favBandWhipsawMaxIntraFlips",
+  "favBandExitEnabled",
+  "favBandExitMinLowerHighDrop",
+  "favBandExitConsecutive",
+  "favBandExitLookbackMs",
+  "favBandExitMinElapsedSec",
+  "favBandExitLossOnly",
+  "favBandExitSwitchEnabled",
+  "favBandExitSwitchOrderUsdc",
   "dipRevertBandMin",
   "dipRevertBandMax",
   "dipRevertMinDrop",
@@ -196,6 +204,14 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   favBandWhipsawPauseWindows: "FAV_BAND_WHIPSAW_PAUSE_WINDOWS",
   favBandWhipsawMaxScore: "FAV_BAND_WHIPSAW_MAX_SCORE",
   favBandWhipsawMaxIntraFlips: "FAV_BAND_WHIPSAW_MAX_INTRA_FLIPS",
+  favBandExitEnabled: "FAV_BAND_EXIT_ENABLED",
+  favBandExitMinLowerHighDrop: "FAV_BAND_EXIT_MIN_LOWER_HIGH_DROP",
+  favBandExitConsecutive: "FAV_BAND_EXIT_CONSECUTIVE",
+  favBandExitLookbackMs: "FAV_BAND_EXIT_LOOKBACK_MS",
+  favBandExitMinElapsedSec: "FAV_BAND_EXIT_MIN_ELAPSED_SEC",
+  favBandExitLossOnly: "FAV_BAND_EXIT_LOSS_ONLY",
+  favBandExitSwitchEnabled: "FAV_BAND_EXIT_SWITCH_ENABLED",
+  favBandExitSwitchOrderUsdc: "FAV_BAND_EXIT_SWITCH_ORDER_USDC",
   favBandOrderUsdc: "FAV_BAND_ORDER_USDC",
   barbellCheapOrderUsdc: "BARBELL_CHEAP_ORDER_USDC",
   reverseCheapOrderUsdc: "REVERSE_CHEAP_ORDER_USDC",
@@ -347,6 +363,11 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "favBandInverseShareRatio":
     case "favBandInverseOrderUsdc":
     case "favBandWhipsawPauseWindows":
+    case "favBandExitMinLowerHighDrop":
+    case "favBandExitConsecutive":
+    case "favBandExitLookbackMs":
+    case "favBandExitMinElapsedSec":
+    case "favBandExitSwitchOrderUsdc":
     case "dipRevertBandMin":
     case "dipRevertBandMax":
     case "dipRevertMinDrop":
@@ -438,6 +459,9 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "dipRevertExitTakeProfitEnabled":
     case "favBandInverseEnabled":
     case "favBandWhipsawEnabled":
+    case "favBandExitEnabled":
+    case "favBandExitLossOnly":
+    case "favBandExitSwitchEnabled":
     case "openEntrySlEnabled":
       return parseBoolean(value, key);
     case "reverseMaxGridLevels":
@@ -576,6 +600,14 @@ const FAV_BAND_KEYS: readonly EditableConfigKey[] = [
   "favBandWhipsawPauseWindows",
   "favBandWhipsawMaxScore",
   "favBandWhipsawMaxIntraFlips",
+  "favBandExitEnabled",
+  "favBandExitMinLowerHighDrop",
+  "favBandExitConsecutive",
+  "favBandExitLookbackMs",
+  "favBandExitMinElapsedSec",
+  "favBandExitLossOnly",
+  "favBandExitSwitchEnabled",
+  "favBandExitSwitchOrderUsdc",
   "enableExpensiveHedge",
 ];
 

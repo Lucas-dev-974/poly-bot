@@ -238,6 +238,22 @@ export const api = {
     request<{ series: Record<string, BacktestSeriesPoint[]> }>(
       `/api/backtest/series?slugs=${encodeURIComponent(slugs.join(","))}`,
     ),
+  backtestLowerLows: (slugs: string[], params?: {
+    minSwingCents?: number;
+    retraceRatio?: number;
+    consecutiveRequired?: number;
+    lookbackMs?: number;
+  }) => {
+    const qs = new URLSearchParams();
+    qs.set("slugs", slugs.join(","));
+    if (params?.minSwingCents !== undefined) qs.set("minSwingCents", String(params.minSwingCents));
+    if (params?.retraceRatio !== undefined) qs.set("retraceRatio", String(params.retraceRatio));
+    if (params?.consecutiveRequired !== undefined) qs.set("consecutiveRequired", String(params.consecutiveRequired));
+    if (params?.lookbackMs !== undefined) qs.set("lookbackMs", String(params.lookbackMs));
+    return request<{ results: import("../types").LowerLowAnalysisResult[] }>(
+      `/api/backtest/lower-lows?${qs.toString()}`,
+    );
+  },
   backtestWalletTrades: (from: number, to: number) =>
     request<WalletTradesResponse>(
       `/api/backtest/wallet-trades?from=${encodeURIComponent(String(from))}&to=${encodeURIComponent(String(to))}`,

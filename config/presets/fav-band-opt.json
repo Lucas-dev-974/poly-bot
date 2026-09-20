@@ -5,7 +5,9 @@
   "description": "Offline grid winner (313 BTC 15m windows, ticks>600, gap<60s): same band [0.70,0.85] and minElapsed 200 as baseline, plus favBandMaxElapsedSec=600. Backtest +298.76 (+398%) vs baseline +290 (+387%), same maxDD ~113, WR ~78%. NOT applied to live — apply manually from Profiles when ready.",
   "settings": {
     "pollIntervalMs": 1000,
-    "marketSlugPrefixes": ["btc-updown-15m"],
+    "marketSlugPrefixes": [
+      "btc-updown-15m"
+    ],
     "strategyId": "fav-band",
     "enableExpensiveHedge": false,
     "arbAskLockOnly": false,
@@ -16,8 +18,9 @@
     "favBandMinElapsedSec": 200,
     "favBandMaxElapsedSec": 600,
     "favBandExitEnabled": false,
-    "favBandExitMinLowerHighDrop": 0.02,
-    "favBandExitConsecutive": 2,
+    "favBandExitMinLowerHighDrop": 0.05,
+    "favBandExitRetraceRatio": 0.25,
+    "favBandExitConsecutive": 3,
     "favBandExitLookbackMs": 120000,
     "favBandExitMinElapsedSec": 0,
     "favBandExitLossOnly": true,

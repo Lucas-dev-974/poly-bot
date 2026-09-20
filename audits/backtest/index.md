@@ -97,6 +97,7 @@ Script : `scripts/research/fav-band/fav-band-param-grid.mts`
 | `live-audit-1789807461060.md` | **Audit positions LIVE** (392 pos., 13→19/09) : WR strict 69.7 %, PnL +$50.82. Finding : config live bande [0.60,0.74] **jamais backtestée** — la zone < 0.70 perd −$47.89 (159 trades) ; jour 09-19 rouge −$40.21 (whipsaw + sizing déridé en séance 7→15 sh) ; flip-slippage FOK confirmé (fill 0.46, outcome favorable) ; 73 closes manuels. Script : `scripts/research/fav-band/live-positions.mts` |
 
 | `live-band-vs-tested-…json` + `live-band-perday-…json` | **Bande LIVE chiffrée sur l'univers ACTUEL** (887 fenêtres, runner officiel, 19/09) : LIVE [0.60-0.74] sizing live (5sh/15exp) **+$90.05 / WR 68.1 % / DD 42.7** ; LIVE à sizing grid +$399.40 / WR 68.2 % ; preset testé 070-085_max600 **+$467.93 / WR 76.2 % / DD 237.7** → la bande live sous-performe de −15 % de PnL et −8 pts WR à sizing égal (PnL/DD comparable 2.08 vs 1.97). Par jour UTC (config live) : jours rouges sim 09-10 (−4.8), 09-15 (−25.2), 09-19 (−29.7) → le whipsaw est un régime, pas un bug. Scripts : `scripts/research/fav-band-research/probe-live-band*.mts` |
+| `fav-band-exit-rule-1789883396238.json` + `fav-band-exit-rule-2026-09-20.md` | **Sortie « dégradation » (pics de plus en plus bas)** / 830 fenêtres / runner officiel. Baseline exit OFF **+$420.70 / WR 76 % / DD 246.8**. Config large 0.05/3 pics : **+365.39 / DD 55.62 (−77 %) / PnL/DD 6.57** — le trade-off risque/rendement gagnant. Config intuitive 0.02/2 : **−63.25** (sort sur le bruit du carnet). Switch inverse post-vente : **−65.63** (64 fills, rachète le token qui monte — même verdict que l'étude hedge dip-revert). Loss-only OFF : −60.66. Défauts ship : drop 0.05, 3 pics, lookback 120 s, loss-only ON, **exit OFF** + **switch OFF** par défaut. Script : `scripts/research/fav-band/exit-rule-backtest.mts` |
 
 **Verdict** : fav-band est le 2ᵉ meilleur moteur de l'univers ; bande
 0.70–0.85 avec min elapsed 200 s. (Le backtest croisé dip-revert
@@ -108,6 +109,11 @@ band-070-085_min200_max600 recommandé, minElapsed 300 à backtester.
 **Rapport d'audit complet (code + wiring + backtest + live + runs du jour)**
 : `RAPPORT-fav-band-audit.md` à la racine (findings F1–F9, recommandations R1–R5
 ; note : `tests/fav-band.test.ts` absent du script `npm test`).
+**Sortie dégradation (2026-09-20, implémentée)** : la règle « pics de plus en
+plus bas » est câblée full-stack (config/runtime-settings/stratégie/UI dialog +
+preset run) derrière `favBandExitEnabled` (OFF par défaut). Ne l'activer qu'en
+0.05/3 : le seuil fin (2¢/2 pics) sort sur le bruit et détruit le PnL ; le
+switch inverse est confirmé destructeur (gardé OFF).
 
 ## 📁 dip-revert/ — moteur dip-revert (favori chuté + rebond)
 

@@ -29,25 +29,61 @@ type WindowBookStats = {
   samples: number;
 };
 
+/** Polymarket L1 tick in cents — floor for a confirming bounce. */
+const PRICE_TICK_CENTS = 1;
+
+function priceToCents(price: number): number {
+  return Math.round(price * 100);
+}
+
 /**
- * Deterioration-exit chain for one filled pair (lower-peaks detector).
- * Anchored at the entry fill: `lastPeak` is the last significant peak, and
- * every time the price falls >= MinLowerHighDrop below the running max
- * (`curPeak`), that peak has failed — one event, `lowerPeaks`++. A failed
- * bounce that stays below `lastPeak` keeps the count (a lower peak forms and
- * can fail in turn); a full recovery to/above `lastPeak` resets the sequence.
- * Idempotent per sample: repeating the same ask never resets the chain, so
- * the runner's shouldDefend → defendShares double call is harmless.
+ * Bounce needed to freeze a plus-bas. Not a rigid 50% retrace:
+ *  - after a real swing (>= minSwing), bounce is clamp(ratio × drop, 1 tick, minSwing)
+ *    so a 10¢ dump confirms around 3¢ (ratio 0.25) not 5¢, and a 20¢ dump never
+ *    waits more than minSwing (default 5¢);
+ *  - a later extension of >= minSwing below the last plus-bas confirms on 1 tick
+ *    (stairs / waterfall / failed bounce).
+ */
+function requiredBounceCents(
+  dropC: number,
+  minSwingC: number,
+  ratio: number,
+  lowestLowC: number | null,
+  curLowC: number,
+): number {
+  if (lowestLowC != null && lowestLowC - curLowC >= minSwingC) {
+    return PRICE_TICK_CENTS;
+  }
+  const cap = Math.max(PRICE_TICK_CENTS, minSwingC);
+  const proportional = Math.round(ratio * dropC);
+  return Math.min(cap, Math.max(PRICE_TICK_CENTS, proportional));
+}
+
+/**
+ * Deterioration-exit chain: confirmed lower-lows (plus-bas), not failed peaks.
+ * A plus-bas is the running trough of the current down-leg, frozen once price
+ * bounces enough (see requiredBounceCents). Strictly lower confirmed lows
+ * increment the sequence; reclaiming the structure high resets it. Breaking
+ * the last plus-bas without a full retrace starts a new down-leg from the
+ * bounce high (failed bounce / continuation). Idempotent per sample so the
+ * runner's shouldDefend → defendShares double call is harmless.
  */
 type ExitPairState = {
   heldTokenId: string | null;
   entryPrice: number | null;
   windowStartSec: number | null;
-  /** Last significant peak (a level whose failure counted one event). */
-  lastPeak: number | null;
-  /** Running max since the last event (bounces below lastPeak raise it). */
-  curPeak: number | null;
-  lowerPeaks: number;
+  phase: "down" | "up";
+  /** Structure high (BOS level): entry, or a pre-low extension. */
+  lastHighC: number;
+  /** Origin of the current down-leg (structure high or last bounce peak). */
+  legHighC: number;
+  /** Lowest confirmed plus-bas in the current sequence. */
+  lowestLowC: number | null;
+  /** Most recently confirmed plus-bas (break of this resumes a down-leg). */
+  lastSwingLowC: number | null;
+  /** Running min (down) or max (up) of the current leg. */
+  curExtremeC: number;
+  lowerLows: number;
   lastEventTs: number | null;
   lastSeenTs: number;
   /** One-shot: set once the exit SELL has committed — no second exit. */
@@ -77,16 +113,16 @@ export type FavBandWhipsawStatus = {
  * Fav-band — directional FOK buy of the favorite in a calibrated ask band
  * after min elapsed; hold to resolve. Optional inverse GTC + optional whipsaw
  * filter (pause after losses / max flips / max score). Optional deterioration
- * exit: when the HELD favorite's price keeps printing lower and lower peaks
- * (successive levels each >= MinLowerHighDrop below the previous reference,
- * `Consecutive` times in a row within LookbackMs), SELL the whole position
- * (FOK at the bid, defend pipeline) instead of riding to resolution — and
- * optionally FOK-buy the OPPOSITE token right after (switch sides).
+ * exit: when the HELD favorite prints a sequence of confirmed plus-bas
+ * (lower lows, each a swing of >= MinSwing frozen by a flexible bounce)
+ * `Consecutive` times within LookbackMs, SELL the whole position (FOK at
+ * the bid, defend pipeline) instead of riding to resolution — and optionally
+ * FOK-buy the OPPOSITE token right after (switch sides).
  */
 export class FavBandStrategy implements TradingStrategy {
   readonly id = "fav-band" as const;
   readonly label =
-    "Fav-band: FOK buy favorite when ask in calibrated mid-band after min elapsed; hold to resolve (optional resting inverse GTC, optional deterioration exit + inverse switch)";
+    "Fav-band: FOK buy favorite when ask in calibrated mid-band after min elapsed; hold to resolve (optional resting inverse GTC, optional lower-low deterioration exit + inverse switch)";
   readonly leadsWithEdge = false;
   /** Deterioration exit reuses the defend pipeline (dip-revert TP precedent). */
   readonly usesDefendAsExit = true;
@@ -219,58 +255,102 @@ export class FavBandStrategy implements TradingStrategy {
   }
 
   /**
-   * One observation against the held token's current ask (lower-peaks chain).
-   * A full recovery to/above the last significant peak resets the sequence;
-   * every peak that fails by >= minDrop counts one event. Idempotent for a
-   * repeated identical sample (the runner calls shouldDefend twice per
-   * decision — no double counting, no spurious reset).
+   * One observation against the held token's current ask (plus-bas chain).
+   * A bounce that reclaims the structure high resets the sequence; every
+   * confirmed trough strictly below the last plus-bas counts one event.
+   * Idempotent for a repeated identical sample (the runner calls
+   * shouldDefend twice per decision — no double counting, no spurious reset).
    */
   private stepExitChainWith(
     state: ExitPairState,
     heldAsk: number,
     nowMs: number,
-    minDrop: number,
+    minSwing: number,
     lookbackMs: number,
     consecutive: number,
+    retraceRatio: number,
   ): void {
     state.lastSeenTs = nowMs;
-    if (state.lastPeak == null || state.curPeak == null) {
-      state.lastPeak = heldAsk;
-      state.curPeak = heldAsk;
-      return;
-    }
-    // Decay: an INCOMPLETE sequence with no fresh event inside the lookback
-    // is stale (the deterioration must stay recent). A completed sequence
-    // stays armed so the exit keeps retrying until the sell fills.
+    const askC = priceToCents(heldAsk);
+    const minSwingC = Math.max(PRICE_TICK_CENTS, priceToCents(minSwing));
+    // Decay: an INCOMPLETE sequence with no fresh plus-bas inside the lookback
+    // is stale. A completed sequence stays armed so the exit keeps retrying
+    // until the sell fills.
     if (
-      state.lowerPeaks > 0 &&
-      state.lowerPeaks < consecutive &&
+      state.lowerLows > 0 &&
+      state.lowerLows < consecutive &&
       state.lastEventTs != null &&
       nowMs - state.lastEventTs > lookbackMs
     ) {
-      state.lowerPeaks = 0;
+      state.lowerLows = 0;
       state.lastEventTs = null;
     }
-    if (heldAsk >= state.lastPeak) {
-      // Full recovery: the price reclaimed the last significant peak — the
-      // lower-peaks pattern is broken. Re-anchor and reset the count.
-      state.lastPeak = heldAsk;
-      state.curPeak = heldAsk;
-      state.lowerPeaks = 0;
+
+    if (state.phase === "down") {
+      if (askC >= state.lastHighC) {
+        state.lastHighC = askC;
+        state.legHighC = askC;
+        state.curExtremeC = askC;
+        if (state.lowestLowC != null) {
+          state.lowestLowC = null;
+          state.lastSwingLowC = null;
+          state.lowerLows = 0;
+          state.lastEventTs = null;
+        }
+        return;
+      }
+      state.curExtremeC = Math.min(state.curExtremeC, askC);
+      const dropC = state.legHighC - state.curExtremeC;
+      const bounceC = askC - state.curExtremeC;
+      if (dropC < minSwingC) return;
+      const needed = requiredBounceCents(
+        dropC,
+        minSwingC,
+        retraceRatio,
+        state.lowestLowC,
+        state.curExtremeC,
+      );
+      if (bounceC >= needed) {
+        this.confirmLow(state, state.curExtremeC, nowMs);
+        state.phase = "up";
+        state.curExtremeC = askC;
+      }
+      return;
+    }
+
+    // phase === "up": tracking the bounce off the last plus-bas.
+    if (askC >= state.lastHighC) {
+      state.phase = "down";
+      state.lastHighC = askC;
+      state.legHighC = askC;
+      state.curExtremeC = askC;
+      state.lowestLowC = null;
+      state.lastSwingLowC = null;
+      state.lowerLows = 0;
       state.lastEventTs = null;
       return;
     }
-    if (heldAsk > state.curPeak) {
-      state.curPeak = heldAsk;
+    state.curExtremeC = Math.max(state.curExtremeC, askC);
+    if (state.lastSwingLowC != null && askC < state.lastSwingLowC) {
+      // Failed bounce / continuation: the last plus-bas broke. New down-leg
+      // starts from the bounce peak — no need for a 50% retrace first.
+      state.phase = "down";
+      state.legHighC = state.curExtremeC;
+      state.curExtremeC = askC;
     }
-    if (state.curPeak - heldAsk >= minDrop) {
-      // The peak at curPeak failed by >= minDrop: one deteriorating level.
-      state.lowerPeaks += 1;
-      state.lastPeak = state.curPeak;
-      state.curPeak = heldAsk;
+  }
+
+  private confirmLow(
+    state: ExitPairState,
+    lowC: number,
+    nowMs: number,
+  ): void {
+    if (state.lowestLowC == null || lowC < state.lowestLowC) {
+      state.lowerLows += 1;
       state.lastEventTs = nowMs;
+      state.lowestLowC = lowC;
     }
-    // Else: noise between the running peak and the step threshold.
+    state.lastSwingLowC = lowC;
   }
 
   /** Purge exit states of closed windows (pairs never come back). */
@@ -452,16 +532,21 @@ export class FavBandStrategy implements TradingStrategy {
     );
   }
 
-  /** Anchors the deterioration chain at the REAL fill (runner + live). */
+  /** Anchors the plus-bas chain at the REAL fill (runner + live). */
   onBuyCommitted(opportunity: TradeOpportunity): void {
     if (!this.exitStates.has(opportunity.pairId)) {
+      const entryC = priceToCents(opportunity.price);
       this.exitStates.set(opportunity.pairId, {
         heldTokenId: opportunity.token.tokenId,
         entryPrice: opportunity.price,
         windowStartSec: opportunity.event.windowStart,
-        lastPeak: opportunity.price,
-        curPeak: opportunity.price,
-        lowerPeaks: 0,
+        phase: "down",
+        lastHighC: entryC,
+        legHighC: entryC,
+        lowestLowC: null,
+        lastSwingLowC: null,
+        curExtremeC: entryC,
+        lowerLows: 0,
         lastEventTs: null,
         lastSeenTs: Date.now(),
         exited: false,
@@ -471,12 +556,12 @@ export class FavBandStrategy implements TradingStrategy {
   }
 
   /**
-   * Deterioration exit (config switch `favBandExitEnabled`): the HELD token's
-   * price keeps printing lower and lower levels. Each printed level ≥
-   * MinLowerHighDrop below the current reference steps the chain down and
-   * bumps the count; `Consecutive` steps in a row within LookbackMs fire the
-   * exit. The hooks run through defendUncoveredPairs (live) and defendCheapLegs
-   * (backtest); the runner sells at the bid (worst-price FOK semantics).
+   * Deterioration exit (config switch `favBandExitEnabled`): the HELD token
+   * prints a sequence of confirmed plus-bas (lower lows). Each trough of
+   * >= MinSwing, frozen by a flexible bounce, that is strictly below the
+   * previous plus-bas increments the count; `Consecutive` plus-bas inside
+   * LookbackMs fire the exit. Hooks run through defendUncoveredPairs (live)
+   * and defendCheapLegs (backtest); the runner sells at the bid.
    */
   shouldDefend(ctx: DefendContext): boolean {
     if (!ctx.config.favBandExitEnabled) return false;
@@ -497,6 +582,7 @@ export class FavBandStrategy implements TradingStrategy {
         ctx.config.favBandExitMinLowerHighDrop,
         ctx.config.favBandExitLookbackMs,
         ctx.config.favBandExitConsecutive,
+        ctx.config.favBandExitRetraceRatio,
       );
     }
 
@@ -509,9 +595,7 @@ export class FavBandStrategy implements TradingStrategy {
       const elapsedSec = nowMs / 1000 - (state.windowStartSec ?? 0);
       if (elapsedSec < ctx.config.favBandExitMinElapsedSec) return false;
     }
-    if (state.lowerPeaks < ctx.config.favBandExitConsecutive) return false;
-    // Event recency: the deteriorating sequence must still be inside the
-    // lookback window at trigger time.
+    if (state.lowerLows < ctx.config.favBandExitConsecutive) return false;
     if (
       state.lastEventTs == null ||
       nowMs - state.lastEventTs > ctx.config.favBandExitLookbackMs

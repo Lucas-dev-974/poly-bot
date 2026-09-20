@@ -5,7 +5,9 @@
   "description": "Best pnl/maxDd on same offline grid: band [0.68,0.82] @ minElapsed 200, no max. PnL +289 (~same as baseline) with maxDd 108 vs 113. Offline only — not applied to live.",
   "settings": {
     "pollIntervalMs": 1000,
-    "marketSlugPrefixes": ["btc-updown-15m"],
+    "marketSlugPrefixes": [
+      "btc-updown-15m"
+    ],
     "strategyId": "fav-band",
     "enableExpensiveHedge": false,
     "arbAskLockOnly": false,
@@ -16,8 +18,9 @@
     "favBandMinElapsedSec": 200,
     "favBandMaxElapsedSec": null,
     "favBandExitEnabled": false,
-    "favBandExitMinLowerHighDrop": 0.02,
-    "favBandExitConsecutive": 2,
+    "favBandExitMinLowerHighDrop": 0.05,
+    "favBandExitRetraceRatio": 0.25,
+    "favBandExitConsecutive": 3,
     "favBandExitLookbackMs": 120000,
     "favBandExitMinElapsedSec": 0,
     "favBandExitLossOnly": true,

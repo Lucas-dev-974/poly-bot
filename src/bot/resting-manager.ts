@@ -143,14 +143,14 @@ export class RestingManager {
                   ? "Custom cheap cancelled - out of band"
                   : "Cheap cancelled - favorite left the hedge band";
         log(cancelWhy, {
-            market: event.title,
-            outcome: order.outcome,
-            limitPrice: order.limitPrice,
-            favoriteAsk: favoriteBook?.bestAsk ?? null,
-            cheapAsk: book?.bestAsk ?? null,
-            pairLockMax: this.deps.config.pairLockMax,
-            strategyId: this.strategy.id,
-          },
+          market: event.title,
+          outcome: order.outcome,
+          limitPrice: order.limitPrice,
+          favoriteAsk: favoriteBook?.bestAsk ?? null,
+          cheapAsk: book?.bestAsk ?? null,
+          pairLockMax: this.deps.config.pairLockMax,
+          strategyId: this.strategy.id,
+        },
         );
       } else {
         log("Cheap repriced - taking ask at or below limit", {

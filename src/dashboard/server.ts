@@ -256,6 +256,11 @@ export class DashboardServer {
         return;
       }
 
+      if (url.pathname === "/api/backtest/lower-lows" && req.method === "GET") {
+        this.handleBacktestLowerLows(url, res);
+        return;
+      }
+
       if (url.pathname === "/api/backtest/wallet-trades" && req.method === "GET") {
         void this.handleBacktestWalletTrades(url, res);
         return;
@@ -1637,6 +1642,45 @@ export class DashboardServer {
     const series = seriesForSlugs(this.repos, slugs);
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ series }));
+  }
+
+  private async handleBacktestLowerLows(
+    url: URL,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    const slugs = (url.searchParams.get("slugs") ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    
+    // Optional parameters
+    const minSwingCents = Number(url.searchParams.get("minSwingCents") ?? 5);
+    const retraceRatio = Number(url.searchParams.get("retraceRatio") ?? 0.25);
+    const consecutiveRequired = Number(url.searchParams.get("consecutiveRequired") ?? 3);
+    const lookbackMs = Number(url.searchParams.get("lookbackMs") ?? 120000);
+
+    if (slugs.length === 0) {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ results: [] }));
+      return;
+    }
+
+    const series = seriesForSlugs(this.repos, slugs);
+    
+    // Import and use the lower-lows analysis
+    const { analyzeLowerLows } = await import("../backtest/lower-lows.js");
+    type LowerLowParams = import("../backtest/lower-lows.js").LowerLowParams;
+    
+    const params: LowerLowParams = {
+      minSwingCents,
+      retraceRatio,
+      consecutiveRequired,
+      lookbackMs,
+    };
+
+    const results = analyzeLowerLows(series, params);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ results }));
   }
 
   private handleBacktestRuns(

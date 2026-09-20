@@ -1,6 +1,6 @@
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import type { JSX } from "solid-js";
-import type { BacktestPositionRow, BacktestSeriesPoint, BacktestWindowMeta } from "../../types";
+import type { BacktestPositionRow, BacktestSeriesPoint, BacktestWindowMeta, LowerLowAnalysisResult, LowerLowEvent } from "../../types";
 import { fmtSizePair, fmtSpread, fmtUsd, fmtUsdCompact } from "../../utils/format";
 import {
   CHART_LABEL_W,
@@ -43,6 +43,9 @@ import {
   type ChartViewBox,
   type WalletOverlayMark,
 } from "../../utils/stacked-chart";
+
+const LOWER_LOW_COLOR_UP = "#ffaa00";    // Orange for Up lower-lows
+const LOWER_LOW_COLOR_DOWN = "#00ffaa";  // Teal for Down lower-lows
 
 interface HoverInfo {
   index: number;
@@ -136,6 +139,7 @@ export function StackedMarketChart(props: {
   walletMarks?: WalletOverlayMark[];
   walletOn?: boolean;
   walletLoading?: boolean;
+  lowerLowsResults?: Record<string, LowerLowAnalysisResult>;
   onVisible: (slugs: string[]) => void;
 }): JSX.Element {
   let wrap: HTMLDivElement | undefined;
@@ -365,14 +369,14 @@ export function StackedMarketChart(props: {
     updateHover(e.clientX, e.clientY);
   }
 
+  /** Ignore click-pin that follows a pan (pointer moved past threshold). */
+  let lastGestureWasPan = false;
+
   function onPointerDown(e: PointerEvent): void {
     if (e.button !== 0 || !svgEl()) return;
-    // Freeze whatever tip was last shown — do this BEFORE capture/leave races.
-    const tip = lastTip ?? hover();
-    const prior = pinned();
-    const same = !!(tip && prior && tipIdentity(tip) === tipIdentity(prior));
+    // Pin is double-click only — pointerdown is for pan/drag, never freezes tip.
     setPressing(true);
-    if (tip && !same) freezeTip(tip, e.clientX, e.clientY);
+    lastGestureWasPan = false;
 
     svgEl()!.setPointerCapture(e.pointerId);
     const origin = { x: e.clientX, y: e.clientY, vb: vb() };
@@ -383,6 +387,7 @@ export function StackedMarketChart(props: {
       const dist = Math.hypot(ev.clientX - origin.x, ev.clientY - origin.y);
       if (dist <= PAN_THRESHOLD_PX) return;
       moved = true;
+      lastGestureWasPan = true;
       if (!dragging()) setDragging(true);
       const dx = ((ev.clientX - origin.x) / Math.max(rect0.width, 1)) * origin.vb.w;
       const dy = ((ev.clientY - origin.y) / Math.max(rect0.height, 1)) * origin.vb.h;
@@ -393,7 +398,7 @@ export function StackedMarketChart(props: {
       });
     };
 
-    const finish = () => {
+    const finish = (ev: PointerEvent) => {
       try {
         svgEl()?.releasePointerCapture(e.pointerId);
       } catch {
@@ -403,21 +408,48 @@ export function StackedMarketChart(props: {
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", finish);
       window.removeEventListener("pointercancel", finish);
-      window.setTimeout(() => setPressing(false), 50);
-      if (moved) {
-        // Pan gesture: keep frozen tip if we froze one.
-        if (tip && !same) freezeTip(tip, origin.x, origin.y);
-        return;
-      }
-      // Pure click: toggle off if it was already the same frozen tip.
-      if (same) setPinned(null);
-      else if (!tip) setPinned(null);
-      else freezeTip(tip, origin.x, origin.y);
+      const cx = ev.clientX;
+      const cy = ev.clientY;
+      window.setTimeout(() => {
+        setPressing(false);
+        // Drop sticky hover left over from pointer-capture (feels like a pin).
+        const el = svgEl();
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const inside =
+          cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom;
+        if (!inside && !pinned()) {
+          setHover(null);
+          lastTip = null;
+        } else if (!moved && !pinned()) {
+          updateHover(cx, cy);
+        }
+      }, 50);
     };
 
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", finish);
     window.addEventListener("pointercancel", finish);
+  }
+
+  /** Pin/unpin only on double-click (MouseEvent.detail === 2). */
+  function onChartClick(e: MouseEvent): void {
+    if (lastGestureWasPan) return;
+    if (e.detail !== 2) {
+      // Single click: never persist.
+      if (pinned()) setPinned(null);
+      return;
+    }
+    e.preventDefault();
+    const tip = lastTip ?? hover();
+    const prior = pinned();
+    if (!tip) {
+      setPinned(null);
+      return;
+    }
+    const same = !!(prior && tipIdentity(tip) === tipIdentity(prior));
+    if (same) setPinned(null);
+    else freezeTip(tip, e.clientX, e.clientY);
   }
 
   function zoomBy(factor: number): void {
@@ -526,6 +558,7 @@ export function StackedMarketChart(props: {
             viewBox={`${vb().x} ${vb().y} ${vb().w} ${vb().h}`}
             preserveAspectRatio="none"
             onPointerDown={onPointerDown}
+            onClick={onChartClick}
             onPointerMove={onPointerMoveCursor}
             onPointerLeave={() => {
               setEdgeScroll(false);
@@ -543,6 +576,7 @@ export function StackedMarketChart(props: {
                   showMetrics={showMetrics()}
                   positions={positionsBySlug().get(w.eventSlug) ?? []}
                   walletMarks={walletBySlug().get(w.eventSlug) ?? []}
+                  lowerLowsResult={props.lowerLowsResults?.[w.eventSlug]}
                   markerRx={marker().rx}
                   markerRy={marker().ry}
                 />
@@ -681,6 +715,7 @@ function MarketRow(props: {
   showMetrics: boolean;
   positions: BacktestPositionRow[];
   walletMarks: WalletOverlayMark[];
+  lowerLowsResult?: LowerLowAnalysisResult;
   markerRx: number;
   markerRy: number;
 }): JSX.Element {
@@ -889,6 +924,74 @@ function MarketRow(props: {
             );
           }}
         </For>
+        <Show when={props.lowerLowsResult}>
+          {(ll) => {
+            const data = ll();
+            if (!data) return null;
+            return (
+              <g class="bt-lower-lows" pointer-events="none">
+                {data.up.events.map((e) => {
+                  const tSec = e.lowTs / 1000;
+                  const cx = x()(tSec);
+                  const cy = y()(e.lowPrice);
+                  return (
+                    <g>
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={Math.max(props.markerRx * 1.5, 3)}
+                        fill="none"
+                        stroke={LOWER_LOW_COLOR_UP}
+                        stroke-width="2"
+                        stroke-dasharray="4 2"
+                        vector-effect="non-scaling-stroke"
+                      />
+                      <text
+                        x={cx}
+                        y={cy - props.markerRy * 2.5}
+                        fill={LOWER_LOW_COLOR_UP}
+                        font-size="8"
+                        text-anchor="middle"
+                        font-weight="bold"
+                      >
+                        LL#{e.lowNumber}
+                      </text>
+                    </g>
+                  );
+                })}
+                {data.down.events.map((e) => {
+                  const tSec = e.lowTs / 1000;
+                  const cx = x()(tSec);
+                  const cy = y()(e.lowPrice);
+                  return (
+                    <g>
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={Math.max(props.markerRx * 1.5, 3)}
+                        fill="none"
+                        stroke={LOWER_LOW_COLOR_DOWN}
+                        stroke-width="2"
+                        stroke-dasharray="4 2"
+                        vector-effect="non-scaling-stroke"
+                      />
+                      <text
+                        x={cx}
+                        y={cy + props.markerRy * 3}
+                        fill={LOWER_LOW_COLOR_DOWN}
+                        font-size="8"
+                        text-anchor="middle"
+                        font-weight="bold"
+                      >
+                        LL#{e.lowNumber}
+                      </text>
+                    </g>
+                  );
+                })}
+              </g>
+            );
+          }}
+        </Show>
       </g>
     </g>
   );

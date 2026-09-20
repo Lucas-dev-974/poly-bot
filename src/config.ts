@@ -273,16 +273,24 @@ export interface BotConfig {
   favBandWhipsawMaxIntraFlips: number | null;
   /**
    * Deterioration exit (default off): after the entry fill, track the HELD
-   * favorite's ask; when it prints `favBandExitConsecutive` successive lower
-   * levels (each >= favBandExitMinLowerHighDrop below the previous peak), the
-   * trend is deteriorating — SELL the whole position (FOK at the bid) instead
-   * of holding to resolution. A new high above the pre-degradation anchor
-   * resets the count.
+   * favorite's ask; when it prints `favBandExitConsecutive` confirmed plus-bas
+   * (lower lows: each swing >= favBandExitMinLowerHighDrop, frozen by a
+   * bounce of favBandExitRetraceRatio of that drop, capped at the swing and
+   * floored at 1 tick), the trend is deteriorating — SELL the whole position
+   * (FOK at the bid) instead of holding to resolution. Reclaiming the
+   * structure high resets the count. A later extension below the last
+   * plus-bas confirms on a 1-tick bounce (stairs / waterfall).
    */
   favBandExitEnabled: boolean;
-  /** Deterioration exit: minimum drop between successive peaks (e.g. 0.02 = 2¢). */
+  /** Deterioration exit: minimum swing size to print a plus-bas (e.g. 0.05 = 5¢). */
   favBandExitMinLowerHighDrop: number;
-  /** Deterioration exit: consecutive lower peaks required (default 2). */
+  /**
+   * Deterioration exit: bounce / drop ratio that freezes a plus-bas (0 = 1 tick,
+   * 0.5 = 50% retrace). Clamped to [1 tick, minSwing] so large dumps do not wait
+   * for a full Fibonacci retrace. Default 0.25.
+   */
+  favBandExitRetraceRatio: number;
+  /** Deterioration exit: consecutive lower lows required (default 3). */
   favBandExitConsecutive: number;
   /** Deterioration exit: sliding sample window (default 120000 = 120 s). */
   favBandExitLookbackMs: number;
@@ -466,8 +474,9 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     favBandWhipsawMaxScore: null,
     favBandWhipsawMaxIntraFlips: null,
     favBandExitEnabled: false,
-    favBandExitMinLowerHighDrop: 0.02,
-    favBandExitConsecutive: 2,
+    favBandExitMinLowerHighDrop: 0.05,
+    favBandExitRetraceRatio: 0.25,
+    favBandExitConsecutive: 3,
     favBandExitLookbackMs: 120_000,
     favBandExitMinElapsedSec: 0,
     favBandExitLossOnly: true,
@@ -527,7 +536,7 @@ function warnIgnoredStrategyEnv(): void {
   if (leftover.length === 0) return;
   console.warn(
     `[config] Ignoring ${leftover.length} strategy env var(s); source of truth is ${RUNTIME_SETTINGS_PATH}:\n` +
-      leftover.map((name) => `  • ${name}`).join("\n"),
+    leftover.map((name) => `  • ${name}`).join("\n"),
   );
 }
 
@@ -580,8 +589,8 @@ export function loadConfig(): BotConfig {
   if (!existsSync(settingsPath)) {
     throw new Error(
       `[config] ${settingsPath} is required.\n` +
-        `  Copy bot-settings.example.json to data/bot-settings.json, or save once from the dashboard.\n` +
-        `  Secrets stay in .env; strategy parameters live only in that JSON.`,
+      `  Copy bot-settings.example.json to data/bot-settings.json, or save once from the dashboard.\n` +
+      `  Secrets stay in .env; strategy parameters live only in that JSON.`,
     );
   }
 
@@ -608,10 +617,10 @@ export function loadConfig(): BotConfig {
     const message = error instanceof Error ? error.message : String(error);
     throw new Error(
       `[config] Runtime settings file is invalid.\n` +
-        `  File: ${settingsPath}\n` +
-        `  Error: ${message}\n` +
-        `Refusing to start with potentially wrong settings.\n` +
-        `Fix data/bot-settings.json.`,
+      `  File: ${settingsPath}\n` +
+      `  Error: ${message}\n` +
+      `Refusing to start with potentially wrong settings.\n` +
+      `Fix data/bot-settings.json.`,
     );
   }
 
@@ -807,6 +816,12 @@ export function validateConfigCoherence(
     if (config.favBandExitEnabled) {
       if (!(config.favBandExitMinLowerHighDrop > 0)) {
         throw new Error("favBandExitMinLowerHighDrop must be > 0");
+      }
+      if (
+        !(config.favBandExitRetraceRatio >= 0) ||
+        config.favBandExitRetraceRatio > 1
+      ) {
+        throw new Error("favBandExitRetraceRatio must be in [0, 1]");
       }
       if (!(config.favBandExitConsecutive >= 2)) {
         throw new Error("favBandExitConsecutive must be >= 2");

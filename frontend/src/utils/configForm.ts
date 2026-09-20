@@ -74,6 +74,7 @@ export type ConfigFormState = {
   favBandWhipsawMaxIntraFlips: string;
   favBandExitEnabled: boolean;
   favBandExitMinLowerHighDrop: string;
+  favBandExitRetraceRatio: string;
   favBandExitConsecutive: string;
   favBandExitLookbackMs: string;
   favBandExitMinElapsedSec: string;
@@ -208,8 +209,9 @@ export function configToForm(config: BotConfig): ConfigFormState {
     favBandInverseOrderUsdc: String(config.favBandInverseOrderUsdc ?? 15),
     favBandWhipsawEnabled: config.favBandWhipsawEnabled === true,
     favBandExitEnabled: config.favBandExitEnabled === true,
-    favBandExitMinLowerHighDrop: String(config.favBandExitMinLowerHighDrop ?? 0.02),
-    favBandExitConsecutive: String(config.favBandExitConsecutive ?? 2),
+    favBandExitMinLowerHighDrop: String(config.favBandExitMinLowerHighDrop ?? 0.05),
+    favBandExitRetraceRatio: String(config.favBandExitRetraceRatio ?? 0.25),
+    favBandExitConsecutive: String(config.favBandExitConsecutive ?? 3),
     favBandExitLookbackMs: String(config.favBandExitLookbackMs ?? 120000),
     favBandExitMinElapsedSec: String(config.favBandExitMinElapsedSec ?? 0),
     favBandExitLossOnly: config.favBandExitLossOnly !== false,
@@ -390,7 +392,8 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     favBandInverseOrderUsdc: parseNum(form.favBandInverseOrderUsdc, "Fav-band inverse order USDC"),
     favBandWhipsawEnabled: form.favBandWhipsawEnabled === true,
     favBandExitEnabled: form.favBandExitEnabled === true,
-    favBandExitMinLowerHighDrop: parseNum(form.favBandExitMinLowerHighDrop, "Fav-band exit min lower-high drop"),
+    favBandExitMinLowerHighDrop: parseNum(form.favBandExitMinLowerHighDrop, "Fav-band exit min swing"),
+    favBandExitRetraceRatio: parseNum(form.favBandExitRetraceRatio, "Fav-band exit retrace ratio"),
     favBandExitConsecutive: parseNum(form.favBandExitConsecutive, "Fav-band exit consecutive"),
     favBandExitLookbackMs: parseNum(form.favBandExitLookbackMs, "Fav-band exit lookback ms"),
     favBandExitMinElapsedSec: parseNum(form.favBandExitMinElapsedSec, "Fav-band exit min elapsed"),
@@ -642,14 +645,18 @@ export function validateConfigForm(
       }
       if (form.favBandExitEnabled) {
         const exDrop = Number(form.favBandExitMinLowerHighDrop);
+        const exRetrace = Number(form.favBandExitRetraceRatio);
         const exConsec = Number(form.favBandExitConsecutive);
         const exLookback = Number(form.favBandExitLookbackMs);
         const exElapsed = Number(form.favBandExitMinElapsedSec);
         if (!Number.isFinite(exDrop) || exDrop <= 0) {
-          errors.push("Fav-band exit: chute entre paliers doit être > 0");
+          errors.push("Fav-band exit: swing min d'un plus-bas doit être > 0");
+        }
+        if (!Number.isFinite(exRetrace) || exRetrace < 0 || exRetrace > 1) {
+          errors.push("Fav-band exit: retracement de confirmation doit être dans [0, 1]");
         }
         if (!Number.isFinite(exConsec) || exConsec < 2) {
-          errors.push("Fav-band exit: paliers consécutifs doit être ≥ 2");
+          errors.push("Fav-band exit: plus-bas consécutifs doit être ≥ 2");
         }
         if (!Number.isFinite(exLookback) || exLookback <= 0) {
           errors.push("Fav-band exit: lookback doit être > 0 ms");
@@ -1157,11 +1164,15 @@ export function fieldErrors(
       }
       if (form.favBandExitEnabled) {
         const exDrop = Number(form.favBandExitMinLowerHighDrop);
+        const exRetrace = Number(form.favBandExitRetraceRatio);
         const exConsec = Number(form.favBandExitConsecutive);
         const exLookback = Number(form.favBandExitLookbackMs);
         const exElapsed = Number(form.favBandExitMinElapsedSec);
         if (!Number.isFinite(exDrop) || exDrop <= 0) {
           result.favBandExitMinLowerHighDrop = "> 0";
+        }
+        if (!Number.isFinite(exRetrace) || exRetrace < 0 || exRetrace > 1) {
+          result.favBandExitRetraceRatio = "[0, 1]";
         }
         if (!Number.isFinite(exConsec) || exConsec < 2) {
           result.favBandExitConsecutive = "≥ 2";

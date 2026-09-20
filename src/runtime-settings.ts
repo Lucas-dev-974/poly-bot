@@ -78,6 +78,7 @@ export const EDITABLE_CONFIG_KEYS = [
   "favBandWhipsawMaxIntraFlips",
   "favBandExitEnabled",
   "favBandExitMinLowerHighDrop",
+  "favBandExitRetraceRatio",
   "favBandExitConsecutive",
   "favBandExitLookbackMs",
   "favBandExitMinElapsedSec",
@@ -206,6 +207,7 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   favBandWhipsawMaxIntraFlips: "FAV_BAND_WHIPSAW_MAX_INTRA_FLIPS",
   favBandExitEnabled: "FAV_BAND_EXIT_ENABLED",
   favBandExitMinLowerHighDrop: "FAV_BAND_EXIT_MIN_LOWER_HIGH_DROP",
+  favBandExitRetraceRatio: "FAV_BAND_EXIT_RETRACE_RATIO",
   favBandExitConsecutive: "FAV_BAND_EXIT_CONSECUTIVE",
   favBandExitLookbackMs: "FAV_BAND_EXIT_LOOKBACK_MS",
   favBandExitMinElapsedSec: "FAV_BAND_EXIT_MIN_ELAPSED_SEC",
@@ -364,6 +366,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "favBandInverseOrderUsdc":
     case "favBandWhipsawPauseWindows":
     case "favBandExitMinLowerHighDrop":
+    case "favBandExitRetraceRatio":
     case "favBandExitConsecutive":
     case "favBandExitLookbackMs":
     case "favBandExitMinElapsedSec":
@@ -602,6 +605,7 @@ const FAV_BAND_KEYS: readonly EditableConfigKey[] = [
   "favBandWhipsawMaxIntraFlips",
   "favBandExitEnabled",
   "favBandExitMinLowerHighDrop",
+  "favBandExitRetraceRatio",
   "favBandExitConsecutive",
   "favBandExitLookbackMs",
   "favBandExitMinElapsedSec",

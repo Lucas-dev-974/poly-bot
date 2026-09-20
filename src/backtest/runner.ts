@@ -989,17 +989,17 @@ async function closeWindow(params: {
 
   const winner = params.resolveWinner
     ? await params.resolveWinner(
-        params.window.eventSlug,
-        params.window.upTokenId,
-        params.window.windowEnd,
-      )
+      params.window.eventSlug,
+      params.window.upTokenId,
+      params.window.windowEnd,
+    )
     : await resolveWindowWinner(
-        params.config,
-        params.repos,
-        params.window.eventSlug,
-        params.window.upTokenId,
-        params.window.windowEnd,
-      );
+      params.config,
+      params.repos,
+      params.window.eventSlug,
+      params.window.upTokenId,
+      params.window.windowEnd,
+    );
 
   const open = params.tracker
     .getOpenPositions()

@@ -1560,3 +1560,13 @@ body:has(.bt-page) {
 .bt-custom-del:hover {
   background: rgba(255, 91, 91, 0.1);
 }
+
+/* Lower-lows markers on chart */
+.bt-lower-lows {
+  pointer-events: none;
+}
+
+.bt-lower-lows text {
+  pointer-events: none;
+  user-select: none;
+}

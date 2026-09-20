@@ -5,7 +5,9 @@
   "description": "NOUVELLE strategie directionnelle (pas ask-lock). Apres favBandMinElapsedSec, FOK buy du favori si ask dans [0.70, 0.85], hold jusqu a resolution, sans hedge. Edge empirique BTC 15m: winrate ~78% vs prix mid-band (les favoris >0.90 sont surcotes). Distinct de edge-lead (pas de confirm / pas de cheap follow-up) et de reverse (favori, pas underdog).",
   "settings": {
     "pollIntervalMs": 1000,
-    "marketSlugPrefixes": ["btc-updown-15m"],
+    "marketSlugPrefixes": [
+      "btc-updown-15m"
+    ],
     "strategyId": "fav-band",
     "enableExpensiveHedge": false,
     "arbAskLockOnly": false,
@@ -20,8 +22,9 @@
     "favBandInverseShareRatio": 2,
     "favBandInverseOrderUsdc": 15,
     "favBandExitEnabled": false,
-    "favBandExitMinLowerHighDrop": 0.02,
-    "favBandExitConsecutive": 2,
+    "favBandExitMinLowerHighDrop": 0.05,
+    "favBandExitRetraceRatio": 0.25,
+    "favBandExitConsecutive": 3,
     "favBandExitLookbackMs": 120000,
     "favBandExitMinElapsedSec": 0,
     "favBandExitLossOnly": true,

@@ -107,7 +107,7 @@ export function BacktestPresetPanel(props: {
   const tabErrorCount = createMemo((): Record<PresetTab, number> => {
     const fe = props.fieldErrors;
     const counts: Record<PresetTab, number> = { cheap: 0, hedge: 0, edge: 0, risk: 0, window: 0, zones: 0 };
-    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax", "arbAskSumMax", "arbAskLockMinElapsedSec", "arbAskLockMaxImbalance", "favBandAskMin", "favBandAskMax", "favBandMinElapsedSec", "favBandMaxElapsedSec", "favBandOrderUsdc", "favBandInverseAskMax", "favBandInverseShareRatio", "favBandInverseOrderUsdc", "favBandExitMinLowerHighDrop", "favBandExitConsecutive", "favBandExitLookbackMs", "favBandExitMinElapsedSec", "favBandExitSwitchOrderUsdc", "barbellCheapOrderUsdc", "reverseCheapOrderUsdc", "customOrderUsdc", "openEntryLeanTrigger", "openEntryMaxElapsedSec", "openEntryFairAskSumMax", "openEntryMaxSpread", "openEntryOrderUsdc", "openEntrySlEnabled", "dipRevertBandMin", "dipRevertBandMax", "dipRevertMinDrop", "dipRevertDropLookbackMs", "dipRevertMinElapsedSec", "dipRevertMaxElapsedSec", "dipRevertMaxSpread", "dipRevertOrderUsdc", "dipRevertExitWinAsk", "antiflipBandMin", "antiflipBandMax", "antiflipDeposedAskMin", "antiflipFlipLookbackMs", "antiflipMinElapsedSec", "antiflipMaxElapsedSec", "antiflipMaxSpread", "antiflipOrderUsdc", "flipConfirmBandMin", "flipConfirmBandMax", "flipConfirmFlipLookbackMs", "flipConfirmMinElapsedSec", "flipConfirmMaxElapsedSec", "flipConfirmMaxSpread", "flipConfirmOrderUsdc", "earlyConvictionAskMin", "earlyConvictionAskMax", "earlyConvictionMaxElapsedSec", "earlyConvictionMaxSpread", "earlyConvictionOrderUsdc"];
+    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax", "arbAskSumMax", "arbAskLockMinElapsedSec", "arbAskLockMaxImbalance", "favBandAskMin", "favBandAskMax", "favBandMinElapsedSec", "favBandMaxElapsedSec", "favBandOrderUsdc", "favBandInverseAskMax", "favBandInverseShareRatio", "favBandInverseOrderUsdc", "favBandExitMinLowerHighDrop", "favBandExitRetraceRatio", "favBandExitConsecutive", "favBandExitLookbackMs", "favBandExitMinElapsedSec", "favBandExitSwitchOrderUsdc", "barbellCheapOrderUsdc", "reverseCheapOrderUsdc", "customOrderUsdc", "openEntryLeanTrigger", "openEntryMaxElapsedSec", "openEntryFairAskSumMax", "openEntryMaxSpread", "openEntryOrderUsdc", "openEntrySlEnabled", "dipRevertBandMin", "dipRevertBandMax", "dipRevertMinDrop", "dipRevertDropLookbackMs", "dipRevertMinElapsedSec", "dipRevertMaxElapsedSec", "dipRevertMaxSpread", "dipRevertOrderUsdc", "dipRevertExitWinAsk", "antiflipBandMin", "antiflipBandMax", "antiflipDeposedAskMin", "antiflipFlipLookbackMs", "antiflipMinElapsedSec", "antiflipMaxElapsedSec", "antiflipMaxSpread", "antiflipOrderUsdc", "flipConfirmBandMin", "flipConfirmBandMax", "flipConfirmFlipLookbackMs", "flipConfirmMinElapsedSec", "flipConfirmMaxElapsedSec", "flipConfirmMaxSpread", "flipConfirmOrderUsdc", "earlyConvictionAskMin", "earlyConvictionAskMax", "earlyConvictionMaxElapsedSec", "earlyConvictionMaxSpread", "earlyConvictionOrderUsdc"];
     const hedgeKeys: Array<keyof ConfigFormState> = ["expensiveBuyMin", "expensiveBuyMax", "expensiveOrderUsdc", "expensiveOrderType", "barbellHedgeRatio", "enableExpensiveHedge", "requireCheapFillBeforeExpensive"];
     const edgeKeys: Array<keyof ConfigFormState> = ["edgeBandMin", "edgeBandMax", "edgeConfirmSamples", "edgeMaxDownTick", "edgeCheapBandMin", "edgeCheapBandMax", "edgeSizingMode", "edgeSharesEdge", "edgeSharesCheap", "edgeOrderUsdc", "maxShareEdge", "edgeCheapOrderUsdc", "edgeSellExpensiveEnabled", "edgeSellExpensiveAfterMin", "edgeSellExpensiveLossPct", "edgeSellExpensiveLossWindowMs", "openEntrySlStructFlipDist", "openEntrySlStructConfirmSec", "openEntrySlStructDist", "openEntrySlLateAfterSec", "openEntrySlLateDist"];
     const riskKeys: Array<keyof ConfigFormState> = ["maxSharesPerOrder", "maxShareEdge", "maxOpenPositionsPerSide", "maxExposureUsdc", "simulatedCapital", "marketSlugPrefixes", "pollIntervalMs"];
@@ -261,12 +261,13 @@ export function BacktestPresetPanel(props: {
                       checked={form().favBandExitEnabled}
                       onChange={(e) => props.onUpdate("favBandExitEnabled", e.currentTarget.checked)}
                     />
-                    <span class="bt-pf-label" title="Après le fill du favori, si son prix imprime N paliers de plus en plus bas, vendre la position (FOK au bid) au lieu de hold résolution.">Sortie dégradation</span>
+                    <span class="bt-pf-label" title="Après le fill du favori, si son prix imprime N plus-bas confirmés de plus en plus bas, vendre la position (FOK au bid) au lieu de hold résolution.">Sortie dégradation</span>
                   </label>
                   <Show when={form().favBandExitEnabled}>
-                    <Num label="Chute entre paliers" tip="Chute minimum entre deux paliers successifs du favori détenu (défaut 0.02 = 2¢). Un plus haut au-dessus du palier courant réinitialise la séquence." value={form().favBandExitMinLowerHighDrop} step={0.005} err={props.fieldErrors.favBandExitMinLowerHighDrop} onInput={(v) => props.onUpdate("favBandExitMinLowerHighDrop", v)} />
-                    <Num label="Paliers consécutifs" tip="Nombre de paliers de plus en plus bas avant la sortie (défaut 2)." value={form().favBandExitConsecutive} step={1} err={props.fieldErrors.favBandExitConsecutive} onInput={(v) => props.onUpdate("favBandExitConsecutive", v)} />
-                    <Num label="Lookback exit (ms)" tip="La séquence doit rester récente : sans nouveau palier dans la fenêtre, la chaîne est réinitialisée (défaut 120000 = 120 s)." value={form().favBandExitLookbackMs} step={1000} err={props.fieldErrors.favBandExitLookbackMs} onInput={(v) => props.onUpdate("favBandExitLookbackMs", v)} />
+                    <Num label="Swing min (plus-bas)" tip="Amplitude minimum d'une jambe pour figer un plus-bas (défaut 0.05 = 5¢). En dessous = bruit." value={form().favBandExitMinLowerHighDrop} step={0.005} err={props.fieldErrors.favBandExitMinLowerHighDrop} onInput={(v) => props.onUpdate("favBandExitMinLowerHighDrop", v)} />
+                    <Num label="Retracement confirm." tip="Part de la chute à remonter pour figer le plus-bas (0.50 = 50 %, défaut 0.25). Borné à [1 tick, swing min]. Un plus-bas suivant se confirme dès 1 tick." value={form().favBandExitRetraceRatio} step={0.05} err={props.fieldErrors.favBandExitRetraceRatio} onInput={(v) => props.onUpdate("favBandExitRetraceRatio", v)} />
+                    <Num label="Plus-bas consécutifs" tip="Nombre de plus-bas de plus en plus bas avant la sortie (défaut 3)." value={form().favBandExitConsecutive} step={1} err={props.fieldErrors.favBandExitConsecutive} onInput={(v) => props.onUpdate("favBandExitConsecutive", v)} />
+                    <Num label="Lookback exit (ms)" tip="La séquence doit rester récente : sans nouveau plus-bas dans la fenêtre, le compteur est réinitialisé (défaut 120000 = 120 s)." value={form().favBandExitLookbackMs} step={1000} err={props.fieldErrors.favBandExitLookbackMs} onInput={(v) => props.onUpdate("favBandExitLookbackMs", v)} />
                     <Num label="Min elapsed exit (sec)" tip="Ne sortir qu'après N secondes de fenêtre (0 = toujours actif)." value={form().favBandExitMinElapsedSec} step={1} err={props.fieldErrors.favBandExitMinElapsedSec} onInput={(v) => props.onUpdate("favBandExitMinElapsedSec", v)} />
                     <label class="bt-pf bt-pf-check">
                       <input
@@ -398,14 +399,14 @@ export function BacktestPresetPanel(props: {
                   <Num label="Ratio hedge" tip="Parts hedge ciblées = cheap rempli × ratio (barbell). (0, 1]." value={form().barbellHedgeRatio} step={0.05} err={props.fieldErrors.barbellHedgeRatio} onInput={(v) => props.onUpdate("barbellHedgeRatio", v)} />
                 </Show>
                 <Show when={sid() !== "arb"}>
-                <label class="bt-pf bt-pf-check">
-                  <input
-                    type="checkbox"
-                    checked={form().enableExpensiveHedge}
-                    onChange={(e) => props.onUpdate("enableExpensiveHedge", e.currentTarget.checked)}
-                  />
-                  <span class="bt-pf-label" title="Active ou coupe toute la jambe expensive / hedge.">Hedge on</span>
-                </label>
+                  <label class="bt-pf bt-pf-check">
+                    <input
+                      type="checkbox"
+                      checked={form().enableExpensiveHedge}
+                      onChange={(e) => props.onUpdate("enableExpensiveHedge", e.currentTarget.checked)}
+                    />
+                    <span class="bt-pf-label" title="Active ou coupe toute la jambe expensive / hedge.">Hedge on</span>
+                  </label>
                 </Show>
                 <Show when={sid() === "reverse"}>
                   <label class="bt-pf bt-pf-check">
@@ -442,52 +443,52 @@ export function BacktestPresetPanel(props: {
                 </p>
               </Show>
               <Show when={sid() === "edge-lead" || isCustom()}>
-              <div class="bt-preset-grid">
-                <Num label="Edge min" tip="Ask favori minimum de la bande de confirmation edge-lead." value={form().edgeBandMin} step={0.01} err={props.fieldErrors.edgeBandMin} onInput={(v) => props.onUpdate("edgeBandMin", v)} />
-                <Num label="Edge max" tip="Ask favori maximum de la bande de confirmation edge-lead." value={form().edgeBandMax} step={0.01} err={props.fieldErrors.edgeBandMax} onInput={(v) => props.onUpdate("edgeBandMax", v)} />
-                <Num label="Confirm ticks" tip="Nombre de ticks consécutifs valides avant d'acheter l'edge." value={form().edgeConfirmSamples} step={1} err={props.fieldErrors.edgeConfirmSamples} onInput={(v) => props.onUpdate("edgeConfirmSamples", v)} />
-                <Num label="Drop / tick" tip="Baisse tick-à-tick max tolérée pendant la confirmation." value={form().edgeMaxDownTick} step={0.001} err={props.fieldErrors.edgeMaxDownTick} onInput={(v) => props.onUpdate("edgeMaxDownTick", v)} />
-                <Num label="Cheap min" tip="Bande cheap edge-lead : ask min. Hors bande = pas de POST, cancel d'un GTC cheap resting." value={form().edgeCheapBandMin} step={0.01} err={props.fieldErrors.edgeCheapBandMin} onInput={(v) => props.onUpdate("edgeCheapBandMin", v)} />
-                <Num label="Cheap max" tip="Bande cheap edge-lead : ask max. GTC au best ask si dans la bande." value={form().edgeCheapBandMax} step={0.01} err={props.fieldErrors.edgeCheapBandMax} onInput={(v) => props.onUpdate("edgeCheapBandMax", v)} />
-                <label class="bt-pf bt-pf-wide">
-                  <span class="bt-pf-label" title="Shares = nombre fixe ; pUSD = budget USDC fixe ; Dynamique = budgets USDC + confirmation.">Mode sizing</span>
-                  <select
-                    value={form().edgeSizingMode}
-                    onChange={(e) =>
-                      props.onUpdate(
-                        "edgeSizingMode",
-                        e.currentTarget.value as ConfigFormState["edgeSizingMode"],
-                      )
-                    }
-                  >
-                    <option value="dynamic">Dynamique (budgets USDC)</option>
-                    <option value="pusd">pUSD (budget USDC fixe)</option>
-                    <option value="shares">Shares (nombre fixe)</option>
-                  </select>
-                </label>
-                <Show when={form().edgeSizingMode === "shares"}>
-                  <Num label="Shares edge" tip="Nombre fixe de shares de l'ordre favori (≥ 5, mode shares)." value={form().edgeSharesEdge} step={1} err={props.fieldErrors.edgeSharesEdge} onInput={(v) => props.onUpdate("edgeSharesEdge", v)} />
-                  <Num label="Shares cheap" tip="Nombre fixe de shares de l'ordre cheap (≥ 5, mode shares)." value={form().edgeSharesCheap} step={1} err={props.fieldErrors.edgeSharesCheap} onInput={(v) => props.onUpdate("edgeSharesCheap", v)} />
-                </Show>
-                <Show when={form().edgeSizingMode !== "shares"}>
-                  <Num label="Edge USDC" tip="Budget USDC pour l'ordre edge (favori). Taille ≈ budget / prix." value={form().edgeOrderUsdc} step={1} err={props.fieldErrors.edgeOrderUsdc} onInput={(v) => props.onUpdate("edgeOrderUsdc", v)} />
-                  <Num label="Max shares edge" tip="Plafond de shares pour l'ordre favori (edge-lead)." value={form().maxShareEdge} step={1} err={props.fieldErrors.maxShareEdge} onInput={(v) => props.onUpdate("maxShareEdge", v)} />
-                  <Num label="Cheap USDC" tip="Budget USDC du cheap après fill edge (edge-lead). Indépendant du 1:1." value={form().edgeCheapOrderUsdc} step={1} err={props.fieldErrors.edgeCheapOrderUsdc} onInput={(v) => props.onUpdate("edgeCheapOrderUsdc", v)} />
-                </Show>
-                <label class="bt-pf bt-pf-wide">
-                  <span class="bt-pf-label" title="Vendre le favori nu (FOK SELL) si aucun cheap fillé et perte soutenue.">Vendre l'edge si perte</span>
-                  <input
-                    type="checkbox"
-                    checked={form().edgeSellExpensiveEnabled}
-                    onChange={(e) => props.onUpdate("edgeSellExpensiveEnabled", e.currentTarget.checked)}
-                  />
-                </label>
-                <Show when={form().edgeSellExpensiveEnabled}>
-                  <Num label="Vente après (min)" tip="Âge du marché (minutes depuis l'ouverture) avant de pouvoir vendre l'edge en perte." value={form().edgeSellExpensiveAfterMin} step={1} err={props.fieldErrors.edgeSellExpensiveAfterMin} onInput={(v) => props.onUpdate("edgeSellExpensiveAfterMin", v)} />
-                  <Num label="Perte (%)" tip="Perte % sous le prix de fill de l'edge pour déclencher la vente (ex. 10 = -10%)." value={form().edgeSellExpensiveLossPct} step={1} err={props.fieldErrors.edgeSellExpensiveLossPct} onInput={(v) => props.onUpdate("edgeSellExpensiveLossPct", v)} />
-                  <Num label="Fenêtre perte (ms)" tip="Durée de perte continue requise avant la vente FOK de l'edge." value={form().edgeSellExpensiveLossWindowMs} step={100} err={props.fieldErrors.edgeSellExpensiveLossWindowMs} onInput={(v) => props.onUpdate("edgeSellExpensiveLossWindowMs", v)} />
-                </Show>
-              </div>
+                <div class="bt-preset-grid">
+                  <Num label="Edge min" tip="Ask favori minimum de la bande de confirmation edge-lead." value={form().edgeBandMin} step={0.01} err={props.fieldErrors.edgeBandMin} onInput={(v) => props.onUpdate("edgeBandMin", v)} />
+                  <Num label="Edge max" tip="Ask favori maximum de la bande de confirmation edge-lead." value={form().edgeBandMax} step={0.01} err={props.fieldErrors.edgeBandMax} onInput={(v) => props.onUpdate("edgeBandMax", v)} />
+                  <Num label="Confirm ticks" tip="Nombre de ticks consécutifs valides avant d'acheter l'edge." value={form().edgeConfirmSamples} step={1} err={props.fieldErrors.edgeConfirmSamples} onInput={(v) => props.onUpdate("edgeConfirmSamples", v)} />
+                  <Num label="Drop / tick" tip="Baisse tick-à-tick max tolérée pendant la confirmation." value={form().edgeMaxDownTick} step={0.001} err={props.fieldErrors.edgeMaxDownTick} onInput={(v) => props.onUpdate("edgeMaxDownTick", v)} />
+                  <Num label="Cheap min" tip="Bande cheap edge-lead : ask min. Hors bande = pas de POST, cancel d'un GTC cheap resting." value={form().edgeCheapBandMin} step={0.01} err={props.fieldErrors.edgeCheapBandMin} onInput={(v) => props.onUpdate("edgeCheapBandMin", v)} />
+                  <Num label="Cheap max" tip="Bande cheap edge-lead : ask max. GTC au best ask si dans la bande." value={form().edgeCheapBandMax} step={0.01} err={props.fieldErrors.edgeCheapBandMax} onInput={(v) => props.onUpdate("edgeCheapBandMax", v)} />
+                  <label class="bt-pf bt-pf-wide">
+                    <span class="bt-pf-label" title="Shares = nombre fixe ; pUSD = budget USDC fixe ; Dynamique = budgets USDC + confirmation.">Mode sizing</span>
+                    <select
+                      value={form().edgeSizingMode}
+                      onChange={(e) =>
+                        props.onUpdate(
+                          "edgeSizingMode",
+                          e.currentTarget.value as ConfigFormState["edgeSizingMode"],
+                        )
+                      }
+                    >
+                      <option value="dynamic">Dynamique (budgets USDC)</option>
+                      <option value="pusd">pUSD (budget USDC fixe)</option>
+                      <option value="shares">Shares (nombre fixe)</option>
+                    </select>
+                  </label>
+                  <Show when={form().edgeSizingMode === "shares"}>
+                    <Num label="Shares edge" tip="Nombre fixe de shares de l'ordre favori (≥ 5, mode shares)." value={form().edgeSharesEdge} step={1} err={props.fieldErrors.edgeSharesEdge} onInput={(v) => props.onUpdate("edgeSharesEdge", v)} />
+                    <Num label="Shares cheap" tip="Nombre fixe de shares de l'ordre cheap (≥ 5, mode shares)." value={form().edgeSharesCheap} step={1} err={props.fieldErrors.edgeSharesCheap} onInput={(v) => props.onUpdate("edgeSharesCheap", v)} />
+                  </Show>
+                  <Show when={form().edgeSizingMode !== "shares"}>
+                    <Num label="Edge USDC" tip="Budget USDC pour l'ordre edge (favori). Taille ≈ budget / prix." value={form().edgeOrderUsdc} step={1} err={props.fieldErrors.edgeOrderUsdc} onInput={(v) => props.onUpdate("edgeOrderUsdc", v)} />
+                    <Num label="Max shares edge" tip="Plafond de shares pour l'ordre favori (edge-lead)." value={form().maxShareEdge} step={1} err={props.fieldErrors.maxShareEdge} onInput={(v) => props.onUpdate("maxShareEdge", v)} />
+                    <Num label="Cheap USDC" tip="Budget USDC du cheap après fill edge (edge-lead). Indépendant du 1:1." value={form().edgeCheapOrderUsdc} step={1} err={props.fieldErrors.edgeCheapOrderUsdc} onInput={(v) => props.onUpdate("edgeCheapOrderUsdc", v)} />
+                  </Show>
+                  <label class="bt-pf bt-pf-wide">
+                    <span class="bt-pf-label" title="Vendre le favori nu (FOK SELL) si aucun cheap fillé et perte soutenue.">Vendre l'edge si perte</span>
+                    <input
+                      type="checkbox"
+                      checked={form().edgeSellExpensiveEnabled}
+                      onChange={(e) => props.onUpdate("edgeSellExpensiveEnabled", e.currentTarget.checked)}
+                    />
+                  </label>
+                  <Show when={form().edgeSellExpensiveEnabled}>
+                    <Num label="Vente après (min)" tip="Âge du marché (minutes depuis l'ouverture) avant de pouvoir vendre l'edge en perte." value={form().edgeSellExpensiveAfterMin} step={1} err={props.fieldErrors.edgeSellExpensiveAfterMin} onInput={(v) => props.onUpdate("edgeSellExpensiveAfterMin", v)} />
+                    <Num label="Perte (%)" tip="Perte % sous le prix de fill de l'edge pour déclencher la vente (ex. 10 = -10%)." value={form().edgeSellExpensiveLossPct} step={1} err={props.fieldErrors.edgeSellExpensiveLossPct} onInput={(v) => props.onUpdate("edgeSellExpensiveLossPct", v)} />
+                    <Num label="Fenêtre perte (ms)" tip="Durée de perte continue requise avant la vente FOK de l'edge." value={form().edgeSellExpensiveLossWindowMs} step={100} err={props.fieldErrors.edgeSellExpensiveLossWindowMs} onInput={(v) => props.onUpdate("edgeSellExpensiveLossWindowMs", v)} />
+                  </Show>
+                </div>
               </Show>
             </Show>
             <Show when={active() === "risk"}>

@@ -101,11 +101,21 @@ export function BacktestPage(): JSX.Element {
   const [showSavePresetDialog, setShowSavePresetDialog] = createSignal(false);
   const [presetNameInput, setPresetNameInput] = createSignal("");
   const [presetDescInput, setPresetDescInput] = createSignal("");
+  // Lower-lows analysis
+  const [lowerLowsResults, setLowerLowsResults] = createSignal<Record<string, import("../types").LowerLowAnalysisResult>>({});
+  const [lowerLowsLoading, setLowerLowsLoading] = createSignal(false);
+  const [lowerLowsParams, setLowerLowsParams] = createSignal<import("../types").LowerLowParams>({
+    minSwingCents: 5,
+    retraceRatio: 0.25,
+    consecutiveRequired: 3,
+    lookbackMs: 120000,
+  });
   let pollTimer: number | undefined;
   let windowsTimer: number | undefined;
   let pollGen = 0;
   let chartGen = 0;
   let walletGen = 0;
+  let lowerLowsGen = 0;
   const loadedSlugs = new Set<string>();
 
   const dates = createMemo(() => {
@@ -415,6 +425,31 @@ export function BacktestPage(): JSX.Element {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       if (gen === walletGen) setWalletLoading(false);
+    }
+  }
+
+  async function loadLowerLows(slugs: string[]): Promise<void> {
+    const gen = ++lowerLowsGen;
+    if (slugs.length === 0) {
+      setLowerLowsResults({});
+      setLowerLowsLoading(false);
+      return;
+    }
+    setLowerLowsLoading(true);
+    try {
+      const params = lowerLowsParams();
+      const res = await api.backtestLowerLows(slugs, params);
+      if (gen !== lowerLowsGen) return;
+      const map: Record<string, import("../types").LowerLowAnalysisResult> = {};
+      for (const r of res.results) {
+        map[r.slug] = r;
+      }
+      setLowerLowsResults(map);
+    } catch (err) {
+      if (gen !== lowerLowsGen) return;
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      if (gen === lowerLowsGen) setLowerLowsLoading(false);
     }
   }
 
@@ -854,6 +889,15 @@ export function BacktestPage(): JSX.Element {
             <span class="bt-wallet-count">{walletLoading() ? "…" : walletMarks().length}</span>
           </Show>
         </label>
+        <button
+          class="btn"
+          type="button"
+          disabled={lowerLowsLoading() || filtered().length === 0}
+          onClick={() => void loadLowerLows(filtered().map((w) => w.eventSlug))}
+          title="Analyser les lower-lows sur les marchés affichés"
+        >
+          {lowerLowsLoading() ? "Lower-lows…" : "Analyser Lower-lows"}
+        </button>
         <label>
           Moteur
           <select
@@ -934,6 +978,7 @@ export function BacktestPage(): JSX.Element {
             walletMarks={walletMarks()}
             walletOn={walletOn()}
             walletLoading={walletLoading()}
+            lowerLowsResults={lowerLowsResults()}
             onVisible={(slugs) => void loadVisible(slugs)}
           />
           <BacktestPresetPanel

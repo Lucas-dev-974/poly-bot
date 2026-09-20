@@ -539,7 +539,7 @@ export function SettingsModal(props: {
               {/* ---- Jambe cheap ---- */}
               <Show when={activeSection() === "cheap"}>
                 <div class="cfg-section">
-<h4>Jambe cheap (underdog)</h4>
+                  <h4>Jambe cheap (underdog)</h4>
                   <p class="cfg-section__desc">
                     {form().strategyId === "reverse"
                       ? "Grille de limit BUY maker sur l'underdog, un niveau par tick dans [cheap min, cheap max]. Chaque niveau est indépendant du hedge."
@@ -603,69 +603,69 @@ export function SettingsModal(props: {
                       />
                     </Field>
                     <Show when={form().strategyId === "arb" || form().strategyId.startsWith("custom:")}>
-                    <Field
-                      label="Pair lock max"
-                      hint="Entrée : bid + hedge ≤ lock. Après fill : fillPrice + hedge ≤ lock, sinon pas de hedge (0.90–0.99)"
-                    >
-                      <NumberInput
-                        value={form().pairLockMax}
-                        min={0.90}
-                        max={0.99}
-                        step={0.01}
-                        onInput={(v) => update("pairLockMax", v)}
-                      />
-                    </Field>
-                    <Field
-                      label="Ask-lock dual-FOK"
-                      hint="N'entrer que si ask_cheap + ask_expensive ≤ lock ; prend les deux asks en FOK (pas de jambe maker seule)."
-                    >
-                      <label class="cfg-check">
-                        <input
-                          type="checkbox"
-                          checked={form().arbAskLockOnly}
-                          onChange={(e) => update("arbAskLockOnly", e.currentTarget.checked)}
-                        />
-                        Activer ask-lock
-                      </label>
-                    </Field>
-                                        <Show when={form().arbAskLockOnly}>
                       <Field
-                        label="Ask-sum max (optionnel)"
-                        hint="Plafond ask+ask plus serre que pairLockMax. Vide = pairLockMax."
+                        label="Pair lock max"
+                        hint="Entrée : bid + hedge ≤ lock. Après fill : fillPrice + hedge ≤ lock, sinon pas de hedge (0.90–0.99)"
                       >
                         <NumberInput
-                          value={form().arbAskSumMax}
+                          value={form().pairLockMax}
                           min={0.90}
                           max={0.99}
                           step={0.01}
-                          onInput={(v) => update("arbAskSumMax", v)}
+                          onInput={(v) => update("pairLockMax", v)}
                         />
                       </Field>
                       <Field
-                        label="Min elapsed sec"
-                        hint="N entrer qu apres N secondes depuis windowStart. Vide = off."
+                        label="Ask-lock dual-FOK"
+                        hint="N'entrer que si ask_cheap + ask_expensive ≤ lock ; prend les deux asks en FOK (pas de jambe maker seule)."
                       >
-                        <NumberInput
-                          value={form().arbAskLockMinElapsedSec}
-                          min={0}
-                          max={900}
-                          step={1}
-                          onInput={(v) => update("arbAskLockMinElapsedSec", v)}
-                        />
+                        <label class="cfg-check">
+                          <input
+                            type="checkbox"
+                            checked={form().arbAskLockOnly}
+                            onChange={(e) => update("arbAskLockOnly", e.currentTarget.checked)}
+                          />
+                          Activer ask-lock
+                        </label>
                       </Field>
-                      <Field
-                        label="Max imbalance"
-                        hint="Skip si |ask_c - ask_e| > seuil. Vide = off."
-                      >
-                        <NumberInput
-                          value={form().arbAskLockMaxImbalance}
-                          min={0}
-                          max={1}
-                          step={0.01}
-                          onInput={(v) => update("arbAskLockMaxImbalance", v)}
-                        />
-                      </Field>
-                    </Show>
+                      <Show when={form().arbAskLockOnly}>
+                        <Field
+                          label="Ask-sum max (optionnel)"
+                          hint="Plafond ask+ask plus serre que pairLockMax. Vide = pairLockMax."
+                        >
+                          <NumberInput
+                            value={form().arbAskSumMax}
+                            min={0.90}
+                            max={0.99}
+                            step={0.01}
+                            onInput={(v) => update("arbAskSumMax", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Min elapsed sec"
+                          hint="N entrer qu apres N secondes depuis windowStart. Vide = off."
+                        >
+                          <NumberInput
+                            value={form().arbAskLockMinElapsedSec}
+                            min={0}
+                            max={900}
+                            step={1}
+                            onInput={(v) => update("arbAskLockMinElapsedSec", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Max imbalance"
+                          hint="Skip si |ask_c - ask_e| > seuil. Vide = off."
+                        >
+                          <NumberInput
+                            value={form().arbAskLockMaxImbalance}
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            onInput={(v) => update("arbAskLockMaxImbalance", v)}
+                          />
+                        </Field>
+                      </Show>
                     </Show>
                   </div>
                 </div>
@@ -679,8 +679,8 @@ export function SettingsModal(props: {
                     {form().strategyId === "reverse"
                       ? "Grille de limit BUY maker sur le favori, posée en même temps que le cheap (pas après fill). Niveaux dans [hedge min, hedge max], budget par niveau."
                       : form().strategyId === "barbell"
-                      ? "Hedge au ratio cheap/hedge uniquement après un cheap rempli, si l'ask favori est dans [hedgeMin, hedgeMax]. Pas de verrou de profit — variance plus élevée."
-                      : "Hedge 1:1 uniquement après un cheap rempli, si l'ask favori est dans [hedgeMin, hedgeMax] et si fillPrice + min(ask, hedgeMax) ≤ pairLockMax. La bande est nécessaire, pas suffisante."}
+                        ? "Hedge au ratio cheap/hedge uniquement après un cheap rempli, si l'ask favori est dans [hedgeMin, hedgeMax]. Pas de verrou de profit — variance plus élevée."
+                        : "Hedge 1:1 uniquement après un cheap rempli, si l'ask favori est dans [hedgeMin, hedgeMax] et si fillPrice + min(ask, hedgeMax) ≤ pairLockMax. La bande est nécessaire, pas suffisante."}
                   </p>
                   <div class="cfg-grid">
                     <Field
@@ -742,28 +742,28 @@ export function SettingsModal(props: {
                       </select>
                     </Field>
                     <Show when={form().strategyId === "barbell"}>
-                    <Field
-                      label="Ratio hedge"
-                      hint="Parts hedge ciblées = cheap rempli × ratio. (0, 1]. Défaut 0.5."
-                    >
-                      <NumberInput
-                        value={form().barbellHedgeRatio}
-                        min={0.01}
-                        max={1}
-                        step={0.05}
-                        onInput={(v) => update("barbellHedgeRatio", v)}
-                      />
-                    </Field>
+                      <Field
+                        label="Ratio hedge"
+                        hint="Parts hedge ciblées = cheap rempli × ratio. (0, 1]. Défaut 0.5."
+                      >
+                        <NumberInput
+                          value={form().barbellHedgeRatio}
+                          min={0.01}
+                          max={1}
+                          step={0.05}
+                          onInput={(v) => update("barbellHedgeRatio", v)}
+                        />
+                      </Field>
                     </Show>
                   </div>
                   <div class="cfg-divider" />
                   <Show when={form().strategyId !== "arb" && form().strategyId !== "fav-band"}>
-                  <Toggle
-                    label="Activer le hedge expensive"
-                    hint="Désactivé : cheap = directionnel. Activé : hedge après fill (barbell/reverse)."
-                    checked={form().enableExpensiveHedge}
-                    onChange={(v) => update("enableExpensiveHedge", v)}
-                  />
+                    <Toggle
+                      label="Activer le hedge expensive"
+                      hint="Désactivé : cheap = directionnel. Activé : hedge après fill (barbell/reverse)."
+                      checked={form().enableExpensiveHedge}
+                      onChange={(v) => update("enableExpensiveHedge", v)}
+                    />
                   </Show><Show when={form().strategyId === "reverse"}>
                     <Toggle
                       label="Expensive après cheap fill"
@@ -1102,7 +1102,7 @@ export function SettingsModal(props: {
                       </Show>
                     </div>
                   </div>
-                  
+
                   <div class="cfg-section" style={{ "margin-top": "1rem" }}>
                     <h4>Filtre whipsaw</h4>
                     <p class="cfg-section__desc">
@@ -1175,14 +1175,15 @@ export function SettingsModal(props: {
                   <div class="cfg-section" style={{ "margin-top": "1rem" }}>
                     <h4>Sortie dégradation (optionnelle)</h4>
                     <p class="cfg-section__desc">
-                      Après le fill, si le prix du favori <strong>détenu</strong> se dégrade en
-                      pic de plus en plus bas (paliers successifs chacun ≥ chute min sous le
-                      palier précédent), la position est <strong>vendue en FOK au bid</strong>
-                      {" "}au lieu d&apos;être tenue jusqu&apos;à la résolution. Option :
-                      acheter le token <strong>inverse</strong> juste après la vente (switch).
+                      Après le fill, si le favori <strong>détenu</strong> imprime une séquence de
+                      <strong>plus-bas confirmés</strong> (swing ≥ min, figé par un rebond — pas un
+                      50&nbsp;% figé : le retracement est borné, un waterfall se confirme au tick),
+                      la position est <strong>vendue en FOK au bid</strong> au lieu d&apos;être tenue
+                      jusqu&apos;à la résolution. Reprise au-dessus du plus-haut de structure =
+                      reset. Option : acheter le token <strong>inverse</strong> juste après (switch).
                     </p>
                     <div class="cfg-grid">
-                      <label class="cfg-check" title="Vend la position quand le favori détenu imprime N paliers de plus en plus bas.">
+                      <label class="cfg-check" title="Vend la position quand le favori détenu imprime N plus-bas de plus en plus bas.">
                         <input
                           type="checkbox"
                           checked={form().favBandExitEnabled}
@@ -1192,8 +1193,8 @@ export function SettingsModal(props: {
                       </label>
                       <Show when={form().favBandExitEnabled}>
                         <Field
-                          label="Chute entre paliers"
-                          hint="Chute minimum entre deux paliers consécutifs (défaut 0.02 = 2¢). Un plus haut qui remonte au-dessus du palier courant réinitialise la séquence."
+                          label="Swing min (plus-bas)"
+                          hint="Amplitude minimum d'une jambe pour figer un plus-bas (défaut 0.05 = 5¢). En dessous = bruit de carnet."
                         >
                           <NumberInput
                             value={form().favBandExitMinLowerHighDrop}
@@ -1203,8 +1204,20 @@ export function SettingsModal(props: {
                           />
                         </Field>
                         <Field
-                          label="Paliers consécutifs"
-                          hint="Nombre de paliers de plus en plus bas avant de sortir (défaut 2)."
+                          label="Retracement de confirmation"
+                          hint="Part de la chute à remonter pour figer le plus-bas (0.50 = 50 %, défaut 0.25). Borné à [1 tick, swing min] : un gros dump n'attend pas un retrace Fibonacci. 0 = n'importe quel tick de rebond. Un plus-bas suivant (sous le précédent) se confirme dès 1 tick."
+                        >
+                          <NumberInput
+                            value={form().favBandExitRetraceRatio}
+                            min={0}
+                            max={1}
+                            step={0.05}
+                            onInput={(v) => update("favBandExitRetraceRatio", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Plus-bas consécutifs"
+                          hint="Nombre de plus-bas de plus en plus bas avant de sortir (défaut 3)."
                         >
                           <NumberInput
                             value={form().favBandExitConsecutive}
@@ -1216,7 +1229,7 @@ export function SettingsModal(props: {
                         </Field>
                         <Field
                           label="Lookback (ms)"
-                          hint="Fenêtre glissante : la séquence doit rester récente (défaut 120000 = 120 s). Sans nouveau palier dans la fenêtre, la séquence est réinitialisée."
+                          hint="Fenêtre glissante : la séquence de plus-bas doit rester récente (défaut 120000 = 120 s). Sans nouveau plus-bas dans la fenêtre, le compteur est réinitialisé."
                         >
                           <NumberInput
                             value={form().favBandExitLookbackMs}
@@ -1269,7 +1282,7 @@ export function SettingsModal(props: {
                       </Show>
                     </div>
                   </div>
-<p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
+                  <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
                     Risque / exposition : onglet Risque (max shares, max exposure).
                     Fenêtre de trading : onglet Fenêtre.
                   </p>

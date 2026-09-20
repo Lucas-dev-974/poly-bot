@@ -236,11 +236,13 @@ export interface BotConfig {
   favBandWhipsawPauseWindows: number;
   favBandWhipsawMaxScore: number | null;
   favBandWhipsawMaxIntraFlips: number | null;
-  /** Deterioration exit (default off): sell the held favorite when its price prints successive lower peaks. */
+  /** Deterioration exit (default off): sell the held favorite on a sequence of confirmed lower lows. */
   favBandExitEnabled: boolean;
-  /** Deterioration exit: minimum drop between successive peaks (e.g. 0.02). */
+  /** Deterioration exit: minimum swing size to print a plus-bas (e.g. 0.05). */
   favBandExitMinLowerHighDrop: number;
-  /** Deterioration exit: consecutive lower peaks required (default 2). */
+  /** Deterioration exit: bounce/drop ratio that freezes a plus-bas (0 = 1 tick, 0.5 = 50%). */
+  favBandExitRetraceRatio: number;
+  /** Deterioration exit: consecutive lower lows required (default 3). */
   favBandExitConsecutive: number;
   /** Deterioration exit: sliding sample window (default 120000 = 120 s). */
   favBandExitLookbackMs: number;
@@ -588,6 +590,38 @@ export interface BacktestSeriesPoint {
   upAskSize?: number | null;
   downBidSize?: number | null;
   downAskSize?: number | null;
+}
+
+export interface LowerLowEvent {
+  sequenceId: number;
+  lowNumber: number;
+  lowPrice: number;
+  lowTs: number;
+  bouncePrice: number;
+  dropCents: number;
+  bounceCents: number;
+  requiredBounceCents: number;
+}
+
+export interface LowerLowAnalysisResult {
+  slug: string;
+  up: {
+    events: LowerLowEvent[];
+    maxSequence: number;
+    finalPrice: number | null;
+  };
+  down: {
+    events: LowerLowEvent[];
+    maxSequence: number;
+    finalPrice: number | null;
+  };
+}
+
+export interface LowerLowParams {
+  minSwingCents: number;
+  retraceRatio: number;
+  consecutiveRequired: number;
+  lookbackMs: number;
 }
 
 export interface BacktestProgress {

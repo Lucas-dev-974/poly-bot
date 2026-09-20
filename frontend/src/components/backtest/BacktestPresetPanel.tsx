@@ -8,6 +8,8 @@ type PresetTab = "cheap" | "hedge" | "edge" | "risk" | "window" | "zones";
 
 export function BacktestPresetPanel(props: {
   form: ConfigFormState | null;
+  /** Moteur sélectionné dans la barre (source de vérité des onglets). */
+  engine: string;
   onUpdate: <K extends keyof ConfigFormState>(key: K, value: ConfigFormState[K]) => void;
   saving: boolean;
   saveMsg: string | null;
@@ -27,7 +29,8 @@ export function BacktestPresetPanel(props: {
 }): JSX.Element {
   const [tab, setTab] = createSignal<PresetTab>("cheap");
   const [showDesc, setShowDesc] = createSignal(false);
-  const sid = createMemo(() => props.form?.strategyId ?? "arb");
+  // Onglets suivent le select Moteur, pas seulement form.strategyId (peut être en retard / stale).
+  const sid = createMemo(() => props.engine || props.form?.strategyId || "arb");
   const isCustom = createMemo(() => sid().startsWith("custom:"));
   const tabs = createMemo((): Array<{ id: PresetTab; label: string }> => {
     if (isCustom()) {
@@ -40,20 +43,57 @@ export function BacktestPresetPanel(props: {
     }
     if (sid() === "edge-lead") {
       return [
-        { id: "edge", label: "Edge" },
+        { id: "edge", label: "edge-lead" },
         { id: "risk", label: "Risque" },
         { id: "window", label: "Fenêtre" },
       ];
     }
     if (sid() === "fav-band") {
       return [
-        { id: "cheap", label: "Fav-band" },
+        { id: "cheap", label: "fav-band" },
         { id: "risk", label: "Risque" },
         { id: "window", label: "Fenêtre" },
       ];
     }
+    if (sid() === "open-entry") {
+      return [
+        { id: "cheap", label: "open-entry" },
+        { id: "edge", label: "SL" },
+        { id: "risk", label: "Risque" },
+        { id: "window", label: "Fenêtre" },
+      ];
+    }
+    if (sid() === "dip-revert") {
+      return [
+        { id: "cheap", label: "dip-revert" },
+        { id: "risk", label: "Risque" },
+        { id: "window", label: "Fenêtre" },
+      ];
+    }
+    if (sid() === "antiflip-revert") {
+      return [
+        { id: "cheap", label: "antiflip-revert" },
+        { id: "risk", label: "Risque" },
+        { id: "window", label: "Fenêtre" },
+      ];
+    }
+    if (sid() === "flip-confirm") {
+      return [
+        { id: "cheap", label: "flip-confirm" },
+        { id: "risk", label: "Risque" },
+        { id: "window", label: "Fenêtre" },
+      ];
+    }
+    if (sid() === "early-conviction") {
+      return [
+        { id: "cheap", label: "early-conviction" },
+        { id: "risk", label: "Risque" },
+        { id: "window", label: "Fenêtre" },
+      ];
+    }
+    // arb / barbell / reverse : 1er onglet = nom du moteur
     return [
-      { id: "cheap", label: "Cheap" },
+      { id: "cheap", label: sid() },
       { id: "hedge", label: "Hedge" },
       { id: "risk", label: "Risque" },
       { id: "window", label: "Fenêtre" },
@@ -67,9 +107,9 @@ export function BacktestPresetPanel(props: {
   const tabErrorCount = createMemo((): Record<PresetTab, number> => {
     const fe = props.fieldErrors;
     const counts: Record<PresetTab, number> = { cheap: 0, hedge: 0, edge: 0, risk: 0, window: 0, zones: 0 };
-    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax", "arbAskSumMax", "arbAskLockMinElapsedSec", "arbAskLockMaxImbalance", "favBandAskMin", "favBandAskMax", "favBandMinElapsedSec", "favBandMaxElapsedSec", "favBandOrderUsdc", "favBandInverseAskMax", "favBandInverseShareRatio", "favBandInverseOrderUsdc", "barbellCheapOrderUsdc", "reverseCheapOrderUsdc", "customOrderUsdc"];
+    const cheapKeys: Array<keyof ConfigFormState> = ["cheapBuyMin", "cheapBuyMax", "cheapOrderUsdc", "pairLockMax", "arbAskSumMax", "arbAskLockMinElapsedSec", "arbAskLockMaxImbalance", "favBandAskMin", "favBandAskMax", "favBandMinElapsedSec", "favBandMaxElapsedSec", "favBandOrderUsdc", "favBandInverseAskMax", "favBandInverseShareRatio", "favBandInverseOrderUsdc", "barbellCheapOrderUsdc", "reverseCheapOrderUsdc", "customOrderUsdc", "openEntryLeanTrigger", "openEntryMaxElapsedSec", "openEntryFairAskSumMax", "openEntryMaxSpread", "openEntryOrderUsdc", "openEntrySlEnabled", "dipRevertBandMin", "dipRevertBandMax", "dipRevertMinDrop", "dipRevertDropLookbackMs", "dipRevertMinElapsedSec", "dipRevertMaxElapsedSec", "dipRevertMaxSpread", "dipRevertOrderUsdc", "dipRevertExitWinAsk", "antiflipBandMin", "antiflipBandMax", "antiflipDeposedAskMin", "antiflipFlipLookbackMs", "antiflipMinElapsedSec", "antiflipMaxElapsedSec", "antiflipMaxSpread", "antiflipOrderUsdc", "flipConfirmBandMin", "flipConfirmBandMax", "flipConfirmFlipLookbackMs", "flipConfirmMinElapsedSec", "flipConfirmMaxElapsedSec", "flipConfirmMaxSpread", "flipConfirmOrderUsdc", "earlyConvictionAskMin", "earlyConvictionAskMax", "earlyConvictionMaxElapsedSec", "earlyConvictionMaxSpread", "earlyConvictionOrderUsdc"];
     const hedgeKeys: Array<keyof ConfigFormState> = ["expensiveBuyMin", "expensiveBuyMax", "expensiveOrderUsdc", "expensiveOrderType", "barbellHedgeRatio", "enableExpensiveHedge", "requireCheapFillBeforeExpensive"];
-    const edgeKeys: Array<keyof ConfigFormState> = ["edgeBandMin", "edgeBandMax", "edgeConfirmSamples", "edgeMaxDownTick", "edgeCheapBandMin", "edgeCheapBandMax", "edgeSizingMode", "edgeSharesEdge", "edgeSharesCheap", "edgeOrderUsdc", "maxShareEdge", "edgeCheapOrderUsdc", "edgeSellExpensiveEnabled", "edgeSellExpensiveAfterMin", "edgeSellExpensiveLossPct", "edgeSellExpensiveLossWindowMs"];
+    const edgeKeys: Array<keyof ConfigFormState> = ["edgeBandMin", "edgeBandMax", "edgeConfirmSamples", "edgeMaxDownTick", "edgeCheapBandMin", "edgeCheapBandMax", "edgeSizingMode", "edgeSharesEdge", "edgeSharesCheap", "edgeOrderUsdc", "maxShareEdge", "edgeCheapOrderUsdc", "edgeSellExpensiveEnabled", "edgeSellExpensiveAfterMin", "edgeSellExpensiveLossPct", "edgeSellExpensiveLossWindowMs", "openEntrySlStructFlipDist", "openEntrySlStructConfirmSec", "openEntrySlStructDist", "openEntrySlLateAfterSec", "openEntrySlLateDist"];
     const riskKeys: Array<keyof ConfigFormState> = ["maxSharesPerOrder", "maxShareEdge", "maxOpenPositionsPerSide", "maxExposureUsdc", "simulatedCapital", "marketSlugPrefixes", "pollIntervalMs"];
     const windowKeys: Array<keyof ConfigFormState> = ["minutesBeforeCloseMin", "minutesBeforeCloseMax", "minMinutesBeforeCloseToBuy"];
     for (const k of cheapKeys) if (fe[k]) counts.cheap++;
@@ -181,6 +221,21 @@ export function BacktestPresetPanel(props: {
           <div class="bt-preset-body">
             <Show when={active() === "cheap"}>
               <div class="bt-preset-grid">
+                <Show when={sid() === "open-entry"}>
+                  <Num label="Lean trigger" tip="Écart up/down min du favori (défaut 0.15). Trop bas = bruit (0.12 isolé : t=0.06)." value={form().openEntryLeanTrigger} step={0.01} err={props.fieldErrors.openEntryLeanTrigger} onInput={(v) => props.onUpdate("openEntryLeanTrigger", v)} />
+                  <Num label="Max elapsed sec" tip="Fenêtre d'entrée [0, N] (défaut 300). Trigger atteint à p50 ~20s." value={form().openEntryMaxElapsedSec} step={1} err={props.fieldErrors.openEntryMaxElapsedSec} onInput={(v) => props.onUpdate("openEntryMaxElapsedSec", v)} />
+                  <Num label="Fair ask sum max" tip="Somme des asks au 1er tick deux-côtés (défaut 1.02) — marché ouvert fair, mémorisé à l'ouverture." value={form().openEntryFairAskSumMax} step={0.01} err={props.fieldErrors.openEntryFairAskSumMax} onInput={(v) => props.onUpdate("openEntryFairAskSumMax", v)} />
+                  <Num label="Max spread" tip="Spread max du favori à l'entrée (défaut 0.04)." value={form().openEntryMaxSpread} step={0.005} err={props.fieldErrors.openEntryMaxSpread} onInput={(v) => props.onUpdate("openEntryMaxSpread", v)} />
+                  <Num label="Order USDC" tip="Budget FOK sur le favori (full-depth L1, retry si kill)." value={form().openEntryOrderUsdc} step={1} err={props.fieldErrors.openEntryOrderUsdc} onInput={(v) => props.onUpdate("openEntryOrderUsdc", v)} />
+                  <label class="bt-pf bt-pf-check">
+                    <input
+                      type="checkbox"
+                      checked={form().openEntrySlEnabled}
+                      onChange={(e) => props.onUpdate("openEntrySlEnabled", e.currentTarget.checked)}
+                    />
+                    <span class="bt-pf-label" title="SL dual-scale actif. Off = hold intégral. Runner 2026-09-19 : hold $365 > SL $330 (les SL coûtent l'espérance à sizing L1, leur valeur = volatilité).">SL actif</span>
+                  </label>
+                </Show>
                 <Show when={sid() === "fav-band"}>
                   <Num label="Fav ask min" tip="Borne basse ask favori." value={form().favBandAskMin} step={0.01} err={props.fieldErrors.favBandAskMin} onInput={(v) => props.onUpdate("favBandAskMin", v)} />
                   <Num label="Fav ask max" tip="Borne haute ask favori." value={form().favBandAskMax} step={0.01} err={props.fieldErrors.favBandAskMax} onInput={(v) => props.onUpdate("favBandAskMax", v)} />
@@ -201,7 +256,54 @@ export function BacktestPresetPanel(props: {
                     <Num label="Inverse USDC" tip="Plafond budget du GTC inverse (≥ 5 shares au pire prix)." value={form().favBandInverseOrderUsdc} step={1} err={props.fieldErrors.favBandInverseOrderUsdc} onInput={(v) => props.onUpdate("favBandInverseOrderUsdc", v)} />
                   </Show>
                 </Show>
-                <Show when={sid() !== "fav-band"}>
+                <Show when={sid() === "dip-revert"}>
+                  <Num label="Ask favori min" tip="Borne basse de la bande d'entrée du favori (défaut 0.55)." value={form().dipRevertBandMin} step={0.01} err={props.fieldErrors.dipRevertBandMin} onInput={(v) => props.onUpdate("dipRevertBandMin", v)} />
+                  <Num label="Ask favori max" tip="Borne haute (défaut 0.65). Au-delà, le favori est « sûr » : le dip est structurel, pas une opportunité." value={form().dipRevertBandMax} step={0.01} err={props.fieldErrors.dipRevertBandMax} onInput={(v) => props.onUpdate("dipRevertBandMax", v)} />
+                  <Num label="Min drop" tip="Chute minimum de l'ask favori sur la fenêtre lookback (défaut 0.03 = 3¢)." value={form().dipRevertMinDrop} step={0.005} err={props.fieldErrors.dipRevertMinDrop} onInput={(v) => props.onUpdate("dipRevertMinDrop", v)} />
+                  <Num label="Drop lookback (ms)" tip="Fenêtre glissante où mesurer la chute (défaut 60000 = 60 s)." value={form().dipRevertDropLookbackMs} step={1000} err={props.fieldErrors.dipRevertDropLookbackMs} onInput={(v) => props.onUpdate("dipRevertDropLookbackMs", v)} />
+                  <Num label="Min elapsed (sec)" tip="Attendre N secondes depuis le début de la fenêtre avant d'entrer (défaut 180)." value={form().dipRevertMinElapsedSec} step={1} err={props.fieldErrors.dipRevertMinElapsedSec} onInput={(v) => props.onUpdate("dipRevertMinElapsedSec", v)} />
+                  <Num label="Max elapsed (sec, opt)" tip="Vide = jusqu'à la close / minutesBeforeClose." value={form().dipRevertMaxElapsedSec} step={1} err={props.fieldErrors.dipRevertMaxElapsedSec} onInput={(v) => props.onUpdate("dipRevertMaxElapsedSec", v)} />
+                  <Num label="Max spread" tip="Spread max du favori à l'entrée (défaut 0.04)." value={form().dipRevertMaxSpread} step={0.005} err={props.fieldErrors.dipRevertMaxSpread} onInput={(v) => props.onUpdate("dipRevertMaxSpread", v)} />
+                  <Num label="Order USDC" tip="Budget FOK sur le favori (défaut 15)." value={form().dipRevertOrderUsdc} step={0.1} err={props.fieldErrors.dipRevertOrderUsdc} onInput={(v) => props.onUpdate("dipRevertOrderUsdc", v)} />
+                  <label class="bt-pf bt-pf-check">
+                    <input
+                      type="checkbox"
+                      checked={form().dipRevertExitTakeProfitEnabled}
+                      onChange={(e) => props.onUpdate("dipRevertExitTakeProfitEnabled", e.currentTarget.checked)}
+                    />
+                    <span class="bt-pf-label" title="Vendre le favori détenu (FOK SELL au bid) quand son ask atteint le seuil, au lieu de hold jusqu'à la résolution.">Take-profit</span>
+                  </label>
+                  <Show when={form().dipRevertExitTakeProfitEnabled}>
+                    <Num label="Take-profit ask" tip="Seuil sur l'ask du favori détenu (défaut 0.85). Doit être > ask max de la bande d'entrée." value={form().dipRevertExitWinAsk} step={0.01} err={props.fieldErrors.dipRevertExitWinAsk} onInput={(v) => props.onUpdate("dipRevertExitWinAsk", v)} />
+                  </Show>
+                </Show>
+                <Show when={sid() === "antiflip-revert"}>
+                  <Num label="Ask déchu min" tip="Borne basse de la bande d'entrée du favori déchu (défaut 0.35)." value={form().antiflipBandMin} step={0.01} err={props.fieldErrors.antiflipBandMin} onInput={(v) => props.onUpdate("antiflipBandMin", v)} />
+                  <Num label="Ask déchu max" tip="Borne haute (défaut 0.45)." value={form().antiflipBandMax} step={0.01} err={props.fieldErrors.antiflipBandMax} onInput={(v) => props.onUpdate("antiflipBandMax", v)} />
+                  <Num label="Floor déchu (opt)" tip="Plancher de prix du déchu (défaut 0.40). Vide = désactivé." value={form().antiflipDeposedAskMin} step={0.01} err={props.fieldErrors.antiflipDeposedAskMin} onInput={(v) => props.onUpdate("antiflipDeposedAskMin", v)} />
+                  <Num label="Flip lookback (ms)" tip="Fenêtre max depuis le flip pour entrer (défaut 90000 = 90s)." value={form().antiflipFlipLookbackMs} step={1000} err={props.fieldErrors.antiflipFlipLookbackMs} onInput={(v) => props.onUpdate("antiflipFlipLookbackMs", v)} />
+                  <Num label="Min elapsed (sec)" tip="Le flip doit survenir après N secondes de fenêtre (défaut 240)." value={form().antiflipMinElapsedSec} step={1} err={props.fieldErrors.antiflipMinElapsedSec} onInput={(v) => props.onUpdate("antiflipMinElapsedSec", v)} />
+                  <Num label="Max elapsed (sec, opt)" tip="Vide = jusqu'à la close / minutesBeforeClose." value={form().antiflipMaxElapsedSec} step={1} err={props.fieldErrors.antiflipMaxElapsedSec} onInput={(v) => props.onUpdate("antiflipMaxElapsedSec", v)} />
+                  <Num label="Max spread" tip="Spread max du token déchu à l'entrée (défaut 0.05)." value={form().antiflipMaxSpread} step={0.005} err={props.fieldErrors.antiflipMaxSpread} onInput={(v) => props.onUpdate("antiflipMaxSpread", v)} />
+                  <Num label="Order USDC" tip="Budget FOK sur le déchu (défaut 15)." value={form().antiflipOrderUsdc} step={0.1} err={props.fieldErrors.antiflipOrderUsdc} onInput={(v) => props.onUpdate("antiflipOrderUsdc", v)} />
+                </Show>
+                <Show when={sid() === "flip-confirm"}>
+                  <Num label="Ask nouveau favori min" tip="Borne basse de la bande d'entrée du nouveau favori (défaut 0.55)." value={form().flipConfirmBandMin} step={0.01} err={props.fieldErrors.flipConfirmBandMin} onInput={(v) => props.onUpdate("flipConfirmBandMin", v)} />
+                  <Num label="Ask nouveau favori max" tip="Borne haute (défaut 0.65)." value={form().flipConfirmBandMax} step={0.01} err={props.fieldErrors.flipConfirmBandMax} onInput={(v) => props.onUpdate("flipConfirmBandMax", v)} />
+                  <Num label="Flip lookback (ms)" tip="Le flip doit dater de moins de N ms avant l'entrée (défaut 90000 = 90s)." value={form().flipConfirmFlipLookbackMs} step={1000} err={props.fieldErrors.flipConfirmFlipLookbackMs} onInput={(v) => props.onUpdate("flipConfirmFlipLookbackMs", v)} />
+                  <Num label="Min elapsed (sec)" tip="Début de la fenêtre d'entrée (défaut 120)." value={form().flipConfirmMinElapsedSec} step={1} err={props.fieldErrors.flipConfirmMinElapsedSec} onInput={(v) => props.onUpdate("flipConfirmMinElapsedSec", v)} />
+                  <Num label="Max elapsed (sec, opt)" tip="Fin de la fenêtre d'entrée (défaut 180). Ne pas élargir sans re-backtester." value={form().flipConfirmMaxElapsedSec} step={1} err={props.fieldErrors.flipConfirmMaxElapsedSec} onInput={(v) => props.onUpdate("flipConfirmMaxElapsedSec", v)} />
+                  <Num label="Max spread" tip="Spread max du favori à l'entrée (défaut 0.05)." value={form().flipConfirmMaxSpread} step={0.005} err={props.fieldErrors.flipConfirmMaxSpread} onInput={(v) => props.onUpdate("flipConfirmMaxSpread", v)} />
+                  <Num label="Order USDC" tip="Budget FOK sur le nouveau favori (défaut 15)." value={form().flipConfirmOrderUsdc} step={0.1} err={props.fieldErrors.flipConfirmOrderUsdc} onInput={(v) => props.onUpdate("flipConfirmOrderUsdc", v)} />
+                </Show>
+                <Show when={sid() === "early-conviction"}>
+                  <Num label="Ask favori min" tip="Seuil de conviction (défaut 0.60). Ne pas baisser à 0.55." value={form().earlyConvictionAskMin} step={0.01} err={props.fieldErrors.earlyConvictionAskMin} onInput={(v) => props.onUpdate("earlyConvictionAskMin", v)} />
+                  <Num label="Ask favori max" tip="Borne haute (défaut 0.80)." value={form().earlyConvictionAskMax} step={0.01} err={props.fieldErrors.earlyConvictionAskMax} onInput={(v) => props.onUpdate("earlyConvictionAskMax", v)} />
+                  <Num label="Max elapsed (sec)" tip="Fenêtre de détection : [0, N] secondes (défaut 45)." value={form().earlyConvictionMaxElapsedSec} step={1} err={props.fieldErrors.earlyConvictionMaxElapsedSec} onInput={(v) => props.onUpdate("earlyConvictionMaxElapsedSec", v)} />
+                  <Num label="Max spread" tip="Spread max du favori à l'entrée (défaut 0.05)." value={form().earlyConvictionMaxSpread} step={0.005} err={props.fieldErrors.earlyConvictionMaxSpread} onInput={(v) => props.onUpdate("earlyConvictionMaxSpread", v)} />
+                  <Num label="Order USDC" tip="Budget FOK sur le favori (défaut 15)." value={form().earlyConvictionOrderUsdc} step={0.1} err={props.fieldErrors.earlyConvictionOrderUsdc} onInput={(v) => props.onUpdate("earlyConvictionOrderUsdc", v)} />
+                </Show>
+                <Show when={sid() === "arb" || sid() === "barbell" || sid() === "reverse"}>
                   <Num label="Cheap min" tip="Ask / prix minimum de la bande cheap (underdog). En dessous : pas d'ordre cheap." value={form().cheapBuyMin} step={0.01} err={props.fieldErrors.cheapBuyMin} onInput={(v) => props.onUpdate("cheapBuyMin", v)} />
                   <Num label="Cheap max" tip="Plafond du bid cheap. Le prix pose reste dans [cheap min, cheap max]." value={form().cheapBuyMax} step={0.01} err={props.fieldErrors.cheapBuyMax} onInput={(v) => props.onUpdate("cheapBuyMax", v)} />
                   <Num
@@ -285,6 +387,20 @@ export function BacktestPresetPanel(props: {
               </div>
             </Show>
             <Show when={active() === "edge"}>
+              <Show when={sid() === "open-entry"}>
+                <div class="bt-preset-grid">
+                  <p class="bt-preset-hint bt-pf-wide">
+                    SL à double échelle (pipeline defend, vend au bid L1). Structurel =
+                    flip adverse confirmé + dégât prix — jamais l'un seul. Tardif =
+                    petit dégât suffit après openEntrySlLateAfterSec.
+                  </p>
+                  <Num label="Struct : flip dist" tip="L'autre jambe mène de >= X (défaut 0.20) pour armer le SL structurel." value={form().openEntrySlStructFlipDist} step={0.01} err={props.fieldErrors.openEntrySlStructFlipDist} onInput={(v) => props.onUpdate("openEntrySlStructFlipDist", v)} />
+                  <Num label="Struct : confirm sec" tip="Le flip doit durer >= N secondes (défaut 20) — coupe les faux retournements." value={form().openEntrySlStructConfirmSec} step={1} err={props.fieldErrors.openEntrySlStructConfirmSec} onInput={(v) => props.onUpdate("openEntrySlStructConfirmSec", v)} />
+                  <Num label="Struct : dégât" tip="ET le prix tenu a perdu >= X (défaut 0.10) — jamais le flip seul." value={form().openEntrySlStructDist} step={0.01} err={props.fieldErrors.openEntrySlStructDist} onInput={(v) => props.onUpdate("openEntrySlStructDist", v)} />
+                  <Num label="Tardif : après sec" tip="Passé N secondes (défaut 300), un petit dégât suffit." value={form().openEntrySlLateAfterSec} step={1} err={props.fieldErrors.openEntrySlLateAfterSec} onInput={(v) => props.onUpdate("openEntrySlLateAfterSec", v)} />
+                  <Num label="Tardif : dégât" tip="Petit dégât tardif (défaut 0.06, <= dégât structurel)." value={form().openEntrySlLateDist} step={0.01} err={props.fieldErrors.openEntrySlLateDist} onInput={(v) => props.onUpdate("openEntrySlLateDist", v)} />
+                </div>
+              </Show>
               <Show when={isCustom()}>
                 <p class="bt-preset-hint">
                   Ces valeurs sont les <strong>fallbacks</strong> utilisés quand une zone
@@ -292,6 +408,7 @@ export function BacktestPresetPanel(props: {
                   <code>confirmTicks</code> ou <code>maxDownTick</code>.
                 </p>
               </Show>
+              <Show when={sid() === "edge-lead" || isCustom()}>
               <div class="bt-preset-grid">
                 <Num label="Edge min" tip="Ask favori minimum de la bande de confirmation edge-lead." value={form().edgeBandMin} step={0.01} err={props.fieldErrors.edgeBandMin} onInput={(v) => props.onUpdate("edgeBandMin", v)} />
                 <Num label="Edge max" tip="Ask favori maximum de la bande de confirmation edge-lead." value={form().edgeBandMax} step={0.01} err={props.fieldErrors.edgeBandMax} onInput={(v) => props.onUpdate("edgeBandMax", v)} />
@@ -338,6 +455,7 @@ export function BacktestPresetPanel(props: {
                   <Num label="Fenêtre perte (ms)" tip="Durée de perte continue requise avant la vente FOK de l'edge." value={form().edgeSellExpensiveLossWindowMs} step={100} err={props.fieldErrors.edgeSellExpensiveLossWindowMs} onInput={(v) => props.onUpdate("edgeSellExpensiveLossWindowMs", v)} />
                 </Show>
               </div>
+              </Show>
             </Show>
             <Show when={active() === "risk"}>
               <div class="bt-preset-grid">

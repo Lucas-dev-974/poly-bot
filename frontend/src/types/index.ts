@@ -2,7 +2,7 @@
 // Garder synchronisÃ© avec le backend lors des changements.
 
 export type TradeSide = "BUY" | "SELL";
-export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band" | "dip-revert" | "antiflip-revert" | "flip-confirm" | "early-conviction";
+export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band" | "dip-revert" | "antiflip-revert" | "flip-confirm" | "early-conviction" | "open-entry";
 export type StrategyId = NativeStrategyId | `custom:${string}`;
 
 export interface GammaMarket {
@@ -231,6 +231,11 @@ export interface BotConfig {
   favBandInverseShareRatio: number;
   /** Hedge-inverse: budget cap (USDC) for the opposite-token GTC. */
   favBandInverseOrderUsdc: number;
+  favBandWhipsawEnabled: boolean;
+  favBandWhipsawPauseAfterLosses: number | null;
+  favBandWhipsawPauseWindows: number;
+  favBandWhipsawMaxScore: number | null;
+  favBandWhipsawMaxIntraFlips: number | null;
   /** Dip-revert: buy favorite after intra-window dip + stabilization. */
   dipRevertBandMin: number;
   dipRevertBandMax: number;
@@ -267,6 +272,18 @@ export interface BotConfig {
   earlyConvictionMaxElapsedSec: number;
   earlyConvictionMaxSpread: number;
   earlyConvictionOrderUsdc: number;
+  /** Open-entry: buy the EMERGING favorite within the entry window; dual-scale SL, hold otherwise. */
+  openEntryLeanTrigger: number;
+  openEntryMaxElapsedSec: number;
+  openEntryFairAskSumMax: number;
+  openEntryMaxSpread: number;
+  openEntryOrderUsdc: number;
+  openEntrySlStructFlipDist: number;
+  openEntrySlStructConfirmSec: number;
+  openEntrySlStructDist: number;
+  openEntrySlLateAfterSec: number;
+  openEntrySlLateDist: number;
+  openEntrySlEnabled: boolean;
   readonlyLive: boolean;
   clobHost: string;
   gammaApiHost: string;
@@ -614,6 +631,12 @@ export interface BacktestResult {
   rejectCount: number;
   coveredPairs: number;
   uncoveredPairs: number;
+  /** Strict wins (status won). Absent on runs persisted before this field. */
+  wins?: number;
+  /** Strict losses (status lost). Absent on old runs. */
+  losses?: number;
+  /** winRate = wins / (wins + losses); null when no resolution. */
+  winRate?: number | null;
   windows: BacktestWindowResult[];
 }
 

@@ -189,10 +189,21 @@ export function BacktestPage(): JSX.Element {
 
   function loadPresetIntoForm(id: string, strategyId: StrategyId): void {
     const base = liveConfig();
-    if (!base) return;
     const preset = findPresetById(id, userPresets());
+    const resolvedId = (preset?.strategyId ?? strategyId) as StrategyId;
+    if (!base) {
+      // Pas encore de live config : met à jour strategyId sur le form existant
+      // pour que Preset Run suive le select Moteur immédiatement.
+      const cur = form();
+      if (cur) {
+        const f = { ...cur, strategyId: resolvedId };
+        setForm(f);
+        setPresetFormSnapshot(f);
+      }
+      return;
+    }
     if (!preset) {
-      const f = applySettingsToForm(base, { strategyId });
+      const f = applySettingsToForm(base, { strategyId: resolvedId });
       setForm(f);
       setPresetFormSnapshot(f);
       return;
@@ -203,7 +214,7 @@ export function BacktestPage(): JSX.Element {
       arbAskLockMinElapsedSec: null,
       arbAskLockMaxImbalance: null,
       ...preset.settings,
-      strategyId: preset.strategyId,
+      strategyId: resolvedId,
     });
     setForm(f);
     setPresetFormSnapshot(f);
@@ -927,6 +938,7 @@ export function BacktestPage(): JSX.Element {
           />
           <BacktestPresetPanel
             form={form()}
+            engine={engine()}
             onUpdate={updateForm}
             saving={saving()}
             saveMsg={saveMsg()}

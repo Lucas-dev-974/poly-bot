@@ -67,6 +67,11 @@ export type ConfigFormState = {
   favBandInverseAskMax: string;
   favBandInverseShareRatio: string;
   favBandInverseOrderUsdc: string;
+  favBandWhipsawEnabled: boolean;
+  favBandWhipsawPauseAfterLosses: string;
+  favBandWhipsawPauseWindows: string;
+  favBandWhipsawMaxScore: string;
+  favBandWhipsawMaxIntraFlips: string;
   dipRevertBandMin: string;
   dipRevertBandMax: string;
   dipRevertMinDrop: string;
@@ -97,6 +102,17 @@ export type ConfigFormState = {
   earlyConvictionMaxElapsedSec: string;
   earlyConvictionMaxSpread: string;
   earlyConvictionOrderUsdc: string;
+  openEntryLeanTrigger: string;
+  openEntryMaxElapsedSec: string;
+  openEntryFairAskSumMax: string;
+  openEntryMaxSpread: string;
+  openEntryOrderUsdc: string;
+  openEntrySlStructFlipDist: string;
+  openEntrySlStructConfirmSec: string;
+  openEntrySlStructDist: string;
+  openEntrySlLateAfterSec: string;
+  openEntrySlLateDist: string;
+  openEntrySlEnabled: boolean;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -182,6 +198,20 @@ export function configToForm(config: BotConfig): ConfigFormState {
     favBandInverseAskMax: String(config.favBandInverseAskMax ?? 0.2),
     favBandInverseShareRatio: String(config.favBandInverseShareRatio ?? 2),
     favBandInverseOrderUsdc: String(config.favBandInverseOrderUsdc ?? 15),
+    favBandWhipsawEnabled: config.favBandWhipsawEnabled === true,
+    favBandWhipsawPauseAfterLosses:
+      config.favBandWhipsawPauseAfterLosses == null
+        ? ""
+        : String(config.favBandWhipsawPauseAfterLosses),
+    favBandWhipsawPauseWindows: String(config.favBandWhipsawPauseWindows ?? 8),
+    favBandWhipsawMaxScore:
+      config.favBandWhipsawMaxScore == null || config.favBandWhipsawMaxScore === undefined
+        ? ""
+        : String(config.favBandWhipsawMaxScore),
+    favBandWhipsawMaxIntraFlips:
+      config.favBandWhipsawMaxIntraFlips == null || config.favBandWhipsawMaxIntraFlips === undefined
+        ? ""
+        : String(config.favBandWhipsawMaxIntraFlips),
     dipRevertBandMin: String(config.dipRevertBandMin ?? 0.55),
     dipRevertBandMax: String(config.dipRevertBandMax ?? 0.65),
     dipRevertMinDrop: String(config.dipRevertMinDrop ?? 0.03),
@@ -221,6 +251,17 @@ export function configToForm(config: BotConfig): ConfigFormState {
     earlyConvictionMaxElapsedSec: String(config.earlyConvictionMaxElapsedSec ?? 45),
     earlyConvictionMaxSpread: String(config.earlyConvictionMaxSpread ?? 0.05),
     earlyConvictionOrderUsdc: String(config.earlyConvictionOrderUsdc ?? 15),
+    openEntryLeanTrigger: String(config.openEntryLeanTrigger ?? 0.15),
+    openEntryMaxElapsedSec: String(config.openEntryMaxElapsedSec ?? 300),
+    openEntryFairAskSumMax: String(config.openEntryFairAskSumMax ?? 1.02),
+    openEntryMaxSpread: String(config.openEntryMaxSpread ?? 0.04),
+    openEntryOrderUsdc: String(config.openEntryOrderUsdc ?? 15),
+    openEntrySlStructFlipDist: String(config.openEntrySlStructFlipDist ?? 0.2),
+    openEntrySlStructConfirmSec: String(config.openEntrySlStructConfirmSec ?? 20),
+    openEntrySlStructDist: String(config.openEntrySlStructDist ?? 0.1),
+    openEntrySlLateAfterSec: String(config.openEntrySlLateAfterSec ?? 300),
+    openEntrySlLateDist: String(config.openEntrySlLateDist ?? 0.06),
+    openEntrySlEnabled: config.openEntrySlEnabled !== false,
   };
 }
 
@@ -331,6 +372,20 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     favBandInverseAskMax: parseNum(form.favBandInverseAskMax, "Fav-band inverse ask max"),
     favBandInverseShareRatio: parseNum(form.favBandInverseShareRatio, "Fav-band inverse share ratio"),
     favBandInverseOrderUsdc: parseNum(form.favBandInverseOrderUsdc, "Fav-band inverse order USDC"),
+    favBandWhipsawEnabled: form.favBandWhipsawEnabled === true,
+    favBandWhipsawPauseAfterLosses:
+      form.favBandWhipsawPauseAfterLosses.trim() === ""
+        ? null
+        : parseNum(form.favBandWhipsawPauseAfterLosses, "Fav-band whipsaw pause after losses"),
+    favBandWhipsawPauseWindows: parseNum(form.favBandWhipsawPauseWindows, "Fav-band whipsaw pause windows"),
+    favBandWhipsawMaxScore:
+      form.favBandWhipsawMaxScore.trim() === ""
+        ? null
+        : parseNum(form.favBandWhipsawMaxScore, "Fav-band whipsaw max score"),
+    favBandWhipsawMaxIntraFlips:
+      form.favBandWhipsawMaxIntraFlips.trim() === ""
+        ? null
+        : parseNum(form.favBandWhipsawMaxIntraFlips, "Fav-band whipsaw max intra flips"),
     dipRevertBandMin: parseNum(form.dipRevertBandMin, "Dip-revert band min"),
     dipRevertBandMax: parseNum(form.dipRevertBandMax, "Dip-revert band max"),
     dipRevertMinDrop: parseNum(form.dipRevertMinDrop, "Dip-revert min drop"),
@@ -376,6 +431,17 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     earlyConvictionMaxElapsedSec: parseNum(form.earlyConvictionMaxElapsedSec, "Early-conviction max elapsed"),
     earlyConvictionMaxSpread: parseNum(form.earlyConvictionMaxSpread, "Early-conviction max spread"),
     earlyConvictionOrderUsdc: parseNum(form.earlyConvictionOrderUsdc, "Early-conviction order USDC"),
+    openEntryLeanTrigger: parseNum(form.openEntryLeanTrigger, "Open-entry lean trigger"),
+    openEntryMaxElapsedSec: parseNum(form.openEntryMaxElapsedSec, "Open-entry max elapsed"),
+    openEntryFairAskSumMax: parseNum(form.openEntryFairAskSumMax, "Open-entry fair ask sum max"),
+    openEntryMaxSpread: parseNum(form.openEntryMaxSpread, "Open-entry max spread"),
+    openEntryOrderUsdc: parseNum(form.openEntryOrderUsdc, "Open-entry order USDC"),
+    openEntrySlStructFlipDist: parseNum(form.openEntrySlStructFlipDist, "Open-entry SL struct flip dist"),
+    openEntrySlStructConfirmSec: parseNum(form.openEntrySlStructConfirmSec, "Open-entry SL struct confirm sec"),
+    openEntrySlStructDist: parseNum(form.openEntrySlStructDist, "Open-entry SL struct dist"),
+    openEntrySlLateAfterSec: parseNum(form.openEntrySlLateAfterSec, "Open-entry SL late after sec"),
+    openEntrySlLateDist: parseNum(form.openEntrySlLateDist, "Open-entry SL late dist"),
+    openEntrySlEnabled: form.openEntrySlEnabled !== false,
   };
 
   if (
@@ -383,7 +449,8 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     next.strategyId === "dip-revert" ||
     next.strategyId === "antiflip-revert" ||
     next.strategyId === "flip-confirm" ||
-    next.strategyId === "early-conviction"
+    next.strategyId === "early-conviction" ||
+    next.strategyId === "open-entry"
   ) {
     next.enableExpensiveHedge = false;
     next.arbAskLockOnly = false;
@@ -464,6 +531,10 @@ export function validateConfigForm(
       if (
         form.strategyId !== "fav-band" &&
         form.strategyId !== "dip-revert" &&
+        form.strategyId !== "antiflip-revert" &&
+        form.strategyId !== "flip-confirm" &&
+        form.strategyId !== "early-conviction" &&
+        form.strategyId !== "open-entry" &&
         cheapBuyMax >= expensiveBuyMin
       ) {
         errors.push("Cheap max doit être < hedge min");
@@ -671,6 +742,48 @@ export function validateConfigForm(
         errors.push("Early-conviction: budget doit être > 0");
       }
     }
+    if (form.strategyId === "open-entry") {
+      const lean = Number(form.openEntryLeanTrigger);
+      const maxElapsed = Number(form.openEntryMaxElapsedSec);
+      const fair = Number(form.openEntryFairAskSumMax);
+      const spread = Number(form.openEntryMaxSpread);
+      const budget = Number(form.openEntryOrderUsdc);
+      const flipDist = Number(form.openEntrySlStructFlipDist);
+      const confirmSec = Number(form.openEntrySlStructConfirmSec);
+      const structDist = Number(form.openEntrySlStructDist);
+      const lateAfter = Number(form.openEntrySlLateAfterSec);
+      const lateDist = Number(form.openEntrySlLateDist);
+      if (!Number.isFinite(lean) || lean <= 0 || lean > 0.5) {
+        errors.push("Open-entry: lean trigger entre 0 (exclu) et 0.5");
+      }
+      if (!Number.isFinite(maxElapsed) || maxElapsed <= 0 || maxElapsed > 900) {
+        errors.push("Open-entry: max elapsed entre 0 (exclu) et 900");
+      }
+      if (!Number.isFinite(fair) || fair <= 1 || fair > 1.2) {
+        errors.push("Open-entry: fair ask sum entre 1 (exclu) et 1.2");
+      }
+      if (!Number.isFinite(spread) || spread < 0) {
+        errors.push("Open-entry: max spread doit être >= 0");
+      }
+      if (!Number.isFinite(budget) || budget <= 0) {
+        errors.push("Open-entry: budget doit être > 0");
+      }
+      if (!Number.isFinite(flipDist) || flipDist <= 0 || flipDist > 1) {
+        errors.push("Open-entry: SL struct flip dist entre 0 (exclu) et 1");
+      }
+      if (!Number.isFinite(confirmSec) || confirmSec < 0 || confirmSec > 900) {
+        errors.push("Open-entry: SL struct confirm sec entre 0 et 900");
+      }
+      if (!Number.isFinite(structDist) || structDist <= 0 || structDist > 1) {
+        errors.push("Open-entry: SL struct dist entre 0 (exclu) et 1");
+      }
+      if (!Number.isFinite(lateAfter) || lateAfter <= 0 || lateAfter > 900) {
+        errors.push("Open-entry: SL late after sec entre 0 (exclu) et 900");
+      }
+      if (!Number.isFinite(lateDist) || lateDist <= 0 || lateDist > structDist) {
+        errors.push("Open-entry: SL late dist doit être <= SL struct dist (le tardif est le plus serré)");
+      }
+    }
     // Edge-lead : validations dédiées. Les champs arb/barbell (cheap/hedge
     // bandes, pairLockMax, barbellHedgeRatio) ne s'appliquent pas à ce moteur.
     if (edge) {
@@ -740,6 +853,22 @@ export function validateConfigForm(
         errors.push("Fenêtre perte edge (ms) doit être > 0");
       }
     }
+    if (form.favBandWhipsawEnabled) {
+      if (form.favBandWhipsawPauseAfterLosses.trim() !== "") {
+        const n = Number(form.favBandWhipsawPauseAfterLosses);
+        if (!Number.isFinite(n) || n < 1) errors.push("Whipsaw: pause après N pertes doit être ≥ 1 (ou vide = off)");
+      }
+      const pw = Number(form.favBandWhipsawPauseWindows);
+      if (!Number.isFinite(pw) || pw < 1) errors.push("Whipsaw: fenêtres de pause ≥ 1");
+      if (form.favBandWhipsawMaxScore.trim() !== "") {
+        const s = Number(form.favBandWhipsawMaxScore);
+        if (!Number.isFinite(s) || s < 0 || s > 100) errors.push("Whipsaw: score max dans [0, 100] (ou vide = off)");
+      }
+      if (form.favBandWhipsawMaxIntraFlips.trim() !== "") {
+        const f = Number(form.favBandWhipsawMaxIntraFlips);
+        if (!Number.isFinite(f) || f < 1) errors.push("Whipsaw: max flips ≥ 1 (ou vide = off)");
+      }
+    }
   } catch (error) {
     errors.push(error instanceof Error ? error.message : String(error));
   }
@@ -806,6 +935,10 @@ export function fieldErrors(
       if (
         form.strategyId !== "fav-band" &&
         form.strategyId !== "dip-revert" &&
+        form.strategyId !== "antiflip-revert" &&
+        form.strategyId !== "flip-confirm" &&
+        form.strategyId !== "early-conviction" &&
+        form.strategyId !== "open-entry" &&
         Number.isFinite(cheapBuyMax) &&
         Number.isFinite(expensiveBuyMin) &&
         cheapBuyMax >= expensiveBuyMin
@@ -1069,6 +1202,48 @@ export function fieldErrors(
       }
       if (!Number.isFinite(spread) || spread < 0) result.earlyConvictionMaxSpread = ">= 0";
       if (!Number.isFinite(budget) || budget <= 0) result.earlyConvictionOrderUsdc = "> 0";
+    }
+    if (form.strategyId === "open-entry") {
+      const lean = Number(form.openEntryLeanTrigger);
+      const maxElapsed = Number(form.openEntryMaxElapsedSec);
+      const fair = Number(form.openEntryFairAskSumMax);
+      const spread = Number(form.openEntryMaxSpread);
+      const budget = Number(form.openEntryOrderUsdc);
+      const flipDist = Number(form.openEntrySlStructFlipDist);
+      const confirmSec = Number(form.openEntrySlStructConfirmSec);
+      const structDist = Number(form.openEntrySlStructDist);
+      const lateAfter = Number(form.openEntrySlLateAfterSec);
+      const lateDist = Number(form.openEntrySlLateDist);
+      if (!Number.isFinite(lean) || lean <= 0 || lean > 0.5) {
+        result.openEntryLeanTrigger = "Entre 0 (exclu) et 0.5";
+      }
+      if (!Number.isFinite(maxElapsed) || maxElapsed <= 0 || maxElapsed > 900) {
+        result.openEntryMaxElapsedSec = "Entre 0 (exclu) et 900";
+      }
+      if (!Number.isFinite(fair) || fair <= 1 || fair > 1.2) {
+        result.openEntryFairAskSumMax = "Entre 1 (exclu) et 1.2";
+      }
+      if (!Number.isFinite(spread) || spread < 0) result.openEntryMaxSpread = ">= 0";
+      if (!Number.isFinite(budget) || budget <= 0) result.openEntryOrderUsdc = "> 0";
+      if (!Number.isFinite(flipDist) || flipDist <= 0 || flipDist > 1) {
+        result.openEntrySlStructFlipDist = "Entre 0 (exclu) et 1";
+      }
+      if (!Number.isFinite(confirmSec) || confirmSec < 0 || confirmSec > 900) {
+        result.openEntrySlStructConfirmSec = "Entre 0 et 900";
+      }
+      if (!Number.isFinite(structDist) || structDist <= 0 || structDist > 1) {
+        result.openEntrySlStructDist = "Entre 0 (exclu) et 1";
+      }
+      if (!Number.isFinite(lateAfter) || lateAfter <= 0 || lateAfter > 900) {
+        result.openEntrySlLateAfterSec = "Entre 0 (exclu) et 900";
+      }
+      if (
+        Number.isFinite(lateDist) &&
+        Number.isFinite(structDist) &&
+        (lateDist <= 0 || lateDist > structDist)
+      ) {
+        result.openEntrySlLateDist = "Doit être <= SL struct dist";
+      }
     }
   } catch (error) {
     // ignore — validateConfigForm handles this

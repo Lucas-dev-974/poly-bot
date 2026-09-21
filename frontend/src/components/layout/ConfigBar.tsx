@@ -28,6 +28,10 @@ export function ConfigBar(props: { onConfigure?: () => void }): JSX.Element {
                 Lean <b>{c().openEntryLeanTrigger}</b> ≤ {c().openEntryMaxElapsedSec}s · fair ≤ {c().openEntryFairAskSumMax} · {c().openEntryOrderUsdc} USDC
                 {c().openEntrySlEnabled === false ? " · SL off" : " · SL on"}
               </>
+            ) : c().strategyId === "probability-repricing" ? (
+              <>
+                Reprice <b>{c().repricingOrderUsdc}</b> USDC · TP {c().repricingTargetAbs} / SL {c().repricingStopAbs}
+              </>
             ) : c().strategyId === "barbell" ? (
               <>
                 Cheap <b>{c().cheapBuyMin}–{c().cheapBuyMax}</b> · {c().barbellCheapOrderUsdc} USDC
@@ -52,7 +56,9 @@ export function ConfigBar(props: { onConfigure?: () => void }): JSX.Element {
               ? ` · edge ${c().edgeBandMin}–${c().edgeBandMax}`
               : c().strategyId === "open-entry"
                 ? " · SL dual-scale ou hold"
-                : c().strategyId === "barbell"
+                : c().strategyId === "probability-repricing"
+                  ? " · exits bid (TP/stop/time)"
+                  : c().strategyId === "barbell"
                   ? ` · ratio ${c().barbellHedgeRatio ?? 0.5}`
                   : c().strategyId === "reverse"
                     ? " · grilles maker"

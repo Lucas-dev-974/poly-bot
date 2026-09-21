@@ -122,6 +122,27 @@ export type ConfigFormState = {
   openEntrySlLateAfterSec: string;
   openEntrySlLateDist: string;
   openEntrySlEnabled: boolean;
+  repricingFeedMaxAgeMs: string;
+  repricingTauMinSec: string;
+  repricingSpreadMax: string;
+  repricingPEntryMax: string;
+  repricingEdgeMin: string;
+  repricingOrderUsdc: string;
+  repricingTargetAbs: string;
+  repricingTargetRel: string;
+  repricingStopAbs: string;
+  repricingHoldMaxSec: string;
+  repricingTauForceExitSec: string;
+  repricingSpreadMaxExit: string;
+  repricingLateWindowSec: string;
+  repricingSignalTtlMs: string;
+  repricingDislocationMin: string;
+  repricingHistoryWindowMs: string;
+  repricingModeAEnabled: boolean;
+  repricingFeesRoundtrip: string;
+  repricingSlipEntryBuffer: string;
+  repricingSlipExitBuffer: string;
+  repricingNotionalMaxPerMarket: string;
 };
 
 export function configToForm(config: BotConfig): ConfigFormState {
@@ -280,6 +301,27 @@ export function configToForm(config: BotConfig): ConfigFormState {
     openEntrySlLateAfterSec: String(config.openEntrySlLateAfterSec ?? 300),
     openEntrySlLateDist: String(config.openEntrySlLateDist ?? 0.06),
     openEntrySlEnabled: config.openEntrySlEnabled !== false,
+    repricingFeedMaxAgeMs: String(config.repricingFeedMaxAgeMs ?? 250),
+    repricingTauMinSec: String(config.repricingTauMinSec ?? 90),
+    repricingSpreadMax: String(config.repricingSpreadMax ?? 0.03),
+    repricingPEntryMax: String(config.repricingPEntryMax ?? 0.22),
+    repricingEdgeMin: String(config.repricingEdgeMin ?? 0.025),
+    repricingOrderUsdc: String(config.repricingOrderUsdc ?? 15),
+    repricingTargetAbs: String(config.repricingTargetAbs ?? 0.06),
+    repricingTargetRel: String(config.repricingTargetRel ?? 0),
+    repricingStopAbs: String(config.repricingStopAbs ?? 0.08),
+    repricingHoldMaxSec: String(config.repricingHoldMaxSec ?? 120),
+    repricingTauForceExitSec: String(config.repricingTauForceExitSec ?? 25),
+    repricingSpreadMaxExit: String(config.repricingSpreadMaxExit ?? 0.05),
+    repricingLateWindowSec: String(config.repricingLateWindowSec ?? 45),
+    repricingSignalTtlMs: String(config.repricingSignalTtlMs ?? 3000),
+    repricingDislocationMin: String(config.repricingDislocationMin ?? 1.0),
+    repricingHistoryWindowMs: String(config.repricingHistoryWindowMs ?? 15000),
+    repricingModeAEnabled: config.repricingModeAEnabled === true,
+    repricingFeesRoundtrip: String(config.repricingFeesRoundtrip ?? 0.002),
+    repricingSlipEntryBuffer: String(config.repricingSlipEntryBuffer ?? 0.005),
+    repricingSlipExitBuffer: String(config.repricingSlipExitBuffer ?? 0.005),
+    repricingNotionalMaxPerMarket: String(config.repricingNotionalMaxPerMarket ?? 30),
   };
 }
 
@@ -469,6 +511,27 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     openEntrySlLateAfterSec: parseNum(form.openEntrySlLateAfterSec, "Open-entry SL late after sec"),
     openEntrySlLateDist: parseNum(form.openEntrySlLateDist, "Open-entry SL late dist"),
     openEntrySlEnabled: form.openEntrySlEnabled !== false,
+    repricingFeedMaxAgeMs: parseNum(form.repricingFeedMaxAgeMs, "Repricing feed max age ms"),
+    repricingTauMinSec: parseNum(form.repricingTauMinSec, "Repricing tau min sec"),
+    repricingSpreadMax: parseNum(form.repricingSpreadMax, "Repricing spread max"),
+    repricingPEntryMax: parseNum(form.repricingPEntryMax, "Repricing p entry max"),
+    repricingEdgeMin: parseNum(form.repricingEdgeMin, "Repricing edge min"),
+    repricingOrderUsdc: parseNum(form.repricingOrderUsdc, "Repricing order USDC"),
+    repricingTargetAbs: parseNum(form.repricingTargetAbs, "Repricing target abs"),
+    repricingTargetRel: parseNum(form.repricingTargetRel, "Repricing target rel"),
+    repricingStopAbs: parseNum(form.repricingStopAbs, "Repricing stop abs"),
+    repricingHoldMaxSec: parseNum(form.repricingHoldMaxSec, "Repricing hold max sec"),
+    repricingTauForceExitSec: parseNum(form.repricingTauForceExitSec, "Repricing tau force exit sec"),
+    repricingSpreadMaxExit: parseNum(form.repricingSpreadMaxExit, "Repricing spread max exit"),
+    repricingLateWindowSec: parseNum(form.repricingLateWindowSec, "Repricing late window sec"),
+    repricingSignalTtlMs: parseNum(form.repricingSignalTtlMs, "Repricing signal TTL ms"),
+    repricingDislocationMin: parseNum(form.repricingDislocationMin, "Repricing dislocation min"),
+    repricingHistoryWindowMs: parseNum(form.repricingHistoryWindowMs, "Repricing history window ms"),
+    repricingModeAEnabled: form.repricingModeAEnabled === true,
+    repricingFeesRoundtrip: parseNum(form.repricingFeesRoundtrip, "Repricing fees roundtrip"),
+    repricingSlipEntryBuffer: parseNum(form.repricingSlipEntryBuffer, "Repricing slip entry buffer"),
+    repricingSlipExitBuffer: parseNum(form.repricingSlipExitBuffer, "Repricing slip exit buffer"),
+    repricingNotionalMaxPerMarket: parseNum(form.repricingNotionalMaxPerMarket, "Repricing notional max per market"),
   };
 
   if (
@@ -477,7 +540,8 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     next.strategyId === "antiflip-revert" ||
     next.strategyId === "flip-confirm" ||
     next.strategyId === "early-conviction" ||
-    next.strategyId === "open-entry"
+    next.strategyId === "open-entry" ||
+    next.strategyId === "probability-repricing"
   ) {
     next.enableExpensiveHedge = false;
     next.arbAskLockOnly = false;
@@ -562,6 +626,7 @@ export function validateConfigForm(
         form.strategyId !== "flip-confirm" &&
         form.strategyId !== "early-conviction" &&
         form.strategyId !== "open-entry" &&
+        form.strategyId !== "probability-repricing" &&
         cheapBuyMax >= expensiveBuyMin
       ) {
         errors.push("Cheap max doit être < hedge min");
@@ -631,13 +696,13 @@ export function validateConfigForm(
         }
         if (!Number.isFinite(invBudget) || invBudget <= 0) {
           errors.push("Fav-band inverse: budget doit être > 0");
-        } else if (
-          Number.isFinite(invAsk) &&
-          invAsk > 0 &&
-          invAsk < 0.5 &&
-          Math.floor((invBudget / invAsk) * 100) / 100 < 5
-        ) {
-          errors.push("Fav-band inverse: budget insuffisant (min 5 shares au pire prix)");
+        } else if (Number.isFinite(invAsk) && invAsk > 0 && invAsk < 0.5) {
+          const maxShares = Number(form.maxSharesPerOrder);
+          const cap = Number.isFinite(maxShares) && maxShares > 0 ? maxShares : Number.MAX_SAFE_INTEGER;
+          const sized = Math.floor(Math.min(invBudget / invAsk, cap) * 100) / 100;
+          if (sized < 5) {
+            errors.push("Fav-band inverse: budget insuffisant (min 5 shares au pire prix)");
+          }
         }
         if (Number.isFinite(maxPos) && maxPos < 2) {
           errors.push("Fav-band inverse: max positions par côté doit être ≥ 2");
@@ -843,6 +908,88 @@ export function validateConfigForm(
         errors.push("Open-entry: SL late dist doit être <= SL struct dist (le tardif est le plus serré)");
       }
     }
+    if (form.strategyId === "probability-repricing") {
+      const tauMin = Number(form.repricingTauMinSec);
+      const spreadMax = Number(form.repricingSpreadMax);
+      const pEntryMax = Number(form.repricingPEntryMax);
+      const edgeMin = Number(form.repricingEdgeMin);
+      const orderUsdc = Number(form.repricingOrderUsdc);
+      const targetAbs = Number(form.repricingTargetAbs);
+      const targetRel = Number(form.repricingTargetRel);
+      const stopAbs = Number(form.repricingStopAbs);
+      const holdMax = Number(form.repricingHoldMaxSec);
+      const tauForce = Number(form.repricingTauForceExitSec);
+      const spreadMaxExit = Number(form.repricingSpreadMaxExit);
+      const lateWindow = Number(form.repricingLateWindowSec);
+      const historyMs = Number(form.repricingHistoryWindowMs);
+      const dislocationMin = Number(form.repricingDislocationMin);
+      const feedAge = Number(form.repricingFeedMaxAgeMs);
+      const signalTtl = Number(form.repricingSignalTtlMs);
+      const fees = Number(form.repricingFeesRoundtrip);
+      const slipEntry = Number(form.repricingSlipEntryBuffer);
+      const slipExit = Number(form.repricingSlipExitBuffer);
+      const notionalMax = Number(form.repricingNotionalMaxPerMarket);
+      if (!Number.isFinite(tauMin) || tauMin <= 0 || tauMin > 900) {
+        errors.push("Repricing: tau min sec entre 0 (exclu) et 900");
+      }
+      if (!Number.isFinite(spreadMax) || spreadMax < 0) {
+        errors.push("Repricing: spread max doit être >= 0");
+      }
+      if (!Number.isFinite(pEntryMax) || pEntryMax <= 0 || pEntryMax > 1) {
+        errors.push("Repricing: p entry max entre 0 (exclu) et 1");
+      }
+      if (!Number.isFinite(edgeMin) || edgeMin < 0) {
+        errors.push("Repricing: edge min doit être >= 0");
+      }
+      if (!Number.isFinite(orderUsdc) || orderUsdc <= 0) {
+        errors.push("Repricing: order USDC doit être > 0");
+      }
+      if (!Number.isFinite(targetAbs) || targetAbs <= 0 || targetAbs > 1) {
+        errors.push("Repricing: target abs entre 0 (exclu) et 1");
+      }
+      if (!Number.isFinite(targetRel) || targetRel < 0) {
+        errors.push("Repricing: target rel doit être >= 0");
+      }
+      if (!Number.isFinite(stopAbs) || stopAbs <= 0 || stopAbs > 1) {
+        errors.push("Repricing: stop abs entre 0 (exclu) et 1");
+      }
+      if (!Number.isFinite(holdMax) || holdMax <= 0) {
+        errors.push("Repricing: hold max sec doit être > 0");
+      }
+      if (!Number.isFinite(tauForce) || tauForce <= 0 || !(Number.isFinite(tauMin) && tauForce < tauMin)) {
+        errors.push("Repricing: tau force exit doit être dans (0, tau min)");
+      }
+      if (!Number.isFinite(spreadMaxExit) || (Number.isFinite(spreadMax) && spreadMaxExit < spreadMax)) {
+        errors.push("Repricing: spread max exit doit être >= spread max");
+      }
+      if (!Number.isFinite(lateWindow) || lateWindow <= 0) {
+        errors.push("Repricing: late window sec doit être > 0");
+      }
+      if (!Number.isFinite(historyMs) || historyMs < 1000) {
+        errors.push("Repricing: history window ms doit être >= 1000");
+      }
+      if (!Number.isFinite(dislocationMin) || dislocationMin <= 0) {
+        errors.push("Repricing: dislocation min doit être > 0");
+      }
+      if (!Number.isFinite(feedAge) || feedAge <= 0) {
+        errors.push("Repricing: feed max age ms doit être > 0");
+      }
+      if (!Number.isFinite(signalTtl) || signalTtl <= 0) {
+        errors.push("Repricing: signal TTL ms doit être > 0");
+      }
+      if (!Number.isFinite(fees) || fees < 0) {
+        errors.push("Repricing: fees roundtrip doit être >= 0");
+      }
+      if (!Number.isFinite(slipEntry) || slipEntry < 0) {
+        errors.push("Repricing: slip entry buffer doit être >= 0");
+      }
+      if (!Number.isFinite(slipExit) || slipExit < 0) {
+        errors.push("Repricing: slip exit buffer doit être >= 0");
+      }
+      if (!Number.isFinite(notionalMax) || notionalMax <= 0) {
+        errors.push("Repricing: notional max per market doit être > 0");
+      }
+    }
     // Edge-lead : validations dédiées. Les champs arb/barbell (cheap/hedge
     // bandes, pairLockMax, barbellHedgeRatio) ne s'appliquent pas à ce moteur.
     if (edge) {
@@ -998,6 +1145,7 @@ export function fieldErrors(
         form.strategyId !== "flip-confirm" &&
         form.strategyId !== "early-conviction" &&
         form.strategyId !== "open-entry" &&
+        form.strategyId !== "probability-repricing" &&
         Number.isFinite(cheapBuyMax) &&
         Number.isFinite(expensiveBuyMin) &&
         cheapBuyMax >= expensiveBuyMin
@@ -1150,13 +1298,13 @@ export function fieldErrors(
         }
         if (!Number.isFinite(invBudget)) {
           result.favBandInverseOrderUsdc = "Nombre invalide";
-        } else if (
-          Number.isFinite(invAsk) &&
-          invAsk > 0 &&
-          invAsk < 0.5 &&
-          Math.floor((invBudget / invAsk) * 100) / 100 < 5
-        ) {
-          result.favBandInverseOrderUsdc = `Min ${Math.ceil(5 * invAsk * 100) / 100} USDC (5 shares)`;
+        } else if (Number.isFinite(invAsk) && invAsk > 0 && invAsk < 0.5) {
+          const maxShares = Number(form.maxSharesPerOrder);
+          const cap = Number.isFinite(maxShares) && maxShares > 0 ? maxShares : Number.MAX_SAFE_INTEGER;
+          const sized = Math.floor(Math.min(invBudget / invAsk, cap) * 100) / 100;
+          if (sized < 5) {
+            result.favBandInverseOrderUsdc = `Min ${Math.ceil(5 * invAsk * 100) / 100} USDC (5 shares)`;
+          }
         }
         if (Number.isFinite(maxPos) && maxPos < 2) {
           result.maxOpenPositionsPerSide = "≥ 2 (jambe inverse)";
@@ -1335,6 +1483,60 @@ export function fieldErrors(
       ) {
         result.openEntrySlLateDist = "Doit être <= SL struct dist";
       }
+    }
+    if (form.strategyId === "probability-repricing") {
+      const tauMin = Number(form.repricingTauMinSec);
+      const spreadMax = Number(form.repricingSpreadMax);
+      const pEntryMax = Number(form.repricingPEntryMax);
+      const edgeMin = Number(form.repricingEdgeMin);
+      const orderUsdc = Number(form.repricingOrderUsdc);
+      const targetAbs = Number(form.repricingTargetAbs);
+      const targetRel = Number(form.repricingTargetRel);
+      const stopAbs = Number(form.repricingStopAbs);
+      const holdMax = Number(form.repricingHoldMaxSec);
+      const tauForce = Number(form.repricingTauForceExitSec);
+      const spreadMaxExit = Number(form.repricingSpreadMaxExit);
+      const lateWindow = Number(form.repricingLateWindowSec);
+      const historyMs = Number(form.repricingHistoryWindowMs);
+      const dislocationMin = Number(form.repricingDislocationMin);
+      const feedAge = Number(form.repricingFeedMaxAgeMs);
+      const signalTtl = Number(form.repricingSignalTtlMs);
+      const fees = Number(form.repricingFeesRoundtrip);
+      const slipEntry = Number(form.repricingSlipEntryBuffer);
+      const slipExit = Number(form.repricingSlipExitBuffer);
+      const notionalMax = Number(form.repricingNotionalMaxPerMarket);
+      if (!Number.isFinite(tauMin) || tauMin <= 0 || tauMin > 900) {
+        result.repricingTauMinSec = "Entre 0 (exclu) et 900";
+      }
+      if (!Number.isFinite(spreadMax) || spreadMax < 0) result.repricingSpreadMax = ">= 0";
+      if (!Number.isFinite(pEntryMax) || pEntryMax <= 0 || pEntryMax > 1) {
+        result.repricingPEntryMax = "Entre 0 (exclu) et 1";
+      }
+      if (!Number.isFinite(edgeMin) || edgeMin < 0) result.repricingEdgeMin = ">= 0";
+      if (!Number.isFinite(orderUsdc) || orderUsdc <= 0) result.repricingOrderUsdc = "> 0";
+      if (!Number.isFinite(targetAbs) || targetAbs <= 0 || targetAbs > 1) {
+        result.repricingTargetAbs = "Entre 0 (exclu) et 1";
+      }
+      if (!Number.isFinite(targetRel) || targetRel < 0) result.repricingTargetRel = ">= 0";
+      if (!Number.isFinite(stopAbs) || stopAbs <= 0 || stopAbs > 1) {
+        result.repricingStopAbs = "Entre 0 (exclu) et 1";
+      }
+      if (!Number.isFinite(holdMax) || holdMax <= 0) result.repricingHoldMaxSec = "> 0";
+      if (!Number.isFinite(tauForce) || tauForce <= 0 || !(Number.isFinite(tauMin) && tauForce < tauMin)) {
+        result.repricingTauForceExitSec = "Dans (0, tau min)";
+      }
+      if (!Number.isFinite(spreadMaxExit) || (Number.isFinite(spreadMax) && spreadMaxExit < spreadMax)) {
+        result.repricingSpreadMaxExit = ">= spread max";
+      }
+      if (!Number.isFinite(lateWindow) || lateWindow <= 0) result.repricingLateWindowSec = "> 0";
+      if (!Number.isFinite(historyMs) || historyMs < 1000) result.repricingHistoryWindowMs = ">= 1000";
+      if (!Number.isFinite(dislocationMin) || dislocationMin <= 0) result.repricingDislocationMin = "> 0";
+      if (!Number.isFinite(feedAge) || feedAge <= 0) result.repricingFeedMaxAgeMs = "> 0";
+      if (!Number.isFinite(signalTtl) || signalTtl <= 0) result.repricingSignalTtlMs = "> 0";
+      if (!Number.isFinite(fees) || fees < 0) result.repricingFeesRoundtrip = ">= 0";
+      if (!Number.isFinite(slipEntry) || slipEntry < 0) result.repricingSlipEntryBuffer = ">= 0";
+      if (!Number.isFinite(slipExit) || slipExit < 0) result.repricingSlipExitBuffer = ">= 0";
+      if (!Number.isFinite(notionalMax) || notionalMax <= 0) result.repricingNotionalMaxPerMarket = "> 0";
     }
   } catch (error) {
     // ignore — validateConfigForm handles this

@@ -28,6 +28,7 @@ describe("strategy presets", () => {
       "flip-confirm",
       "lock-harvest",
       "open-entry",
+      "probability-repricing",
       "reverse",
     ]);
 
@@ -82,6 +83,13 @@ describe("strategy presets", () => {
     assert.equal(dipRevert.settings.dipRevertExitWinAsk, 0.85);
     assert.equal(favBand.strategyId, "fav-band");
     assert.equal(favBand.settings.favBandAskMin, 0.7);
+    const probabilityRepricing = presets.find((preset) => preset.id === "probability-repricing");
+    assert.ok(probabilityRepricing);
+    assert.equal(probabilityRepricing.strategyId, "probability-repricing");
+    assert.equal(probabilityRepricing.settings.strategyId, "probability-repricing");
+    assert.equal(probabilityRepricing.settings.repricingTauMinSec, 90);
+    assert.equal(probabilityRepricing.settings.repricingTargetAbs, 0.06);
+    assert.equal(probabilityRepricing.settings.enableExpensiveHedge, false);
   });
 
   it("filters bundled presets by engine", () => {
@@ -121,6 +129,10 @@ describe("strategy presets", () => {
     assert.deepEqual(
       presetsForStrategy("open-entry").map((preset) => preset.id),
       ["open-entry"],
+    );
+    assert.deepEqual(
+      presetsForStrategy("probability-repricing").map((preset) => preset.id),
+      ["probability-repricing"],
     );
   });
 

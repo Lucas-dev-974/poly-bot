@@ -65,7 +65,7 @@ describe("validateTradingConfig", () => {
         validateConfigCoherence(
           testConfig({ strategyId: "fav-band", favBandOrderUsdc: 1 }),
         ),
-      /fav-band: budget 1 USDC can never reach MIN_CLOB_SHARES/,
+      /fav-band: budget 1 USDC.*cannot reach MIN_CLOB_SHARES/,
     );
   });
 
@@ -75,7 +75,7 @@ describe("validateTradingConfig", () => {
         validateConfigCoherence(
           testConfig({ strategyId: "dip-revert", dipRevertOrderUsdc: 2 }),
         ),
-      /dip-revert: budget 2 USDC can never reach/,
+      /dip-revert: budget 2 USDC.*cannot reach/,
     );
   });
 
@@ -85,7 +85,7 @@ describe("validateTradingConfig", () => {
         validateConfigCoherence(
           testConfig({ strategyId: "edge-lead", edgeCheapOrderUsdc: 0.5 }),
         ),
-      /edge-lead cheap: budget 0.5 USDC can never reach/,
+      /edge-lead cheap: budget 0.5 USDC.*cannot reach/,
     );
   });
 
@@ -95,7 +95,7 @@ describe("validateTradingConfig", () => {
         validateConfigCoherence(
           testConfig({ strategyId: "barbell", barbellCheapOrderUsdc: 0.3 }),
         ),
-      /barbell cheap: budget 0.3 USDC can never reach/,
+      /barbell cheap: budget 0.3 USDC.*cannot reach/,
     );
   });
 
@@ -105,7 +105,7 @@ describe("validateTradingConfig", () => {
         validateConfigCoherence(
           testConfig({ strategyId: "reverse", reverseCheapOrderUsdc: 0.3 }),
         ),
-      /reverse cheap: budget 0.3 USDC can never reach/,
+      /reverse cheap: budget 0.3 USDC.*cannot reach/,
     );
   });
 

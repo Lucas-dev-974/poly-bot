@@ -129,6 +129,27 @@ export const EDITABLE_CONFIG_KEYS = [
   "favBandOrderUsdc",
   "barbellCheapOrderUsdc",
   "reverseCheapOrderUsdc",
+  "repricingFeedMaxAgeMs",
+  "repricingTauMinSec",
+  "repricingSpreadMax",
+  "repricingPEntryMax",
+  "repricingEdgeMin",
+  "repricingOrderUsdc",
+  "repricingTargetAbs",
+  "repricingTargetRel",
+  "repricingStopAbs",
+  "repricingHoldMaxSec",
+  "repricingTauForceExitSec",
+  "repricingSpreadMaxExit",
+  "repricingLateWindowSec",
+  "repricingSignalTtlMs",
+  "repricingDislocationMin",
+  "repricingHistoryWindowMs",
+  "repricingModeAEnabled",
+  "repricingFeesRoundtrip",
+  "repricingSlipEntryBuffer",
+  "repricingSlipExitBuffer",
+  "repricingNotionalMaxPerMarket",
   "customOrderUsdc",
 ] as const;
 
@@ -259,6 +280,27 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   openEntrySlLateAfterSec: "OPEN_ENTRY_SL_LATE_AFTER_SEC",
   openEntrySlLateDist: "OPEN_ENTRY_SL_LATE_DIST",
   openEntrySlEnabled: "OPEN_ENTRY_SL_ENABLED",
+  repricingFeedMaxAgeMs: "REPRICING_FEED_MAX_AGE_MS",
+  repricingTauMinSec: "REPRICING_TAU_MIN_SEC",
+  repricingSpreadMax: "REPRICING_SPREAD_MAX",
+  repricingPEntryMax: "REPRICING_PENTRY_MAX",
+  repricingEdgeMin: "REPRICING_EDGE_MIN",
+  repricingOrderUsdc: "REPRICING_ORDER_USDC",
+  repricingTargetAbs: "REPRICING_TARGET_ABS",
+  repricingTargetRel: "REPRICING_TARGET_REL",
+  repricingStopAbs: "REPRICING_STOP_ABS",
+  repricingHoldMaxSec: "REPRICING_HOLD_MAX_SEC",
+  repricingTauForceExitSec: "REPRICING_TAU_FORCE_EXIT_SEC",
+  repricingSpreadMaxExit: "REPRICING_SPREAD_MAX_EXIT",
+  repricingLateWindowSec: "REPRICING_LATE_WINDOW_SEC",
+  repricingSignalTtlMs: "REPRICING_SIGNAL_TTL_MS",
+  repricingDislocationMin: "REPRICING_DISLOCATION_MIN",
+  repricingHistoryWindowMs: "REPRICING_HISTORY_WINDOW_MS",
+  repricingModeAEnabled: "REPRICING_MODE_AENABLED",
+  repricingFeesRoundtrip: "REPRICING_FEES_ROUNDTRIP",
+  repricingSlipEntryBuffer: "REPRICING_SLIP_ENTRY_BUFFER",
+  repricingSlipExitBuffer: "REPRICING_SLIP_EXIT_BUFFER",
+  repricingNotionalMaxPerMarket: "REPRICING_NOTIONAL_MAX_PER_MARKET",
 };
 
 const FORBIDDEN_KEYS = new Set([
@@ -406,6 +448,26 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "openEntrySlStructConfirmSec":
     case "openEntrySlStructDist":
     case "openEntrySlLateAfterSec":
+    case "repricingFeedMaxAgeMs":
+    case "repricingTauMinSec":
+    case "repricingSpreadMax":
+    case "repricingPEntryMax":
+    case "repricingEdgeMin":
+    case "repricingOrderUsdc":
+    case "repricingTargetAbs":
+    case "repricingTargetRel":
+    case "repricingStopAbs":
+    case "repricingHoldMaxSec":
+    case "repricingTauForceExitSec":
+    case "repricingSpreadMaxExit":
+    case "repricingLateWindowSec":
+    case "repricingSignalTtlMs":
+    case "repricingDislocationMin":
+    case "repricingHistoryWindowMs":
+    case "repricingFeesRoundtrip":
+    case "repricingSlipEntryBuffer":
+    case "repricingSlipExitBuffer":
+    case "repricingNotionalMaxPerMarket":
     case "openEntrySlLateDist":
     case "pairLockMax":
     case "expensiveOrderUsdc":
@@ -466,6 +528,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "favBandExitLossOnly":
     case "favBandExitSwitchEnabled":
     case "openEntrySlEnabled":
+    case "repricingModeAEnabled":
       return parseBoolean(value, key);
     case "reverseMaxGridLevels":
       return parseNullableNumber(value, key);
@@ -664,7 +727,32 @@ const EARLY_CONVICTION_KEYS: readonly EditableConfigKey[] = [
   "enableExpensiveHedge",
 ];
 
-/** Open-entry : lean d'ouverture, fair gate, échelle de SL, budget. */
+/** Probability-repricing : dislocation CLOB, exits bid, fees/slip, budget. */
+const PROBABILITY_REPRICING_KEYS: readonly EditableConfigKey[] = [
+  "repricingFeedMaxAgeMs",
+  "repricingTauMinSec",
+  "repricingSpreadMax",
+  "repricingPEntryMax",
+  "repricingEdgeMin",
+  "repricingOrderUsdc",
+  "repricingTargetAbs",
+  "repricingTargetRel",
+  "repricingStopAbs",
+  "repricingHoldMaxSec",
+  "repricingTauForceExitSec",
+  "repricingSpreadMaxExit",
+  "repricingLateWindowSec",
+  "repricingSignalTtlMs",
+  "repricingDislocationMin",
+  "repricingHistoryWindowMs",
+  "repricingModeAEnabled",
+  "repricingFeesRoundtrip",
+  "repricingSlipEntryBuffer",
+  "repricingSlipExitBuffer",
+  "repricingNotionalMaxPerMarket",
+  "enableExpensiveHedge",
+];
+
 const OPEN_ENTRY_KEYS: readonly EditableConfigKey[] = [
   "openEntryLeanTrigger",
   "openEntryMaxElapsedSec",
@@ -733,6 +821,8 @@ export function keysForStrategy(
                     ? EARLY_CONVICTION_KEYS
                     : strategyId === "open-entry"
                       ? OPEN_ENTRY_KEYS
+                      : strategyId === "probability-repricing"
+                        ? PROBABILITY_REPRICING_KEYS
                       : String(strategyId).startsWith("custom:")
                         ? CUSTOM_KEYS
                         : ARB_KEYS; // arb seul

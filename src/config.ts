@@ -390,7 +390,33 @@ export interface BotConfig {
   openEntrySlLateDist: number;
   /** Stop-loss dual-scale actif (défaut true = config backtestée). False = hold intégral. */
   openEntrySlEnabled: boolean;
+  /**
+   * Probability-repricing (path trade): dislocation vs short CLOB history (mode C)
+   * + optional mode A reversion. Exits on executable bid. Placeholders — calibrate.
+   */
+  repricingFeedMaxAgeMs: number;
+  repricingTauMinSec: number;
+  repricingSpreadMax: number;
+  repricingPEntryMax: number;
+  repricingEdgeMin: number;
+  repricingOrderUsdc: number;
+  repricingTargetAbs: number;
+  repricingTargetRel: number;
+  repricingStopAbs: number;
+  repricingHoldMaxSec: number;
+  repricingTauForceExitSec: number;
+  repricingSpreadMaxExit: number;
+  repricingLateWindowSec: number;
+  repricingSignalTtlMs: number;
+  repricingDislocationMin: number;
+  repricingHistoryWindowMs: number;
+  repricingModeAEnabled: boolean;
+  repricingFeesRoundtrip: number;
+  repricingSlipEntryBuffer: number;
+  repricingSlipExitBuffer: number;
+  repricingNotionalMaxPerMarket: number;
 }
+
 
 /**
  * Code defaults for strategy keys. Used as baseline before overlaying
@@ -523,8 +549,30 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     openEntrySlLateAfterSec: 300,
     openEntrySlLateDist: 0.06,
     openEntrySlEnabled: true,
+    repricingFeedMaxAgeMs: 250,
+    repricingTauMinSec: 90,
+    repricingSpreadMax: 0.03,
+    repricingPEntryMax: 0.22,
+    repricingEdgeMin: 0.025,
+    repricingOrderUsdc: 15,
+    repricingTargetAbs: 0.06,
+    repricingTargetRel: 0,
+    repricingStopAbs: 0.08,
+    repricingHoldMaxSec: 120,
+    repricingTauForceExitSec: 25,
+    repricingSpreadMaxExit: 0.05,
+    repricingLateWindowSec: 45,
+    repricingSignalTtlMs: 3000,
+    repricingDislocationMin: 1.0,
+    repricingHistoryWindowMs: 15_000,
+    repricingModeAEnabled: false,
+    repricingFeesRoundtrip: 0.002,
+    repricingSlipEntryBuffer: 0.005,
+    repricingSlipExitBuffer: 0.005,
+    repricingNotionalMaxPerMarket: 30,
   };
 }
+
 
 function warnIgnoredStrategyEnv(): void {
   const leftover: string[] = [];
@@ -699,6 +747,7 @@ export function validateConfigCoherence(
       config.barbellCheapOrderUsdc,
       config.cheapBuyMax,
       "barbell cheap",
+      config.maxSharesPerOrder,
     );
   }
   if (
@@ -714,11 +763,15 @@ export function validateConfigCoherence(
       config.reverseCheapOrderUsdc,
       config.cheapBuyMax,
       "reverse cheap",
+      config.maxSharesPerOrder,
     );
   }
   if (config.strategyId?.startsWith("custom:")) {
     // Custom (graph) : pas de bande statique → pire cas prix 0.99.
-    validateEngineBudget(config.customOrderUsdc, 0.99, "custom graph");
+    validateEngineBudget(
+      config.customOrderUsdc, 0.99, "custom graph",
+      config.maxSharesPerOrder,
+    );
   }
   if (config.minutesBeforeCloseMin > config.minutesBeforeCloseMax) {
     throw new Error("MINUTES_BEFORE_CLOSE_MIN must be <= MINUTES_BEFORE_CLOSE_MAX");
@@ -757,6 +810,7 @@ export function validateConfigCoherence(
       config.favBandOrderUsdc,
       config.favBandAskMax,
       "fav-band",
+      config.maxSharesPerOrder,
     );
     if (config.favBandInverseEnabled) {
       if (
@@ -776,10 +830,11 @@ export function validateConfigCoherence(
       }
       // Budget viability: 5 shares × askMax at the inverse trigger ceiling.
       validateEngineBudget(
-        config.favBandInverseOrderUsdc,
-        config.favBandInverseAskMax,
-        "fav-band inverse",
-      );
+      config.favBandInverseOrderUsdc,
+      config.favBandInverseAskMax,
+      "fav-band inverse",
+      config.maxSharesPerOrder,
+    );
       // The inverse leg is a SECOND leg per pair: with the directional entry
       // already occupying side slot 1, maxOpenPositionsPerSide = 1 would make
       // the feature silently unreachable (appendOpportunity side-count guard).
@@ -838,10 +893,11 @@ export function validateConfigCoherence(
         }
         // The opposite token can trade anywhere in (0, 1): worst case 0.99.
         validateEngineBudget(
-          config.favBandExitSwitchOrderUsdc,
-          0.99,
-          "fav-band exit switch",
-        );
+      config.favBandExitSwitchOrderUsdc,
+      0.99,
+      "fav-band exit switch",
+      config.maxSharesPerOrder,
+    );
         // The switch leg is a SECOND leg per pair: the sold entry leg keeps
         // counting in countLegsByKind, so with maxOpenPositionsPerSide = 1
         // the emission would be silently blocked (appendOpportunity guard).
@@ -885,6 +941,7 @@ export function validateConfigCoherence(
       config.dipRevertOrderUsdc,
       config.dipRevertBandMax,
       "dip-revert",
+      config.maxSharesPerOrder,
     );
     if (config.dipRevertExitTakeProfitEnabled) {
       if (
@@ -937,6 +994,7 @@ export function validateConfigCoherence(
       config.antiflipOrderUsdc,
       config.antiflipBandMax,
       "antiflip-revert",
+      config.maxSharesPerOrder,
     );
   }
   if (config.strategyId === "flip-confirm") {
@@ -970,6 +1028,7 @@ export function validateConfigCoherence(
       config.flipConfirmOrderUsdc,
       config.flipConfirmBandMax,
       "flip-confirm",
+      config.maxSharesPerOrder,
     );
   }
   if (config.strategyId === "early-conviction") {
@@ -999,6 +1058,7 @@ export function validateConfigCoherence(
       config.earlyConvictionOrderUsdc,
       config.earlyConvictionAskMax,
       "early-conviction",
+      config.maxSharesPerOrder,
     );
   }
   if (config.strategyId === "open-entry") {
@@ -1078,6 +1138,59 @@ export function validateConfigCoherence(
       config.openEntryOrderUsdc,
       (config.openEntryFairAskSumMax - 1) / 2 + 0.5,
       "open-entry",
+      config.maxSharesPerOrder,
+    );
+  }
+  if (config.strategyId === "probability-repricing") {
+    config.arbAskLockOnly = false;
+    config.enableExpensiveHedge = false;
+    if (!(config.repricingTauMinSec > 0 && config.repricingTauMinSec <= 900)) {
+      throw new Error("repricingTauMinSec must be in (0, 900]");
+    }
+    if (config.repricingSpreadMax < 0) {
+      throw new Error("repricingSpreadMax must be >= 0");
+    }
+    if (!(config.repricingPEntryMax > 0 && config.repricingPEntryMax <= 1)) {
+      throw new Error("repricingPEntryMax must be in (0, 1]");
+    }
+    if (!(config.repricingEdgeMin >= 0)) {
+      throw new Error("repricingEdgeMin must be >= 0");
+    }
+    if (!(config.repricingOrderUsdc > 0)) {
+      throw new Error("repricingOrderUsdc must be > 0 for probability-repricing");
+    }
+    if (!(config.repricingTargetAbs > 0 && config.repricingTargetAbs <= 1)) {
+      throw new Error("repricingTargetAbs must be in (0, 1]");
+    }
+    if (config.repricingTargetRel < 0) {
+      throw new Error("repricingTargetRel must be >= 0");
+    }
+    if (!(config.repricingStopAbs > 0 && config.repricingStopAbs <= 1)) {
+      throw new Error("repricingStopAbs must be in (0, 1]");
+    }
+    if (!(config.repricingHoldMaxSec > 0)) {
+      throw new Error("repricingHoldMaxSec must be > 0");
+    }
+    if (!(config.repricingTauForceExitSec > 0 && config.repricingTauForceExitSec < config.repricingTauMinSec)) {
+      throw new Error("repricingTauForceExitSec must be in (0, repricingTauMinSec)");
+    }
+    if (config.repricingSpreadMaxExit < config.repricingSpreadMax) {
+      throw new Error("repricingSpreadMaxExit must be >= repricingSpreadMax");
+    }
+    if (!(config.repricingLateWindowSec > 0)) {
+      throw new Error("repricingLateWindowSec must be > 0");
+    }
+    if (!(config.repricingHistoryWindowMs >= 1000)) {
+      throw new Error("repricingHistoryWindowMs must be >= 1000");
+    }
+    if (!(config.repricingDislocationMin > 0)) {
+      throw new Error("repricingDislocationMin must be > 0");
+    }
+    validateEngineBudget(
+      config.repricingOrderUsdc,
+      config.repricingPEntryMax,
+      "probability-repricing",
+      config.maxSharesPerOrder,
     );
   }
   const validateEdge =
@@ -1108,6 +1221,7 @@ export function validateConfigCoherence(
       config.edgeCheapOrderUsdc,
       config.edgeCheapBandMax,
       "edge-lead cheap",
+      config.maxSharesPerOrder,
     );
     if (config.edgeCheapBandMin >= config.edgeCheapBandMax) {
       throw new Error("EDGE_CHEAP_BAND_MIN must be < EDGE_CHEAP_BAND_MAX");

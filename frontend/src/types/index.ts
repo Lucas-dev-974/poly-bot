@@ -2,7 +2,7 @@
 // Garder synchronisÃ© avec le backend lors des changements.
 
 export type TradeSide = "BUY" | "SELL";
-export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band" | "dip-revert" | "antiflip-revert" | "flip-confirm" | "early-conviction" | "open-entry";
+export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band" | "dip-revert" | "antiflip-revert" | "flip-confirm" | "early-conviction" | "open-entry" | "probability-repricing";
 export type StrategyId = NativeStrategyId | `custom:${string}`;
 
 export interface GammaMarket {
@@ -302,6 +302,28 @@ export interface BotConfig {
   openEntrySlLateAfterSec: number;
   openEntrySlLateDist: number;
   openEntrySlEnabled: boolean;
+  /** Probability-repricing: path trade, dislocation vs short CLOB history (mode C) + optional mode A. */
+  repricingFeedMaxAgeMs: number;
+  repricingTauMinSec: number;
+  repricingSpreadMax: number;
+  repricingPEntryMax: number;
+  repricingEdgeMin: number;
+  repricingOrderUsdc: number;
+  repricingTargetAbs: number;
+  repricingTargetRel: number;
+  repricingStopAbs: number;
+  repricingHoldMaxSec: number;
+  repricingTauForceExitSec: number;
+  repricingSpreadMaxExit: number;
+  repricingLateWindowSec: number;
+  repricingSignalTtlMs: number;
+  repricingDislocationMin: number;
+  repricingHistoryWindowMs: number;
+  repricingModeAEnabled: boolean;
+  repricingFeesRoundtrip: number;
+  repricingSlipEntryBuffer: number;
+  repricingSlipExitBuffer: number;
+  repricingNotionalMaxPerMarket: number;
   readonlyLive: boolean;
   clobHost: string;
   gammaApiHost: string;

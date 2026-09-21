@@ -43,6 +43,8 @@ export interface DefendContext {
   pairId: string;
   /** Ask of the filled cheap token. Needed for banded sell-cheap rules. */
   cheapAsk?: number | null;
+  /** Bid of the filled cheap token (executable exit). Preferred for path exits. */
+  cheapBid?: number | null;
   tracker?: TradeTracker;
   /** Backtest snapshot time. Live omits this → Date.now() at method entry. */
   nowMs?: number;

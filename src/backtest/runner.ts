@@ -539,6 +539,7 @@ function defendCheapLegs(
     pairId,
     nowMs: ctx.nowMs,
     cheapAsk: cheapBook?.bestAsk ?? null,
+    cheapBid: cheapBook?.bestBid ?? null,
     tracker: ctx.tracker,
   };
   if (!opts?.force && !ctx.strategy.shouldDefend(defendCtx)) return;

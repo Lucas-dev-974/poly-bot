@@ -148,6 +148,7 @@ export class RestingManager {
           limitPrice: order.limitPrice,
           favoriteAsk: favoriteBook?.bestAsk ?? null,
           cheapAsk: book?.bestAsk ?? null,
+      cheapBid: book?.bestBid ?? null,
           pairLockMax: this.deps.config.pairLockMax,
           strategyId: this.strategy.id,
         },
@@ -279,6 +280,7 @@ export class RestingManager {
       filledExpensive,
       pairId,
       cheapAsk: cheapBook?.bestAsk ?? null,
+      cheapBid: cheapBook?.bestBid ?? null,
       tracker: this.deps.tracker,
     };
     if (!this.strategy.shouldDefend(defendCtx)) {
@@ -458,6 +460,7 @@ export class RestingManager {
       filledExpensive: filledExpensiveSize,
       pairId,
       cheapAsk: freshBook?.bestAsk ?? null,
+      cheapBid: freshBook?.bestBid ?? null,
       tracker: this.deps.tracker,
     });
     if (uncoveredSize <= 0) {

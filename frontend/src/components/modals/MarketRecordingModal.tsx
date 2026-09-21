@@ -2,6 +2,7 @@ import { For, Show, createEffect, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { api } from "../../api/client";
 import { addLog } from "../../stores/logStore";
+import { applyMarketRules } from "../../stores/marketRulesStore";
 import { notifyError } from "../../utils/notifications";
 import { pushError } from "../../stores/toastStore";
 import type {
@@ -32,6 +33,9 @@ export function MarketRecordingModal(props: {
     try {
       const r = await api.marketRules();
       setData(r);
+      // Pousse l'état dans le store partagé → le panneau « Marchés actifs »
+      // réagit instantanément aux changements.
+      applyMarketRules(r);
     } catch (e) {
       addLog(
         "Enregistrements : échec du chargement — " +

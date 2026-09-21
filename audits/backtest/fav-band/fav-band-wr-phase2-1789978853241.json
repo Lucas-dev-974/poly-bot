@@ -1,0 +1,386 @@
+{
+  "note": "WR R&D phase 2 — combos of phase-1 winners (high band x max780 x earlier entry), 911 windows, cap20 sizing.",
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "capital": 20,
+  "windows": 913,
+  "rows": [
+    {
+      "label": "F1_askMin0.72_max780",
+      "ms": 96686,
+      "trades": 788,
+      "wins": 604,
+      "losses": 184,
+      "wr": 76.65,
+      "pnl": 85.81,
+      "maxDd": 42.55,
+      "endEquity": 105.81,
+      "pnlPerDd": 2.017,
+      "buckets": [
+        {
+          "bucket": "0.72-0.74",
+          "n": 436,
+          "wrPct": 75.5,
+          "pnl": 68.8
+        },
+        {
+          "bucket": "0.74-0.76",
+          "n": 149,
+          "wrPct": 73.8,
+          "pnl": -4.7
+        },
+        {
+          "bucket": "0.76-0.78",
+          "n": 66,
+          "wrPct": 80.3,
+          "pnl": 12.95
+        },
+        {
+          "bucket": "0.78-0.80",
+          "n": 38,
+          "wrPct": 76.3,
+          "pnl": -4.05
+        },
+        {
+          "bucket": "0.80-0.82",
+          "n": 99,
+          "wrPct": 83.8,
+          "pnl": 12.81
+        }
+      ]
+    },
+    {
+      "label": "F2_askMin0.74_max780",
+      "ms": 89379,
+      "trades": 806,
+      "wins": 626,
+      "losses": 180,
+      "wr": 77.67,
+      "pnl": 69.01,
+      "maxDd": 42.25,
+      "endEquity": 89.01,
+      "pnlPerDd": 1.633,
+      "buckets": [
+        {
+          "bucket": "0.74-0.76",
+          "n": 504,
+          "wrPct": 75.4,
+          "pnl": 25.55
+        },
+        {
+          "bucket": "0.76-0.78",
+          "n": 131,
+          "wrPct": 80.2,
+          "pnl": 24.5
+        },
+        {
+          "bucket": "0.78-0.80",
+          "n": 61,
+          "wrPct": 78.7,
+          "pnl": 0.6
+        },
+        {
+          "bucket": "0.80-0.82",
+          "n": 110,
+          "wrPct": 84.5,
+          "pnl": 18.36
+        }
+      ]
+    },
+    {
+      "label": "F3_askMin0.76_max780",
+      "ms": 96236,
+      "trades": 818,
+      "wins": 646,
+      "losses": 172,
+      "wr": 78.97,
+      "pnl": 57.66,
+      "maxDd": 39.5,
+      "endEquity": 77.66,
+      "pnlPerDd": 1.46,
+      "buckets": [
+        {
+          "bucket": "0.76-0.78",
+          "n": 520,
+          "wrPct": 79,
+          "pnl": 69.9
+        },
+        {
+          "bucket": "0.78-0.80",
+          "n": 153,
+          "wrPct": 73.9,
+          "pnl": -34.4
+        },
+        {
+          "bucket": "0.80-0.82",
+          "n": 145,
+          "wrPct": 84.1,
+          "pnl": 22.16
+        }
+      ]
+    },
+    {
+      "label": "F4_askMin0.78_max780",
+      "ms": 102873,
+      "trades": 819,
+      "wins": 657,
+      "losses": 162,
+      "wr": 80.22,
+      "pnl": 45.61,
+      "maxDd": 32.45,
+      "endEquity": 65.61,
+      "pnlPerDd": 1.406,
+      "buckets": [
+        {
+          "bucket": "0.78-0.80",
+          "n": 562,
+          "wrPct": 78.3,
+          "pnl": -0.45
+        },
+        {
+          "bucket": "0.80-0.82",
+          "n": 257,
+          "wrPct": 84.4,
+          "pnl": 46.06
+        }
+      ]
+    },
+    {
+      "label": "F5_askMin0.78",
+      "ms": 84809,
+      "trades": 847,
+      "wins": 678,
+      "losses": 169,
+      "wr": 80.05,
+      "pnl": 39.61,
+      "maxDd": 34.9,
+      "endEquity": 59.61,
+      "pnlPerDd": 1.135,
+      "buckets": [
+        {
+          "bucket": "0.78-0.80",
+          "n": 578,
+          "wrPct": 77.9,
+          "pnl": -13.2
+        },
+        {
+          "bucket": "0.80-0.82",
+          "n": 269,
+          "wrPct": 84.8,
+          "pnl": 52.81
+        }
+      ]
+    },
+    {
+      "label": "G1_min150",
+      "ms": 83214,
+      "trades": 799,
+      "wins": 588,
+      "losses": 211,
+      "wr": 73.59,
+      "pnl": 94.56,
+      "maxDd": 47.2,
+      "endEquity": 114.56,
+      "pnlPerDd": 2.003,
+      "buckets": [
+        {
+          "bucket": "0.68-0.70",
+          "n": 380,
+          "wrPct": 71.3,
+          "pnl": 56.6
+        },
+        {
+          "bucket": "0.70-0.72",
+          "n": 156,
+          "wrPct": 73.1,
+          "pnl": 21.65
+        },
+        {
+          "bucket": "0.72-0.74",
+          "n": 84,
+          "wrPct": 71.4,
+          "pnl": -4.05
+        },
+        {
+          "bucket": "0.74-0.76",
+          "n": 60,
+          "wrPct": 76.7,
+          "pnl": 6.9
+        },
+        {
+          "bucket": "0.76-0.78",
+          "n": 34,
+          "wrPct": 79.4,
+          "pnl": 5.1
+        },
+        {
+          "bucket": "0.78-0.80",
+          "n": 22,
+          "wrPct": 77.3,
+          "pnl": -1.15
+        },
+        {
+          "bucket": "0.80-0.82",
+          "n": 63,
+          "wrPct": 84.1,
+          "pnl": 9.51
+        }
+      ]
+    },
+    {
+      "label": "G2_min150_askMin0.72",
+      "ms": 86430,
+      "trades": 815,
+      "wins": 619,
+      "losses": 196,
+      "wr": 75.95,
+      "pnl": 82.06,
+      "maxDd": 56.85,
+      "endEquity": 102.06,
+      "pnlPerDd": 1.443,
+      "buckets": [
+        {
+          "bucket": "0.72-0.74",
+          "n": 502,
+          "wrPct": 75.3,
+          "pnl": 75.55
+        },
+        {
+          "bucket": "0.74-0.76",
+          "n": 152,
+          "wrPct": 73.7,
+          "pnl": -5.35
+        },
+        {
+          "bucket": "0.76-0.78",
+          "n": 62,
+          "wrPct": 79,
+          "pnl": 8.35
+        },
+        {
+          "bucket": "0.78-0.80",
+          "n": 34,
+          "wrPct": 73.5,
+          "pnl": -8
+        },
+        {
+          "bucket": "0.80-0.82",
+          "n": 65,
+          "wrPct": 84.6,
+          "pnl": 11.51
+        }
+      ]
+    },
+    {
+      "label": "G3_min120_askMin0.74",
+      "ms": 96735,
+      "trades": 811,
+      "wins": 618,
+      "losses": 193,
+      "wr": 76.2,
+      "pnl": 33.95,
+      "maxDd": 63.55,
+      "endEquity": 53.95,
+      "pnlPerDd": 0.534,
+      "buckets": [
+        {
+          "bucket": "0.74-0.76",
+          "n": 586,
+          "wrPct": 74.2,
+          "pnl": -2.95
+        },
+        {
+          "bucket": "0.76-0.78",
+          "n": 115,
+          "wrPct": 80.9,
+          "pnl": 25.75
+        },
+        {
+          "bucket": "0.78-0.80",
+          "n": 53,
+          "wrPct": 83,
+          "pnl": 12.35
+        },
+        {
+          "bucket": "0.80-0.82",
+          "n": 57,
+          "wrPct": 80.7,
+          "pnl": -1.2
+        }
+      ]
+    },
+    {
+      "label": "H1_askMin0.76_max780_p3x12",
+      "ms": 89144,
+      "trades": 776,
+      "wins": 612,
+      "losses": 164,
+      "wr": 78.87,
+      "pnl": 51.31,
+      "maxDd": 40.05,
+      "endEquity": 71.31,
+      "pnlPerDd": 1.281,
+      "buckets": [
+        {
+          "bucket": "0.76-0.78",
+          "n": 498,
+          "wrPct": 79.1,
+          "pnl": 68.75
+        },
+        {
+          "bucket": "0.78-0.80",
+          "n": 144,
+          "wrPct": 72.9,
+          "pnl": -39.2
+        },
+        {
+          "bucket": "0.80-0.82",
+          "n": 134,
+          "wrPct": 84.3,
+          "pnl": 21.76
+        }
+      ]
+    },
+    {
+      "label": "H2_askMin0.74_max720",
+      "ms": 89120,
+      "trades": 800,
+      "wins": 620,
+      "losses": 180,
+      "wr": 77.5,
+      "pnl": 61.71,
+      "maxDd": 44.3,
+      "endEquity": 81.71,
+      "pnlPerDd": 1.393,
+      "buckets": [
+        {
+          "bucket": "0.74-0.76",
+          "n": 501,
+          "wrPct": 75.2,
+          "pnl": 21.75
+        },
+        {
+          "bucket": "0.76-0.78",
+          "n": 128,
+          "wrPct": 79.7,
+          "pnl": 21
+        },
+        {
+          "bucket": "0.78-0.80",
+          "n": 61,
+          "wrPct": 78.7,
+          "pnl": 0.6
+        },
+        {
+          "bucket": "0.80-0.82",
+          "n": 110,
+          "wrPct": 84.5,
+          "pnl": 18.36
+        }
+      ]
+    }
+  ]
+}

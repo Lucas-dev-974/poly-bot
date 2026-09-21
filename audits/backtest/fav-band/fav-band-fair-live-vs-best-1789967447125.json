@@ -1,0 +1,75 @@
+{
+  "note": "Offline only. LIVE vs BEST configs, ALL at live sizing (4.5 USDC / 5 sh / expo 6 / 3 slots).",
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 901,
+  "rows": [
+    {
+      "label": "A0_live-band_asis-no-inverse_live-sizing",
+      "ms": 95744,
+      "pnl": 51.4,
+      "pnlPct": 68.53,
+      "fills": 817,
+      "rejects": 1,
+      "windows": 901,
+      "trades": 817,
+      "wins": 570,
+      "losses": 247,
+      "wr": 69.8,
+      "maxDd": 64.65,
+      "worst": -3.75,
+      "pnlPerDd": 0.795
+    },
+    {
+      "label": "B0_live-band_pause_live-sizing",
+      "ms": 94222,
+      "pnl": 45.45,
+      "pnlPct": 60.6,
+      "fills": 690,
+      "rejects": 1,
+      "windows": 901,
+      "trades": 690,
+      "wins": 482,
+      "losses": 208,
+      "wr": 69.9,
+      "maxDd": 54.3,
+      "worst": -3.75,
+      "pnlPerDd": 0.837
+    },
+    {
+      "label": "C0_best-band_pause_live-sizing",
+      "ms": 116788,
+      "pnl": 119.51,
+      "pnlPct": 159.35,
+      "fills": 792,
+      "rejects": 0,
+      "windows": 901,
+      "trades": 792,
+      "wins": 594,
+      "losses": 198,
+      "wr": 75,
+      "maxDd": 42,
+      "worst": -4.1,
+      "pnlPerDd": 2.845
+    },
+    {
+      "label": "D0_best-band_pause_exitB_live-sizing",
+      "ms": 91014,
+      "pnl": 63.09,
+      "pnlPct": 84.12,
+      "fills": 682,
+      "rejects": 0,
+      "windows": 901,
+      "trades": 443,
+      "wins": 203,
+      "losses": 240,
+      "wr": 45.8,
+      "maxDd": 12.1,
+      "worst": -3.65,
+      "pnlPerDd": 5.214
+    }
+  ]
+}

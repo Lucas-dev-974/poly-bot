@@ -1,0 +1,238 @@
+{
+  "note": "Offline. BEST config (band 0.68-0.82, min200, no max, pause 3x8, inverse off) with $20 simulated capital — 4 sizing variants incl. ruin demo.",
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "capital": 20,
+  "windows": 909,
+  "rows": [
+    {
+      "label": "S1_BEST_cap20_order4.5_sh5_expo6",
+      "ms": 96334,
+      "capitalStart": 20,
+      "pnl": 127.26,
+      "pnlPct": 636.3,
+      "fills": 798,
+      "rejects": 0,
+      "windows": 909,
+      "trades": 798,
+      "wins": 600,
+      "losses": 198,
+      "wr": 75.2,
+      "maxDd": 42,
+      "worst": -4.1,
+      "minEquity": 20,
+      "endEquity": 147.26,
+      "pnlPerDd": 3.03
+    },
+    {
+      "label": "S2_BEST_cap20_order5_sh10_expo10",
+      "ms": 90507,
+      "capitalStart": 20,
+      "pnl": 172.87,
+      "pnlPct": 864.35,
+      "fills": 798,
+      "rejects": 25,
+      "windows": 909,
+      "trades": 798,
+      "wins": 600,
+      "losses": 198,
+      "wr": 75.2,
+      "maxDd": 58.19,
+      "worst": -5,
+      "minEquity": 20,
+      "endEquity": 192.87,
+      "pnlPerDd": 2.971
+    },
+    {
+      "label": "S3_BEST+exitB_cap20_order4.5_sh5_expo6",
+      "ms": 104926,
+      "capitalStart": 20,
+      "pnl": 67.19,
+      "pnlPct": 335.95,
+      "fills": 690,
+      "rejects": 0,
+      "windows": 909,
+      "trades": 449,
+      "wins": 207,
+      "losses": 242,
+      "wr": 46.1,
+      "maxDd": 12.1,
+      "worst": -3.65,
+      "minEquity": 20,
+      "endEquity": 87.19,
+      "pnlPerDd": 5.553
+    },
+    {
+      "label": "S4_BEST_cap20_order15_sh25_expo20_ruin-demo",
+      "ms": 85992,
+      "capitalStart": 20,
+      "pnl": 513.51,
+      "pnlPct": 2567.55,
+      "fills": 797,
+      "rejects": 14,
+      "windows": 909,
+      "trades": 797,
+      "wins": 599,
+      "losses": 198,
+      "wr": 75.2,
+      "maxDd": 175.12,
+      "worst": -15,
+      "minEquity": 20,
+      "endEquity": 533.51,
+      "pnlPerDd": 2.932
+    }
+  ],
+  "mainRunDays": {
+    "days": [
+      {
+        "day": "2026-09-08",
+        "pnl": 33.26,
+        "won": 41,
+        "lost": 7,
+        "sold": 0,
+        "trades": 48
+      },
+      {
+        "day": "2026-09-09",
+        "pnl": 13.4,
+        "won": 42,
+        "lost": 13,
+        "sold": 0,
+        "trades": 55
+      },
+      {
+        "day": "2026-09-10",
+        "pnl": -13.85,
+        "won": 53,
+        "lost": 24,
+        "sold": 0,
+        "trades": 77
+      },
+      {
+        "day": "2026-09-11",
+        "pnl": 23.6,
+        "won": 26,
+        "lost": 4,
+        "sold": 0,
+        "trades": 30
+      },
+      {
+        "day": "2026-09-12",
+        "pnl": 9.95,
+        "won": 15,
+        "lost": 3,
+        "sold": 0,
+        "trades": 18
+      },
+      {
+        "day": "2026-09-13",
+        "pnl": -1.1,
+        "won": 43,
+        "lost": 17,
+        "sold": 0,
+        "trades": 60
+      },
+      {
+        "day": "2026-09-14",
+        "pnl": 29.35,
+        "won": 67,
+        "lost": 18,
+        "sold": 0,
+        "trades": 85
+      },
+      {
+        "day": "2026-09-15",
+        "pnl": -37.9,
+        "won": 41,
+        "lost": 26,
+        "sold": 0,
+        "trades": 67
+      },
+      {
+        "day": "2026-09-16",
+        "pnl": 30.45,
+        "won": 66,
+        "lost": 18,
+        "sold": 0,
+        "trades": 84
+      },
+      {
+        "day": "2026-09-17",
+        "pnl": 15.9,
+        "won": 63,
+        "lost": 20,
+        "sold": 0,
+        "trades": 83
+      },
+      {
+        "day": "2026-09-18",
+        "pnl": 17.3,
+        "won": 53,
+        "lost": 16,
+        "sold": 0,
+        "trades": 69
+      },
+      {
+        "day": "2026-09-19",
+        "pnl": -23.4,
+        "won": 28,
+        "lost": 17,
+        "sold": 0,
+        "trades": 45
+      },
+      {
+        "day": "2026-09-20",
+        "pnl": 4.8,
+        "won": 42,
+        "lost": 15,
+        "sold": 0,
+        "trades": 57
+      },
+      {
+        "day": "2026-09-21",
+        "pnl": 25.5,
+        "won": 20,
+        "lost": 0,
+        "sold": 0,
+        "trades": 20
+      }
+    ],
+    "buckets": [
+      {
+        "bucket": "0.68-0.70",
+        "wrPct": 71.8,
+        "pnl": 58.7,
+        "won": 242,
+        "lost": 95,
+        "n": 337
+      },
+      {
+        "bucket": "0.70-0.75",
+        "wrPct": 73.3,
+        "pnl": 24.65,
+        "won": 192,
+        "lost": 70,
+        "n": 262
+      },
+      {
+        "bucket": "0.75-0.78",
+        "wrPct": 84.8,
+        "pnl": 29.7,
+        "won": 56,
+        "lost": 10,
+        "n": 66
+      },
+      {
+        "bucket": "0.78-0.82",
+        "wrPct": 82.7,
+        "pnl": 14.21,
+        "won": 110,
+        "lost": 23,
+        "n": 133
+      }
+    ]
+  }
+}

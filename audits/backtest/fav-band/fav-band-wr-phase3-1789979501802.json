@@ -1,0 +1,84 @@
+{
+  "note": "WR R&D phase 3 — refinement around the 80% frontier (top band 0.80-0.82, exit B on F4, pause 2x8, min250).",
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "capital": 20,
+  "windows": 914,
+  "rows": [
+    {
+      "label": "P1_askMin0.80_max780",
+      "ms": 108813,
+      "trades": 790,
+      "wins": 643,
+      "losses": 147,
+      "wr": 81.39,
+      "pnl": 33.61,
+      "maxDd": 42.7,
+      "endEquity": 53.61,
+      "pnlPerDd": 0.787
+    },
+    {
+      "label": "P2_askMin0.79_max780",
+      "ms": 88669,
+      "trades": 800,
+      "wins": 647,
+      "losses": 153,
+      "wr": 80.88,
+      "pnl": 41.46,
+      "maxDd": 33,
+      "endEquity": 61.46,
+      "pnlPerDd": 1.256
+    },
+    {
+      "label": "P3_askMin0.80",
+      "ms": 89599,
+      "trades": 826,
+      "wins": 672,
+      "losses": 154,
+      "wr": 81.36,
+      "pnl": 33.46,
+      "maxDd": 41.85,
+      "endEquity": 53.46,
+      "pnlPerDd": 0.8
+    },
+    {
+      "label": "P4_F4_exitB",
+      "ms": 86947,
+      "trades": 517,
+      "wins": 270,
+      "losses": 247,
+      "wr": 52.22,
+      "pnl": 30.14,
+      "maxDd": 15.05,
+      "endEquity": 50.14,
+      "pnlPerDd": 2.003
+    },
+    {
+      "label": "P5_F4_pause2x8",
+      "ms": 96520,
+      "trades": 682,
+      "wins": 547,
+      "losses": 135,
+      "wr": 80.21,
+      "pnl": 37.11,
+      "maxDd": 33.05,
+      "endEquity": 57.11,
+      "pnlPerDd": 1.123
+    },
+    {
+      "label": "P6_F4_min250",
+      "ms": 89953,
+      "trades": 806,
+      "wins": 648,
+      "losses": 158,
+      "wr": 80.4,
+      "pnl": 46.81,
+      "maxDd": 30.75,
+      "endEquity": 66.81,
+      "pnlPerDd": 1.522
+    }
+  ]
+}

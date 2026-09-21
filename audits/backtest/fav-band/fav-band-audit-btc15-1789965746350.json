@@ -1,0 +1,3050 @@
+{
+  "note": "Offline only — live bot untouched. Full fav-band audit on ALL complete BTC 15m windows (minTicks 601, gap<=60s).",
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 899,
+  "rankedByPnl": [
+    {
+      "group": "baseline",
+      "label": "baseline_band-068-082_min200_noMax",
+      "favBandAskMin": 0.68,
+      "favBandAskMax": 0.82,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": null,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandInverseEnabled": false,
+      "favBandExitEnabled": false,
+      "ms": 92306,
+      "pnl": 367.71,
+      "pnlPct": 490.28,
+      "capitalStart": 75,
+      "capitalEnd": 442.71,
+      "fills": 864,
+      "rejects": 13,
+      "windows": 899,
+      "trades": 864,
+      "wins": 640,
+      "losses": 224,
+      "wr": 74.1,
+      "maxDd": 229.51,
+      "worst": -15,
+      "pnlPerDd": 1.602
+    },
+    {
+      "group": "whipsaw",
+      "label": "whipsaw-pause3x8_band-opt",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandInverseEnabled": false,
+      "favBandExitEnabled": false,
+      "favBandWhipsawEnabled": true,
+      "favBandWhipsawPauseAfterLosses": 3,
+      "favBandWhipsawPauseWindows": 8,
+      "ms": 88881,
+      "pnl": 349.32,
+      "pnlPct": 465.76,
+      "capitalStart": 75,
+      "capitalEnd": 424.32,
+      "fills": 779,
+      "rejects": 4,
+      "windows": 899,
+      "trades": 779,
+      "wins": 591,
+      "losses": 188,
+      "wr": 75.9,
+      "maxDd": 182.42,
+      "worst": -15,
+      "pnlPerDd": 1.915
+    },
+    {
+      "group": "exit",
+      "label": "exit-ratio0p5_drop0p03_n3",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandExitEnabled": true,
+      "favBandExitLookbackMs": 120000,
+      "favBandExitMinElapsedSec": 0,
+      "favBandExitLossOnly": true,
+      "favBandExitSwitchEnabled": false,
+      "favBandExitRetraceRatio": 0.5,
+      "favBandExitMinLowerHighDrop": 0.03,
+      "favBandExitConsecutive": 3,
+      "ms": 85437,
+      "pnl": 345.18,
+      "pnlPct": 460.24,
+      "capitalStart": 75,
+      "capitalEnd": 420.18,
+      "fills": 1315,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 857,
+      "wins": 396,
+      "losses": 461,
+      "wr": 46.2,
+      "maxDd": 98.61,
+      "worst": -15,
+      "pnlPerDd": 3.5
+    },
+    {
+      "group": "exit",
+      "label": "exit-ratio0p25_drop0p03_n3",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandExitEnabled": true,
+      "favBandExitLookbackMs": 120000,
+      "favBandExitMinElapsedSec": 0,
+      "favBandExitLossOnly": true,
+      "favBandExitSwitchEnabled": false,
+      "favBandExitRetraceRatio": 0.25,
+      "favBandExitMinLowerHighDrop": 0.03,
+      "favBandExitConsecutive": 3,
+      "ms": 86657,
+      "pnl": 297.5,
+      "pnlPct": 396.67,
+      "capitalStart": 75,
+      "capitalEnd": 372.5,
+      "fills": 1352,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 857,
+      "wins": 360,
+      "losses": 497,
+      "wr": 42,
+      "maxDd": 99.03,
+      "worst": -15,
+      "pnlPerDd": 3.004
+    },
+    {
+      "group": "exit",
+      "label": "exit-ratio0p25_drop0p05_n3",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandExitEnabled": true,
+      "favBandExitLookbackMs": 120000,
+      "favBandExitMinElapsedSec": 0,
+      "favBandExitLossOnly": true,
+      "favBandExitSwitchEnabled": false,
+      "favBandExitRetraceRatio": 0.25,
+      "favBandExitMinLowerHighDrop": 0.05,
+      "favBandExitConsecutive": 3,
+      "ms": 84962,
+      "pnl": 280.17,
+      "pnlPct": 373.56,
+      "capitalStart": 75,
+      "capitalEnd": 355.17,
+      "fills": 1297,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 857,
+      "wins": 409,
+      "losses": 448,
+      "wr": 47.7,
+      "maxDd": 141.05,
+      "worst": -15,
+      "pnlPerDd": 1.986
+    },
+    {
+      "group": "exit",
+      "label": "exit-ratio0p5_drop0p05_n2",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandExitEnabled": true,
+      "favBandExitLookbackMs": 120000,
+      "favBandExitMinElapsedSec": 0,
+      "favBandExitLossOnly": true,
+      "favBandExitSwitchEnabled": false,
+      "favBandExitRetraceRatio": 0.5,
+      "favBandExitMinLowerHighDrop": 0.05,
+      "favBandExitConsecutive": 2,
+      "ms": 86650,
+      "pnl": 277.86,
+      "pnlPct": 370.48,
+      "capitalStart": 75,
+      "capitalEnd": 352.86,
+      "fills": 1343,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 857,
+      "wins": 368,
+      "losses": 489,
+      "wr": 42.9,
+      "maxDd": 98.03,
+      "worst": -14.99,
+      "pnlPerDd": 2.834
+    },
+    {
+      "group": "exit",
+      "label": "exit-ratio0p25_drop0p05_n2",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandExitEnabled": true,
+      "favBandExitLookbackMs": 120000,
+      "favBandExitMinElapsedSec": 0,
+      "favBandExitLossOnly": true,
+      "favBandExitSwitchEnabled": false,
+      "favBandExitRetraceRatio": 0.25,
+      "favBandExitMinLowerHighDrop": 0.05,
+      "favBandExitConsecutive": 2,
+      "ms": 87529,
+      "pnl": 266.52,
+      "pnlPct": 355.36,
+      "capitalStart": 75,
+      "capitalEnd": 341.52,
+      "fills": 1392,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 857,
+      "wins": 320,
+      "losses": 537,
+      "wr": 37.3,
+      "maxDd": 101.03,
+      "worst": -14.99,
+      "pnlPerDd": 2.638
+    },
+    {
+      "group": "exit",
+      "label": "exit-ratio0p5_drop0p05_n3",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandExitEnabled": true,
+      "favBandExitLookbackMs": 120000,
+      "favBandExitMinElapsedSec": 0,
+      "favBandExitLossOnly": true,
+      "favBandExitSwitchEnabled": false,
+      "favBandExitRetraceRatio": 0.5,
+      "favBandExitMinLowerHighDrop": 0.05,
+      "favBandExitConsecutive": 3,
+      "ms": 84679,
+      "pnl": 261.38,
+      "pnlPct": 348.51,
+      "capitalStart": 75,
+      "capitalEnd": 336.38,
+      "fills": 1245,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 857,
+      "wins": 456,
+      "losses": 401,
+      "wr": 53.2,
+      "maxDd": 115.87,
+      "worst": -15,
+      "pnlPerDd": 2.256
+    },
+    {
+      "group": "exit",
+      "label": "exit-ratio0p5_drop0p03_n2",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandExitEnabled": true,
+      "favBandExitLookbackMs": 120000,
+      "favBandExitMinElapsedSec": 0,
+      "favBandExitLossOnly": true,
+      "favBandExitSwitchEnabled": false,
+      "favBandExitRetraceRatio": 0.5,
+      "favBandExitMinLowerHighDrop": 0.03,
+      "favBandExitConsecutive": 2,
+      "ms": 87343,
+      "pnl": 253.5,
+      "pnlPct": 338,
+      "capitalStart": 75,
+      "capitalEnd": 328.5,
+      "fills": 1406,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 857,
+      "wins": 307,
+      "losses": 550,
+      "wr": 35.8,
+      "maxDd": 75.47,
+      "worst": -14.99,
+      "pnlPerDd": 3.359
+    },
+    {
+      "group": "baseline",
+      "label": "baseline_band-070-085_min200_max600",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandInverseEnabled": false,
+      "favBandExitEnabled": false,
+      "ms": 90420,
+      "pnl": 240.82,
+      "pnlPct": 321.09,
+      "capitalStart": 75,
+      "capitalEnd": 315.82,
+      "fills": 857,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 857,
+      "wins": 643,
+      "losses": 214,
+      "wr": 75,
+      "maxDd": 238.51,
+      "worst": -15,
+      "pnlPerDd": 1.01
+    },
+    {
+      "group": "exit",
+      "label": "exit-ratio0p25_drop0p05_n3_loss-only-off",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandExitEnabled": true,
+      "favBandExitLookbackMs": 120000,
+      "favBandExitMinElapsedSec": 0,
+      "favBandExitLossOnly": false,
+      "favBandExitSwitchEnabled": false,
+      "favBandExitRetraceRatio": 0.25,
+      "favBandExitMinLowerHighDrop": 0.05,
+      "favBandExitConsecutive": 3,
+      "ms": 85676,
+      "pnl": 233.54,
+      "pnlPct": 311.39,
+      "capitalStart": 75,
+      "capitalEnd": 308.54,
+      "fills": 1329,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 857,
+      "wins": 445,
+      "losses": 400,
+      "wr": 51.9,
+      "maxDd": 154.11,
+      "worst": -15,
+      "pnlPerDd": 1.515
+    },
+    {
+      "group": "baseline",
+      "label": "baseline_band-070-085_noMax",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": null,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandInverseEnabled": false,
+      "favBandExitEnabled": false,
+      "ms": 84079,
+      "pnl": 231.74,
+      "pnlPct": 308.99,
+      "capitalStart": 75,
+      "capitalEnd": 306.74,
+      "fills": 877,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 877,
+      "wins": 657,
+      "losses": 220,
+      "wr": 74.9,
+      "maxDd": 246.83,
+      "worst": -15,
+      "pnlPerDd": 0.939
+    },
+    {
+      "group": "exit",
+      "label": "exit-ratio0p25_drop0p03_n2",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandExitEnabled": true,
+      "favBandExitLookbackMs": 120000,
+      "favBandExitMinElapsedSec": 0,
+      "favBandExitLossOnly": true,
+      "favBandExitSwitchEnabled": false,
+      "favBandExitRetraceRatio": 0.25,
+      "favBandExitMinLowerHighDrop": 0.03,
+      "favBandExitConsecutive": 2,
+      "ms": 89521,
+      "pnl": 222.64,
+      "pnlPct": 296.85,
+      "capitalStart": 75,
+      "capitalEnd": 297.64,
+      "fills": 1443,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 857,
+      "wins": 270,
+      "losses": 587,
+      "wr": 31.5,
+      "maxDd": 90.11,
+      "worst": -14.99,
+      "pnlPerDd": 2.471
+    },
+    {
+      "group": "exit",
+      "label": "exit-ratio0p25_drop0p02_n2_LIVE-CONFIGURED",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandExitEnabled": true,
+      "favBandExitLookbackMs": 120000,
+      "favBandExitMinElapsedSec": 0,
+      "favBandExitLossOnly": true,
+      "favBandExitSwitchEnabled": false,
+      "favBandExitRetraceRatio": 0.25,
+      "favBandExitMinLowerHighDrop": 0.02,
+      "favBandExitConsecutive": 2,
+      "ms": 89901,
+      "pnl": 157.55,
+      "pnlPct": 210.07,
+      "capitalStart": 75,
+      "capitalEnd": 232.55,
+      "fills": 1464,
+      "rejects": 5,
+      "windows": 899,
+      "trades": 857,
+      "wins": 249,
+      "losses": 608,
+      "wr": 29.1,
+      "maxDd": 105.13,
+      "worst": -14.99,
+      "pnlPerDd": 1.499
+    },
+    {
+      "group": "whipsaw",
+      "label": "whipsaw-maxScore40_band-opt",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandInverseEnabled": false,
+      "favBandExitEnabled": false,
+      "favBandWhipsawEnabled": true,
+      "favBandWhipsawMaxScore": 40,
+      "ms": 77503,
+      "pnl": 142.2,
+      "pnlPct": 189.6,
+      "capitalStart": 75,
+      "capitalEnd": 217.2,
+      "fills": 108,
+      "rejects": 0,
+      "windows": 899,
+      "trades": 108,
+      "wins": 87,
+      "losses": 21,
+      "wr": 80.6,
+      "maxDd": 59.99,
+      "worst": -15,
+      "pnlPerDd": 2.37
+    },
+    {
+      "group": "live",
+      "label": "live_band-065-075_sizing-live",
+      "favBandAskMin": 0.65,
+      "favBandAskMax": 0.75,
+      "favBandMinElapsedSec": 180,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 4.5,
+      "maxSharesPerOrder": 5,
+      "maxExposureUsdc": 6,
+      "favBandInverseEnabled": false,
+      "favBandExitEnabled": false,
+      "ms": 84709,
+      "pnl": 48.05,
+      "pnlPct": 64.07,
+      "capitalStart": 75,
+      "capitalEnd": 123.05,
+      "fills": 815,
+      "rejects": 1,
+      "windows": 899,
+      "trades": 815,
+      "wins": 568,
+      "losses": 247,
+      "wr": 69.7,
+      "maxDd": 64.65,
+      "worst": -3.75,
+      "pnlPerDd": 0.743
+    },
+    {
+      "group": "inverse",
+      "label": "inverse-on_live-band_sizing-live",
+      "favBandAskMin": 0.65,
+      "favBandAskMax": 0.75,
+      "favBandMinElapsedSec": 180,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 4.5,
+      "maxSharesPerOrder": 5,
+      "maxExposureUsdc": 6,
+      "favBandInverseEnabled": true,
+      "favBandInverseAskMax": 0.15,
+      "favBandInverseShareRatio": 1.3,
+      "favBandInverseOrderUsdc": 1.4,
+      "maxOpenPositionsPerSide": 3,
+      "favBandExitEnabled": false,
+      "ms": 150965,
+      "pnl": -53.2,
+      "pnlPct": -70.93,
+      "capitalStart": 75,
+      "capitalEnd": 21.8,
+      "fills": 1552,
+      "rejects": 1,
+      "windows": 899,
+      "trades": 815,
+      "wins": 610,
+      "losses": 195,
+      "wr": 74.8,
+      "maxDd": 64.95,
+      "worst": -4,
+      "pnlPerDd": -0.819
+    },
+    {
+      "group": "exit",
+      "label": "exit-ratio0p25_drop0p05_n3_switch-on",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandExitEnabled": true,
+      "favBandExitLookbackMs": 120000,
+      "favBandExitMinElapsedSec": 0,
+      "favBandExitLossOnly": true,
+      "favBandExitSwitchEnabled": true,
+      "favBandExitRetraceRatio": 0.25,
+      "favBandExitMinLowerHighDrop": 0.05,
+      "favBandExitConsecutive": 3,
+      "favBandExitSwitchOrderUsdc": 15,
+      "maxOpenPositionsPerSide": 2,
+      "ms": 75793,
+      "pnl": -61.27,
+      "pnlPct": -81.69,
+      "capitalStart": 75,
+      "capitalEnd": 13.73,
+      "fills": 55,
+      "rejects": 109399,
+      "windows": 899,
+      "trades": 29,
+      "wins": 17,
+      "losses": 12,
+      "wr": 58.6,
+      "maxDd": 74.16,
+      "worst": -20.99,
+      "pnlPerDd": -0.826
+    },
+    {
+      "group": "inverse",
+      "label": "inverse-on_band-opt_sizing-grid",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandInverseEnabled": true,
+      "favBandInverseAskMax": 0.2,
+      "favBandInverseShareRatio": 2,
+      "favBandInverseOrderUsdc": 15,
+      "maxOpenPositionsPerSide": 2,
+      "favBandExitEnabled": false,
+      "ms": 86460,
+      "pnl": -63.7,
+      "pnlPct": -84.93,
+      "capitalStart": 75,
+      "capitalEnd": 11.3,
+      "fills": 77,
+      "rejects": 108489,
+      "windows": 899,
+      "trades": 36,
+      "wins": 2,
+      "losses": 34,
+      "wr": 5.6,
+      "maxDd": 72.24,
+      "worst": -15,
+      "pnlPerDd": -0.882
+    },
+    {
+      "group": "whipsaw",
+      "label": "whipsaw-maxIntraFlips4_band-opt",
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandInverseEnabled": false,
+      "favBandExitEnabled": false,
+      "favBandWhipsawEnabled": true,
+      "favBandWhipsawMaxIntraFlips": 4,
+      "ms": 87426,
+      "pnl": -63.95,
+      "pnlPct": -85.27,
+      "capitalStart": 75,
+      "capitalEnd": 11.05,
+      "fills": 421,
+      "rejects": 3300,
+      "windows": 899,
+      "trades": 421,
+      "wins": 312,
+      "losses": 109,
+      "wr": 74.1,
+      "maxDd": 231.47,
+      "worst": -15,
+      "pnlPerDd": -0.276
+    },
+    {
+      "group": "live",
+      "label": "live_band-065-075_sizing-grid",
+      "favBandAskMin": 0.65,
+      "favBandAskMax": 0.75,
+      "favBandMinElapsedSec": 180,
+      "favBandMaxElapsedSec": 600,
+      "favBandOrderUsdc": 15,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "favBandInverseEnabled": false,
+      "favBandExitEnabled": false,
+      "ms": 84391,
+      "pnl": -71.66,
+      "pnlPct": -95.55,
+      "capitalStart": 75,
+      "capitalEnd": 3.34,
+      "fills": 196,
+      "rejects": 58397,
+      "windows": 899,
+      "trades": 196,
+      "wins": 131,
+      "losses": 65,
+      "wr": 66.8,
+      "maxDd": 220.32,
+      "worst": -15,
+      "pnlPerDd": -0.325
+    }
+  ],
+  "perDayArtifacts": {
+    "baseline_band-070-085_min200_max600": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 143.92,
+          "won": 41,
+          "lost": 6,
+          "sold": 0,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 45.05,
+          "won": 47,
+          "lost": 14,
+          "sold": 0,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -32.42,
+          "won": 62,
+          "lost": 24,
+          "sold": 0,
+          "trades": 86
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 71.93,
+          "won": 26,
+          "lost": 5,
+          "sold": 0,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": 19.61,
+          "won": 12,
+          "lost": 3,
+          "sold": 0,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 46.9,
+          "won": 49,
+          "lost": 14,
+          "sold": 0,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 120.94,
+          "won": 70,
+          "lost": 17,
+          "sold": 0,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -218.47,
+          "won": 55,
+          "lost": 34,
+          "sold": 0,
+          "trades": 89
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 123.03,
+          "won": 68,
+          "lost": 17,
+          "sold": 0,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": -3.02,
+          "won": 64,
+          "lost": 23,
+          "sold": 0,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 69.83,
+          "won": 59,
+          "lost": 17,
+          "sold": 0,
+          "trades": 76
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -143.32,
+          "won": 28,
+          "lost": 19,
+          "sold": 0,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": -61.43,
+          "won": 50,
+          "lost": 21,
+          "sold": 0,
+          "trades": 71
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 58.27,
+          "won": 12,
+          "lost": 0,
+          "sold": 0,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 72,
+          "pnl": 111.52,
+          "won": 440,
+          "lost": 171,
+          "n": 611
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 81.6,
+          "pnl": 115.22,
+          "won": 93,
+          "lost": 21,
+          "n": 114
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 83.3,
+          "pnl": 14.08,
+          "won": 110,
+          "lost": 22,
+          "n": 132
+        }
+      ],
+      "exitsSold": 0
+    },
+    "live_band-065-075_sizing-live": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 17.15,
+          "won": 34,
+          "lost": 11,
+          "sold": 0,
+          "trades": 45
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": -0.8,
+          "won": 40,
+          "lost": 19,
+          "sold": 0,
+          "trades": 59
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -22.1,
+          "won": 50,
+          "lost": 29,
+          "sold": 0,
+          "trades": 79
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 14.2,
+          "won": 24,
+          "lost": 7,
+          "sold": 0,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": 18.5,
+          "won": 14,
+          "lost": 1,
+          "sold": 0,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 20.3,
+          "won": 46,
+          "lost": 15,
+          "sold": 0,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 28.1,
+          "won": 61,
+          "lost": 20,
+          "sold": 0,
+          "trades": 81
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -42.45,
+          "won": 49,
+          "lost": 35,
+          "sold": 0,
+          "trades": 84
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 17.65,
+          "won": 59,
+          "lost": 22,
+          "sold": 0,
+          "trades": 81
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 13.85,
+          "won": 61,
+          "lost": 24,
+          "sold": 0,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 34.45,
+          "won": 58,
+          "lost": 17,
+          "sold": 0,
+          "trades": 75
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -36.65,
+          "won": 24,
+          "lost": 21,
+          "sold": 0,
+          "trades": 45
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": -17.55,
+          "won": 41,
+          "lost": 24,
+          "sold": 0,
+          "trades": 65
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 3.4,
+          "won": 7,
+          "lost": 2,
+          "sold": 0,
+          "trades": 9
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.65-0.70",
+          "wrPct": 68.4,
+          "pnl": 56.6,
+          "won": 361,
+          "lost": 167,
+          "n": 528
+        },
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 68.8,
+          "pnl": -32.3,
+          "won": 143,
+          "lost": 65,
+          "n": 208
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 81,
+          "pnl": 23.75,
+          "won": 64,
+          "lost": 15,
+          "n": 79
+        }
+      ],
+      "exitsSold": 0
+    },
+    "inverse-on_live-band_sizing-live": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 2.15,
+          "won": 37,
+          "lost": 48,
+          "sold": 0,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": -5.55,
+          "won": 47,
+          "lost": 65,
+          "sold": 0,
+          "trades": 112
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -23.1,
+          "won": 60,
+          "lost": 87,
+          "sold": 0,
+          "trades": 147
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 7.45,
+          "won": 28,
+          "lost": 33,
+          "sold": 0,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": 8,
+          "won": 14,
+          "lost": 15,
+          "sold": 0,
+          "trades": 29
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 6.8,
+          "won": 52,
+          "lost": 67,
+          "sold": 0,
+          "trades": 119
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 2.1,
+          "won": 66,
+          "lost": 83,
+          "sold": 0,
+          "trades": 149
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -10.45,
+          "won": 68,
+          "lost": 100,
+          "sold": 0,
+          "trades": 168
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": -1.35,
+          "won": 66,
+          "lost": 87,
+          "sold": 0,
+          "trades": 153
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": -14.4,
+          "won": 66,
+          "lost": 90,
+          "sold": 0,
+          "trades": 156
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 22.45,
+          "won": 67,
+          "lost": 84,
+          "sold": 0,
+          "trades": 151
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -32.15,
+          "won": 30,
+          "lost": 50,
+          "sold": 0,
+          "trades": 80
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": -13.3,
+          "won": 51,
+          "lost": 75,
+          "sold": 0,
+          "trades": 126
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": -1.85,
+          "won": 7,
+          "lost": 9,
+          "sold": 0,
+          "trades": 16
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.65-0.70",
+          "wrPct": 68.4,
+          "pnl": 56.6,
+          "won": 361,
+          "lost": 167,
+          "n": 528
+        },
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 68.8,
+          "pnl": -32.3,
+          "won": 143,
+          "lost": 65,
+          "n": 208
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 81,
+          "pnl": 23.75,
+          "won": 64,
+          "lost": 15,
+          "n": 79
+        },
+        {
+          "bucket": "lt-0.65",
+          "wrPct": 12.3,
+          "pnl": -101.25,
+          "won": 91,
+          "lost": 646,
+          "n": 737
+        }
+      ],
+      "exitsSold": 0
+    },
+    "inverse-on_band-opt_sizing-grid": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": -63.7,
+          "won": 34,
+          "lost": 43,
+          "sold": 0,
+          "trades": 77
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 90,
+          "pnl": 120.23,
+          "won": 27,
+          "lost": 3,
+          "n": 30
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 75,
+          "pnl": -1.79,
+          "won": 3,
+          "lost": 1,
+          "n": 4
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 100,
+          "pnl": 6.15,
+          "won": 2,
+          "lost": 0,
+          "n": 2
+        },
+        {
+          "bucket": "lt-0.65",
+          "wrPct": 4.9,
+          "pnl": -188.29,
+          "won": 2,
+          "lost": 39,
+          "n": 41
+        }
+      ],
+      "exitsSold": 0
+    },
+    "exit-ratio0p25_drop0p03_n2": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 59.48,
+          "won": 20,
+          "lost": 0,
+          "sold": 27,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": -10.81,
+          "won": 13,
+          "lost": 0,
+          "sold": 48,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -45.55,
+          "won": 20,
+          "lost": 0,
+          "sold": 66,
+          "trades": 86
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 19.85,
+          "won": 10,
+          "lost": 0,
+          "sold": 21,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": -3.63,
+          "won": 6,
+          "lost": 0,
+          "sold": 9,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 67.21,
+          "won": 27,
+          "lost": 0,
+          "sold": 36,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 16.74,
+          "won": 25,
+          "lost": 0,
+          "sold": 62,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -19.15,
+          "won": 23,
+          "lost": 1,
+          "sold": 65,
+          "trades": 89
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 19.83,
+          "won": 26,
+          "lost": 0,
+          "sold": 59,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 88.78,
+          "won": 36,
+          "lost": 0,
+          "sold": 51,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 8.12,
+          "won": 20,
+          "lost": 0,
+          "sold": 56,
+          "trades": 76
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -7.46,
+          "won": 19,
+          "lost": 0,
+          "sold": 28,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": 19.32,
+          "won": 21,
+          "lost": 0,
+          "sold": 50,
+          "trades": 71
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 9.91,
+          "won": 4,
+          "lost": 0,
+          "sold": 8,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 30.4,
+          "pnl": 146.99,
+          "won": 186,
+          "lost": 425,
+          "n": 611
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 36.8,
+          "pnl": 83.41,
+          "won": 42,
+          "lost": 72,
+          "n": 114
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 31.8,
+          "pnl": -7.76,
+          "won": 42,
+          "lost": 90,
+          "n": 132
+        }
+      ],
+      "exitsSold": 586
+    },
+    "exit-ratio0p25_drop0p03_n3": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 57.17,
+          "won": 23,
+          "lost": 0,
+          "sold": 24,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 39.23,
+          "won": 24,
+          "lost": 0,
+          "sold": 37,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -36.24,
+          "won": 29,
+          "lost": 0,
+          "sold": 57,
+          "trades": 86
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 19.3,
+          "won": 12,
+          "lost": 0,
+          "sold": 19,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": 1.07,
+          "won": 9,
+          "lost": 0,
+          "sold": 6,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 69.5,
+          "won": 32,
+          "lost": 0,
+          "sold": 31,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 19.71,
+          "won": 33,
+          "lost": 0,
+          "sold": 54,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -39.67,
+          "won": 31,
+          "lost": 1,
+          "sold": 57,
+          "trades": 89
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": -9.11,
+          "won": 32,
+          "lost": 0,
+          "sold": 53,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 108.24,
+          "won": 45,
+          "lost": 0,
+          "sold": 42,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 11.71,
+          "won": 28,
+          "lost": 0,
+          "sold": 48,
+          "trades": 76
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -34.44,
+          "won": 21,
+          "lost": 0,
+          "sold": 26,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": 64.64,
+          "won": 34,
+          "lost": 1,
+          "sold": 36,
+          "trades": 71
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 26.39,
+          "won": 7,
+          "lost": 0,
+          "sold": 5,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 39.6,
+          "pnl": 176.04,
+          "won": 242,
+          "lost": 369,
+          "n": 611
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 48.2,
+          "pnl": 105.55,
+          "won": 55,
+          "lost": 59,
+          "n": 114
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 47.7,
+          "pnl": 15.91,
+          "won": 63,
+          "lost": 69,
+          "n": 132
+        }
+      ],
+      "exitsSold": 495
+    },
+    "exit-ratio0p25_drop0p05_n2": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 55.38,
+          "won": 22,
+          "lost": 0,
+          "sold": 25,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 33.89,
+          "won": 20,
+          "lost": 0,
+          "sold": 41,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -41.96,
+          "won": 23,
+          "lost": 0,
+          "sold": 63,
+          "trades": 86
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 36.5,
+          "won": 13,
+          "lost": 0,
+          "sold": 18,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": -2.64,
+          "won": 7,
+          "lost": 0,
+          "sold": 8,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 66.35,
+          "won": 30,
+          "lost": 0,
+          "sold": 33,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 28.91,
+          "won": 30,
+          "lost": 0,
+          "sold": 57,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -24.62,
+          "won": 30,
+          "lost": 1,
+          "sold": 58,
+          "trades": 89
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 28.27,
+          "won": 29,
+          "lost": 0,
+          "sold": 56,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 88.61,
+          "won": 41,
+          "lost": 0,
+          "sold": 46,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 5.08,
+          "won": 24,
+          "lost": 0,
+          "sold": 52,
+          "trades": 76
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -42.42,
+          "won": 19,
+          "lost": 1,
+          "sold": 27,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": 13.62,
+          "won": 26,
+          "lost": 0,
+          "sold": 45,
+          "trades": 71
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 21.55,
+          "won": 6,
+          "lost": 0,
+          "sold": 6,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 35.5,
+          "pnl": 172.25,
+          "won": 217,
+          "lost": 394,
+          "n": 611
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 41.2,
+          "pnl": 81.39,
+          "won": 47,
+          "lost": 67,
+          "n": 114
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 42.4,
+          "pnl": 12.88,
+          "won": 56,
+          "lost": 76,
+          "n": 132
+        }
+      ],
+      "exitsSold": 535
+    },
+    "exit-ratio0p25_drop0p05_n3": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 34.22,
+          "won": 24,
+          "lost": 0,
+          "sold": 23,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 35.63,
+          "won": 26,
+          "lost": 0,
+          "sold": 35,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -11.31,
+          "won": 37,
+          "lost": 1,
+          "sold": 48,
+          "trades": 86
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 58.66,
+          "won": 17,
+          "lost": 0,
+          "sold": 14,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": 19.82,
+          "won": 10,
+          "lost": 0,
+          "sold": 5,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 83.61,
+          "won": 36,
+          "lost": 0,
+          "sold": 27,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 40.52,
+          "won": 40,
+          "lost": 0,
+          "sold": 47,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -55.05,
+          "won": 36,
+          "lost": 1,
+          "sold": 52,
+          "trades": 89
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 4.13,
+          "won": 37,
+          "lost": 0,
+          "sold": 48,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 100.01,
+          "won": 48,
+          "lost": 0,
+          "sold": 39,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 8.53,
+          "won": 32,
+          "lost": 0,
+          "sold": 44,
+          "trades": 76
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -87.27,
+          "won": 21,
+          "lost": 5,
+          "sold": 21,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": 22.85,
+          "won": 37,
+          "lost": 1,
+          "sold": 33,
+          "trades": 71
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 25.82,
+          "won": 8,
+          "lost": 0,
+          "sold": 4,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 44.5,
+          "pnl": 117.19,
+          "won": 272,
+          "lost": 339,
+          "n": 611
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 55.3,
+          "pnl": 117.41,
+          "won": 63,
+          "lost": 51,
+          "n": 114
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 56.1,
+          "pnl": 45.57,
+          "won": 74,
+          "lost": 58,
+          "n": 132
+        }
+      ],
+      "exitsSold": 440
+    },
+    "exit-ratio0p5_drop0p03_n2": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 77.12,
+          "won": 23,
+          "lost": 0,
+          "sold": 24,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 14.68,
+          "won": 18,
+          "lost": 0,
+          "sold": 43,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -41.51,
+          "won": 23,
+          "lost": 0,
+          "sold": 63,
+          "trades": 86
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 21.52,
+          "won": 12,
+          "lost": 0,
+          "sold": 19,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": -5.46,
+          "won": 6,
+          "lost": 0,
+          "sold": 9,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 76.46,
+          "won": 29,
+          "lost": 0,
+          "sold": 34,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 8.99,
+          "won": 28,
+          "lost": 0,
+          "sold": 59,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -38.12,
+          "won": 25,
+          "lost": 1,
+          "sold": 63,
+          "trades": 89
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 9.75,
+          "won": 27,
+          "lost": 0,
+          "sold": 58,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 84.54,
+          "won": 40,
+          "lost": 0,
+          "sold": 47,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 13.83,
+          "won": 23,
+          "lost": 0,
+          "sold": 53,
+          "trades": 76
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -26.4,
+          "won": 20,
+          "lost": 0,
+          "sold": 27,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": 26.41,
+          "won": 25,
+          "lost": 0,
+          "sold": 46,
+          "trades": 71
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 31.69,
+          "won": 8,
+          "lost": 0,
+          "sold": 4,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 34.2,
+          "pnl": 188.73,
+          "won": 209,
+          "lost": 402,
+          "n": 611
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 41.2,
+          "pnl": 74.69,
+          "won": 47,
+          "lost": 67,
+          "n": 114
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 38.6,
+          "pnl": -9.92,
+          "won": 51,
+          "lost": 81,
+          "n": 132
+        }
+      ],
+      "exitsSold": 549
+    },
+    "exit-ratio0p5_drop0p03_n3": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 53.48,
+          "won": 24,
+          "lost": 0,
+          "sold": 23,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 48.12,
+          "won": 27,
+          "lost": 0,
+          "sold": 34,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -48.11,
+          "won": 32,
+          "lost": 0,
+          "sold": 54,
+          "trades": 86
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 23.76,
+          "won": 14,
+          "lost": 0,
+          "sold": 17,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": -2.46,
+          "won": 9,
+          "lost": 0,
+          "sold": 6,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 76.86,
+          "won": 34,
+          "lost": 0,
+          "sold": 29,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 54.42,
+          "won": 41,
+          "lost": 0,
+          "sold": 46,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -29.68,
+          "won": 35,
+          "lost": 1,
+          "sold": 53,
+          "trades": 89
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": -1.9,
+          "won": 35,
+          "lost": 0,
+          "sold": 50,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 100.34,
+          "won": 48,
+          "lost": 0,
+          "sold": 39,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 15.9,
+          "won": 30,
+          "lost": 0,
+          "sold": 46,
+          "trades": 76
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -42.09,
+          "won": 22,
+          "lost": 1,
+          "sold": 24,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": 61.81,
+          "won": 36,
+          "lost": 1,
+          "sold": 34,
+          "trades": 71
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 34.73,
+          "won": 9,
+          "lost": 0,
+          "sold": 3,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 42.4,
+          "pnl": 168.39,
+          "won": 259,
+          "lost": 352,
+          "n": 611
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 56.1,
+          "pnl": 132.85,
+          "won": 64,
+          "lost": 50,
+          "n": 114
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 55.3,
+          "pnl": 43.94,
+          "won": 73,
+          "lost": 59,
+          "n": 132
+        }
+      ],
+      "exitsSold": 458
+    },
+    "exit-ratio0p5_drop0p05_n2": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 63.04,
+          "won": 24,
+          "lost": 0,
+          "sold": 23,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 52.63,
+          "won": 25,
+          "lost": 0,
+          "sold": 36,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -60.37,
+          "won": 27,
+          "lost": 0,
+          "sold": 59,
+          "trades": 86
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 57.33,
+          "won": 17,
+          "lost": 0,
+          "sold": 14,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": 0.83,
+          "won": 8,
+          "lost": 0,
+          "sold": 7,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 73.22,
+          "won": 33,
+          "lost": 0,
+          "sold": 30,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 1.71,
+          "won": 36,
+          "lost": 1,
+          "sold": 50,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -52.94,
+          "won": 33,
+          "lost": 1,
+          "sold": 55,
+          "trades": 89
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 7.2,
+          "won": 30,
+          "lost": 0,
+          "sold": 55,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 112.38,
+          "won": 47,
+          "lost": 0,
+          "sold": 40,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 29.92,
+          "won": 28,
+          "lost": 0,
+          "sold": 48,
+          "trades": 76
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -49.85,
+          "won": 21,
+          "lost": 1,
+          "sold": 25,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": 13.09,
+          "won": 30,
+          "lost": 0,
+          "sold": 41,
+          "trades": 71
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 29.67,
+          "won": 9,
+          "lost": 0,
+          "sold": 3,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 40.3,
+          "pnl": 133.93,
+          "won": 246,
+          "lost": 365,
+          "n": 611
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 46.5,
+          "pnl": 87.44,
+          "won": 53,
+          "lost": 61,
+          "n": 114
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 52.3,
+          "pnl": 56.49,
+          "won": 69,
+          "lost": 63,
+          "n": 132
+        }
+      ],
+      "exitsSold": 486
+    },
+    "exit-ratio0p5_drop0p05_n3": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 46.04,
+          "won": 26,
+          "lost": 0,
+          "sold": 21,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 53.55,
+          "won": 32,
+          "lost": 0,
+          "sold": 29,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -34.42,
+          "won": 41,
+          "lost": 1,
+          "sold": 44,
+          "trades": 86
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 74.05,
+          "won": 20,
+          "lost": 0,
+          "sold": 11,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": 11.37,
+          "won": 10,
+          "lost": 0,
+          "sold": 5,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 74.38,
+          "won": 37,
+          "lost": 0,
+          "sold": 26,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 38.01,
+          "won": 49,
+          "lost": 2,
+          "sold": 36,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -80.2,
+          "won": 41,
+          "lost": 2,
+          "sold": 46,
+          "trades": 89
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": -0.37,
+          "won": 40,
+          "lost": 0,
+          "sold": 45,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 107.87,
+          "won": 52,
+          "lost": 0,
+          "sold": 35,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 21.64,
+          "won": 37,
+          "lost": 1,
+          "sold": 38,
+          "trades": 76
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -68.41,
+          "won": 24,
+          "lost": 5,
+          "sold": 18,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": -7.21,
+          "won": 38,
+          "lost": 2,
+          "sold": 31,
+          "trades": 71
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 25.08,
+          "won": 9,
+          "lost": 0,
+          "sold": 3,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 49.6,
+          "pnl": 85.21,
+          "won": 303,
+          "lost": 308,
+          "n": 611
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 61.4,
+          "pnl": 128.05,
+          "won": 70,
+          "lost": 44,
+          "n": 114
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 62.9,
+          "pnl": 48.12,
+          "won": 83,
+          "lost": 49,
+          "n": 132
+        }
+      ],
+      "exitsSold": 388
+    },
+    "exit-ratio0p25_drop0p02_n2_LIVE-CONFIGURED": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 54.09,
+          "won": 19,
+          "lost": 0,
+          "sold": 28,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": -7.24,
+          "won": 12,
+          "lost": 0,
+          "sold": 49,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -55.46,
+          "won": 17,
+          "lost": 0,
+          "sold": 69,
+          "trades": 86
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 12.91,
+          "won": 9,
+          "lost": 0,
+          "sold": 22,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": -8.57,
+          "won": 5,
+          "lost": 0,
+          "sold": 10,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 75.31,
+          "won": 26,
+          "lost": 0,
+          "sold": 37,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 15.4,
+          "won": 24,
+          "lost": 0,
+          "sold": 63,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -16.79,
+          "won": 22,
+          "lost": 1,
+          "sold": 66,
+          "trades": 89
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 23.21,
+          "won": 26,
+          "lost": 0,
+          "sold": 59,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 91.99,
+          "won": 34,
+          "lost": 0,
+          "sold": 53,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": -20.38,
+          "won": 16,
+          "lost": 0,
+          "sold": 60,
+          "trades": 76
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -4.74,
+          "won": 18,
+          "lost": 0,
+          "sold": 29,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": -11.66,
+          "won": 17,
+          "lost": 0,
+          "sold": 54,
+          "trades": 71
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 9.48,
+          "won": 4,
+          "lost": 0,
+          "sold": 8,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 28.5,
+          "pnl": 137.92,
+          "won": 174,
+          "lost": 437,
+          "n": 611
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 31.6,
+          "pnl": 37.99,
+          "won": 36,
+          "lost": 78,
+          "n": 114
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 29.5,
+          "pnl": -18.36,
+          "won": 39,
+          "lost": 93,
+          "n": 132
+        }
+      ],
+      "exitsSold": 607
+    },
+    "exit-ratio0p25_drop0p05_n3_loss-only-off": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 39.26,
+          "won": 23,
+          "lost": 0,
+          "sold": 24,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 40.72,
+          "won": 25,
+          "lost": 0,
+          "sold": 36,
+          "trades": 61
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -21.76,
+          "won": 32,
+          "lost": 1,
+          "sold": 53,
+          "trades": 86
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 56.93,
+          "won": 16,
+          "lost": 0,
+          "sold": 15,
+          "trades": 31
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": 13.18,
+          "won": 9,
+          "lost": 0,
+          "sold": 6,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 74.73,
+          "won": 33,
+          "lost": 0,
+          "sold": 30,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 34.33,
+          "won": 36,
+          "lost": 0,
+          "sold": 51,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -65.57,
+          "won": 33,
+          "lost": 1,
+          "sold": 55,
+          "trades": 89
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 3.97,
+          "won": 34,
+          "lost": 0,
+          "sold": 51,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 101.78,
+          "won": 47,
+          "lost": 0,
+          "sold": 40,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 1.37,
+          "won": 29,
+          "lost": 0,
+          "sold": 47,
+          "trades": 76
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -98.01,
+          "won": 17,
+          "lost": 5,
+          "sold": 25,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": 25.94,
+          "won": 35,
+          "lost": 1,
+          "sold": 35,
+          "trades": 71
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 26.67,
+          "won": 8,
+          "lost": 0,
+          "sold": 4,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 48.9,
+          "pnl": 83.24,
+          "won": 299,
+          "lost": 303,
+          "n": 611
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 59.6,
+          "pnl": 107.01,
+          "won": 68,
+          "lost": 44,
+          "n": 114
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 59.1,
+          "pnl": 43.29,
+          "won": 78,
+          "lost": 53,
+          "n": 132
+        }
+      ],
+      "exitsSold": 472
+    },
+    "exit-ratio0p25_drop0p05_n3_switch-on": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": -61.27,
+          "won": 18,
+          "lost": 9,
+          "sold": 14,
+          "trades": 41
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 52,
+          "pnl": 25.43,
+          "won": 13,
+          "lost": 12,
+          "n": 25
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 50,
+          "pnl": 0.88,
+          "won": 1,
+          "lost": 1,
+          "n": 2
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 66.7,
+          "pnl": 3.72,
+          "won": 2,
+          "lost": 1,
+          "n": 3
+        },
+        {
+          "bucket": "lt-0.65",
+          "wrPct": 18.2,
+          "pnl": -91.3,
+          "won": 2,
+          "lost": 9,
+          "n": 11
+        }
+      ],
+      "exitsSold": 14
+    },
+    "whipsaw-pause3x8_band-opt": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 143.92,
+          "won": 41,
+          "lost": 6,
+          "sold": 0,
+          "trades": 47
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 46.32,
+          "won": 42,
+          "lost": 12,
+          "sold": 0,
+          "trades": 54
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -46.65,
+          "won": 57,
+          "lost": 23,
+          "sold": 0,
+          "trades": 80
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 82.93,
+          "won": 25,
+          "lost": 4,
+          "sold": 0,
+          "trades": 29
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": 19.61,
+          "won": 12,
+          "lost": 3,
+          "sold": 0,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 46.9,
+          "won": 49,
+          "lost": 14,
+          "sold": 0,
+          "trades": 63
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 120.94,
+          "won": 70,
+          "lost": 17,
+          "sold": 0,
+          "trades": 87
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -163.22,
+          "won": 35,
+          "lost": 23,
+          "sold": 0,
+          "trades": 58
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 123.03,
+          "won": 68,
+          "lost": 17,
+          "sold": 0,
+          "trades": 85
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": -5.09,
+          "won": 58,
+          "lost": 21,
+          "sold": 0,
+          "trades": 79
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 43.86,
+          "won": 52,
+          "lost": 16,
+          "sold": 0,
+          "trades": 68
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -113.34,
+          "won": 28,
+          "lost": 17,
+          "sold": 0,
+          "trades": 45
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": -8.16,
+          "won": 42,
+          "lost": 15,
+          "sold": 0,
+          "trades": 57
+        },
+        {
+          "day": "2026-09-21",
+          "pnl": 58.27,
+          "won": 12,
+          "lost": 0,
+          "sold": 0,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 72.9,
+          "pnl": 201.57,
+          "won": 403,
+          "lost": 150,
+          "n": 553
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 82.1,
+          "pnl": 117.27,
+          "won": 87,
+          "lost": 19,
+          "n": 106
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 84.2,
+          "pnl": 30.48,
+          "won": 101,
+          "lost": 19,
+          "n": 120
+        }
+      ],
+      "exitsSold": 0
+    },
+    "whipsaw-maxIntraFlips4_band-opt": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 61.44,
+          "won": 17,
+          "lost": 2,
+          "sold": 0,
+          "trades": 19
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 36.79,
+          "won": 23,
+          "lost": 5,
+          "sold": 0,
+          "trades": 28
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -33.68,
+          "won": 32,
+          "lost": 13,
+          "sold": 0,
+          "trades": 45
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 16.36,
+          "won": 12,
+          "lost": 3,
+          "sold": 0,
+          "trades": 15
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": 16.22,
+          "won": 9,
+          "lost": 2,
+          "sold": 0,
+          "trades": 11
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 48.87,
+          "won": 30,
+          "lost": 7,
+          "sold": 0,
+          "trades": 37
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": 21.52,
+          "won": 38,
+          "lost": 11,
+          "sold": 0,
+          "trades": 49
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -163.71,
+          "won": 33,
+          "lost": 22,
+          "sold": 0,
+          "trades": 55
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 7.55,
+          "won": 34,
+          "lost": 11,
+          "sold": 0,
+          "trades": 45
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 19.06,
+          "won": 34,
+          "lost": 10,
+          "sold": 0,
+          "trades": 44
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 39.66,
+          "won": 31,
+          "lost": 8,
+          "sold": 0,
+          "trades": 39
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -104.97,
+          "won": 16,
+          "lost": 12,
+          "sold": 0,
+          "trades": 28
+        },
+        {
+          "day": "2026-09-20",
+          "pnl": -29.06,
+          "won": 3,
+          "lost": 3,
+          "sold": 0,
+          "trades": 6
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 69.7,
+          "pnl": -73.09,
+          "won": 168,
+          "lost": 73,
+          "n": 241
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 80.5,
+          "pnl": 62.64,
+          "won": 66,
+          "lost": 16,
+          "n": 82
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 79.6,
+          "pnl": -53.5,
+          "won": 78,
+          "lost": 20,
+          "n": 98
+        }
+      ],
+      "exitsSold": 0
+    },
+    "whipsaw-maxScore40_band-opt": {
+      "days": [
+        {
+          "day": "2026-09-08",
+          "pnl": 31.06,
+          "won": 8,
+          "lost": 1,
+          "sold": 0,
+          "trades": 9
+        },
+        {
+          "day": "2026-09-09",
+          "pnl": 25.67,
+          "won": 5,
+          "lost": 0,
+          "sold": 0,
+          "trades": 5
+        },
+        {
+          "day": "2026-09-10",
+          "pnl": -31.61,
+          "won": 5,
+          "lost": 4,
+          "sold": 0,
+          "trades": 9
+        },
+        {
+          "day": "2026-09-11",
+          "pnl": 19.22,
+          "won": 7,
+          "lost": 1,
+          "sold": 0,
+          "trades": 8
+        },
+        {
+          "day": "2026-09-12",
+          "pnl": 14.2,
+          "won": 3,
+          "lost": 0,
+          "sold": 0,
+          "trades": 3
+        },
+        {
+          "day": "2026-09-13",
+          "pnl": 66.23,
+          "won": 18,
+          "lost": 2,
+          "sold": 0,
+          "trades": 20
+        },
+        {
+          "day": "2026-09-14",
+          "pnl": -18.88,
+          "won": 2,
+          "lost": 2,
+          "sold": 0,
+          "trades": 4
+        },
+        {
+          "day": "2026-09-15",
+          "pnl": -8.88,
+          "won": 1,
+          "lost": 1,
+          "sold": 0,
+          "trades": 2
+        },
+        {
+          "day": "2026-09-16",
+          "pnl": 5.72,
+          "won": 10,
+          "lost": 3,
+          "sold": 0,
+          "trades": 13
+        },
+        {
+          "day": "2026-09-17",
+          "pnl": 21.8,
+          "won": 4,
+          "lost": 0,
+          "sold": 0,
+          "trades": 4
+        },
+        {
+          "day": "2026-09-18",
+          "pnl": 61.26,
+          "won": 17,
+          "lost": 2,
+          "sold": 0,
+          "trades": 19
+        },
+        {
+          "day": "2026-09-19",
+          "pnl": -43.59,
+          "won": 7,
+          "lost": 5,
+          "sold": 0,
+          "trades": 12
+        }
+      ],
+      "buckets": [
+        {
+          "bucket": "0.70-0.75",
+          "wrPct": 75.7,
+          "pnl": 65.45,
+          "won": 53,
+          "lost": 17,
+          "n": 70
+        },
+        {
+          "bucket": "0.75-0.80",
+          "wrPct": 95.2,
+          "pnl": 77.3,
+          "won": 20,
+          "lost": 1,
+          "n": 21
+        },
+        {
+          "bucket": "0.80+",
+          "wrPct": 82.4,
+          "pnl": -0.55,
+          "won": 14,
+          "lost": 3,
+          "n": 17
+        }
+      ],
+      "exitsSold": 0
+    }
+  }
+}

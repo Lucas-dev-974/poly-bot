@@ -1,0 +1,85 @@
+{
+  "note": "Offline. Live config re-fetched 2026-09-21 07:31 UTC (band 0.68-0.82, inverse ON ratio2/2usdc). vs BEST at live sizing.",
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 903,
+  "rows": [
+    {
+      "label": "L1_live-asis (bande 0.68-0.82 + inverse ON ratio2/2u)",
+      "ms": 142572,
+      "pnl": -23.3,
+      "pnlPct": -31.07,
+      "fills": 1684,
+      "rejects": 1,
+      "windows": 903,
+      "trades": 861,
+      "wins": 667,
+      "losses": 179,
+      "wr": 77.5,
+      "maxDd": 49.5,
+      "worst": -4.1,
+      "pnlPerDd": -0.471,
+      "inverse": {
+        "inverseFills": 823,
+        "inversePnl": -105.75,
+        "inverseWr": 12.5
+      }
+    },
+    {
+      "label": "L2_live-asis-sans-inverse",
+      "ms": 82433,
+      "pnl": 82.45,
+      "pnlPct": 109.93,
+      "fills": 861,
+      "rejects": 1,
+      "windows": 903,
+      "trades": 861,
+      "wins": 633,
+      "losses": 228,
+      "wr": 73.5,
+      "maxDd": 60,
+      "worst": -4.1,
+      "pnlPerDd": 1.374,
+      "inverse": {
+        "inverseFills": 0,
+        "inversePnl": 0,
+        "inverseWr": 0
+      }
+    },
+    {
+      "label": "BEST_band-0.68-0.82_min200_noMax_pause_inverse-off",
+      "ms": 85891,
+      "pnl": 122.06,
+      "pnlPct": 162.75,
+      "fills": 794,
+      "rejects": 0,
+      "windows": 903,
+      "trades": 794,
+      "wins": 596,
+      "losses": 198,
+      "wr": 75.1,
+      "maxDd": 42,
+      "worst": -4.1,
+      "pnlPerDd": 2.906
+    },
+    {
+      "label": "BEST+min180-max600 (garde timing live, pause, inverse off)",
+      "ms": 91804,
+      "pnl": 95.8,
+      "pnlPct": 127.73,
+      "fills": 762,
+      "rejects": 1,
+      "windows": 903,
+      "trades": 762,
+      "wins": 565,
+      "losses": 197,
+      "wr": 74.1,
+      "maxDd": 45.2,
+      "worst": -4.1,
+      "pnlPerDd": 2.119
+    }
+  ]
+}

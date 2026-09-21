@@ -7,6 +7,7 @@ import type {
   MarketView,
   PolymarketPosition,
   PricePoint,
+  SimulatedPosition,
   StrategyId,
   TokenBook,
   TradePoint,
@@ -86,6 +87,47 @@ export function marketToChartTarget(m: MarketView): ChartTarget {
     outcomeIndex: null,
     windowStart: m.windowStart,
     windowEnd: m.windowEnd,
+  };
+}
+
+/**
+ * Position bot (SimulatedPosition) → ChartTarget. Les tokens Up/Down et les
+ * labels d'outcome sont résolus depuis le book live du store markets (même
+ * eventSlug) ; à défaut, seule la jambe cliquée est connue. Le conditionId est
+ * retrouvé via la liste des positions Polymarket (match par tokenId) pour
+ * activer les trades Data API. Le prix actuel / P&L sont dérivés du bid live.
+ */
+export function simulatedPositionToChartTarget(p: SimulatedPosition): ChartTarget {
+  const market = markets[p.eventSlug];
+  const upBook = market?.books.find((b) => b.outcomeIndex === 0);
+  const downBook = market?.books.find((b) => b.outcomeIndex === 1);
+  const clickedIsUp = p.outcomeIndex === 0;
+  const upTokenId = upBook?.tokenId ?? (clickedIsUp ? p.tokenId : undefined);
+  const downTokenId = downBook?.tokenId ?? (clickedIsUp ? undefined : p.tokenId);
+  const clickedBook = market?.books.find((b) => b.tokenId === p.tokenId);
+  const curPrice = clickedBook?.bestBid ?? clickedBook?.bestAsk ?? null;
+  const cost = p.cost > 0 ? p.cost : p.fillPrice * p.size;
+  const cashPnl = curPrice != null ? (curPrice - p.fillPrice) * p.size : undefined;
+  const parsed = parseSlugWindow(p.eventSlug);
+  return {
+    title: p.eventTitle,
+    slug: p.eventSlug,
+    conditionId: polyPositions.find((x) => x.asset === p.tokenId)?.conditionId ?? "",
+    upTokenId: upTokenId ?? "",
+    downTokenId,
+    upOutcome: upBook?.outcome ?? (clickedIsUp ? p.outcome : "Up"),
+    downOutcome: downBook?.outcome ?? (clickedIsUp ? "Down" : p.outcome),
+    outcomeIndex: p.outcomeIndex,
+    windowStart: parsed?.start,
+    windowEnd: parsed?.end ?? p.windowEnd,
+    avgPrice: p.fillPrice,
+    curPrice: curPrice ?? undefined,
+    size: p.size,
+    cost,
+    cashPnl,
+    percentPnl: cashPnl != null && cost > 0 ? (cashPnl / cost) * 100 : undefined,
+    currentValue: curPrice != null ? curPrice * p.size : undefined,
+    closed: false,
   };
 }
 

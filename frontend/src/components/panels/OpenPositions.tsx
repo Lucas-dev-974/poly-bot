@@ -5,19 +5,24 @@ import { EmptyState } from "../ui/EmptyState";
 import { Panel } from "../ui/Panel";
 import { markets } from "../../stores/marketStore";
 import { openPositionList } from "../../stores/positionStore";
-import { currentBidForPosition, marketCoverage } from "../../utils/helpers";
+import { currentQuotesForPosition, marketCoverage } from "../../utils/helpers";
 import { countdown, fmtPrice, fmtUsd } from "../../utils/format";
+import { MarketHistoryModal, simulatedPositionToChartTarget } from "../modals/MarketHistoryModal";
 import type { SimulatedPosition } from "../../types";
 
-// PNL latent pour une position : (bid courant - fillPrice) × size.
+// PNL latent + quotes du token d'une position : (bid courant - fillPrice) × size.
 // Doit être un createMemo pour rester réactif aux mises à jour du book.
 function usePositionPnl(
   position: SimulatedPosition,
-): () => { bid: number | null; pnl: number | null } {
+): () => {
+  bid: number | null;
+  ask: number | null;
+  pnl: number | null;
+} {
   return createMemo(() => {
-    const bid = currentBidForPosition(markets, position);
-    if (bid == null) return { bid: null, pnl: null };
-    return { bid, pnl: (bid - position.fillPrice) * position.size };
+    const { bid, ask } = currentQuotesForPosition(markets, position);
+    if (bid == null) return { bid, ask, pnl: null };
+    return { bid, ask, pnl: (bid - position.fillPrice) * position.size };
   });
 }
 
@@ -27,6 +32,8 @@ export function OpenPositions(props: {
   closingId?: string | null;
 }): JSX.Element {
   const positions = createMemo(() => openPositionList());
+
+  const [chartPosition, setChartPosition] = createSignal<SimulatedPosition | null>(null);
 
   const byMarket = createMemo(() => {
     const map = new Map<string, {
@@ -53,7 +60,7 @@ export function OpenPositions(props: {
     let total = 0;
     for (const m of byMarket()) {
       for (const p of m.positions) {
-        const bid = currentBidForPosition(markets, p);
+        const bid = currentQuotesForPosition(markets, p).bid;
         if (bid != null) total += (bid - p.fillPrice) * p.size;
       }
     }
@@ -65,7 +72,7 @@ export function OpenPositions(props: {
     for (const m of byMarket()) {
       let pnl = 0;
       for (const p of m.positions) {
-        const bid = currentBidForPosition(markets, p);
+        const bid = currentQuotesForPosition(markets, p).bid;
         if (bid != null) pnl += (bid - p.fillPrice) * p.size;
       }
       map.set(m.slug, pnl);
@@ -74,111 +81,135 @@ export function OpenPositions(props: {
   });
 
   return (
-    <Panel title="Positions ouvertes" full>
-      <Show
-        when={positions().length > 0}
-        fallback={<EmptyState text="Aucune position ouverte." />}
-      >
-        <div class="market-cards">
-          <For each={byMarket()}>
-            {(m) => {
-              const pnlMap = createMemo(() => marketPnls().get(m.slug) ?? 0);
-              return (
-                <div class="market-card">
-                  <div class="mc-head">
-                    <span class="mc-title">
-                      <a
-                        class="market-link"
-                        href={`https://polymarket.com/event/${encodeURIComponent(m.slug)}`}
-                        target="_blank"
-                        rel="noopener"
-                      >
-                        {m.title}
-                      </a>
-                    </span>
-                    <Badge variant={marketCoverage(m.positions) === "couvert" ? "couvert" : "partiel"}>
-                      {marketCoverage(m.positions)}
-                    </Badge>
-                    <span class="countdown">
-                      {m.windowEnd * 1000 <= props.now
-                        ? "Résolution…"
-                        : countdown(m.windowEnd, props.now)}
-                    </span>
-                  </div>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Outcome</th>
-                        <th>Type</th>
-                        <th>Moteur</th>
-                        <th>Fill</th>
-                        <th>Taille</th>
-                        <th>Coût</th>
-                        <th>PNL latent</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <For each={m.positions}>
-                        {(p) => {
-                          const pnlInfo = usePositionPnl(p);
-                          const busy = () => props.closingId === p.id;
-                          return (
-                            <tr>
-                              <td>{p.outcome}</td>
-                              <td>
-                                <Badge variant={p.kind}>
-                                  {p.orderType ? `${p.orderType} - ${p.kind}` : p.kind}
-                                </Badge>
-                              </td>
-                              <td>{p.strategyId ?? "—"}</td>
-                              <td>{fmtPrice(p.fillPrice)}</td>
-                              <td>{p.size}</td>
-                              <td>{fmtUsd(p.cost)}</td>
-                              <td>
-                                <Show
-                                  when={pnlInfo().pnl != null}
-                                  fallback={<span class="muted">—</span>}
-                                >
-                                  <span class={pnlInfo().pnl! >= 0 ? "ok" : "err"}>
-                                    {fmtUsd(pnlInfo().pnl)}
-                                  </span>
-                                </Show>
-                              </td>
-                              <td>
-                                <Show when={props.onClosePosition}>
-                                  <button
-                                    class="btn"
-                                    type="button"
-                                    disabled={busy()}
-                                    onClick={() => props.onClosePosition?.(p)}
+    <>
+      <Panel title="Positions ouvertes" full>
+        <Show
+          when={positions().length > 0}
+          fallback={<EmptyState text="Aucune position ouverte." />}
+        >
+          <div class="market-cards">
+            <For each={byMarket()}>
+              {(m) => {
+                const pnlMap = createMemo(() => marketPnls().get(m.slug) ?? 0);
+                return (
+                  <div class="market-card">
+                    <div class="mc-head">
+                      <span class="mc-title">
+                        <a
+                          class="market-link"
+                          href={`https://polymarket.com/event/${encodeURIComponent(m.slug)}`}
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          {m.title}
+                        </a>
+                      </span>
+                      <Badge variant={marketCoverage(m.positions) === "couvert" ? "couvert" : "partiel"}>
+                        {marketCoverage(m.positions)}
+                      </Badge>
+                      <span class="countdown">
+                        {m.windowEnd * 1000 <= props.now
+                          ? "Résolution…"
+                          : countdown(m.windowEnd, props.now)}
+                      </span>
+                    </div>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Outcome</th>
+                          <th>Type</th>
+                          <th>Moteur</th>
+                          <th>Fill</th>
+                          <th>Taille</th>
+                          <th>Bid</th>
+                          <th>Ask</th>
+                          <th>Coût</th>
+                          <th>PNL latent</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <For each={m.positions}>
+                          {(p) => {
+                            const pnlInfo = usePositionPnl(p);
+                            const busy = () => props.closingId === p.id;
+                            return (
+                              <tr>
+                                <td>{p.outcome}</td>
+                                <td>
+                                  <Badge variant={p.kind}>
+                                    {p.orderType ? `${p.orderType} - ${p.kind}` : p.kind}
+                                  </Badge>
+                                </td>
+                                <td>{p.strategyId ?? "—"}</td>
+                                <td>{fmtPrice(p.fillPrice)}</td>
+                                <td>{p.size}</td>
+                                <td>{fmtPrice(pnlInfo().bid)}</td>
+                                <td>{fmtPrice(pnlInfo().ask)}</td>
+                                <td>{fmtUsd(p.cost)}</td>
+                                <td>
+                                  <Show
+                                    when={pnlInfo().pnl != null}
+                                    fallback={<span class="muted">—</span>}
                                   >
-                                    {busy() ? "…" : "Fermer"}
-                                  </button>
-                                </Show>
-                              </td>
-                            </tr>
-                          );
-                        }}
-                      </For>
-                    </tbody>
-                  </table>
-                  <div class="mc-total">
-                    Coût {fmtUsd(m.positions.reduce((s, p) => s + p.cost, 0))} · PNL latent{" "}
-                    <span class={pnlMap() >= 0 ? "ok" : "err"}>
-                      {fmtUsd(pnlMap())}
-                    </span>
+                                    <span class={pnlInfo().pnl! >= 0 ? "ok" : "err"}>
+                                      {fmtUsd(pnlInfo().pnl)}
+                                    </span>
+                                  </Show>
+                                </td>
+                                <td>
+                                  <span class="poly-action-cell">
+                                    <button
+                                      class="chart-btn"
+                                      type="button"
+                                      title="Voir le graphique du marché"
+                                      onClick={() => setChartPosition(p)}
+                                    >
+                                      📊
+                                    </button>
+                                    <Show when={props.onClosePosition}>
+                                      <button
+                                        class="btn"
+                                        type="button"
+                                        disabled={busy()}
+                                        onClick={() => props.onClosePosition?.(p)}
+                                      >
+                                        {busy() ? "…" : "Fermer"}
+                                      </button>
+                                    </Show>
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          }}
+                        </For>
+                      </tbody>
+                    </table>
+                    <div class="mc-total">
+                      Coût {fmtUsd(m.positions.reduce((s, p) => s + p.cost, 0))} · PNL latent{" "}
+                      <span class={pnlMap() >= 0 ? "ok" : "err"}>
+                        {fmtUsd(pnlMap())}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              );
-            }}
-          </For>
-        </div>
-        <div class="orders-total">
-          PNL latent total :{" "}
-          <span class={totalPnl() >= 0 ? "ok" : "err"}>{fmtUsd(totalPnl())}</span>
-        </div>
+                );
+              }}
+            </For>
+          </div>
+          <div class="orders-total">
+            PNL latent total :{" "}
+            <span class={totalPnl() >= 0 ? "ok" : "err"}>{fmtUsd(totalPnl())}</span>
+          </div>
+        </Show>
+      </Panel>
+      <Show when={chartPosition()}>
+        {(p) => (
+          <MarketHistoryModal
+            target={simulatedPositionToChartTarget(p())}
+            onClose={() => setChartPosition(null)}
+          />
+        )}
       </Show>
-    </Panel>
+    </>
   );
 }

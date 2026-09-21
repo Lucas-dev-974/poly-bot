@@ -7,14 +7,26 @@ export function marketCoverage(positions: SimulatedPosition[]): "couvert" | "par
   return covered ? "couvert" : "partiel";
 }
 
+/** Quotes L1 du token d'une position, depuis le book live du store markets. */
+export interface PositionQuotes {
+  bid: number | null;
+  ask: number | null;
+}
+
+export function currentQuotesForPosition(
+  markets: Record<string, MarketView>,
+  position: SimulatedPosition,
+): PositionQuotes {
+  const m = markets[position.eventSlug];
+  const book = m?.books.find((b) => b.tokenId === position.tokenId);
+  return { bid: book?.bestBid ?? null, ask: book?.bestAsk ?? null };
+}
+
 export function currentBidForPosition(
   markets: Record<string, MarketView>,
   position: SimulatedPosition,
 ): number | null {
-  const m = markets[position.eventSlug];
-  if (!m) return null;
-  const book = m.books.find((b) => b.tokenId === position.tokenId);
-  return book ? book.bestBid : null;
+  return currentQuotesForPosition(markets, position).bid;
 }
 
 export function reasonLabel(reason?: string): string {

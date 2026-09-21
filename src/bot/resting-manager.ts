@@ -589,7 +589,10 @@ export class RestingManager {
     if (position.size < MIN_CLOB_SHARES) {
       return {
         ok: false,
-        error: `Taille ${position.size} sous le minimum CLOB (${MIN_CLOB_SHARES})`,
+        error:
+          `Taille ${position.size} sous le minimum CLOB (${MIN_CLOB_SHARES} shares) — ` +
+          "le venue refuse tout ordre (vente impossible même si l'investi dépasse $1). " +
+          "La position sera soldée automatiquement à la résolution (auto-redeem : gagnant crédité, perdant nettoyé).",
       };
     }
     const freshBook = await this.deps.scanner.getTokenBook(position.tokenId);

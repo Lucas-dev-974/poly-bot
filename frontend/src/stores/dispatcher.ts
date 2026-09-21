@@ -11,6 +11,7 @@ import { setSimStats } from "../stores/statsStore";
 import { replacePolyPositions } from "../stores/polyStore";
 import { updateRelayerQuota } from "../stores/quotaStore";
 import { addLog } from "../stores/logStore";
+import { pushError } from "./toastStore";
 
 /**
  * Route chaque événement SSE vers les stores correspondants.
@@ -123,6 +124,7 @@ export function dispatchEvent(event: BotEvent): void {
 
     case "error":
       addLog(event.message, undefined, true);
+      pushError(event.message, { group: "bot-error", replaceGroup: true });
       break;
 
     case "log":

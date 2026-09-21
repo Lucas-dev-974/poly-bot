@@ -3,6 +3,7 @@ import type { JSX } from "solid-js";
 import { api } from "../../api/client";
 import { addLog } from "../../stores/logStore";
 import { notifyError } from "../../utils/notifications";
+import { pushError } from "../../stores/toastStore";
 import type {
   MarketRuleRow,
   MarketRulesResponse,
@@ -63,6 +64,7 @@ export function MarketRecordingModal(props: {
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       addLog("Erreur d'ajout : " + msg, undefined, true);
+      pushError(msg, { group: "market-rule-add", replaceGroup: true });
       notifyError("Ajout famille échoué", msg);
     } finally {
       setAdding(false);
@@ -91,6 +93,7 @@ export function MarketRecordingModal(props: {
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       addLog("Erreur de toggle : " + msg, undefined, true);
+      pushError(msg, { group: "market-rule-toggle", replaceGroup: true });
       notifyError("Changement refusé", msg);
     } finally {
       setPendingToggle(null);

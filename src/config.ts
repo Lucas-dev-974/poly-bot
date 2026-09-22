@@ -272,6 +272,21 @@ export interface BotConfig {
   /** Skip entry when intra-window favorite flips >= this (null = off). */
   favBandWhipsawMaxIntraFlips: number | null;
   /**
+   * Cross-book imbalance gate (default off, all three null): require the
+   * 3-level merged imbalance (both tokens, signed toward the bought
+   * favorite) to be >= `favBandImbalanceCrossMin` for
+   * `favBandImbalanceTicks` consecutive samples. Research 2026-09-22 (937
+   * BTC 15m windows, 825 fills): the strongly against-pressure zone
+   * (crossRel < −0.3 persisted) carries the weakest fav-band fills
+   * (~$0.06/trade vs ~$0.20 baseline), so a floor there kept 83% of PnL on
+   * 45% of trades post-hoc. Off by default: calibrate before enabling live.
+   */
+  favBandImbalanceCrossMin: number | null;
+  /** Consecutive tick samples the cross-imbalance condition must hold (default 2). */
+  favBandImbalanceTicks: number | null;
+  /** Skip entry when L1 spread on the favorite ask >= this (null = off). */
+  favBandImbalanceMaxSpread: number | null;
+  /**
    * Deterioration exit (default off): after the entry fill, track the HELD
    * favorite's ask; when it prints `favBandExitConsecutive` confirmed plus-bas
    * (lower lows: each swing >= favBandExitMinLowerHighDrop, frozen by a
@@ -499,6 +514,9 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     favBandWhipsawPauseWindows: 8,
     favBandWhipsawMaxScore: null,
     favBandWhipsawMaxIntraFlips: null,
+    favBandImbalanceCrossMin: null,
+    favBandImbalanceTicks: null,
+    favBandImbalanceMaxSpread: null,
     favBandExitEnabled: false,
     favBandExitMinLowerHighDrop: 0.05,
     favBandExitRetraceRatio: 0.25,
@@ -866,6 +884,35 @@ export function validateConfigCoherence(
         !(config.favBandWhipsawMaxIntraFlips >= 1)
       ) {
         throw new Error("favBandWhipsawMaxIntraFlips must be >= 1 when set");
+      }
+    }
+    if (
+      config.favBandImbalanceCrossMin != null ||
+      config.favBandImbalanceTicks != null ||
+      config.favBandImbalanceMaxSpread != null
+    ) {
+      if (
+        config.favBandImbalanceCrossMin != null &&
+        !(
+          config.favBandImbalanceCrossMin > -1 &&
+          config.favBandImbalanceCrossMin < 1
+        )
+      ) {
+        throw new Error(
+          "favBandImbalanceCrossMin must be in (-1, 1) when set",
+        );
+      }
+      if (
+        config.favBandImbalanceTicks != null &&
+        !(config.favBandImbalanceTicks >= 1)
+      ) {
+        throw new Error("favBandImbalanceTicks must be >= 1 when set");
+      }
+      if (
+        config.favBandImbalanceMaxSpread != null &&
+        !(config.favBandImbalanceMaxSpread > 0)
+      ) {
+        throw new Error("favBandImbalanceMaxSpread must be > 0 when set");
       }
     }
     if (config.favBandExitEnabled) {

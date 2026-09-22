@@ -1,0 +1,76 @@
+{
+  "note": "Phase 2 — REAL in-strategy cross-imbalance gate: baseline BEST fav-band (S1 sizing, cap $20) vs gate variants. Gate: entry only when 3-level merged book pressure signed toward the bought favorite stayed >= CrossMin for Ticks consecutive samples. Same engine/preset path as production.",
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 939,
+  "rows": [
+    {
+      "label": "S1_baseline_no_gate",
+      "ms": 119878,
+      "pnl": 163.66,
+      "fills": 827,
+      "rejects": 0,
+      "tradedWindows": 827,
+      "wr": 75.9,
+      "maxDd": 42,
+      "endEquity": 183.66,
+      "pnlPerTrade": 0.198,
+      "pnlPerDd": 3.897
+    },
+    {
+      "label": "S1_gate_crossMin-0.3_ticks2",
+      "ms": 85740,
+      "pnl": 172.05,
+      "fills": 814,
+      "rejects": 4,
+      "tradedWindows": 814,
+      "wr": 76.3,
+      "maxDd": 39.85,
+      "endEquity": 192.05,
+      "pnlPerTrade": 0.211,
+      "pnlPerDd": 4.317
+    },
+    {
+      "label": "S1_gate_crossMin-0.1_ticks2",
+      "ms": 86697,
+      "pnl": 179.55,
+      "fills": 807,
+      "rejects": 3,
+      "tradedWindows": 807,
+      "wr": 76.7,
+      "maxDd": 34.75,
+      "endEquity": 199.55,
+      "pnlPerTrade": 0.222,
+      "pnlPerDd": 5.167
+    },
+    {
+      "label": "S1_gate_crossMin-0.3_ticks1",
+      "ms": 89872,
+      "pnl": 162.21,
+      "fills": 812,
+      "rejects": 2,
+      "tradedWindows": 812,
+      "wr": 76,
+      "maxDd": 45.25,
+      "endEquity": 182.21,
+      "pnlPerTrade": 0.2,
+      "pnlPerDd": 3.585
+    },
+    {
+      "label": "S1_gate_crossMin-0.3_ticks2_spread0.04",
+      "ms": 98006,
+      "pnl": 175.65,
+      "fills": 813,
+      "rejects": 4,
+      "tradedWindows": 813,
+      "wr": 76.4,
+      "maxDd": 36.2,
+      "endEquity": 195.65,
+      "pnlPerTrade": 0.216,
+      "pnlPerDd": 4.852
+    }
+  ]
+}

@@ -76,6 +76,9 @@ export const EDITABLE_CONFIG_KEYS = [
   "favBandWhipsawPauseWindows",
   "favBandWhipsawMaxScore",
   "favBandWhipsawMaxIntraFlips",
+  "favBandImbalanceCrossMin",
+  "favBandImbalanceTicks",
+  "favBandImbalanceMaxSpread",
   "favBandExitEnabled",
   "favBandExitMinLowerHighDrop",
   "favBandExitRetraceRatio",
@@ -226,6 +229,9 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   favBandWhipsawPauseWindows: "FAV_BAND_WHIPSAW_PAUSE_WINDOWS",
   favBandWhipsawMaxScore: "FAV_BAND_WHIPSAW_MAX_SCORE",
   favBandWhipsawMaxIntraFlips: "FAV_BAND_WHIPSAW_MAX_INTRA_FLIPS",
+  favBandImbalanceCrossMin: "FAV_BAND_IMBALANCE_CROSS_MIN",
+  favBandImbalanceTicks: "FAV_BAND_IMBALANCE_TICKS",
+  favBandImbalanceMaxSpread: "FAV_BAND_IMBALANCE_MAX_SPREAD",
   favBandExitEnabled: "FAV_BAND_EXIT_ENABLED",
   favBandExitMinLowerHighDrop: "FAV_BAND_EXIT_MIN_LOWER_HIGH_DROP",
   favBandExitRetraceRatio: "FAV_BAND_EXIT_RETRACE_RATIO",
@@ -508,6 +514,9 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "favBandWhipsawPauseAfterLosses":
     case "favBandWhipsawMaxScore":
     case "favBandWhipsawMaxIntraFlips":
+    case "favBandImbalanceCrossMin":
+    case "favBandImbalanceTicks":
+    case "favBandImbalanceMaxSpread":
     case "dipRevertMaxElapsedSec":
     case "antiflipMaxElapsedSec":
     case "flipConfirmMaxElapsedSec":
@@ -666,6 +675,9 @@ const FAV_BAND_KEYS: readonly EditableConfigKey[] = [
   "favBandWhipsawPauseWindows",
   "favBandWhipsawMaxScore",
   "favBandWhipsawMaxIntraFlips",
+  "favBandImbalanceCrossMin",
+  "favBandImbalanceTicks",
+  "favBandImbalanceMaxSpread",
   "favBandExitEnabled",
   "favBandExitMinLowerHighDrop",
   "favBandExitRetraceRatio",

@@ -18,6 +18,10 @@ import type {
   StrategyContext,
   TradingStrategy,
 } from "./trading-strategy.js";
+import {
+  CrossImbalanceHistory,
+  crossImbalanceSigned,
+} from "../utils/book-imbalance.js";
 
 type WindowBookStats = {
   slug: string;
@@ -135,6 +139,10 @@ export class FavBandStrategy implements TradingStrategy {
   private prevLossStreak = 0;
   /** Per-pair deterioration-exit chain state. */
   private readonly exitStates = new Map<string, ExitPairState>();
+  /** Per-pair rolling cross-imbalance samples (for the persistence gate). */
+  private readonly imbalanceHistory = new CrossImbalanceHistory();
+  /** Purge the imbalance history at most this often. */
+  private lastImbalancePruneMs = 0;
 
   findOpportunities(ctx: StrategyContext): TradeOpportunity[] {
     const { config, tracker, event, books } = ctx;
@@ -150,6 +158,23 @@ export class FavBandStrategy implements TradingStrategy {
 
     const pairId = `${event.slug}:${event.windowEnd}`;
     const favFilled = tracker.getFilledCheapSizeForPair(pairId);
+
+    // Cross-imbalance sample: recorded every tick BEFORE the gates so the
+    // persistence gate sees the true rolling state, not only in-band ticks.
+    if (config.favBandImbalanceCrossMin != null) {
+      const up = books.find((b) => b.outcomeIndex === 0);
+      const down = books.find((b) => b.outcomeIndex === 1);
+      this.imbalanceHistory.push(
+        pairId,
+        nowMs,
+        crossImbalanceSigned(up, down, fav.outcomeIndex),
+        Math.max(8, (config.favBandImbalanceTicks ?? 2) + 2),
+      );
+      if (nowMs - this.lastImbalancePruneMs > 60_000) {
+        this.imbalanceHistory.forgetStale(nowMs, EXIT_STATE_STALE_MS);
+        this.lastImbalancePruneMs = nowMs;
+      }
+    }
 
     // Post-exit follow-up: after the exit SELL the cheap leg is CLOSED
     // (favFilled back to 0 and the entry gates would block), so the
@@ -194,6 +219,31 @@ export class FavBandStrategy implements TradingStrategy {
     }
 
     if (tracker.countLegsByKind(pairId, "cheap") > 0) {
+      return opportunities;
+    }
+
+    // Cross-imbalance persistence gate (default off): skip when the merged
+    // 3-level book pressure signed toward the bought favorite has been
+    // below CrossMin for Ticks consecutive samples. Null samples fail the
+    // condition (gate not armed on size-less books).
+    if (
+      config.favBandImbalanceCrossMin != null &&
+      !this.imbalanceHistory.consecutiveAtOrAbove(
+        pairId,
+        config.favBandImbalanceCrossMin,
+        config.favBandImbalanceTicks ?? 2,
+      )
+    ) {
+      return opportunities;
+    }
+
+    // Fav-band spread filter tied to the imbalance gate (default off).
+    if (
+      config.favBandImbalanceMaxSpread != null &&
+      fav.bestAsk != null &&
+      fav.bestBid != null &&
+      fav.bestAsk - fav.bestBid > config.favBandImbalanceMaxSpread
+    ) {
       return opportunities;
     }
 

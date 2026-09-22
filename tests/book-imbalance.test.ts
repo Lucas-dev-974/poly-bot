@@ -130,9 +130,28 @@ describe("fav-band cross-imbalance gate", () => {
     assert.equal(opps.length, 1);
   });
 
+  it("master switch off bypasses the gate even when CrossMin is set", () => {
+    const strategy = new FavBandStrategy();
+    const cfg = config({
+      favBandImbalanceEnabled: false,
+      favBandImbalanceCrossMin: -0.3,
+      favBandImbalanceTicks: 2,
+    });
+    const event = testEvent(1_800_000_000);
+    // bearish books would fail the floor — but the switch is off → entry passes
+    const opps = strategy.findOpportunities({
+      config: cfg,
+      tracker: new TradeTracker(),
+      event,
+      books: favUp(),
+      nowMs: (event.windowStart + 300) * 1000,
+    });
+    assert.equal(opps.length, 1);
+  });
+
   it("blocks entry while pressure is strongly against for < 2 ticks", () => {
     const strategy = new FavBandStrategy();
-    const cfg = config({ favBandImbalanceCrossMin: -0.3, favBandImbalanceTicks: 2 });
+    const cfg = config({ favBandImbalanceEnabled: true, favBandImbalanceCrossMin: -0.3, favBandImbalanceTicks: 2 });
     const event = testEvent(1_800_000_000);
     // tick 1: bearish
     const opps1 = strategy.findOpportunities({
@@ -158,7 +177,7 @@ describe("fav-band cross-imbalance gate", () => {
 
   it("allows entry once the floor is met for N consecutive ticks", () => {
     const strategy = new FavBandStrategy();
-    const cfg = config({ favBandImbalanceCrossMin: -0.3, favBandImbalanceTicks: 2 });
+    const cfg = config({ favBandImbalanceEnabled: true, favBandImbalanceCrossMin: -0.3, favBandImbalanceTicks: 2 });
     const event = testEvent(1_800_000_000);
     // tick 1: bullish sample → history [bull] → not armed (needs 2)
     const opps1 = strategy.findOpportunities({
@@ -182,7 +201,7 @@ describe("fav-band cross-imbalance gate", () => {
 
   it("a fresh against-pressure sample re-blocks immediately (no stale arming)", () => {
     const strategy = new FavBandStrategy();
-    const cfg = config({ favBandImbalanceCrossMin: -0.3, favBandImbalanceTicks: 2 });
+    const cfg = config({ favBandImbalanceEnabled: true, favBandImbalanceCrossMin: -0.3, favBandImbalanceTicks: 2 });
     const event = testEvent(1_800_000_000);
     strategy.findOpportunities({
       config: cfg,

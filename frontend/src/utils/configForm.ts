@@ -72,6 +72,10 @@ export type ConfigFormState = {
   favBandWhipsawPauseWindows: string;
   favBandWhipsawMaxScore: string;
   favBandWhipsawMaxIntraFlips: string;
+  favBandImbalanceEnabled: boolean;
+  favBandImbalanceCrossMin: string;
+  favBandImbalanceTicks: string;
+  favBandImbalanceMaxSpread: string;
   favBandExitEnabled: boolean;
   favBandExitMinLowerHighDrop: string;
   favBandExitRetraceRatio: string;
@@ -251,6 +255,19 @@ export function configToForm(config: BotConfig): ConfigFormState {
       config.favBandWhipsawMaxIntraFlips == null || config.favBandWhipsawMaxIntraFlips === undefined
         ? ""
         : String(config.favBandWhipsawMaxIntraFlips),
+    favBandImbalanceEnabled: config.favBandImbalanceEnabled === true,
+    favBandImbalanceCrossMin:
+      config.favBandImbalanceCrossMin == null || config.favBandImbalanceCrossMin === undefined
+        ? ""
+        : String(config.favBandImbalanceCrossMin),
+    favBandImbalanceTicks:
+      config.favBandImbalanceTicks == null || config.favBandImbalanceTicks === undefined
+        ? ""
+        : String(config.favBandImbalanceTicks),
+    favBandImbalanceMaxSpread:
+      config.favBandImbalanceMaxSpread == null || config.favBandImbalanceMaxSpread === undefined
+        ? ""
+        : String(config.favBandImbalanceMaxSpread),
     dipRevertBandMin: String(config.dipRevertBandMin ?? 0.55),
     dipRevertBandMax: String(config.dipRevertBandMax ?? 0.65),
     dipRevertMinDrop: String(config.dipRevertMinDrop ?? 0.03),
@@ -455,6 +472,19 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
       form.favBandWhipsawMaxIntraFlips.trim() === ""
         ? null
         : parseNum(form.favBandWhipsawMaxIntraFlips, "Fav-band whipsaw max intra flips"),
+    favBandImbalanceEnabled: form.favBandImbalanceEnabled === true,
+    favBandImbalanceCrossMin:
+      form.favBandImbalanceCrossMin.trim() === ""
+        ? null
+        : parseNum(form.favBandImbalanceCrossMin, "Fav-band imbalance cross min"),
+    favBandImbalanceTicks:
+      form.favBandImbalanceTicks.trim() === ""
+        ? null
+        : parseNum(form.favBandImbalanceTicks, "Fav-band imbalance ticks"),
+    favBandImbalanceMaxSpread:
+      form.favBandImbalanceMaxSpread.trim() === ""
+        ? null
+        : parseNum(form.favBandImbalanceMaxSpread, "Fav-band imbalance max spread"),
     dipRevertBandMin: parseNum(form.dipRevertBandMin, "Dip-revert band min"),
     dipRevertBandMax: parseNum(form.dipRevertBandMax, "Dip-revert band max"),
     dipRevertMinDrop: parseNum(form.dipRevertMinDrop, "Dip-revert min drop"),
@@ -1074,6 +1104,20 @@ export function validateConfigForm(
         const f = Number(form.favBandWhipsawMaxIntraFlips);
         if (!Number.isFinite(f) || f < 1) errors.push("Whipsaw: max flips >= 1 (ou vide = off)");
       }
+    }
+    if (form.favBandImbalanceCrossMin.trim() !== "") {
+      const v = Number(form.favBandImbalanceCrossMin);
+      if (!Number.isFinite(v) || v <= -1 || v >= 1) {
+        errors.push("Imbalance: plancher cross dans (-1, 1) (ou vide = off)");
+      }
+    }
+    if (form.favBandImbalanceTicks.trim() !== "") {
+      const n = Number(form.favBandImbalanceTicks);
+      if (!Number.isFinite(n) || n < 1) errors.push("Imbalance: ticks >= 1 (ou vide = defaut 2)");
+    }
+    if (form.favBandImbalanceMaxSpread.trim() !== "") {
+      const s = Number(form.favBandImbalanceMaxSpread);
+      if (!Number.isFinite(s) || s <= 0) errors.push("Imbalance: spread max > 0 (ou vide = off)");
     }
   } catch (error) {
     errors.push(error instanceof Error ? error.message : String(error));

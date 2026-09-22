@@ -238,6 +238,14 @@ export interface BotConfig {
   favBandWhipsawPauseWindows: number;
   favBandWhipsawMaxScore: number | null;
   favBandWhipsawMaxIntraFlips: number | null;
+  /** Master switch: enable the cross-book imbalance entry gate. */
+  favBandImbalanceEnabled: boolean;
+  /** Cross-book imbalance gate (default off): entry floor on the merged book pressure toward the favorite. */
+  favBandImbalanceCrossMin: number | null;
+  /** Cross-imbalance persistence: consecutive tick samples required (default 2 when gate active). */
+  favBandImbalanceTicks: number | null;
+  /** Optional max L1 spread on the favorite (null = off). */
+  favBandImbalanceMaxSpread: number | null;
   /** Deterioration exit (default off): sell the held favorite on a sequence of confirmed lower lows. */
   favBandExitEnabled: boolean;
   /** Deterioration exit: minimum swing size to print a plus-bas (e.g. 0.05). */

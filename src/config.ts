@@ -281,6 +281,16 @@ export interface BotConfig {
   /** Skip entry when intra-window favorite flips >= this (null = off). */
   favBandWhipsawMaxIntraFlips: number | null;
   /**
+   * Master switch for the cross-book imbalance gate (default false). When
+   * true, fav-band entries require the 3-level merged book pressure (both
+   * tokens, signed toward the bought favorite) to stay >= CrossMin for
+   * Ticks consecutive samples. When false the gate is fully bypassed even
+   * if CrossMin is set. Research 2026-09-22 (937 BTC 15m windows, 825
+   * fills): the strongly against-pressure zone (crossRel < −0.3 persisted)
+   * carries the weakest fav-band fills (~$0.06/trade vs ~$0.20 baseline).
+   */
+  favBandImbalanceEnabled: boolean;
+  /**
    * Cross-book imbalance gate (default off, all three null): require the
    * 3-level merged imbalance (both tokens, signed toward the bought
    * favorite) to be >= `favBandImbalanceCrossMin` for
@@ -523,6 +533,7 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     favBandWhipsawPauseWindows: 8,
     favBandWhipsawMaxScore: null,
     favBandWhipsawMaxIntraFlips: null,
+    favBandImbalanceEnabled: false,
     favBandImbalanceCrossMin: null,
     favBandImbalanceTicks: null,
     favBandImbalanceMaxSpread: null,
@@ -903,6 +914,7 @@ export function validateConfigCoherence(
       }
     }
     if (
+      config.favBandImbalanceEnabled ||
       config.favBandImbalanceCrossMin != null ||
       config.favBandImbalanceTicks != null ||
       config.favBandImbalanceMaxSpread != null

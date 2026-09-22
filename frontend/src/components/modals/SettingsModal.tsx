@@ -1184,6 +1184,65 @@ export function SettingsModal(props: {
                   </div>
 
                   <div class="cfg-section" style={{ "margin-top": "1rem" }}>
+                    <h4>Filtre imbalance carnet</h4>
+                    <p class="cfg-section__desc">
+                      Avant chaque entrée fav-band, vérifie la <strong>pression du carnet fusionné</strong>{" "}
+                      (bids Up + asks Down vs asks Up + bids Down, 3 niveaux, signée vers le favori acheté).
+                      Entrée autorisée seulement si la pression reste au-dessus du plancher pendant N ticks
+                      consécutifs — évite les pièges « prix qui tient, carnet qui déserte ». Backtest BTC 15m :
+                      plancher −0.1 / 2 ticks → PnL +9.7&nbsp;%, drawdown −17&nbsp;%.
+                    </p>
+                    <div class="cfg-grid">
+                      <label class="cfg-check" title="Vérifie la pression du carnet fusionné avant chaque entrée fav-band.">
+                        <input
+                          type="checkbox"
+                          checked={form().favBandImbalanceEnabled}
+                          onChange={(e) => update("favBandImbalanceEnabled", e.currentTarget.checked)}
+                        />
+                        <span>Filtre imbalance activé</span>
+                      </label>
+                      <Show when={form().favBandImbalanceEnabled}>
+                        <Field
+                          label="Plancher cross (−1..1)"
+                          hint="Entrée seulement si pression croisée ≥ plancher aux N derniers ticks. Recommandation recherche : −0.1."
+                        >
+                          <NumberInput
+                            value={form().favBandImbalanceCrossMin}
+                            min={-0.99}
+                            max={0.99}
+                            step={0.05}
+                            onInput={(v) => update("favBandImbalanceCrossMin", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Ticks de persistance"
+                          hint="Nombre de mesures consécutives au-dessus du plancher requises (vide = défaut 2). 1 tick = vulnérable au spoofing."
+                        >
+                          <NumberInput
+                            value={form().favBandImbalanceTicks}
+                            min={1}
+                            max={10}
+                            step={1}
+                            onInput={(v) => update("favBandImbalanceTicks", v)}
+                          />
+                        </Field>
+                        <Field
+                          label="Spread max favori (optionnel)"
+                          hint="Skip si spread L1 du favori ≥ ce seuil (vide = off). Ex : 0.04. Complète le filtre anti-carnet-troué."
+                        >
+                          <NumberInput
+                            value={form().favBandImbalanceMaxSpread}
+                            min={0.01}
+                            max={0.2}
+                            step={0.01}
+                            onInput={(v) => update("favBandImbalanceMaxSpread", v)}
+                          />
+                        </Field>
+                      </Show>
+                    </div>
+                  </div>
+
+                  <div class="cfg-section" style={{ "margin-top": "1rem" }}>
                     <h4>Sortie dégradation (optionnelle)</h4>
                     <p class="cfg-section__desc">
                       Après le fill, si le favori <strong>détenu</strong> imprime une séquence de

@@ -52,20 +52,21 @@ const specs: Spec[] = [
   { label: "S1_baseline_no_gate", overrides: { ...BASE_SIGNAL } },
   {
     label: "S1_gate_crossMin-0.3_ticks2",
-    overrides: { ...BASE_SIGNAL, favBandImbalanceCrossMin: -0.3, favBandImbalanceTicks: 2 },
+    overrides: { ...BASE_SIGNAL, favBandImbalanceEnabled: true, favBandImbalanceCrossMin: -0.3, favBandImbalanceTicks: 2 },
   },
   {
     label: "S1_gate_crossMin-0.1_ticks2",
-    overrides: { ...BASE_SIGNAL, favBandImbalanceCrossMin: -0.1, favBandImbalanceTicks: 2 },
+    overrides: { ...BASE_SIGNAL, favBandImbalanceEnabled: true, favBandImbalanceCrossMin: -0.1, favBandImbalanceTicks: 2 },
   },
   {
     label: "S1_gate_crossMin-0.3_ticks1",
-    overrides: { ...BASE_SIGNAL, favBandImbalanceCrossMin: -0.3, favBandImbalanceTicks: 1 },
+    overrides: { ...BASE_SIGNAL, favBandImbalanceEnabled: true, favBandImbalanceCrossMin: -0.3, favBandImbalanceTicks: 1 },
   },
   {
     label: "S1_gate_crossMin-0.3_ticks2_spread0.04",
     overrides: {
       ...BASE_SIGNAL,
+      favBandImbalanceEnabled: true,
       favBandImbalanceCrossMin: -0.3,
       favBandImbalanceTicks: 2,
       favBandImbalanceMaxSpread: 0.04,

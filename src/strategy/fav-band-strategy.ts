@@ -161,7 +161,7 @@ export class FavBandStrategy implements TradingStrategy {
 
     // Cross-imbalance sample: recorded every tick BEFORE the gates so the
     // persistence gate sees the true rolling state, not only in-band ticks.
-    if (config.favBandImbalanceCrossMin != null) {
+    if (config.favBandImbalanceEnabled) {
       const up = books.find((b) => b.outcomeIndex === 0);
       const down = books.find((b) => b.outcomeIndex === 1);
       this.imbalanceHistory.push(
@@ -222,23 +222,24 @@ export class FavBandStrategy implements TradingStrategy {
       return opportunities;
     }
 
-    // Cross-imbalance persistence gate (default off): skip when the merged
-    // 3-level book pressure signed toward the bought favorite has been
-    // below CrossMin for Ticks consecutive samples. Null samples fail the
-    // condition (gate not armed on size-less books).
+    // Cross-imbalance persistence gate (master switch, default off): skip
+    // when the merged 3-level book pressure signed toward the bought
+    // favorite has been below CrossMin for Ticks consecutive samples. Null
+    // samples fail the condition (gate not armed on size-less books).
     if (
-      config.favBandImbalanceCrossMin != null &&
+      config.favBandImbalanceEnabled &&
       !this.imbalanceHistory.consecutiveAtOrAbove(
         pairId,
-        config.favBandImbalanceCrossMin,
+        config.favBandImbalanceCrossMin ?? -0.1,
         config.favBandImbalanceTicks ?? 2,
       )
     ) {
       return opportunities;
     }
 
-    // Fav-band spread filter tied to the imbalance gate (default off).
+    // Fav-band spread filter tied to the imbalance master switch (off when the switch is off).
     if (
+      config.favBandImbalanceEnabled &&
       config.favBandImbalanceMaxSpread != null &&
       fav.bestAsk != null &&
       fav.bestBid != null &&

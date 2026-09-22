@@ -288,6 +288,73 @@ export class Trader {
   }
 
   /**
+   * Manual BUY en GTC resting (dashboard, budget sub-1$). Le venue refuse
+   * tout ordre MARKETABLE sous $1 de notional (FOK 0.72$ → "invalid amount
+   * for a marketable BUY order ($0.72), min size: 1") ; un GTC MAKER n'a
+   * pas ce plancher (seul min_order_size en shares s'applique). Pour rester
+   * non-marketable (maker), le limit est posé 1 tick sous le best ask —
+   * l'ordre repose sur le carnet et est suivi par pollOrderFills.
+   *
+   * Le prix resting est calculé ici (tick size réelle du token fetchée au
+   * CLOB, alignement grille obligatoire) et renvoyé pour l'affichage/le
+   * tracking.
+   *
+   * Returns orderId (null si refus venue, avec errorMsg) + restingPrice.
+   */
+  async placeManualBuyGTC(
+    tokenId: string,
+    shares: number,
+    bestAsk: number,
+  ): Promise<{ orderId: string | null; restingPrice?: number; errorMsg?: string }> {
+    if (!this.client) {
+      throw new Error("Trading client not initialized");
+    }
+    const [tickSize, negRisk] = await Promise.all([
+      this.client.getTickSize(tokenId),
+      this.client.getNegRisk(tokenId).catch(() => false),
+    ]);
+    const tick = Number(tickSize) || 0.01;
+    // 1 tick sous l'ask : garantit le statut maker (non marketable). Le
+    // CLOB exige un prix aligné sur la grille de ticks.
+    const restingPrice = Math.max(
+      Math.floor((bestAsk - tick) / tick) * tick,
+      tick,
+    );
+    try {
+      const response = await this.withTimeout(
+        "placeManualBuyGTC",
+        this.client.createAndPostOrder(
+          {
+            tokenID: tokenId,
+            price: restingPrice,
+            side: Side.BUY,
+            size: shares,
+          },
+          {
+            tickSize: tickSize as "0.1" | "0.01" | "0.001" | "0.0001",
+            negRisk,
+          },
+          OrderType.GTC,
+        ),
+      );
+      const orderId = response.orderID ?? null;
+      const errorMsg = (response as { errorMsg?: string }).errorMsg;
+      if (!orderId) {
+        return {
+          orderId: null,
+          restingPrice,
+          errorMsg: errorMsg ?? "ordre GTC refusé (pas d'orderID)",
+        };
+      }
+      return { orderId, restingPrice };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      // Rejected by the venue (e.g. below min shares) — business outcome.
+      return { orderId: null, restingPrice, errorMsg: msg };
+    }
+  }
+
+  /**
    * Place a FOK (Fill-or-Kill) SELL market order for the cheap leg — a
    * cut-loss / pair-defense mechanism (S2.4). When the favorite ask is
    * above expensiveBuyMax, the filled cheap is sold at the current best

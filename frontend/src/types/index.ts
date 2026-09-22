@@ -799,4 +799,6 @@ export interface ManualBuyResult {
   requestedUsd?: number;
   /** ID de la position trackée. */
   positionId?: string;
+  /** True : ordre GTC resting posté (budget sub-1$), fill suivi async. */
+  pending?: boolean;
 }

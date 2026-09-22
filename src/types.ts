@@ -170,4 +170,10 @@ export interface ManualBuyResult {
   requestedUsd?: number;
   /** ID de la position trackée (résolution auto à la fin de fenêtre). */
   positionId?: string;
+  /**
+   * True : budget sub-1$, ordre GTC resting posté (pas de fill immédiat).
+   * Le fill est suivi par pollOrderFills ; la position apparaît dans
+   * « Positions ouvertes » quand les tokens sont confirmés au wallet.
+   */
+  pending?: boolean;
 }

@@ -88,9 +88,15 @@ function OutcomeTile(props: {
         shares: shares()!,
       });
       if (res.ok) {
-        pushInfo(
-          `Achat exécuté : ${fmtShares(res.size)} shares de ${res.outcome} @ ${fmtPrice(res.fillPrice)} (${fmtPrice(res.cost)} pUSD)`,
-        );
+        if (res.pending) {
+          pushInfo(
+            `Ordre au carnet posté (budget ${fmtPrice(res.requestedUsd ?? 0)} pUSD sous l'ask) — position trackée dès le remplissage`,
+          );
+        } else {
+          pushInfo(
+            `Achat exécuté : ${fmtShares(res.size)} shares de ${res.outcome} @ ${fmtPrice(res.fillPrice)} (${fmtPrice(res.cost)} pUSD)`,
+          );
+        }
         setDone(true);
         setSharesInput("5");
         setTimeout(() => setDone(false), 2500);

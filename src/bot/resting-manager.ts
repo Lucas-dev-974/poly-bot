@@ -809,17 +809,127 @@ export class RestingManager {
 
     // Garde-fou anti-doublon : attachLeg range kind "manual" dans
     // expensiveLegs (fallback du ternaire cheap/expensive) — vérifier là.
-    const pair = this.deps.tracker.getPair(`manual:${tokenId}`);
-    if (
+    // Un GTC resting manuel (posté, pas encore rempli) bloque aussi : sinon
+    // un 2e clic posterait un doublon pendant l'attente de fill.
+    const manualPairId = `manual:${tokenId}`;
+    const pair = this.deps.tracker.getPair(manualPairId);
+    const hasOpenLeg =
       pair &&
       [...pair.cheapLegs, ...pair.expensiveLegs].some(
         (leg) => leg.status === "open",
-      )
-    ) {
+      );
+    const hasRestingManual = this.deps.tracker
+      .getAllPostedOrders()
+      .some((o) => o.pairId === manualPairId);
+    if (hasOpenLeg || hasRestingManual) {
       return {
         ok: false,
         error: "Un achat manuel est déjà ouvert sur ce token",
         tokenId,
+      };
+    }
+
+    // Budget < 1 $ : le venue rejette les ordres marketables (FOK) sous ~1$
+    // de nominal ("invalid amount for a marketable BUY order"). Contourne
+    // via un GTC limite 1 tick SOUS l'ask : maker, non marketable, seul le
+    // plancher 5 shares s'applique. Le fill est suivi par pollOrderFills
+    // (finalizeLiveOrder → createLivePosition) via recordPostedOrder.
+    if (budgetUsd < 1) {
+      // 1 tick sous l'ask : garantit le statut maker (non marketable), le
+      // CLOB exige un prix aligné sur la grille de ticks.
+      const placed = await this.deps.trader.placeManualBuyGTC(
+        tokenId,
+        shares,
+        bestAsk,
+      );
+      if (!placed.orderId) {
+        const reason = placed.errorMsg ?? "GTC refusé";
+        log("manualBuy: GTC not accepted", { tokenId, shares, bestAsk, reason });
+        return {
+          ok: false,
+          error: `Ordre au carnet refusé (${reason})`,
+          tokenId,
+          price: bestAsk,
+          requestedUsd: budgetUsd,
+        };
+      }
+      const orderId = placed.orderId;
+      const restingPrice = placed.restingPrice ?? bestAsk;
+      const key = `manual-gtc:${tokenId}:${Date.now()}`;
+      const tokenIds = parseGammaList(event.market.clobTokenIds);
+      const outcomes = parseGammaList(event.market.outcomes);
+      const outcomeIndex = tokenIds.indexOf(tokenId);
+      const outcome =
+        outcomes[outcomeIndex] ?? freshBook.outcome ?? tokenId.slice(0, 8);
+      this.deps.tracker.recordPostedOrder(
+        key,
+        event.slug,
+        event.windowEnd,
+        round4(budgetUsd),
+        orderId,
+        {
+          eventSlug: event.slug,
+          windowEnd: event.windowEnd,
+          tokenId,
+          outcome,
+          outcomeIndex,
+          kind: "manual",
+          limitPrice: restingPrice,
+          size: shares,
+          pairId: manualPairId,
+          eventTitle: event.title,
+          bestAskAtFill: null,
+          strategyId: undefined,
+        },
+      );
+      bus.emit({
+        type: "order",
+        result: {
+          dryRun: false,
+          tokenId,
+          side: "BUY",
+          price: restingPrice,
+          size: shares,
+          filled: false,
+          reason: "resting",
+          orderType: "GTC",
+          response: { orderID: orderId },
+        },
+        opportunity: {
+          kind: "manual",
+          event: {
+            title: event.title,
+            slug: event.slug,
+            market: {} as never,
+            windowStart: 0,
+            windowEnd: event.windowEnd,
+          },
+          token: { ...freshBook, outcome },
+          price: restingPrice,
+          size: shares,
+          tickSize: "0.01",
+          negRisk: false,
+          tradeKey: key,
+          pairId: manualPairId,
+        },
+      });
+      log("manualBuy: sub-$1 budget → GTC resting posted", {
+        tokenId,
+        shares,
+        budgetUsd,
+        restingPrice,
+        orderId,
+      });
+      return {
+        ok: true,
+        tokenId,
+        outcome,
+        price: bestAsk,
+        size: 0,
+        cost: 0,
+        requestedUsd: budgetUsd,
+        positionId: key,
+        pending: true,
       };
     }
 

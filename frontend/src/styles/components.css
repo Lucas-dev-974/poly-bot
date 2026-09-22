@@ -2142,6 +2142,41 @@ select.cfg-input {
   word-break: break-word;
 }
 
+.am-buy-mode {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.am-buy-mode__btn {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.am-buy-mode__btn--active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.am-buy-note {
+  margin: 4px 0 0;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.am-buy-note strong {
+  color: var(--accent);
+}
+
 @media (max-width: 1100px) {
   .am-card__outcomes {
     grid-template-columns: 1fr;

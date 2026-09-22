@@ -100,7 +100,11 @@ export class DashboardServer {
       >)
     | null = null;
   private manualBuyFn:
-    | ((tokenId: string, shares: number) => Promise<ManualBuyResult>)
+    | ((
+        tokenId: string,
+        shares: number,
+        mode: "fok" | "resting",
+      ) => Promise<ManualBuyResult>)
     | null = null;
   private marketRulesStore: MarketRuleStore | null = null;
   private readonly backtestJob: BacktestJob;
@@ -150,7 +154,11 @@ export class DashboardServer {
 
   /** Store a handler for dashboard-initiated manual buys (share count). */
   setManualBuyHandler(
-    fn: (tokenId: string, shares: number) => Promise<ManualBuyResult>,
+    fn: (
+      tokenId: string,
+      shares: number,
+      mode: "fok" | "resting",
+    ) => Promise<ManualBuyResult>,
   ): void {
     this.manualBuyFn = fn;
   }
@@ -989,9 +997,12 @@ export class DashboardServer {
       const parsed = JSON.parse(body) as {
         tokenId?: string;
         shares?: number;
+        mode?: string;
       };
       const tokenId = String(parsed.tokenId ?? "").trim();
       const shares = Math.floor(Number(parsed.shares));
+      const mode =
+        parsed.mode === "resting" ? ("resting" as const) : ("fok" as const);
       if (!tokenId) {
         res.writeHead(400, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ ok: false, error: "tokenId is required" }));
@@ -1012,7 +1023,7 @@ export class DashboardServer {
         res.end(JSON.stringify({ ok: false, error: "Manual buy handler not initialized" }));
         return;
       }
-      const result = await this.manualBuyFn(tokenId, shares);
+      const result = await this.manualBuyFn(tokenId, shares, mode);
       res.writeHead(result.ok ? 200 : 400, { "Content-Type": "application/json" });
       res.end(JSON.stringify(result));
     } catch (error) {

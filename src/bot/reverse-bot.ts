@@ -144,8 +144,12 @@ export class ReverseBot {
 
   /** Manual BUY from the dashboard (pUSD budget, FOK at the live ask). */
   /** Manual BUY from the dashboard (share count, min = CLOB minimum). */
-  manualBuy(tokenId: string, shares: number) {
-    return this.resting.manualBuy(tokenId, shares);
+  manualBuy(
+    tokenId: string,
+    shares: number,
+    mode: "fok" | "resting" = "fok",
+  ) {
+    return this.resting.manualBuy(tokenId, shares, mode);
   }
 
   /** Get the current strategy status for the dashboard (fav-band whipsaw pause). */

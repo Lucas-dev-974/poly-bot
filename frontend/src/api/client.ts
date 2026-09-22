@@ -203,7 +203,11 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }),
-  manualBuy: (body: { tokenId: string; shares: number }) =>
+  manualBuy: (body: {
+    tokenId: string;
+    shares: number;
+    mode: "fok" | "resting";
+  }) =>
     request<ManualBuyResult>("/api/manual-buy", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

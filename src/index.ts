@@ -64,7 +64,9 @@ async function main(): Promise<void> {
       () => bot.isPaused(),
     );
     dashboard.setClosePositionHandler((id) => bot.closePositionManual(id));
-    dashboard.setManualBuyHandler((tokenId, shares) => bot.manualBuy(tokenId, shares));
+    dashboard.setManualBuyHandler((tokenId, shares, mode) =>
+      bot.manualBuy(tokenId, shares, mode),
+    );
         dashboard.setBot(bot);
       }
 

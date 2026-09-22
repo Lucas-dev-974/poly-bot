@@ -749,13 +749,21 @@ export class RestingManager {
 
   /**
    * Achat manuel depuis le dashboard (tuile "Marchés actifs"). L'utilisateur
-   * choisit un NOMBRE DE SHARES (défaut/min 5 = minimum CLOB) ; le budget
-   * pUSD est calculé = shares × best ask. L'exécution est un FOK market BUY
-   * au best ask (worst-price limit), la position est trackée comme les
-   * positions du bot (résolution auto à la fin de fenêtre) mais isolée de
-   * la logique d'arbitrage via un pairId dédié "manual:<tokenId>".
+   * choisit un NOMBRE DE SHARES (défaut/min 5 = minimum CLOB) et le MODE :
+   * - "fok" : FOK market BUY au best ask (taker, immédiat). Le venue impose
+   *   un nominal ≥ 1 $ — si le budget passe dessous, les shares sont
+   *   ARRONDIES AU-DESSUS vers max(5, ceil(1$ / ask)) pour rester FOK.
+   * - "resting" : GTC maker 1 tick sous l'ask, pas de plancher notional
+   *   (shares exactes), fill suivi par pollOrderFills.
+   * La position est trackée comme les positions du bot (résolution auto à
+   * la fin de fenêtre) mais isolée de la logique d'arbitrage via un pairId
+   * dédié "manual:<tokenId>".
    */
-  async manualBuy(tokenId: string, shares: number): Promise<ManualBuyResult> {
+  async manualBuy(
+    tokenId: string,
+    shares: number,
+    mode: "fok" | "resting" = "fok",
+  ): Promise<ManualBuyResult> {
     if (!Number.isFinite(shares) || shares < MIN_CLOB_SHARES) {
       return {
         ok: false,
@@ -786,9 +794,26 @@ export class RestingManager {
     }
     // Budget pUSD couvrant exactement `shares` au best ask courant (le FOK
     // BUY du CLOB prend un budget USDC, pas des shares).
-    const budgetUsd = round4(shares * bestAsk);
+    let budgetUsd = round4(shares * bestAsk);
     const askSize = freshBook.bestAskSize ?? null;
-    if (askSize !== null && askSize > 0 && askSize < shares) {
+
+    // Mode FOK + budget < 1 $ : le venue rejette les ordres marketables
+    // sous ~1$ de nominal. Pour rester FOK (exécution immédiate à l'ask),
+    // les shares sont arrondies AU-DESSUS : max(5, ceil(1$ / ask)).
+    // Mode resting : shares exactes (pas de plancher notional en maker).
+    let effectiveShares = shares;
+    if (mode === "fok" && budgetUsd < 1) {
+      effectiveShares = Math.max(MIN_CLOB_SHARES, Math.ceil(1 / bestAsk));
+      budgetUsd = round4(effectiveShares * bestAsk);
+      log("manualBuy: sub-$1 FOK budget → shares rounded up", {
+        tokenId,
+        requested: shares,
+        effectiveShares,
+        budgetUsd,
+      });
+    }
+
+    if (askSize !== null && askSize > 0 && askSize < effectiveShares) {
       const shown = Math.round(askSize * 100) / 100;
       return {
         ok: false,
@@ -829,12 +854,12 @@ export class RestingManager {
       };
     }
 
-    // Budget < 1 $ : le venue rejette les ordres marketables (FOK) sous ~1$
-    // de nominal ("invalid amount for a marketable BUY order"). Contourne
-    // via un GTC limite 1 tick SOUS l'ask : maker, non marketable, seul le
-    // plancher 5 shares s'applique. Le fill est suivi par pollOrderFills
-    // (finalizeLiveOrder → createLivePosition) via recordPostedOrder.
-    if (budgetUsd < 1) {
+    // Mode resting (ou demande explicite) : GTC limite 1 tick SOUS l'ask —
+    // maker, non marketable, pas de plancher notional, shares exactes. Le
+    // fill est suivi par pollOrderFills (finalizeLiveOrder →
+    // createLivePosition) via recordPostedOrder. En mode FOK, on continue
+    // plus bas : les shares ont été arrondies pour passer le plancher 1$.
+    if (mode === "resting") {
       // 1 tick sous l'ask : garantit le statut maker (non marketable), le
       // CLOB exige un prix aligné sur la grille de ticks.
       const placed = await this.deps.trader.placeManualBuyGTC(

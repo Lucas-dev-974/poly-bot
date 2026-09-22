@@ -58,9 +58,10 @@ function OutcomeTile(props: {
     return bestBid != null && bestAsk != null ? bestAsk - bestBid : null;
   };
 
-  // Achat inline : champ shares (défaut 5, min 5) + envoi direct, dans la
-  // tuile elle-même (pas de modale).
+  // Achat inline : champ shares (défaut 5, min 5) + mode d'exécution
+  // (FOK immédiat à l'ask / GTC au carnet), dans la tuile elle-même.
   const [sharesInput, setSharesInput] = createSignal("5");
+  const [mode, setMode] = createSignal<"fok" | "resting">("fok");
   const [busy, setBusy] = createSignal(false);
   const [error, setError] = createSignal("");
   const [done, setDone] = createSignal(false);
@@ -72,11 +73,27 @@ function OutcomeTile(props: {
   });
   const cost = () => {
     const p = props.book.bestAsk;
-    const s = shares();
-    if (p == null || p <= 0 || s === null) return null;
+    const s = shares() ?? 0;
+    if (p == null || p <= 0 || s <= 0) return null;
     return s * p;
   };
   const valid = () => shares() !== null && props.book.bestAsk != null;
+
+  // Mode FOK sub-1$ : les shares seront arrondies au-dessus côté bot vers
+  // max(5, ceil(1$/ask)) — affiché pour éviter la surprise du coût réel.
+  const roundedShares = () => {
+    const p = props.book.bestAsk;
+    const s = shares() ?? 0;
+    if (p == null || p <= 0 || s <= 0) return null;
+    if (s * p >= 1) return null;
+    return Math.max(MIN_SHARES, Math.ceil(1 / p));
+  };
+  const roundedCost = () => {
+    const p = props.book.bestAsk;
+    const r = roundedShares();
+    if (p == null || p <= 0 || r === null) return null;
+    return r * p;
+  };
 
   const buy = async (): Promise<void> => {
     if (!valid() || busy()) return;
@@ -86,6 +103,7 @@ function OutcomeTile(props: {
       const res = await api.manualBuy({
         tokenId: props.book.tokenId,
         shares: shares()!,
+        mode: mode(),
       });
       if (res.ok) {
         if (res.pending) {
@@ -149,6 +167,26 @@ function OutcomeTile(props: {
         </Show>
       </div>
       <div class="am-buy-inline">
+        <div class="am-buy-mode" role="radiogroup" aria-label="Mode d'exécution">
+          <button
+            type="button"
+            class="am-buy-mode__btn"
+            classList={{ "am-buy-mode__btn--active": mode() === "fok" }}
+            title="FOK immédiat à l'ask (taker). Sous 1 $, arrondi des shares au-dessus pour atteindre le plancher venue."
+            onClick={() => setMode("fok")}
+          >
+            FOK
+          </button>
+          <button
+            type="button"
+            class="am-buy-mode__btn"
+            classList={{ "am-buy-mode__btn--active": mode() === "resting" }}
+            title="Ordre limite au carnet 1 tick sous l'ask (maker). Shares exactes, fill non garanti, annulé en fin de fenêtre."
+            onClick={() => setMode("resting")}
+          >
+            Carnet
+          </button>
+        </div>
         <input
           class="am-buy-shares-input"
           type="number"
@@ -167,16 +205,26 @@ function OutcomeTile(props: {
         <button
           class="am-buy-btn"
           type="button"
-          title={`Acheter manuellement du ${props.book.outcome} (FOK au best ask)`}
+          title={
+            mode() === "fok"
+              ? `Acheter immédiatement du ${props.book.outcome} au ask (FOK)`
+              : `Poster un ordre au carnet pour du ${props.book.outcome} (GTC maker)`
+          }
           disabled={!valid() || busy()}
           onClick={() => void buy()}
         >
-          {done() ? "✓" : busy() ? "…" : "Acheter"}
+          {done() ? "✓" : busy() ? "…" : mode() === "fok" ? "Acheter" : "Carnet"}
         </button>
         <span class="am-buy-cost">
           {cost() != null ? `≈ ${fmtPrice(cost()!)} pUSD` : "—"}
         </span>
       </div>
+      <Show when={mode() === "fok" && roundedShares() !== null}>
+        <p class="am-buy-note">
+          Sous 1 $ en FOK : arrondi à <strong>{roundedShares()}</strong> shares
+          (≈ {fmtPrice(roundedCost()!)} pUSD) au ask courant.
+        </p>
+      </Show>
       <Show when={error()}>
         <p class="am-buy-error">{error()}</p>
       </Show>

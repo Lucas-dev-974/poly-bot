@@ -2,7 +2,7 @@ import type { BotConfig } from "../config.js";
 import { bus } from "../dashboard/events.js";
 import type { Repositories } from "../db/index.js";
 import { log } from "../logger.js";
-import type { MarketScanner } from "../market-scanner.js";
+import type { BookSource } from "../market-data.js";
 import type { TradingStrategy } from "../strategy/trading-strategy.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { Trader } from "../trader.js";
@@ -17,7 +17,7 @@ export type OpportunityExecutorDeps = {
   config: BotConfig; // shared mutable reference - do not copy
   trader: Trader;
   tracker: TradeTracker;
-  scanner: MarketScanner;
+  scanner: BookSource;
   repos?: Repositories;
   lifecycle: LiveOrderLifecycle;
   balance: BalanceGuard;

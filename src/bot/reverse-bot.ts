@@ -4,6 +4,7 @@ import { bus } from "../dashboard/events.js";
 import type { Repositories } from "../db/index.js";
 import { log } from "../logger.js";
 import { MarketScanner } from "../market-scanner.js";
+import { MarketDataProvider } from "../market-data.js";
 import { PositionResolver } from "../position-resolver.js";
 import type { EditableConfigKey } from "../runtime-settings.js";
 import { createStrategy } from "../strategy/registry.js";
@@ -38,6 +39,8 @@ class TickSupersededError extends Error {
 
 export class ReverseBot {
   private readonly scanner: MarketScanner;
+  /** Provider de books : WS primaire (market channel), REST fallback. */
+  readonly provider: MarketDataProvider;
   readonly tracker: TradeTracker;
   private readonly resolver: PositionResolver | null;
   private totalAttempts = 0;
@@ -70,6 +73,10 @@ export class ReverseBot {
       repos?.postedOrders,
     );
     this.scanner = new MarketScanner(config);
+    this.provider = new MarketDataProvider(
+      config,
+      (payload) => bus.emit({ type: "wsStatus", ...payload }),
+    );
     this.resolver = new PositionResolver(config, this.tracker);
     this.strategy = createStrategy(config.strategyId, repos);
     this.lifecycle = new LiveOrderLifecycle({ config, trader, tracker: this.tracker }, this.strategy);
@@ -78,7 +85,7 @@ export class ReverseBot {
         config,
         trader,
         tracker: this.tracker,
-        scanner: this.scanner,
+        scanner: this.provider,
         lifecycle: this.lifecycle,
       },
       this.strategy,
@@ -89,7 +96,7 @@ export class ReverseBot {
         config,
         trader,
         tracker: this.tracker,
-        scanner: this.scanner,
+        scanner: this.provider,
         repos: this.repos,
         lifecycle: this.lifecycle,
         balance: this.balance,
@@ -116,6 +123,34 @@ export class ReverseBot {
     this.totalAttempts = this.repos?.botState.get(TOTAL_ATTEMPTS_KEY) ?? 0;
     this.paused = (this.repos?.botState.get(PAUSED_KEY) ?? 0) === 1;
     await this.trader.init();
+    // User channel : un fill WS déclenche le finalize immédiat (lookup par
+    // orderId dans le tracker ; ordre inconnu → ignoré, réconciliation REST
+    // conservée en filet). Idempotent : handleOrderStatus est une no-op sur
+    // un ordre déjà finalisé (l'ordre quitte postedOrders au premier finalize).
+    this.provider.onUserReconnected = () => {
+      // Rattrapage post-reconnexion user channel : passe de réconciliation immédiate.
+      void this.lifecycle.pollOrderFills().catch((error) => {
+        log("WS reconnect reconciliation failed", { error: String(error) });
+      });
+    };
+    this.provider.onFill = (status) => {
+      const order = this.tracker
+        .getPostedOrdersWithOrderId()
+        .find((o) => o.orderId === status.orderId);
+      if (!order) return;
+      void this.lifecycle
+        .handleOrderStatus(order, {
+          filled: status.filled,
+          cancelled: status.cancelled,
+          sizeMatched: status.sizeMatched,
+        })
+        .catch((error) =>
+          log("WS fill finalize failed", {
+            orderId: status.orderId,
+            error: String(error),
+          }),
+        );
+    };
   }
 
   reset(): void {
@@ -189,6 +224,10 @@ export class ReverseBot {
     bus.emit({ type: "config", config: toPublicConfig(this.config) });
     bus.emit({ type: "botControl", enabled: !this.paused });
 
+    // WS market channel : books temps réel (le set d'assets est synchronisé
+    // par syncAssets à chaque tick — connexion initiale sans abonnement).
+    this.provider.start();
+
     await this.tickWithWatchdog();
     this.scheduleTick();
 
@@ -209,6 +248,11 @@ export class ReverseBot {
 
     this.snapshots.pruneData();
     setInterval(() => this.snapshots.pruneData(), 3600_000); // 1h
+  }
+
+  /** Arrêt propre : ferme le socket WS market (shutdown). */
+  async stop(): Promise<void> {
+    await this.provider.stop();
   }
 
   private scheduleTick(): void {
@@ -340,6 +384,7 @@ export class ReverseBot {
       });
       if (scanned.length === 0) {
         log("No active markets in window");
+        this.provider.syncAssets([]);
         return;
       }
 
@@ -351,6 +396,9 @@ export class ReverseBot {
           trading: item.trading,
         });
       }
+
+      // WS market channel : le set d'assets suit les fenêtres actives.
+      this.provider.syncAssets(scanned);
     } catch (error) {
       if (error instanceof TickSupersededError) {
         return;

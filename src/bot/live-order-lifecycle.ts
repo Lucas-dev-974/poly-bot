@@ -92,26 +92,38 @@ export class LiveOrderLifecycle {
     for (const order of orders) {
       const status = await this.getOrderStatusTracked(order);
       if (!status) continue;
-      if (status.filled || status.cancelled) {
-        if (status.sizeMatched > 0) {
-          const outcome = await this.finalizeLiveOrder(order, status);
-          if (outcome === "pending") continue;
-          if (outcome === "ghost" || outcome === "none") {
-            await this.cancelOrphanHedgesIfNeeded(order);
-          }
-        } else {
-          this.emitOrderCancelled(order);
-          this.deps.tracker.removePostedOrder(order.key);
-          await this.cancelOrphanHedgesIfNeeded(order);
-        }
-        log("Live order removed from resting exposure", {
-          orderId: order.orderId,
-          filled: status.filled,
-          cancelled: status.cancelled,
-          sizeMatched: status.sizeMatched,
-        });
-      }
+      await this.handleOrderStatus(order, status);
     }
+  }
+
+  /**
+   * Traite un statut terminal (fill/cancel) pour un ordre posted. Idempotent :
+   * l'ordre quitte `postedOrders` au premier finalize, donc la réconciliation
+   * REST (pollOrderFills) et les messages WS ne peuvent pas double-compter.
+   */
+  async handleOrderStatus(
+    order: { key: string; orderId: string } & PostedOrderContext,
+    status: { filled: boolean; cancelled: boolean; sizeMatched: number },
+  ): Promise<boolean> {
+    if (!(status.filled || status.cancelled)) return false;
+    if (status.sizeMatched > 0) {
+      const outcome = await this.finalizeLiveOrder(order, status);
+      if (outcome === "pending") return false;
+      if (outcome === "ghost" || outcome === "none") {
+        await this.cancelOrphanHedgesIfNeeded(order);
+      }
+    } else {
+      this.emitOrderCancelled(order);
+      this.deps.tracker.removePostedOrder(order.key);
+      await this.cancelOrphanHedgesIfNeeded(order);
+    }
+    log("Live order removed from resting exposure", {
+      orderId: order.orderId,
+      filled: status.filled,
+      cancelled: status.cancelled,
+      sizeMatched: status.sizeMatched,
+    });
+    return true;
   }
 
   async getOrderStatusTracked(

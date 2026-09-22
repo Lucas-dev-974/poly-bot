@@ -123,6 +123,15 @@ export interface BotConfig {
   clobPassphrase?: string;
   gammaApiHost: string;
   dataApiHost: string;
+  /** WebSocket CLOB actif (books + fills temps réel). False = polling REST only. */
+  wsEnabled: boolean;
+  wsMarketHost: string;
+  wsUserHost: string;
+  /**
+   * Fraîcheur maximale de l'activité socket avant bascule REST (market feed).
+   * Voir MarketFeed.isLive() — staleness au niveau socket, pas par asset.
+   */
+  wsBookMaxAgeMs: number;
   enableDashboard: boolean;
   dashboardPort: number;
   simulatedCapital: number;
@@ -633,6 +642,10 @@ export function loadConfig(): BotConfig {
     clobPassphrase: process.env.CLOB_PASSPHRASE,
     gammaApiHost: envString("GAMMA_API_HOST", "https://gamma-api.polymarket.com"),
     dataApiHost: envString("DATA_API_HOST", "https://data-api.polymarket.com"),
+    wsEnabled: envBoolean("ENABLE_WS", true),
+    wsMarketHost: envString("WS_MARKET_HOST", "wss://ws-subscriptions-clob.polymarket.com/ws/market"),
+    wsUserHost: envString("WS_USER_HOST", "wss://ws-subscriptions-clob.polymarket.com/ws/user"),
+    wsBookMaxAgeMs: envNumber("WS_BOOK_MAX_AGE_MS", 3_000),
     enableDashboard: envBoolean("ENABLE_DASHBOARD", true),
     dashboardPort: envNumber("DASHBOARD_PORT", 3105),
     dbPath,
@@ -796,6 +809,9 @@ export function validateConfigCoherence(
   }
   if (config.pollIntervalMs < 500) {
     throw new Error("POLL_INTERVAL_MS must be >= 500");
+  }
+  if (config.wsBookMaxAgeMs < 500) {
+    throw new Error("WS_BOOK_MAX_AGE_MS must be >= 500");
   }
   if (config.maxOpenPositionsPerSide < 1) {
     throw new Error("MAX_OPEN_POSITIONS_PER_SIDE must be >= 1");

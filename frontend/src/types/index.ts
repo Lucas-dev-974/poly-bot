@@ -473,7 +473,8 @@ export type BotEvent =
   | { type: "botControl"; enabled: boolean }
   | { type: "error"; message: string }
   | { type: "log"; message: string; data?: Record<string, unknown> }
-  | { type: "strategyStatus"; status: FavBandWhipsawStatus };
+  | { type: "strategyStatus"; status: FavBandWhipsawStatus }
+  | { type: "wsStatus"; channel: "market" | "user"; connected: boolean; reconnects: number };
 
 // Types UI enrichis
 export interface MarketView extends UpDownEvent {

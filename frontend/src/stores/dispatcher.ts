@@ -11,6 +11,7 @@ import { setSimStats } from "../stores/statsStore";
 import { replacePolyPositions } from "../stores/polyStore";
 import { updateRelayerQuota } from "../stores/quotaStore";
 import { addLog } from "../stores/logStore";
+import { setWsStatus } from "./wsStore";
 import { pushError } from "./toastStore";
 
 /**
@@ -134,6 +135,10 @@ export function dispatchEvent(event: BotEvent): void {
         case "strategyStatus":
           // Strategy status events are handled via REST polling in WhipsawStatus component
           // No store update needed — the component polls /api/strategy/status directly
+          break;
+
+        case "wsStatus":
+          setWsStatus(event);
           break;
       }
     }

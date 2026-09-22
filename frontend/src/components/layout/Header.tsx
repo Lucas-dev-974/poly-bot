@@ -3,6 +3,7 @@ import type { JSX } from "solid-js";
 import { Badge } from "../ui/Badge";
 import { config, mode, botEnabled, setBotEnabled } from "../../stores/botStore";
 import { relayerQuota } from "../../stores/quotaStore";
+import { wsMarket, wsUser } from "../../stores/wsStore";
 import { api } from "../../api/client";
 import { addLog } from "../../stores/logStore";
 import { fmtUsd } from "../../utils/format";
@@ -75,6 +76,7 @@ export function Header(props: {
         )}
       </Show>
 
+          <WsBadge />
       <QuotaBadge />
       {capital()}
     </header>
@@ -157,6 +159,41 @@ function QuotaBadge(): JSX.Element {
       label: "Relayer quota épuisé",
       sub: `reset dans ${formatDuration(remaining)}`,
       cls: "exhausted",
+    };
+  });
+
+  return (
+    <Show when={display()} fallback={<></>}>
+      {(d) => (
+        <div class={`quota-badge ${d().cls}`}>
+          {d().label}
+          <Show when={d().sub}>
+            <span class="sub">{d().sub}</span>
+          </Show>
+        </div>
+      )}
+    </Show>
+  );
+}
+
+/**
+ * Badge WS : état des deux canaux CLOB (market + user). Vert = connecté,
+ * gris = déconnecté (fallback REST), tooltip = compte des reconnexions.
+ */
+function WsBadge(): JSX.Element {
+  const market = createMemo(() => wsMarket());
+  const user = createMemo(() => wsUser());
+
+  const display = createMemo(() => {
+    const m = market();
+    const u = user();
+    if (!m && !u) return null;
+    const connected = m?.connected !== false && u?.connected !== false;
+    const reconnects = (m?.reconnects ?? 0) + (u?.reconnects ?? 0);
+    return {
+      label: connected ? "WS OK" : "WS off",
+      sub: reconnects > 0 ? `${reconnects} recon.` : null,
+      cls: connected ? "ok" : "off",
     };
   });
 

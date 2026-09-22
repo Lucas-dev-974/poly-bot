@@ -13,6 +13,7 @@ import { Trader } from "./trader.js";
 let db: Database | null = null;
 let autoRedeemer: AutoRedeemer | null = null;
 let balanceTracker: BalanceTracker | null = null;
+let botRef: ReverseBot | null = null;
 
 async function main(): Promise<void> {
   const config = loadConfig();
@@ -46,6 +47,7 @@ async function main(): Promise<void> {
   }
 
   const bot = new ReverseBot(config, trader, repos);
+  botRef = bot;
 
   if (config.enableDashboard) {
     const dashboard = new DashboardServer(config.dashboardPort, config, repos);
@@ -85,6 +87,7 @@ main().catch((error) => {
 function shutdown(): void {
   autoRedeemer?.stop();
   balanceTracker?.stop();
+  void botRef?.stop();
   db?.close();
   process.exit(0);
 }

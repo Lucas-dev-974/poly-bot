@@ -1,7 +1,7 @@
 import type { BotConfig } from "../config.js";
 import { bus } from "../dashboard/events.js";
 import { log } from "../logger.js";
-import type { MarketScanner } from "../market-scanner.js";
+import type { BookSource } from "../market-data.js";
 import type { TradingStrategy } from "../strategy/trading-strategy.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { Trader } from "../trader.js";
@@ -37,7 +37,7 @@ export type RestingManagerDeps = {
   config: BotConfig; // shared mutable ref — do not copy
   trader: Trader;
   tracker: TradeTracker;
-  scanner: MarketScanner;
+  scanner: BookSource;
   lifecycle: LiveOrderLifecycle;
 };
 

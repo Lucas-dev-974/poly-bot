@@ -49,8 +49,10 @@ export interface TokenBook {
   bid3Size?: number | null;
 }
 
+export type PositionKind = "cheap" | "expensive" | "manual";
+
 export interface TradeOpportunity {
-  kind: "cheap" | "expensive";
+  kind: PositionKind;
   event: UpDownEvent;
   token: TokenBook;
   price: number;
@@ -78,7 +80,7 @@ export interface OrderResult {
 
 /** "sold" = cheap leg sold via pair defense (defendPair) before resolution. */
 export type PositionStatus = "open" | "won" | "lost" | "sold";
-export type FillReason = "marketable" | "probabilistic" | "resting";
+export type FillReason = "marketable" | "probabilistic" | "resting" | "manual";
 
 export interface SimulatedPosition {
   id: string;
@@ -87,7 +89,7 @@ export interface SimulatedPosition {
   tokenId: string;
   outcome: string;
   outcomeIndex: number;
-  kind: "cheap" | "expensive";
+  kind: PositionKind;
   limitPrice: number;
   fillPrice: number;
   size: number;
@@ -480,7 +482,7 @@ export interface MarketView extends UpDownEvent {
 }
 
 export interface OrderView {
-  kind: "cheap" | "expensive";
+  kind: PositionKind;
   market: string;
   slug: string;
   tokenId: string;
@@ -777,4 +779,24 @@ export interface FavBandWhipsawStatus {
   lossStreak: number;
   pauseAfterLosses: number | null;
   pauseWindows: number;
+}
+
+/** Réponse d'un achat manuel. `ok=false` → `error` décrit la raison. */
+export interface ManualBuyResult {
+  ok: boolean;
+  error?: string;
+  tokenId?: string;
+  outcome?: string;
+  /** Prix demandé (bestAsk au moment du POST). */
+  price?: number;
+  /** Prix de fill réel. */
+  fillPrice?: number;
+  /** Shares reçues. */
+  size?: number;
+  /** pUSD réellement dépensé. */
+  cost?: number;
+  /** pUSD demandé. */
+  requestedUsd?: number;
+  /** ID de la position trackée. */
+  positionId?: string;
 }

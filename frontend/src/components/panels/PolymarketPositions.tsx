@@ -13,7 +13,7 @@ import { openPositionList, resolvedPositions } from "../../stores/positionStore"
 import { dateTimeStr, fmtPrice, fmtUsd } from "../../utils/format";
 import { marketRecencyMs } from "../../utils/market";
 import { MarketHistoryModal, positionToChartTarget } from "../modals/MarketHistoryModal";
-import type { PolymarketPosition, StrategyId } from "../../types";
+import type { PolymarketPosition, PositionKind, StrategyId } from "../../types";
 
 /** Identifie un marché par son créneau visible (titre = date + heure), pas par token. */
 function marketKey(position: PolymarketPosition): string {
@@ -64,12 +64,12 @@ const KIND_FILTERS: Array<{ id: KindFilter; label: string }> = [
 function positionMeta(
   position: PolymarketPosition,
 ): {
-  kind: "cheap" | "expensive" | null;
+  kind: PositionKind | null;
   orderType: "GTC" | "FOK" | "FAK" | "SIM" | null;
   strategyId: StrategyId | null;
 } {
   const botPositions = [...openPositionList(), ...resolvedPositions];
-  let kind: "cheap" | "expensive" | null = null;
+  let kind: PositionKind | null = null;
   let orderType: "GTC" | "FOK" | "FAK" | "SIM" | null = null;
   let strategyId: StrategyId | null = null;
 

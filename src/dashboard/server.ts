@@ -15,6 +15,8 @@ import {
 } from "../withdraw.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { Trader } from "../trader.js";
+import type { ManualBuyResult } from "../types.js";
+import { MIN_CLOB_SHARES } from "../utils/prices.js";
 import { ReverseBot } from "../bot/reverse-bot.js";
 import {
   applyRuntimeSettings,
@@ -97,6 +99,9 @@ export class DashboardServer {
         | { ok: false; error: string }
       >)
     | null = null;
+  private manualBuyFn:
+    | ((tokenId: string, shares: number) => Promise<ManualBuyResult>)
+    | null = null;
   private marketRulesStore: MarketRuleStore | null = null;
   private readonly backtestJob: BacktestJob;
 
@@ -141,6 +146,13 @@ export class DashboardServer {
     >,
   ): void {
     this.closePositionFn = fn;
+  }
+
+  /** Store a handler for dashboard-initiated manual buys (share count). */
+  setManualBuyHandler(
+    fn: (tokenId: string, shares: number) => Promise<ManualBuyResult>,
+  ): void {
+    this.manualBuyFn = fn;
   }
 
   /** Store a reference to the bot for strategy status queries. */
@@ -203,6 +215,11 @@ export class DashboardServer {
 
       if (url.pathname === "/api/open-positions/close" && req.method === "POST") {
         void this.handleCloseOpenPosition(req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/manual-buy" && req.method === "POST") {
+        void this.handleManualBuy(req, res);
         return;
       }
 
@@ -943,6 +960,60 @@ export class DashboardServer {
         return;
       }
       res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(result));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: message }));
+    }
+  }
+
+  /**
+   * POST /api/manual-buy — achat manuel depuis le dashboard.
+   * Body : { tokenId: string; shares: number } (nombre de shares, min 5).
+   * Délègue au bot (RestingManager.manualBuy) : budget pUSD calculé côté
+   * bot (shares × best ask), FOK BUY au best ask puis tracking de la
+   * position (résolution auto à la fin de fenêtre).
+   */
+  private async handleManualBuy(
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+  ): Promise<void> {
+    if (!this.isAllowedOrigin(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
+      return;
+    }
+    try {
+      const body = await this.readBody(req);
+      const parsed = JSON.parse(body) as {
+        tokenId?: string;
+        shares?: number;
+      };
+      const tokenId = String(parsed.tokenId ?? "").trim();
+      const shares = Math.floor(Number(parsed.shares));
+      if (!tokenId) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "tokenId is required" }));
+        return;
+      }
+      if (!Number.isFinite(shares) || shares < MIN_CLOB_SHARES) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(
+          JSON.stringify({
+            ok: false,
+            error: `shares must be an integer ≥ ${MIN_CLOB_SHARES}`,
+          }),
+        );
+        return;
+      }
+      if (!this.manualBuyFn) {
+        res.writeHead(503, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "Manual buy handler not initialized" }));
+        return;
+      }
+      const result = await this.manualBuyFn(tokenId, shares);
+      res.writeHead(result.ok ? 200 : 400, { "Content-Type": "application/json" });
       res.end(JSON.stringify(result));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

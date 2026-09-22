@@ -4,7 +4,7 @@ import { log } from "../logger.js";
 import type { PostedOrderContext, TradeTracker } from "../trade-tracker.js";
 import type { Trader } from "../trader.js";
 import type { TradingStrategy } from "../strategy/trading-strategy.js";
-import type { SimulatedPosition } from "../types.js";
+import type { PositionKind, SimulatedPosition } from "../types.js";
 import { shouldCancelOrphanIndependentHedges } from "../strategy/hedge-post.js";
 import { confirmedFillSize } from "../utils/order-status.js";
 
@@ -148,7 +148,7 @@ export class LiveOrderLifecycle {
   }
 
   async cancelOrphanHedgesIfNeeded(
-    order: { key: string; pairId: string; kind: "cheap" | "expensive" } & PostedOrderContext,
+    order: { key: string; pairId: string; kind: PositionKind } & PostedOrderContext,
   ): Promise<void> {
     // Edge-lead gère le GTC edge resting via manageRestingEdgeLead.
     // L'orphan-hedge arb (cheap disparu → cancel le favori) casserait un

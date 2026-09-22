@@ -219,6 +219,75 @@ export class Trader {
   }
 
   /**
+   * Manual BUY (dashboard "Marchés actifs") — FOK market order funded by a
+   * pUSD budget. For a BUY FOK the CLOB `amount` is the dollar budget; it
+   * computes the shares. `price` is a worst-price limit: we pass the live
+   * bestAsk so the FOK is marketable and fills at (at most) that price.
+   *
+   * Tick size and neg-risk are fetched from the CLOB for the token.
+   *
+   * Returns a compact summary: `success` = filled, `spentUsd` = USDC spent
+   * (makingAmount), `filledShares` = shares received (takingAmount).
+   */
+  async placeManualBuy(
+    tokenId: string,
+    amountUsd: number,
+    worstPrice: number,
+  ): Promise<{
+    success: boolean;
+    filledShares: number;
+    spentUsd: number;
+    fillPrice: number;
+    orderId?: string;
+    errorMsg?: string;
+  }> {
+    if (!this.client) {
+      throw new Error("Trading client not initialized");
+    }
+    const [tickSize, negRisk] = await Promise.all([
+      this.client.getTickSize(tokenId),
+      this.client.getNegRisk(tokenId).catch(() => false),
+    ]);
+    const amount = Math.round(amountUsd * 10_000) / 10_000;
+    try {
+      const response = await this.withTimeout(
+        "placeManualBuy",
+        this.client.createAndPostMarketOrder(
+          {
+            tokenID: tokenId,
+            price: worstPrice,
+            amount,
+            side: Side.BUY,
+            orderType: OrderType.FOK,
+          },
+          { tickSize, negRisk },
+          OrderType.FOK,
+        ),
+      );
+      const success = response.success ?? false;
+      // For BUY: makingAmount = USDC spent, takingAmount = shares received.
+      const spentUsd = success ? Number(response.makingAmount) || 0 : 0;
+      const filledShares = success ? Number(response.takingAmount) || 0 : 0;
+      return {
+        success,
+        filledShares,
+        spentUsd,
+        fillPrice: filledShares > 0 ? spentUsd / filledShares : worstPrice,
+        orderId: response.orderID,
+        errorMsg: response.errorMsg,
+      };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      // FOK killed by the venue (couldn't fully fill) — a business outcome,
+      // not a transport error: report it instead of bubbling.
+      if (/couldn't be fully filled/i.test(msg)) {
+        return { success: false, filledShares: 0, spentUsd: 0, fillPrice: worstPrice, errorMsg: msg };
+      }
+      throw err;
+    }
+  }
+
+  /**
    * Place a FOK (Fill-or-Kill) SELL market order for the cheap leg — a
    * cut-loss / pair-defense mechanism (S2.4). When the favorite ask is
    * above expensiveBuyMax, the filled cheap is sold at the current best

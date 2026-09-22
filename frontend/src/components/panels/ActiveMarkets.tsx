@@ -1,4 +1,4 @@
-import { For, Show, createMemo, createSignal, onCleanup } from "solid-js";
+import { For, Index, Show, createMemo, createSignal, onCleanup } from "solid-js";
 import type { JSX } from "solid-js";
 import { Badge } from "../ui/Badge";
 import { EmptyState } from "../ui/EmptyState";
@@ -7,7 +7,12 @@ import { marketList } from "../../stores/marketStore";
 import { ruleFor, refreshMarketRules } from "../../stores/marketRulesStore";
 import { countdown, fmtPrice, fmtShares, pct, fmtSpread } from "../../utils/format";
 import { MarketHistoryModal, marketToChartTarget } from "../modals/MarketHistoryModal";
+import { api } from "../../api/client";
+import { pushInfo } from "../../stores/toastStore";
 import type { MarketView, TokenBook } from "../../types";
+
+/** Minimum CLOB : un ordre sous 5 shares est refusé par le venue. */
+const MIN_SHARES = 5;
 
 /** Seuils d'urgence du compte à rebours (ms). */
 const HOT_MS = 5 * 60 * 1000;
@@ -38,7 +43,10 @@ function roleFor(book: TokenBook, books: TokenBook[]): "underdog" | "favorite" {
     : "favorite";
 }
 
-function OutcomeTile(props: { book: TokenBook; books: TokenBook[] }): JSX.Element {
+function OutcomeTile(props: {
+  book: TokenBook;
+  books: TokenBook[];
+}): JSX.Element {
   const role = () => roleFor(props.book, props.books);
   const mid = () => {
     const { bestBid, bestAsk } = props.book;
@@ -50,11 +58,59 @@ function OutcomeTile(props: { book: TokenBook; books: TokenBook[] }): JSX.Elemen
     return bestBid != null && bestAsk != null ? bestAsk - bestBid : null;
   };
 
+  // Achat inline : champ shares (défaut 5, min 5) + envoi direct, dans la
+  // tuile elle-même (pas de modale).
+  const [sharesInput, setSharesInput] = createSignal("5");
+  const [busy, setBusy] = createSignal(false);
+  const [error, setError] = createSignal("");
+  const [done, setDone] = createSignal(false);
+
+  const shares = createMemo(() => {
+    const n = Number(sharesInput());
+    if (!Number.isFinite(n) || n < MIN_SHARES) return null;
+    return Math.floor(n);
+  });
+  const cost = () => {
+    const p = props.book.bestAsk;
+    const s = shares();
+    if (p == null || p <= 0 || s === null) return null;
+    return s * p;
+  };
+  const valid = () => shares() !== null && props.book.bestAsk != null;
+
+  const buy = async (): Promise<void> => {
+    if (!valid() || busy()) return;
+    setError("");
+    setBusy(true);
+    try {
+      const res = await api.manualBuy({
+        tokenId: props.book.tokenId,
+        shares: shares()!,
+      });
+      if (res.ok) {
+        pushInfo(
+          `Achat exécuté : ${fmtShares(res.size)} shares de ${res.outcome} @ ${fmtPrice(res.fillPrice)} (${fmtPrice(res.cost)} pUSD)`,
+        );
+        setDone(true);
+        setSharesInput("5");
+        setTimeout(() => setDone(false), 2500);
+      } else {
+        setError(res.error ?? "Achat refusé");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div class={`am-outcome${role() === "underdog" ? " am-outcome--best" : ""}`}>
       <div class="am-outcome__head">
         <span class="am-outcome__name">{props.book.outcome}</span>
-        <Badge variant={role()}>{role()}</Badge>
+        <div class="am-outcome__head-right">
+          <Badge variant={role()}>{role()}</Badge>
+        </div>
       </div>
       <div class="am-prices">
         <div class="am-price">
@@ -86,6 +142,38 @@ function OutcomeTile(props: { book: TokenBook; books: TokenBook[] }): JSX.Elemen
           </span>
         </Show>
       </div>
+      <div class="am-buy-inline">
+        <input
+          class="am-buy-shares-input"
+          type="number"
+          inputmode="numeric"
+          aria-label={`Nombre de shares à acheter (${props.book.outcome})`}
+          min={MIN_SHARES}
+          step="1"
+          placeholder="5"
+          value={sharesInput()}
+          onInput={(e) => setSharesInput(e.currentTarget.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") void buy();
+          }}
+          disabled={busy()}
+        />
+        <button
+          class="am-buy-btn"
+          type="button"
+          title={`Acheter manuellement du ${props.book.outcome} (FOK au best ask)`}
+          disabled={!valid() || busy()}
+          onClick={() => void buy()}
+        >
+          {done() ? "✓" : busy() ? "…" : "Acheter"}
+        </button>
+        <span class="am-buy-cost">
+          {cost() != null ? `≈ ${fmtPrice(cost()!)} pUSD` : "—"}
+        </span>
+      </div>
+      <Show when={error()}>
+        <p class="am-buy-error">{error()}</p>
+      </Show>
     </div>
   );
 }
@@ -234,9 +322,9 @@ export function ActiveMarkets(props: { now: number }): JSX.Element {
                     fallback={<div class="am-outcome am-outcome--empty">Données indisponibles</div>}
                   >
                     <div class="am-card__outcomes">
-                      <For each={m.books}>
-                        {(book) => <OutcomeTile book={book} books={m.books} />}
-                      </For>
+                      <Index each={m.books}>
+                        {(book) => <OutcomeTile book={book()} books={m.books} />}
+                      </Index>
                     </div>
                   </Show>
                 </article>

@@ -26,6 +26,16 @@
   color: #fff;
 }
 
+.badge.manual {
+  background: var(--amber);
+  color: #000;
+}
+
+.badge.manual {
+  background: var(--amber);
+  color: #000;
+}
+
 .badge.underdog {
   background: var(--red);
   color: #fff;
@@ -2045,6 +2055,91 @@ select.cfg-input {
   font-size: 10.5px;
   color: var(--muted);
   white-space: nowrap;
+}
+
+.am-outcome__head-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Achat manuel inline dans la tuile outcome (pas de modale) */
+.am-buy-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.am-buy-shares-input {
+  width: 52px;
+  padding: 3px 6px;
+  font-size: 11px;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-elev);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.am-buy-shares-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.am-buy-shares-input:disabled {
+  opacity: 0.5;
+}
+
+.am-buy-shares-input::-webkit-outer-spin-button,
+.am-buy-shares-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.am-buy-shares-input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.am-buy-btn {
+  border: 1px solid rgba(79, 140, 255, 0.55);
+  background: rgba(79, 140, 255, 0.12);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.am-buy-btn:hover:not(:disabled) {
+  background: rgba(79, 140, 255, 0.25);
+  border-color: var(--accent);
+}
+
+.am-buy-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.am-buy-cost {
+  font-size: 10.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.am-buy-error {
+  margin: 4px 0 0;
+  font-size: 10.5px;
+  color: rgba(231, 76, 60, 0.9);
+  word-break: break-word;
 }
 
 @media (max-width: 1100px) {

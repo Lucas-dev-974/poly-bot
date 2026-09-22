@@ -1,5 +1,5 @@
 import type { StrategyId } from "../strategy/ids.js";
-import type { FillReason } from "../types.js";
+import type { FillReason, PositionKind } from "../types.js";
 
 export interface BacktestWindowMeta {
   eventSlug: string;
@@ -36,7 +36,7 @@ export interface BacktestSeriesPoint {
 export interface BacktestTradeRecord {
   ts: number;
   eventSlug: string;
-  kind: "cheap" | "expensive";
+  kind: PositionKind;
   outcome: string;
   side: "BUY" | "SELL";
   limitPrice: number;

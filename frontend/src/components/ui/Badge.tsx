@@ -5,6 +5,7 @@ type BadgeVariant =
   | "live"
   | "cheap"
   | "expensive"
+  | "manual"
   | "underdog"
   | "favorite"
   | "couvert"
@@ -15,6 +16,7 @@ const VARIANTS: Record<BadgeVariant, string> = {
   live: "badge live",
   cheap: "badge cheap",
   expensive: "badge expensive",
+  manual: "badge manual",
   underdog: "badge underdog",
   favorite: "badge favorite",
   couvert: "badge couvert",

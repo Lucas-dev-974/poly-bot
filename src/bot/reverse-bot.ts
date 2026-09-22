@@ -142,6 +142,12 @@ export class ReverseBot {
     return this.resting.closePositionManual(positionId);
   }
 
+  /** Manual BUY from the dashboard (pUSD budget, FOK at the live ask). */
+  /** Manual BUY from the dashboard (share count, min = CLOB minimum). */
+  manualBuy(tokenId: string, shares: number) {
+    return this.resting.manualBuy(tokenId, shares);
+  }
+
   /** Get the current strategy status for the dashboard (fav-band whipsaw pause). */
   getStrategyStatus(): FavBandWhipsawStatus | null {
     if (this.config.strategyId !== "fav-band") return null;

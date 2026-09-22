@@ -1,5 +1,6 @@
 import type {
   ArbPairStatus,
+  PositionKind,
   SimulatedArbPair,
   SimulatedPosition,
 } from "./types.js";
@@ -30,7 +31,7 @@ export interface PostedOrderContext {
   tokenId: string;
   outcome: string;
   outcomeIndex: number;
-  kind: "cheap" | "expensive";
+  kind: PositionKind;
   limitPrice: number;
   size: number;
   pairId: string;
@@ -104,7 +105,14 @@ export class TradeTracker {
           .filter((p) => p.pairId === pair.id && p.kind === "cheap")
           .map((p) => openById.get(p.id) ?? p);
         pair.expensiveLegs = legs
-          .filter((p) => p.pairId === pair.id && p.kind === "expensive")
+          .filter(
+            (p) =>
+              p.pairId === pair.id &&
+              // kind "manual" est rangé dans expensiveLegs par attachLeg
+              // (fallback du ternaire cheap/expensive) — le garder ici pour
+              // que la paire manuelle survive au restart.
+              (p.kind === "expensive" || p.kind === "manual"),
+          )
           .map((p) => openById.get(p.id) ?? p);
       }
       this.pairs.set(pair.id, pair);

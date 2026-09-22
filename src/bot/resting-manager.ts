@@ -5,9 +5,33 @@ import type { MarketScanner } from "../market-scanner.js";
 import type { TradingStrategy } from "../strategy/trading-strategy.js";
 import type { TradeTracker } from "../trade-tracker.js";
 import type { Trader } from "../trader.js";
-import type { TokenBook, TradeOpportunity, UpDownEvent } from "../types.js";
+import type {
+  ManualBuyResult,
+  SimulatedPosition,
+  TokenBook,
+  TradeOpportunity,
+  UpDownEvent,
+} from "../types.js";
 import { MIN_CLOB_SHARES } from "../utils/prices.js";
 import type { LiveOrderLifecycle } from "./live-order-lifecycle.js";
+
+function round4(value: number): number {
+  return Math.round(value * 10_000) / 10_000;
+}
+
+/** Parse la liste JSON-sérialisée de Gamma (outcomes). */
+function parseGammaList(value: unknown): string[] {
+  if (Array.isArray(value)) return value.map(String);
+  if (typeof value === "string" && value.length > 0) {
+    try {
+      const parsed = JSON.parse(value) as unknown;
+      if (Array.isArray(parsed)) return parsed.map(String);
+    } catch {
+      /* ignore */
+    }
+  }
+  return [];
+}
 
 export type RestingManagerDeps = {
   config: BotConfig; // shared mutable ref — do not copy
@@ -723,4 +747,202 @@ export class RestingManager {
     }
   }
 
+  /**
+   * Achat manuel depuis le dashboard (tuile "Marchés actifs"). L'utilisateur
+   * choisit un NOMBRE DE SHARES (défaut/min 5 = minimum CLOB) ; le budget
+   * pUSD est calculé = shares × best ask. L'exécution est un FOK market BUY
+   * au best ask (worst-price limit), la position est trackée comme les
+   * positions du bot (résolution auto à la fin de fenêtre) mais isolée de
+   * la logique d'arbitrage via un pairId dédié "manual:<tokenId>".
+   */
+  async manualBuy(tokenId: string, shares: number): Promise<ManualBuyResult> {
+    if (!Number.isFinite(shares) || shares < MIN_CLOB_SHARES) {
+      return {
+        ok: false,
+        error: `Nombre de shares invalide (minimum ${MIN_CLOB_SHARES})`,
+        tokenId,
+      };
+    }
+    // Retrouve d'abord l'event scanné correspondant au token : il fournit le
+    // vrai slug/title/windowEnd (résolution Gamma de fin de fenêtre) et les
+    // outcomes nommés ("Up"/"Down"). Refus AVANT tout ordre si introuvable.
+    const events = await this.deps.scanner.scan().catch(() => []);
+    const event = events.find((e) => e.market.clobTokenIds.includes(tokenId));
+    if (!event) {
+      log("manualBuy: event not found for token — refusing", { tokenId });
+      return {
+        ok: false,
+        error: "Token introuvable dans les marchés actifs (fenêtre expirée ?)",
+        tokenId,
+      };
+    }
+    const freshBook = await this.deps.scanner.getTokenBook(tokenId);
+    if (!freshBook) {
+      return { ok: false, error: "Carnet indisponible pour ce token", tokenId };
+    }
+    const bestAsk = freshBook.bestAsk;
+    if (bestAsk === null || bestAsk <= 0) {
+      return { ok: false, error: "Pas d'ask pour acheter (carnet vide)", tokenId };
+    }
+    // Budget pUSD couvrant exactement `shares` au best ask courant (le FOK
+    // BUY du CLOB prend un budget USDC, pas des shares).
+    const budgetUsd = round4(shares * bestAsk);
+    const askSize = freshBook.bestAskSize ?? null;
+    if (askSize !== null && askSize > 0 && askSize < shares) {
+      const shown = Math.round(askSize * 100) / 100;
+      return {
+        ok: false,
+        error:
+          `Taille à l'ask insuffisante (${shown} shares disponibles au meilleur ask)`,
+        tokenId,
+      };
+    }
+    const available = await this.deps.trader.getAvailableCollateral();
+    if (available !== null && available < budgetUsd) {
+      const shown = Math.round(available * 100) / 100;
+      return {
+        ok: false,
+        error: `Collatéral insuffisant (${shown} pUSD disponibles)`,
+        tokenId,
+      };
+    }
+
+    // Garde-fou anti-doublon : attachLeg range kind "manual" dans
+    // expensiveLegs (fallback du ternaire cheap/expensive) — vérifier là.
+    const pair = this.deps.tracker.getPair(`manual:${tokenId}`);
+    if (
+      pair &&
+      [...pair.cheapLegs, ...pair.expensiveLegs].some(
+        (leg) => leg.status === "open",
+      )
+    ) {
+      return {
+        ok: false,
+        error: "Un achat manuel est déjà ouvert sur ce token",
+        tokenId,
+      };
+    }
+
+    try {
+      const result = await this.deps.trader.placeManualBuy(tokenId, budgetUsd, bestAsk);
+      if (!result.success || result.filledShares <= 0) {
+        const reason = result.errorMsg ?? "FOK tué (non rempli)";
+        log("manualBuy: FOK not filled", { tokenId, shares, budgetUsd, reason });
+        return {
+          ok: false,
+          error: `Achat non exécuté (${reason})`,
+          tokenId,
+          price: bestAsk,
+          requestedUsd: budgetUsd,
+        };
+      }
+
+      const filledSize = round4(result.filledShares);
+      const fillPrice = round4(result.fillPrice);
+      const cost = round4(result.spentUsd);
+      if (filledSize < MIN_CLOB_SHARES) {
+        // Rempli mais sous le minimum CLOB : position non revendable ; le
+        // redeem à la résolution gère les dust via auto-redeem. On track
+        // quand même — l'utilisateur voit la position réelle.
+        log("manualBuy: filled below CLOB min — dust position tracked", {
+          tokenId,
+          filledSize,
+        });
+      }
+
+      // outcomes/clobTokenIds sont des listes parallèles de Gamma : la
+      // position de l'index tokenId = l'index de l'outcome. NE PAS utiliser
+      // freshBook.outcomeIndex : scanner.getTokenBook() renvoie toujours
+      // outcomeIndex 0 (outcome vide) — il résoudrait tout achat comme "Up".
+      const tokenIds = parseGammaList(event.market.clobTokenIds);
+      const outcomes = parseGammaList(event.market.outcomes);
+      const outcomeIndex = tokenIds.indexOf(tokenId);
+      const outcome =
+        outcomes[outcomeIndex] ??
+        freshBook.outcome ??
+        `Token ${tokenId.slice(0, 8)}`;
+      const windowEnd = event.windowEnd;
+      const pairId = `manual:${tokenId}`;
+      const position: SimulatedPosition = {
+        id: `manual:${result.orderId ?? Date.now()}`,
+        eventSlug: event.slug,
+        eventTitle: event.title,
+        tokenId,
+        outcome,
+        outcomeIndex,
+        kind: "manual",
+        limitPrice: bestAsk,
+        fillPrice,
+        size: filledSize,
+        cost,
+        windowEnd,
+        status: "open",
+        fillReason: "manual",
+        pairId,
+        bestAskAtFill: bestAsk,
+        orderType: "FOK",
+        strategyId: undefined,
+      };
+      this.deps.tracker.addOpenPosition(position);
+      this.deps.tracker.attachLeg(position);
+
+      bus.emit({
+        type: "order",
+        result: {
+          dryRun: false,
+          tokenId,
+          side: "BUY",
+          price: bestAsk,
+          fillPrice,
+          size: filledSize,
+          filledSize,
+          filled: true,
+          reason: "filled-fok-manual",
+          orderType: "FOK",
+          response: { orderID: result.orderId },
+        },
+        opportunity: {
+          kind: "manual",
+          event: {
+            title: position.eventTitle,
+            slug: position.eventSlug,
+            market: {} as never,
+            windowStart: 0,
+            windowEnd,
+          },
+          token: freshBook,
+          price: bestAsk,
+          size: filledSize,
+          tickSize: "0.01",
+          negRisk: false,
+          tradeKey: `manual-buy:${tokenId}:${Date.now()}`,
+          pairId,
+        },
+      });
+      bus.emit({ type: "openedPosition", position });
+      log("manualBuy: FOK BUY filled", {
+        tokenId,
+        outcome,
+        fillPrice,
+        filledSize,
+        cost,
+        orderId: result.orderId,
+      });
+      return {
+        ok: true,
+        tokenId,
+        outcome,
+        price: bestAsk,
+        fillPrice,
+        size: filledSize,
+        cost,
+        requestedUsd: budgetUsd,
+        positionId: position.id,
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      log("manualBuy: BUY failed", { tokenId, error: message });
+      return { ok: false, error: message, tokenId };
+    }
+  }
 }

@@ -48,8 +48,10 @@ export interface TokenBook {
   bid3Size?: number | null;
 }
 
+export type PositionKind = "cheap" | "expensive" | "manual";
+
 export interface TradeOpportunity {
-  kind: "cheap" | "expensive";
+  kind: PositionKind;
   event: UpDownEvent;
   token: TokenBook;
   price: number;
@@ -85,7 +87,7 @@ export interface OrderBook {
 
 /** "sold" = cheap leg sold via pair defense (defendPair) before resolution. */
 export type PositionStatus = "open" | "won" | "lost" | "sold";
-export type FillReason = "marketable" | "probabilistic" | "resting";
+export type FillReason = "marketable" | "probabilistic" | "resting" | "manual";
 
 export interface SimulatedPosition {
   id: string;
@@ -94,7 +96,7 @@ export interface SimulatedPosition {
   tokenId: string;
   outcome: string;
   outcomeIndex: number;
-  kind: "cheap" | "expensive";
+  kind: PositionKind;
   limitPrice: number;
   fillPrice: number;
   size: number;
@@ -147,4 +149,25 @@ export interface SimulatedStats {
   coveredCount: number;
   uncoveredCount: number;
   coverRate: number;
+}
+
+/** Réponse d'un achat manuel. `ok=false` → `error` décrit la raison. */
+export interface ManualBuyResult {
+  ok: boolean;
+  error?: string;
+  /** Token demandé. */
+  tokenId?: string;
+  outcome?: string;
+  /** Prix demandé (bestAsk au moment du POST). */
+  price?: number;
+  /** Prix de fill réel (peut différer du bestAsk si le carnet a bougé). */
+  fillPrice?: number;
+  /** Shares reçues (round4 CLOB). */
+  size?: number;
+  /** pUSD réellement dépensé = fillPrice × size. */
+  cost?: number;
+  /** pUSD demandé (pour audit). */
+  requestedUsd?: number;
+  /** ID de la position trackée (résolution auto à la fin de fenêtre). */
+  positionId?: string;
 }

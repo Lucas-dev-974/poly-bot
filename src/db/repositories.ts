@@ -1,5 +1,7 @@
 import type {
   ArbPairStatus,
+  FillReason,
+  PositionKind,
   PositionStatus,
   SimulatedArbPair,
   SimulatedPosition,
@@ -14,7 +16,7 @@ interface PositionRow {
   tokenId: string;
   outcome: string;
   outcomeIndex: number;
-  kind: "cheap" | "expensive";
+  kind: PositionKind;
   limitPrice: number;
   fillPrice: number;
   size: number;
@@ -23,7 +25,7 @@ interface PositionRow {
   status: PositionStatus;
   resolvedAt: number | null;
   pnl: number | null;
-  fillReason: "marketable" | "probabilistic" | "resting";
+  fillReason: FillReason;
   pairId: string;
   bestAskAtFill: number | null;
   orderType: "GTC" | "FOK" | "FAK" | "SIM" | null;
@@ -427,7 +429,7 @@ export interface PostedOrderRow {
   tokenId?: string;
   outcome?: string;
   outcomeIndex?: number;
-  kind?: "cheap" | "expensive";
+  kind?: PositionKind;
   limitPrice?: number;
   size?: number;
   pairId?: string;
@@ -547,7 +549,7 @@ export interface OrderRow {
   tokenId: string;
   outcome: string;
   outcomeIndex: number;
-  kind: "cheap" | "expensive";
+  kind: PositionKind;
   orderType: "GTC" | "FOK" | "FAK" | "SIM";
   side: string;
   limitPrice: number;
@@ -581,7 +583,7 @@ export class OrderRepository {
       response?: unknown;
     },
     opportunity: {
-      kind: "cheap" | "expensive";
+      kind: PositionKind;
       tradeKey: string;
       pairId: string;
       event: { slug: string; title: string; windowEnd: number };
@@ -1050,7 +1052,7 @@ export class BookSnapshotRepository {
 export interface OpportunitySnapshotRow {
   ts: number;
   eventSlug: string;
-  kind: "cheap" | "expensive";
+  kind: PositionKind;
   tokenId: string;
   outcome: string;
   price: number;

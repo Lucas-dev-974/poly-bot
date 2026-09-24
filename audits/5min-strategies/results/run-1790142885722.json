@@ -1,0 +1,623 @@
+{
+ "runId": "run-1790142885722",
+ "startedAt": 1790142887449,
+ "budget": 2,
+ "results": [
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S1-momentum",
+   "name": "Momentum favori",
+   "desc": "Leader ask 0.60-0.80, écart ≥15¢, après 60s. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S2-early-lock",
+   "name": "Early lock favori",
+   "desc": "Leader ask 0.82-0.88 dans les 90 premières s. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S3-dip-revert",
+   "name": "Dip-revert favori",
+   "desc": "Leader décote après spike adverse (drop ≥8¢ en 20s), ask 0.55-0.75. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S4-antiflip",
+   "name": "Antiflip (ancien favori)",
+   "desc": "Après un flip, achète l'ancien leader si ask 0.35-0.50. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S5-flip-confirm",
+   "name": "Flip-confirm (nouveau favori)",
+   "desc": "Flip avant 150s → achète le nouveau leader si ask 0.55-0.65. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S6-underdog-grid",
+   "name": "Grille maker underdog 0.10",
+   "desc": "Limit BUY 0.10 sur l'underdog (t+60s). Payout 1:9 si gagnant.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S6b-underdog-grid-20",
+   "name": "Grille maker underdog 0.20",
+   "desc": "Limit BUY 0.20 sur l'underdog (t+60s). Payout 1:4 si gagnant.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S7-late-lock",
+   "name": "Late lock ≥0.90",
+   "desc": "Leader ask 0.88-0.93 après 120s. Ticket 10$ (référence).",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S8-breakout",
+   "name": "Breakout du range",
+   "desc": "Casse de 0.70 après un range ≤0.68. Entry ask 0.70-0.78. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S9-underdog-momentum",
+   "name": "Underdog momentum",
+   "desc": "Underdog gagne ≥8¢ en 60s, ask 0.30-0.45. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S10-maker-fav-75",
+   "name": "Maker limit favori 0.75",
+   "desc": "Limit BUY 0.75 sur le leader (t+30s). Fill = re-test du prix.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S11-maker-fav-65",
+   "name": "Maker limit favori 0.65",
+   "desc": "Limit BUY 0.65 sur le leader (t+30s). Payout 1:1.54.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S12-double-maker-70",
+   "name": "Double maker 0.70 Up+Down",
+   "desc": "Limit BUY 0.70 sur les 2 tokens (budget split). Payout 1:1.43 par fill.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-21": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-22": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-23": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    }
+   }
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S13-open-blowout",
+   "name": "Open blowout",
+   "desc": "Leader ask 0.70-0.80 dans les 30 premières s. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S14-sniper-60s",
+   "name": "Sniper T-60s ≥0.90",
+   "desc": "À T-60s, achète le leader si ask ≥0.90. Ticket 10$ (référence).",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S15-sniper-45s",
+   "name": "Sniper T-45s ≥0.88",
+   "desc": "À T-45s, achète le leader si ask ≥0.88. Ticket 5$ (référence).",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790142885722",
+   "strategyId": "S16-momentum-SL",
+   "name": "Momentum + stop-loss -10¢",
+   "desc": "Comme S1 + SL : vend au bid si l'ask tenu descend de 10¢ sous l'entrée.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 20
+   },
+   "dataset": {
+    "windows": 116,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  }
+ ]
+}

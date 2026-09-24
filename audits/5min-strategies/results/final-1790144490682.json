@@ -1,0 +1,932 @@
+{
+ "runId": "final-1790144490682",
+ "type": "final",
+ "budget": 4,
+ "minTicks": 100,
+ "windows": 836,
+ "results": [
+  {
+   "strategyId": "A-antiflip-0.3-0.5-d0s-w0.6",
+   "name": "Antiflip 0.3-0.5 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.5], délai 0s.",
+   "metrics": {
+    "trades": 571,
+    "wins": 288,
+    "losses": 283,
+    "winrate": 0.5044,
+    "pnl": 187.82,
+    "pnlPerTrade": 0.3289,
+    "avgCost": 4,
+    "maxWin": 9.33,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.683,
+    "wrUp": 0.5399,
+    "wrDown": 0.4712,
+    "nUp": 276,
+    "nDown": 295
+   },
+   "inSample": {
+    "trades": 264,
+    "winrate": 0.5152,
+    "pnl": 123.14
+   },
+   "outOfSample": {
+    "trades": 307,
+    "winrate": 0.4951,
+    "pnl": 64.68
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 108,
+     "w": 64,
+     "pnl": 134.5
+    },
+    "2026-09-20": {
+     "t": 188,
+     "w": 84,
+     "pnl": -36.24
+    },
+    "2026-09-21": {
+     "t": 201,
+     "w": 107,
+     "pnl": 106.87
+    },
+    "2026-09-22": {
+     "t": 59,
+     "w": 26,
+     "pnl": -18.63
+    },
+    "2026-09-23": {
+     "t": 15,
+     "w": 7,
+     "pnl": 1.32
+    }
+   }
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.45-d5s-w0.6",
+   "name": "Antiflip 0.3-0.45 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.45], délai 5s.",
+   "metrics": {
+    "trades": 219,
+    "wins": 103,
+    "losses": 116,
+    "winrate": 0.4703,
+    "pnl": 143.2,
+    "pnlPerTrade": 0.6539,
+    "avgCost": 4,
+    "maxWin": 8.9,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.262,
+    "wrUp": 0.5258,
+    "wrDown": 0.4262,
+    "nUp": 97,
+    "nDown": 122
+   },
+   "inSample": {
+    "trades": 104,
+    "winrate": 0.4712,
+    "pnl": 78.83
+   },
+   "outOfSample": {
+    "trades": 115,
+    "winrate": 0.4696,
+    "pnl": 64.37
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 46,
+     "w": 25,
+     "pnl": 71.58
+    },
+    "2026-09-20": {
+     "t": 69,
+     "w": 27,
+     "pnl": -8.82
+    },
+    "2026-09-21": {
+     "t": 76,
+     "w": 36,
+     "pnl": 47.55
+    },
+    "2026-09-22": {
+     "t": 24,
+     "w": 13,
+     "pnl": 28.85
+    },
+    "2026-09-23": {
+     "t": 4,
+     "w": 2,
+     "pnl": 4.04
+    }
+   }
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.1",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 45s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 564,
+    "wins": 228,
+    "losses": 336,
+    "winrate": 0.4043,
+    "pnl": 144.52,
+    "pnlPerTrade": 0.2562,
+    "avgCost": 4,
+    "maxWin": 9.33,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.6746,
+    "wrUp": 0.4234,
+    "wrDown": 0.3862,
+    "nUp": 274,
+    "nDown": 290
+   },
+   "inSample": {
+    "trades": 265,
+    "winrate": 0.4377,
+    "pnl": 157.32
+   },
+   "outOfSample": {
+    "trades": 299,
+    "winrate": 0.3746,
+    "pnl": -12.8
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 108,
+     "w": 49,
+     "pnl": 73.32
+    },
+    "2026-09-20": {
+     "t": 191,
+     "w": 77,
+     "pnl": 56.36
+    },
+    "2026-09-21": {
+     "t": 189,
+     "w": 75,
+     "pnl": 29.56
+    },
+    "2026-09-22": {
+     "t": 62,
+     "w": 20,
+     "pnl": -33.36
+    },
+    "2026-09-23": {
+     "t": 14,
+     "w": 7,
+     "pnl": 18.64
+    }
+   }
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.08",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 45s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 587,
+    "wins": 233,
+    "losses": 354,
+    "winrate": 0.3969,
+    "pnl": 121.53,
+    "pnlPerTrade": 0.207,
+    "avgCost": 4,
+    "maxWin": 9.33,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.7022,
+    "wrUp": 0.412,
+    "wrDown": 0.3828,
+    "nUp": 284,
+    "nDown": 303
+   },
+   "inSample": {
+    "trades": 280,
+    "winrate": 0.4321,
+    "pnl": 166.85
+   },
+   "outOfSample": {
+    "trades": 307,
+    "winrate": 0.3648,
+    "pnl": -45.32
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 115,
+     "w": 50,
+     "pnl": 59.46
+    },
+    "2026-09-20": {
+     "t": 199,
+     "w": 82,
+     "pnl": 91.07
+    },
+    "2026-09-21": {
+     "t": 197,
+     "w": 74,
+     "pnl": -12.26
+    },
+    "2026-09-22": {
+     "t": 62,
+     "w": 20,
+     "pnl": -35.38
+    },
+    "2026-09-23": {
+     "t": 14,
+     "w": 7,
+     "pnl": 18.64
+    }
+   }
+  },
+  {
+   "strategyId": "H-antiflip-sharp-d0.25-0.3-0.4",
+   "name": "Antiflip sharp drop≥0.25 [0.3-0.4]",
+   "desc": "Post-flip: déposé décote ≥0.25¢ du sommet, bande [0.3-0.4].",
+   "metrics": {
+    "trades": 20,
+    "wins": 11,
+    "losses": 9,
+    "winrate": 0.55,
+    "pnl": 44.29,
+    "pnlPerTrade": 2.2145,
+    "avgCost": 4,
+    "maxWin": 8.5,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.0239,
+    "wrUp": 0.7143,
+    "wrDown": 0.4615,
+    "nUp": 7,
+    "nDown": 13
+   },
+   "inSample": {
+    "trades": 11,
+    "winrate": 0.3636,
+    "pnl": 1.43
+   },
+   "outOfSample": {
+    "trades": 9,
+    "winrate": 0.7778,
+    "pnl": 42.86
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 6,
+     "w": 2,
+     "pnl": -1.5
+    },
+    "2026-09-20": {
+     "t": 5,
+     "w": 2,
+     "pnl": 2.93
+    },
+    "2026-09-21": {
+     "t": 8,
+     "w": 6,
+     "pnl": 36.61
+    },
+    "2026-09-22": {
+     "t": 1,
+     "w": 1,
+     "pnl": 6.25
+    }
+   }
+  },
+  {
+   "strategyId": "H-antiflip-sharp-d0.12-0.3-0.45",
+   "name": "Antiflip sharp drop≥0.12 [0.3-0.45]",
+   "desc": "Post-flip: déposé décote ≥0.12¢ du sommet, bande [0.3-0.45].",
+   "metrics": {
+    "trades": 145,
+    "wins": 71,
+    "losses": 74,
+    "winrate": 0.4897,
+    "pnl": 143.62,
+    "pnlPerTrade": 0.9905,
+    "avgCost": 4,
+    "maxWin": 8.9,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.1734,
+    "wrUp": 0.5385,
+    "wrDown": 0.45,
+    "nUp": 65,
+    "nDown": 80
+   },
+   "inSample": {
+    "trades": 72,
+    "winrate": 0.5139,
+    "pnl": 95.26
+   },
+   "outOfSample": {
+    "trades": 73,
+    "winrate": 0.4658,
+    "pnl": 48.36
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 31,
+     "w": 18,
+     "pnl": 66.59
+    },
+    "2026-09-20": {
+     "t": 49,
+     "w": 21,
+     "pnl": 15.51
+    },
+    "2026-09-21": {
+     "t": 44,
+     "w": 21,
+     "pnl": 36.79
+    },
+    "2026-09-22": {
+     "t": 19,
+     "w": 10,
+     "pnl": 22.21
+    },
+    "2026-09-23": {
+     "t": 2,
+     "w": 1,
+     "pnl": 2.52
+    }
+   }
+  },
+  {
+   "strategyId": "H-antiflip-sharp-d0.12-0.35-0.5",
+   "name": "Antiflip sharp drop≥0.12 [0.35-0.5]",
+   "desc": "Post-flip: déposé décote ≥0.12¢ du sommet, bande [0.35-0.5].",
+   "metrics": {
+    "trades": 179,
+    "wins": 90,
+    "losses": 89,
+    "winrate": 0.5028,
+    "pnl": 131.77,
+    "pnlPerTrade": 0.7361,
+    "avgCost": 4,
+    "maxWin": 7.42,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.2141,
+    "wrUp": 0.5542,
+    "wrDown": 0.4583,
+    "nUp": 83,
+    "nDown": 96
+   },
+   "inSample": {
+    "trades": 82,
+    "winrate": 0.5488,
+    "pnl": 95.85
+   },
+   "outOfSample": {
+    "trades": 97,
+    "winrate": 0.4639,
+    "pnl": 35.92
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 38,
+     "w": 23,
+     "pnl": 65.07
+    },
+    "2026-09-20": {
+     "t": 54,
+     "w": 25,
+     "pnl": 18.13
+    },
+    "2026-09-21": {
+     "t": 62,
+     "w": 30,
+     "pnl": 31.51
+    },
+    "2026-09-22": {
+     "t": 22,
+     "w": 11,
+     "pnl": 18.54
+    },
+    "2026-09-23": {
+     "t": 3,
+     "w": 1,
+     "pnl": -1.48
+    }
+   }
+  },
+  {
+   "strategyId": "H-antiflip-sharp-d0.12-0.3-0.4",
+   "name": "Antiflip sharp drop≥0.12 [0.3-0.4]",
+   "desc": "Post-flip: déposé décote ≥0.12¢ du sommet, bande [0.3-0.4].",
+   "metrics": {
+    "trades": 71,
+    "wins": 35,
+    "losses": 36,
+    "winrate": 0.493,
+    "pnl": 101.51,
+    "pnlPerTrade": 1.4297,
+    "avgCost": 4,
+    "maxWin": 8.9,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.0849,
+    "wrUp": 0.5625,
+    "wrDown": 0.4359,
+    "nUp": 32,
+    "nDown": 39
+   },
+   "inSample": {
+    "trades": 39,
+    "winrate": 0.5385,
+    "pnl": 78.57
+   },
+   "outOfSample": {
+    "trades": 32,
+    "winrate": 0.4375,
+    "pnl": 22.94
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 21,
+     "w": 11,
+     "pnl": 41.01
+    },
+    "2026-09-20": {
+     "t": 20,
+     "w": 10,
+     "pnl": 29.56
+    },
+    "2026-09-21": {
+     "t": 21,
+     "w": 9,
+     "pnl": 15.13
+    },
+    "2026-09-22": {
+     "t": 8,
+     "w": 4,
+     "pnl": 9.29
+    },
+    "2026-09-23": {
+     "t": 1,
+     "w": 1,
+     "pnl": 6.52
+    }
+   }
+  },
+  {
+   "strategyId": "I-lateflip-0.4-0.75-0.3-0.45",
+   "name": "Antiflip tardif (flip à 40-75%)",
+   "desc": "Flip entre 40% et 75% de la fenêtre, déposé [0.3-0.45].",
+   "metrics": {
+    "trades": 103,
+    "wins": 50,
+    "losses": 53,
+    "winrate": 0.4854,
+    "pnl": 94.02,
+    "pnlPerTrade": 0.9128,
+    "avgCost": 4,
+    "maxWin": 9.33,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.1232,
+    "wrUp": 0.5686,
+    "wrDown": 0.4038,
+    "nUp": 51,
+    "nDown": 52
+   },
+   "inSample": {
+    "trades": 52,
+    "winrate": 0.4423,
+    "pnl": 20.98
+   },
+   "outOfSample": {
+    "trades": 51,
+    "winrate": 0.5294,
+    "pnl": 73.04
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 18,
+     "w": 8,
+     "pnl": 10.52
+    },
+    "2026-09-20": {
+     "t": 38,
+     "w": 17,
+     "pnl": 15.32
+    },
+    "2026-09-21": {
+     "t": 36,
+     "w": 16,
+     "pnl": 21.39
+    },
+    "2026-09-22": {
+     "t": 9,
+     "w": 7,
+     "pnl": 36.61
+    },
+    "2026-09-23": {
+     "t": 2,
+     "w": 2,
+     "pnl": 10.18
+    }
+   }
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.08-floor0.4",
+   "name": "Antiflip bounce+0.08 floor 0.4",
+   "desc": "Post-flip: rebond ≥0.08 du plancher, ask ≥0.4 et ≤0.52.",
+   "metrics": {
+    "trades": 397,
+    "wins": 204,
+    "losses": 193,
+    "winrate": 0.5139,
+    "pnl": 170.38,
+    "pnlPerTrade": 0.4292,
+    "avgCost": 4,
+    "maxWin": 6,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.4749,
+    "wrUp": 0.5368,
+    "wrDown": 0.4928,
+    "nUp": 190,
+    "nDown": 207
+   },
+   "inSample": {
+    "trades": 180,
+    "winrate": 0.5222,
+    "pnl": 90.82
+   },
+   "outOfSample": {
+    "trades": 217,
+    "winrate": 0.5069,
+    "pnl": 79.56
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 74,
+     "w": 42,
+     "pnl": 58.33
+    },
+    "2026-09-20": {
+     "t": 129,
+     "w": 61,
+     "pnl": 19.1
+    },
+    "2026-09-21": {
+     "t": 144,
+     "w": 77,
+     "pnl": 87.05
+    },
+    "2026-09-22": {
+     "t": 42,
+     "w": 21,
+     "pnl": 11.24
+    },
+    "2026-09-23": {
+     "t": 8,
+     "w": 3,
+     "pnl": -5.34
+    }
+   }
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.05-floor0.4",
+   "name": "Antiflip bounce+0.05 floor 0.4",
+   "desc": "Post-flip: rebond ≥0.05 du plancher, ask ≥0.4 et ≤0.52.",
+   "metrics": {
+    "trades": 457,
+    "wins": 232,
+    "losses": 225,
+    "winrate": 0.5077,
+    "pnl": 164.59,
+    "pnlPerTrade": 0.3602,
+    "avgCost": 4,
+    "maxWin": 6,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.5467,
+    "wrUp": 0.545,
+    "wrDown": 0.4723,
+    "nUp": 222,
+    "nDown": 235
+   },
+   "inSample": {
+    "trades": 207,
+    "winrate": 0.5266,
+    "pnl": 113.04
+   },
+   "outOfSample": {
+    "trades": 250,
+    "winrate": 0.492,
+    "pnl": 51.55
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 87,
+     "w": 51,
+     "pnl": 85.99
+    },
+    "2026-09-20": {
+     "t": 147,
+     "w": 68,
+     "pnl": 5.19
+    },
+    "2026-09-21": {
+     "t": 162,
+     "w": 85,
+     "pnl": 79.7
+    },
+    "2026-09-22": {
+     "t": 50,
+     "w": 24,
+     "pnl": 2.73
+    },
+    "2026-09-23": {
+     "t": 11,
+     "w": 4,
+     "pnl": -9.02
+    }
+   }
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.03-floor0.33",
+   "name": "Antiflip bounce+0.03 floor 0.33",
+   "desc": "Post-flip: rebond ≥0.03 du plancher, ask ≥0.33 et ≤0.52.",
+   "metrics": {
+    "trades": 525,
+    "wins": 257,
+    "losses": 268,
+    "winrate": 0.4895,
+    "pnl": 223.69,
+    "pnlPerTrade": 0.4261,
+    "avgCost": 4,
+    "maxWin": 8.12,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.628,
+    "wrUp": 0.5265,
+    "wrDown": 0.4571,
+    "nUp": 245,
+    "nDown": 280
+   },
+   "inSample": {
+    "trades": 240,
+    "winrate": 0.4958,
+    "pnl": 128.74
+   },
+   "outOfSample": {
+    "trades": 285,
+    "winrate": 0.4842,
+    "pnl": 94.95
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 100,
+     "w": 57,
+     "pnl": 107.22
+    },
+    "2026-09-20": {
+     "t": 172,
+     "w": 74,
+     "pnl": 3.3
+    },
+    "2026-09-21": {
+     "t": 179,
+     "w": 93,
+     "pnl": 115.91
+    },
+    "2026-09-22": {
+     "t": 60,
+     "w": 27,
+     "pnl": -5.41
+    },
+    "2026-09-23": {
+     "t": 14,
+     "w": 6,
+     "pnl": 2.67
+    }
+   }
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.03-0.3-0.45-e0.9",
+   "name": "Antiflip bounce+0.03 [0.3-0.45]",
+   "desc": "Post-flip: attend rebond ≥0.03 du plancher du déposé, bande [0.3-0.45], entrée avant 90%.",
+   "metrics": {
+    "trades": 461,
+    "wins": 206,
+    "losses": 255,
+    "winrate": 0.4469,
+    "pnl": 253.45,
+    "pnlPerTrade": 0.5498,
+    "avgCost": 4,
+    "maxWin": 9.33,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.5514,
+    "wrUp": 0.472,
+    "wrDown": 0.4251,
+    "nUp": 214,
+    "nDown": 247
+   },
+   "inSample": {
+    "trades": 207,
+    "winrate": 0.4493,
+    "pnl": 127.63
+   },
+   "outOfSample": {
+    "trades": 254,
+    "winrate": 0.4449,
+    "pnl": 125.82
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 83,
+     "w": 45,
+     "pnl": 124.83
+    },
+    "2026-09-20": {
+     "t": 153,
+     "w": 58,
+     "pnl": -2.89
+    },
+    "2026-09-21": {
+     "t": 161,
+     "w": 79,
+     "pnl": 143.81
+    },
+    "2026-09-22": {
+     "t": 52,
+     "w": 20,
+     "pnl": -13.28
+    },
+    "2026-09-23": {
+     "t": 12,
+     "w": 4,
+     "pnl": 0.98
+    }
+   }
+  },
+  {
+   "strategyId": "C-favband-0.7-0.82-sp0.1",
+   "name": "Fav-band 0.7-0.82 écart≥0.1",
+   "desc": "Favori ask 0.7-0.82, écart ≥0.1¢, après 45s.",
+   "metrics": {
+    "trades": 716,
+    "wins": 527,
+    "losses": 189,
+    "winrate": 0.736,
+    "pnl": 22.46,
+    "pnlPerTrade": 0.0314,
+    "avgCost": 4,
+    "maxWin": 1.71,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.8565,
+    "wrUp": 0.7533,
+    "wrDown": 0.7168,
+    "nUp": 377,
+    "nDown": 339
+   },
+   "inSample": {
+    "trades": 348,
+    "winrate": 0.7299,
+    "pnl": -2.29
+   },
+   "outOfSample": {
+    "trades": 368,
+    "winrate": 0.7418,
+    "pnl": 24.75
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 148,
+     "w": 109,
+     "pnl": 6.05
+    },
+    "2026-09-20": {
+     "t": 238,
+     "w": 172,
+     "pnl": -10.38
+    },
+    "2026-09-21": {
+     "t": 235,
+     "w": 174,
+     "pnl": 13.91
+    },
+    "2026-09-22": {
+     "t": 76,
+     "w": 61,
+     "pnl": 28.41
+    },
+    "2026-09-23": {
+     "t": 19,
+     "w": 11,
+     "pnl": -15.53
+    }
+   }
+  },
+  {
+   "strategyId": "E-favlimit-0.7-t30s",
+   "name": "Favori limit 0.7 (t+30s)",
+   "desc": "Limit BUY 0.7 sur le favori (placé t+30s).",
+   "metrics": {
+    "trades": 725,
+    "wins": 449,
+    "losses": 276,
+    "winrate": 0.6193,
+    "pnl": -336.21,
+    "pnlPerTrade": -0.4637,
+    "avgCost": 4,
+    "maxWin": 1.71,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.8672,
+    "wrUp": 0.6525,
+    "wrDown": 0.5876,
+    "nUp": 354,
+    "nDown": 371
+   },
+   "inSample": {
+    "trades": 359,
+    "winrate": 0.624,
+    "pnl": -156.96
+   },
+   "outOfSample": {
+    "trades": 366,
+    "winrate": 0.6148,
+    "pnl": -179.25
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 157,
+     "w": 96,
+     "pnl": -79.84
+    },
+    "2026-09-20": {
+     "t": 246,
+     "w": 154,
+     "pnl": -104.66
+    },
+    "2026-09-21": {
+     "t": 228,
+     "w": 141,
+     "pnl": -106.89
+    },
+    "2026-09-22": {
+     "t": 75,
+     "w": 48,
+     "pnl": -25.92
+    },
+    "2026-09-23": {
+     "t": 19,
+     "w": 10,
+     "pnl": -18.9
+    }
+   }
+  },
+  {
+   "strategyId": "D-doglimit-0.1-t60",
+   "name": "Underdog limit 0.1 (t+60s)",
+   "desc": "Limit BUY 0.1 sur l'underdog (placé t+60s). Payout 1:9.0.",
+   "metrics": {
+    "trades": 570,
+    "wins": 47,
+    "losses": 523,
+    "winrate": 0.0825,
+    "pnl": -400,
+    "pnlPerTrade": -0.7018,
+    "avgCost": 4,
+    "maxWin": 36,
+    "maxLoss": -4,
+    "tradesPerWindow": 0.6818,
+    "wrUp": 0.0957,
+    "wrDown": 0.0694,
+    "nUp": 282,
+    "nDown": 288
+   },
+   "inSample": {
+    "trades": 292,
+    "winrate": 0.0959,
+    "pnl": -48
+   },
+   "outOfSample": {
+    "trades": 278,
+    "winrate": 0.0683,
+    "pnl": -352
+   },
+   "perDay": {
+    "2026-09-19": {
+     "t": 123,
+     "w": 10,
+     "pnl": -92
+    },
+    "2026-09-20": {
+     "t": 201,
+     "w": 22,
+     "pnl": 76
+    },
+    "2026-09-21": {
+     "t": 171,
+     "w": 12,
+     "pnl": -204
+    },
+    "2026-09-22": {
+     "t": 59,
+     "w": 2,
+     "pnl": -156
+    },
+    "2026-09-23": {
+     "t": 16,
+     "w": 1,
+     "pnl": -24
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,8465 @@
+[
+ {
+  "id": "H-antiflip-sharp-d0.25-0.3-0.4",
+  "name": "Antiflip sharp drop≥0.25 [0.3-0.4]",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 20,
+   "wins": 11,
+   "losses": 9,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.55,
+   "pnl": 44.29,
+   "avgPnlPerTrade": 2.2145,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0239,
+   "maxWin": 8.5,
+   "maxLoss": -4
+  },
+  "runsCount": 8
+ },
+ {
+  "id": "A-antiflip-0.3-0.4-d5s-w0.6",
+  "name": "Antiflip 0.3-0.4 +5s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 75,
+   "wins": 38,
+   "losses": 37,
+   "winrate": 0.5067,
+   "pnl": 115.51,
+   "avgPnlPerTrade": 1.5401,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "H-antiflip-sharp-d0.18-0.3-0.4",
+  "name": "Antiflip sharp drop≥0.18 [0.3-0.4]",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 49,
+   "wins": 24,
+   "losses": 25,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4898,
+   "pnl": 74.88,
+   "avgPnlPerTrade": 1.5282,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0586,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "H-antiflip-sharp-d0.12-0.3-0.4",
+  "name": "Antiflip sharp drop≥0.12 [0.3-0.4]",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 71,
+   "wins": 35,
+   "losses": 36,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.493,
+   "pnl": 101.51,
+   "avgPnlPerTrade": 1.4297,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0849,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 8
+ },
+ {
+  "id": "A-antiflip-0.4-0.55-d5s",
+  "name": "Antiflip 0.4-0.55 +5s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 15,
+   "wins": 10,
+   "losses": 5,
+   "winrate": 0.6667,
+   "pnl": 20,
+   "avgPnlPerTrade": 1.3333,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0179,
+   "maxWin": 3,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.4-0.55-d5s-w0.6",
+  "name": "Antiflip 0.4-0.55 +5s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 15,
+   "wins": 10,
+   "losses": 5,
+   "winrate": 0.6667,
+   "pnl": 20,
+   "avgPnlPerTrade": 1.3333,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0179,
+   "maxWin": 3,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.3-0.4-d0s-w0.6",
+  "name": "Antiflip 0.3-0.4 +0s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 40,
+   "wins": 19,
+   "losses": 21,
+   "winrate": 0.475,
+   "pnl": 51.3,
+   "avgPnlPerTrade": 1.2825,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0478,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.3-0.4-d5s-w1",
+  "name": "Antiflip 0.3-0.4 +5s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 83,
+   "wins": 39,
+   "losses": 44,
+   "winrate": 0.4699,
+   "pnl": 94.93,
+   "avgPnlPerTrade": 1.1437,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0993,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "H-antiflip-sharp-d0.25-0.3-0.45",
+  "name": "Antiflip sharp drop≥0.25 [0.3-0.45]",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 34,
+   "wins": 16,
+   "losses": 18,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4706,
+   "pnl": 33.74,
+   "avgPnlPerTrade": 0.9924,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0407,
+   "maxWin": 8.5,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "H-antiflip-sharp-d0.12-0.3-0.45",
+  "name": "Antiflip sharp drop≥0.12 [0.3-0.45]",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 145,
+   "wins": 71,
+   "losses": 74,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4897,
+   "pnl": 143.62,
+   "avgPnlPerTrade": 0.9905,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1734,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 8
+ },
+ {
+  "id": "A-antiflip-0.4-0.55-d5s-w1",
+  "name": "Antiflip 0.4-0.55 +5s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 17,
+   "wins": 10,
+   "losses": 7,
+   "winrate": 0.5882,
+   "pnl": 16,
+   "avgPnlPerTrade": 0.9412,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0203,
+   "maxWin": 3,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "I-lateflip-0.4-0.75-0.3-0.45",
+  "name": "Antiflip tardif (flip à 40-75%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 103,
+   "wins": 50,
+   "losses": 53,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4854,
+   "pnl": 94.02,
+   "avgPnlPerTrade": 0.9128,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1232,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 8
+ },
+ {
+  "id": "A-antiflip-0.3-0.45-d0s-w0.6",
+  "name": "Antiflip 0.3-0.45 +0s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 128,
+   "wins": 64,
+   "losses": 64,
+   "winrate": 0.5,
+   "pnl": 112.55,
+   "avgPnlPerTrade": 0.8793,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1531,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.4-0.55-d10s",
+  "name": "Antiflip 0.4-0.55 +10s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 14,
+   "wins": 8,
+   "losses": 6,
+   "winrate": 0.5714,
+   "pnl": 12,
+   "avgPnlPerTrade": 0.8571,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0167,
+   "maxWin": 3,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.4-0.55-d10s-w1",
+  "name": "Antiflip 0.4-0.55 +10s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 14,
+   "wins": 8,
+   "losses": 6,
+   "winrate": 0.5714,
+   "pnl": 12,
+   "avgPnlPerTrade": 0.8571,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0167,
+   "maxWin": 3,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.3-0.45-d5s",
+  "name": "Antiflip 0.3-0.45 +5s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 75,
+   "wins": 38,
+   "losses": 37,
+   "winrate": 0.5067,
+   "pnl": 57.71,
+   "avgPnlPerTrade": 0.7695,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 4.45,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.3-0.5-d5s",
+  "name": "Antiflip 0.3-0.5 +5s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 75,
+   "wins": 38,
+   "losses": 37,
+   "winrate": 0.5067,
+   "pnl": 57.71,
+   "avgPnlPerTrade": 0.7695,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 4.45,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.3-0.4-d5s",
+  "name": "Antiflip 0.3-0.4 +5s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 75,
+   "wins": 38,
+   "losses": 37,
+   "winrate": 0.5067,
+   "pnl": 57.71,
+   "avgPnlPerTrade": 0.7695,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 4.45,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.3-0.45-d5s-w0.6",
+  "name": "Antiflip 0.3-0.45 +5s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 75,
+   "wins": 38,
+   "losses": 37,
+   "winrate": 0.5067,
+   "pnl": 57.71,
+   "avgPnlPerTrade": 0.7695,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 4.45,
+   "maxLoss": -2
+  },
+  "runsCount": 10
+ },
+ {
+  "id": "A-antiflip-0.3-0.5-d5s-w0.6",
+  "name": "Antiflip 0.3-0.5 +5s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 75,
+   "wins": 38,
+   "losses": 37,
+   "winrate": 0.5067,
+   "pnl": 57.71,
+   "avgPnlPerTrade": 0.7695,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 4.45,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "H-antiflip-sharp-d0.12-0.35-0.5",
+  "name": "Antiflip sharp drop≥0.12 [0.35-0.5]",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 179,
+   "wins": 90,
+   "losses": 89,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.5028,
+   "pnl": 131.77,
+   "avgPnlPerTrade": 0.7361,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.2141,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 8
+ },
+ {
+  "id": "A-antiflip-0.35-0.5-d5s",
+  "name": "Antiflip 0.35-0.5 +5s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 56,
+   "wins": 29,
+   "losses": 27,
+   "winrate": 0.5179,
+   "pnl": 40.18,
+   "avgPnlPerTrade": 0.7175,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.067,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.35-0.55-d5s",
+  "name": "Antiflip 0.35-0.55 +5s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 56,
+   "wins": 29,
+   "losses": 27,
+   "winrate": 0.5179,
+   "pnl": 40.18,
+   "avgPnlPerTrade": 0.7175,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.067,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.35-0.5-d5s-w0.6",
+  "name": "Antiflip 0.35-0.5 +5s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 56,
+   "wins": 29,
+   "losses": 27,
+   "winrate": 0.5179,
+   "pnl": 40.18,
+   "avgPnlPerTrade": 0.7175,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.067,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.35-0.55-d5s-w0.6",
+  "name": "Antiflip 0.35-0.55 +5s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 56,
+   "wins": 29,
+   "losses": 27,
+   "winrate": 0.5179,
+   "pnl": 40.18,
+   "avgPnlPerTrade": 0.7175,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.067,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.4-0.55-d10s-w0.6",
+  "name": "Antiflip 0.4-0.55 +10s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 13,
+   "wins": 7,
+   "losses": 6,
+   "winrate": 0.5385,
+   "pnl": 9,
+   "avgPnlPerTrade": 0.6923,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0156,
+   "maxWin": 3,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d10s-0.4-0.48",
+  "name": "Antiflip 10s post-flip [0.4-0.48]",
+  "best": {
+   "runId": "sweep4-1790145170100",
+   "budget": 2,
+   "trades": 13,
+   "wins": 7,
+   "losses": 6,
+   "winrate": 0.5385,
+   "pnl": 9,
+   "avgPnlPerTrade": 0.6923,
+   "avgCost": 2,
+   "avgWin": 3,
+   "tradesPerWindow": 0.0156
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d10s-0.4-0.45",
+  "name": "Antiflip 10s post-flip [0.4-0.45]",
+  "best": {
+   "runId": "sweep4-1790145170100",
+   "budget": 2,
+   "trades": 13,
+   "wins": 7,
+   "losses": 6,
+   "winrate": 0.5385,
+   "pnl": 9,
+   "avgPnlPerTrade": 0.6923,
+   "avgCost": 2,
+   "avgWin": 3,
+   "tradesPerWindow": 0.0156
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "H-antiflip-sharp-d0.18-0.3-0.45",
+  "name": "Antiflip sharp drop≥0.18 [0.3-0.45]",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 80,
+   "wins": 35,
+   "losses": 45,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4375,
+   "pnl": 54.14,
+   "avgPnlPerTrade": 0.6767,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0957,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "A-antiflip-0.3-0.45-d0s",
+  "name": "Antiflip 0.3-0.45 +0s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 40,
+   "wins": 19,
+   "losses": 21,
+   "winrate": 0.475,
+   "pnl": 25.62,
+   "avgPnlPerTrade": 0.6405,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0478,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.3-0.5-d0s",
+  "name": "Antiflip 0.3-0.5 +0s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 40,
+   "wins": 19,
+   "losses": 21,
+   "winrate": 0.475,
+   "pnl": 25.62,
+   "avgPnlPerTrade": 0.6405,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0478,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.3-0.4-d0s",
+  "name": "Antiflip 0.3-0.4 +0s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 40,
+   "wins": 19,
+   "losses": 21,
+   "winrate": 0.475,
+   "pnl": 25.62,
+   "avgPnlPerTrade": 0.6405,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0478,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.3-0.5-d0s-w0.6",
+  "name": "Antiflip 0.3-0.5 +0s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 40,
+   "wins": 19,
+   "losses": 21,
+   "winrate": 0.475,
+   "pnl": 25.62,
+   "avgPnlPerTrade": 0.6405,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0478,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 10
+ },
+ {
+  "id": "S4-antiflip",
+  "name": "Antiflip (ancien favori)",
+  "best": {
+   "runId": "run-1790143480193",
+   "budget": 2,
+   "trades": 60,
+   "wins": 30,
+   "losses": 30,
+   "sells": 0,
+   "winrate": 0.5,
+   "pnl": 37.89,
+   "avgPnlPerTrade": 0.6315,
+   "avgCostPerTrade": 2,
+   "avgEntryElapsedSec": 55,
+   "maxWin": 3.71,
+   "maxLoss": -2,
+   "profitFactor": 0.34,
+   "expectancyPerTrade": 0.6315,
+   "tradesPerWindow": 0.0718
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "H-antiflip-sharp-d0.25-0.35-0.5",
+  "name": "Antiflip sharp drop≥0.25 [0.35-0.5]",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 55,
+   "wins": 28,
+   "losses": 27,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.5091,
+   "pnl": 34.22,
+   "avgPnlPerTrade": 0.6222,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0658,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "A-antiflip-0.3-0.45-d5s-w1",
+  "name": "Antiflip 0.3-0.45 +5s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 230,
+   "wins": 107,
+   "losses": 123,
+   "winrate": 0.4652,
+   "pnl": 139.21,
+   "avgPnlPerTrade": 0.6053,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.2751,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.1",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 569,
+   "wins": 245,
+   "losses": 324,
+   "winrate": 0.4306,
+   "pnl": 342.99,
+   "avgPnlPerTrade": 0.6028,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6806,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 13
+ },
+ {
+  "id": "A-antiflip-0.3-0.45-d0s-w1",
+  "name": "Antiflip 0.3-0.45 +0s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 142,
+   "wins": 67,
+   "losses": 75,
+   "winrate": 0.4718,
+   "pnl": 84.03,
+   "avgPnlPerTrade": 0.5918,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1699,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.35-0.5-d5s-w1",
+  "name": "Antiflip 0.35-0.5 +5s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 61,
+   "wins": 30,
+   "losses": 31,
+   "winrate": 0.4918,
+   "pnl": 35.89,
+   "avgPnlPerTrade": 0.5884,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.073,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.35-0.55-d5s-w1",
+  "name": "Antiflip 0.35-0.55 +5s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 61,
+   "wins": 30,
+   "losses": 31,
+   "winrate": 0.4918,
+   "pnl": 35.89,
+   "avgPnlPerTrade": 0.5884,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.073,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.3-0.5-d5s-w1",
+  "name": "Antiflip 0.3-0.5 +5s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 83,
+   "wins": 39,
+   "losses": 44,
+   "winrate": 0.4699,
+   "pnl": 47.42,
+   "avgPnlPerTrade": 0.5713,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0993,
+   "maxWin": 4.45,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "I-lateflip-0.45-0.8-0.3-0.45",
+  "name": "Antiflip tardif (flip à 45-80%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 96,
+   "wins": 42,
+   "losses": 54,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4375,
+   "pnl": 53,
+   "avgPnlPerTrade": 0.5521,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1148,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "L-antiflip-d12s-0.42-0.46",
+  "name": "Antiflip 12s post-flip [0.42-0.46]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 123,
+   "wins": 62,
+   "losses": 61,
+   "winrate": 0.5041,
+   "pnl": 67.83,
+   "avgPnlPerTrade": 0.5515,
+   "avgCost": 4,
+   "avgWin": 5.03,
+   "tradesPerWindow": 0.1471
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "J-antiflip-bounce0.03-0.3-0.45-e0.9",
+  "name": "Antiflip bounce+0.03 [0.3-0.45]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 461,
+   "wins": 206,
+   "losses": 255,
+   "winrate": 0.4469,
+   "pnl": 253.45,
+   "avgPnlPerTrade": 0.5498,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5514,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "L-antiflip-d8s-0.42-0.46",
+  "name": "Antiflip 8s post-flip [0.42-0.46]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 135,
+   "wins": 67,
+   "losses": 68,
+   "winrate": 0.4963,
+   "pnl": 70.44,
+   "avgPnlPerTrade": 0.5218,
+   "avgCost": 4,
+   "avgWin": 5.11,
+   "tradesPerWindow": 0.1615
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "H-antiflip-sharp-d0.18-0.35-0.5",
+  "name": "Antiflip sharp drop≥0.18 [0.35-0.5]",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 98,
+   "wins": 47,
+   "losses": 51,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4796,
+   "pnl": 50.83,
+   "avgPnlPerTrade": 0.5187,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1172,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.08",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 590,
+   "wins": 249,
+   "losses": 341,
+   "winrate": 0.422,
+   "pnl": 298.1,
+   "avgPnlPerTrade": 0.5053,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7057,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 13
+ },
+ {
+  "id": "A-antiflip-0.3-0.4-d0s-w1",
+  "name": "Antiflip 0.3-0.4 +0s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 47,
+   "wins": 19,
+   "losses": 28,
+   "winrate": 0.4043,
+   "pnl": 23.3,
+   "avgPnlPerTrade": 0.4957,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0562,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "J-antiflip-bounce0.03-0.3-0.45-e0.7",
+  "name": "Antiflip bounce+0.03 [0.3-0.45]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 442,
+   "wins": 195,
+   "losses": 247,
+   "winrate": 0.4412,
+   "pnl": 217.24,
+   "avgPnlPerTrade": 0.4915,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5287,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "I-lateflip-0.4-0.75-0.3-0.4",
+  "name": "Antiflip tardif (flip à 40-75%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 57,
+   "wins": 23,
+   "losses": 34,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4035,
+   "pnl": 27.56,
+   "avgPnlPerTrade": 0.4835,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0682,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.12",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 562,
+   "wins": 234,
+   "losses": 328,
+   "winrate": 0.4164,
+   "pnl": 271,
+   "avgPnlPerTrade": 0.4822,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6722,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "J-antiflip-bounce0.08-0.3-0.45-e0.9",
+  "name": "Antiflip bounce+0.08 [0.3-0.45]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 360,
+   "wins": 154,
+   "losses": 206,
+   "winrate": 0.4278,
+   "pnl": 171.17,
+   "avgPnlPerTrade": 0.4755,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4306,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "J-antiflip-bounce0.03-0.33-0.48-e0.9",
+  "name": "Antiflip bounce+0.03 [0.33-0.48]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 484,
+   "wins": 225,
+   "losses": 259,
+   "winrate": 0.4649,
+   "pnl": 229.36,
+   "avgPnlPerTrade": 0.4739,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5789,
+   "maxWin": 8.12,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "J-antiflip-bounce0.05-0.33-0.48-e0.9",
+  "name": "Antiflip bounce+0.05 [0.33-0.48]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 446,
+   "wins": 208,
+   "losses": 238,
+   "winrate": 0.4664,
+   "pnl": 209.72,
+   "avgPnlPerTrade": 0.4702,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5335,
+   "maxWin": 8.12,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "J-antiflip-bounce0.05-0.33-0.48-e0.7",
+  "name": "Antiflip bounce+0.05 [0.33-0.48]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 428,
+   "wins": 200,
+   "losses": 228,
+   "winrate": 0.4673,
+   "pnl": 197.83,
+   "avgPnlPerTrade": 0.4622,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.512,
+   "maxWin": 8.12,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "L-antiflip-d8s-0.42-0.48",
+  "name": "Antiflip 8s post-flip [0.42-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 192,
+   "wins": 96,
+   "losses": 96,
+   "winrate": 0.5,
+   "pnl": 86.89,
+   "avgPnlPerTrade": 0.4526,
+   "avgCost": 4,
+   "avgWin": 4.91,
+   "tradesPerWindow": 0.2297
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d12s-0.46-0.5",
+  "name": "Antiflip 12s post-flip [0.46-0.5]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 128,
+   "wins": 68,
+   "losses": 60,
+   "winrate": 0.5313,
+   "pnl": 57.91,
+   "avgPnlPerTrade": 0.4524,
+   "avgCost": 4,
+   "avgWin": 4.38,
+   "tradesPerWindow": 0.1531
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d12s-0.44-0.48",
+  "name": "Antiflip 12s post-flip [0.44-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 125,
+   "wins": 64,
+   "losses": 61,
+   "winrate": 0.512,
+   "pnl": 55.77,
+   "avgPnlPerTrade": 0.4462,
+   "avgCost": 4,
+   "avgWin": 4.68,
+   "tradesPerWindow": 0.1495
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "J-antiflip-bounce0.03-0.33-0.48-e0.7",
+  "name": "Antiflip bounce+0.03 [0.33-0.48]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 471,
+   "wins": 218,
+   "losses": 253,
+   "winrate": 0.4628,
+   "pnl": 208.28,
+   "avgPnlPerTrade": 0.4422,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5634,
+   "maxWin": 8.12,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "J-antiflip-bounce0.05-0.3-0.45-e0.9",
+  "name": "Antiflip bounce+0.05 [0.3-0.45]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 424,
+   "wins": 182,
+   "losses": 242,
+   "winrate": 0.4292,
+   "pnl": 186.59,
+   "avgPnlPerTrade": 0.4401,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5072,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "K-antiflip-bounce0.08-floor0.4",
+  "name": "Antiflip bounce+0.08 floor 0.4",
+  "best": {
+   "runId": "sweep3-1790144256290",
+   "budget": 4,
+   "trades": 397,
+   "wins": 204,
+   "losses": 193,
+   "winrate": 0.5139,
+   "pnl": 170.38,
+   "avgPnlPerTrade": 0.4292,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4749,
+   "maxWin": 6,
+   "maxLoss": -4
+  },
+  "runsCount": 8
+ },
+ {
+  "id": "K-antiflip-bounce0.03-floor0.33",
+  "name": "Antiflip bounce+0.03 floor 0.33",
+  "best": {
+   "runId": "sweep3-1790144256290",
+   "budget": 4,
+   "trades": 525,
+   "wins": 257,
+   "losses": 268,
+   "winrate": 0.4895,
+   "pnl": 223.69,
+   "avgPnlPerTrade": 0.4261,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.628,
+   "maxWin": 8.12,
+   "maxLoss": -4
+  },
+  "runsCount": 8
+ },
+ {
+  "id": "J-antiflip-bounce0.05-0.35-0.5-e0.9",
+  "name": "Antiflip bounce+0.05 [0.35-0.5]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 460,
+   "wins": 222,
+   "losses": 238,
+   "winrate": 0.4826,
+   "pnl": 191.28,
+   "avgPnlPerTrade": 0.4158,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5502,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "L-antiflip-d10s-0.42-0.46",
+  "name": "Antiflip 10s post-flip [0.42-0.46]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 135,
+   "wins": 66,
+   "losses": 69,
+   "winrate": 0.4889,
+   "pnl": 55.93,
+   "avgPnlPerTrade": 0.4143,
+   "avgCost": 4,
+   "avgWin": 5.03,
+   "tradesPerWindow": 0.1615
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d12s-0.42-0.48",
+  "name": "Antiflip 12s post-flip [0.42-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 173,
+   "wins": 86,
+   "losses": 87,
+   "winrate": 0.4971,
+   "pnl": 69.91,
+   "avgPnlPerTrade": 0.4041,
+   "avgCost": 4,
+   "avgWin": 4.86,
+   "tradesPerWindow": 0.2069
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "J-antiflip-bounce0.05-0.35-0.5-e0.7",
+  "name": "Antiflip bounce+0.05 [0.35-0.5]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 444,
+   "wins": 214,
+   "losses": 230,
+   "winrate": 0.482,
+   "pnl": 176.94,
+   "avgPnlPerTrade": 0.3985,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5311,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "L-antiflip-d12s-0.4-0.48",
+  "name": "Antiflip 12s post-flip [0.4-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 200,
+   "wins": 98,
+   "losses": 102,
+   "winrate": 0.49,
+   "pnl": 79.66,
+   "avgPnlPerTrade": 0.3983,
+   "avgCost": 4,
+   "avgWin": 4.98,
+   "tradesPerWindow": 0.2392
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "J-antiflip-bounce0.05-0.3-0.4-e0.9",
+  "name": "Antiflip bounce+0.05 [0.3-0.4]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 359,
+   "wins": 138,
+   "losses": 221,
+   "winrate": 0.3844,
+   "pnl": 142.96,
+   "avgPnlPerTrade": 0.3982,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4294,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "I-lateflip-0.3-0.6-0.3-0.4",
+  "name": "Antiflip tardif (flip à 30-60%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 53,
+   "wins": 21,
+   "losses": 32,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.3962,
+   "pnl": 20.79,
+   "avgPnlPerTrade": 0.3923,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0634,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "I-lateflip-0.45-0.8-0.3-0.4",
+  "name": "Antiflip tardif (flip à 45-80%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 57,
+   "wins": 22,
+   "losses": 35,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.386,
+   "pnl": 22.19,
+   "avgPnlPerTrade": 0.3893,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0682,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "K-antiflip-bounce0.05-floor0.33",
+  "name": "Antiflip bounce+0.05 floor 0.33",
+  "best": {
+   "runId": "sweep3-1790144256290",
+   "budget": 4,
+   "trades": 489,
+   "wins": 237,
+   "losses": 252,
+   "winrate": 0.4847,
+   "pnl": 186.14,
+   "avgPnlPerTrade": 0.3807,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5849,
+   "maxWin": 8.12,
+   "maxLoss": -4
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "L-antiflip-d10s-0.42-0.48",
+  "name": "Antiflip 10s post-flip [0.42-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 190,
+   "wins": 94,
+   "losses": 96,
+   "winrate": 0.4947,
+   "pnl": 71.87,
+   "avgPnlPerTrade": 0.3783,
+   "avgCost": 4,
+   "avgWin": 4.85,
+   "tradesPerWindow": 0.2273
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "K-antiflip-bounce0.05-floor0.36",
+  "name": "Antiflip bounce+0.05 floor 0.36",
+  "best": {
+   "runId": "sweep3-1790144256290",
+   "budget": 4,
+   "trades": 532,
+   "wins": 283,
+   "losses": 249,
+   "winrate": 0.532,
+   "pnl": 198.73,
+   "avgPnlPerTrade": 0.3736,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6364,
+   "maxWin": 7.11,
+   "maxLoss": -4
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "J-antiflip-bounce0.08-0.3-0.45-e0.7",
+  "name": "Antiflip bounce+0.08 [0.3-0.45]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 330,
+   "wins": 138,
+   "losses": 192,
+   "winrate": 0.4182,
+   "pnl": 121.88,
+   "avgPnlPerTrade": 0.3693,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.3947,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "J-antiflip-bounce0.08-0.3-0.4-e0.9",
+  "name": "Antiflip bounce+0.08 [0.3-0.4]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 305,
+   "wins": 117,
+   "losses": 188,
+   "winrate": 0.3836,
+   "pnl": 112.52,
+   "avgPnlPerTrade": 0.3689,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.3648,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "K-antiflip-bounce0.05-floor0.4",
+  "name": "Antiflip bounce+0.05 floor 0.4",
+  "best": {
+   "runId": "sweep3-1790144256290",
+   "budget": 4,
+   "trades": 457,
+   "wins": 232,
+   "losses": 225,
+   "winrate": 0.5077,
+   "pnl": 164.59,
+   "avgPnlPerTrade": 0.3602,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5467,
+   "maxWin": 6,
+   "maxLoss": -4
+  },
+  "runsCount": 8
+ },
+ {
+  "id": "L-antiflip-d12s-0.44-0.5",
+  "name": "Antiflip 12s post-flip [0.44-0.5]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 174,
+   "wins": 89,
+   "losses": 85,
+   "winrate": 0.5115,
+   "pnl": 62.49,
+   "avgPnlPerTrade": 0.3591,
+   "avgCost": 4,
+   "avgWin": 4.52,
+   "tradesPerWindow": 0.2081
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "J-antiflip-bounce0.05-0.3-0.45-e0.7",
+  "name": "Antiflip bounce+0.05 [0.3-0.45]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 398,
+   "wins": 168,
+   "losses": 230,
+   "winrate": 0.4221,
+   "pnl": 142.82,
+   "avgPnlPerTrade": 0.3588,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4761,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.08",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 484,
+   "wins": 221,
+   "losses": 263,
+   "winrate": 0.4566,
+   "pnl": 172.19,
+   "avgPnlPerTrade": 0.3558,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5789,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "J-antiflip-bounce0.03-0.3-0.4-e0.9",
+  "name": "Antiflip bounce+0.03 [0.3-0.4]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 396,
+   "wins": 152,
+   "losses": 244,
+   "winrate": 0.3838,
+   "pnl": 140.14,
+   "avgPnlPerTrade": 0.3539,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4737,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "K-antiflip-bounce0.03-floor0.36",
+  "name": "Antiflip bounce+0.03 floor 0.36",
+  "best": {
+   "runId": "sweep3-1790144256290",
+   "budget": 4,
+   "trades": 511,
+   "wins": 253,
+   "losses": 258,
+   "winrate": 0.4951,
+   "pnl": 180.75,
+   "avgPnlPerTrade": 0.3537,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6112,
+   "maxWin": 7.11,
+   "maxLoss": -4
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "K-antiflip-bounce0.08-floor0.36",
+  "name": "Antiflip bounce+0.08 floor 0.36",
+  "best": {
+   "runId": "sweep3-1790144256290",
+   "budget": 4,
+   "trades": 419,
+   "wins": 206,
+   "losses": 213,
+   "winrate": 0.4916,
+   "pnl": 147.98,
+   "avgPnlPerTrade": 0.3532,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5012,
+   "maxWin": 7.11,
+   "maxLoss": -4
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "L-antiflip-d10s-0.44-0.48",
+  "name": "Antiflip 10s post-flip [0.44-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 144,
+   "wins": 72,
+   "losses": 72,
+   "winrate": 0.5,
+   "pnl": 49.95,
+   "avgPnlPerTrade": 0.3469,
+   "avgCost": 4,
+   "avgWin": 4.69,
+   "tradesPerWindow": 0.1722
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "K-antiflip-bounce0.03-floor0.4",
+  "name": "Antiflip bounce+0.03 floor 0.4",
+  "best": {
+   "runId": "sweep3-1790144256290",
+   "budget": 4,
+   "trades": 499,
+   "wins": 252,
+   "losses": 247,
+   "winrate": 0.505,
+   "pnl": 171.21,
+   "avgPnlPerTrade": 0.3431,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5969,
+   "maxWin": 6,
+   "maxLoss": -4
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "L-antiflip-d8s-0.4-0.45",
+  "name": "Antiflip 8s post-flip [0.4-0.45]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 146,
+   "wins": 68,
+   "losses": 78,
+   "winrate": 0.4658,
+   "pnl": 49.66,
+   "avgPnlPerTrade": 0.3401,
+   "avgCost": 4,
+   "avgWin": 5.32,
+   "tradesPerWindow": 0.1746
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "J-antiflip-bounce0.03-0.35-0.5-e0.7",
+  "name": "Antiflip bounce+0.03 [0.35-0.5]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 483,
+   "wins": 231,
+   "losses": 252,
+   "winrate": 0.4783,
+   "pnl": 163.57,
+   "avgPnlPerTrade": 0.3387,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5778,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "L-antiflip-d8s-0.4-0.48",
+  "name": "Antiflip 8s post-flip [0.4-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 227,
+   "wins": 109,
+   "losses": 118,
+   "winrate": 0.4802,
+   "pnl": 74.39,
+   "avgPnlPerTrade": 0.3277,
+   "avgCost": 4,
+   "avgWin": 5.01,
+   "tradesPerWindow": 0.2715
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "S9-underdog-momentum",
+  "name": "Underdog momentum",
+  "best": {
+   "runId": "run-1790143522232",
+   "budget": 4,
+   "trades": 513,
+   "wins": 210,
+   "losses": 303,
+   "sells": 0,
+   "winrate": 0.4094,
+   "pnl": 168.06,
+   "avgPnlPerTrade": 0.3276,
+   "avgCostPerTrade": 4,
+   "avgEntryElapsedSec": 118,
+   "maxWin": 9.33,
+   "maxLoss": -4,
+   "profitFactor": 0.09,
+   "expectancyPerTrade": 0.3276,
+   "tradesPerWindow": 0.6136
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "J-antiflip-bounce0.03-0.35-0.5-e0.9",
+  "name": "Antiflip bounce+0.03 [0.35-0.5]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 494,
+   "wins": 235,
+   "losses": 259,
+   "winrate": 0.4757,
+   "pnl": 159.32,
+   "avgPnlPerTrade": 0.3225,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5909,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "K-antiflip-bounce0.08-floor0.33",
+  "name": "Antiflip bounce+0.08 floor 0.33",
+  "best": {
+   "runId": "sweep3-1790144256290",
+   "budget": 4,
+   "trades": 438,
+   "wins": 208,
+   "losses": 230,
+   "winrate": 0.4749,
+   "pnl": 140.76,
+   "avgPnlPerTrade": 0.3214,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5239,
+   "maxWin": 8.12,
+   "maxLoss": -4
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "J-antiflip-bounce0.03-0.3-0.4-e0.7",
+  "name": "Antiflip bounce+0.03 [0.3-0.4]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 366,
+   "wins": 139,
+   "losses": 227,
+   "winrate": 0.3798,
+   "pnl": 117.42,
+   "avgPnlPerTrade": 0.3208,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4378,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "J-antiflip-bounce0.08-0.35-0.5-e0.9",
+  "name": "Antiflip bounce+0.08 [0.35-0.5]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 398,
+   "wins": 188,
+   "losses": 210,
+   "winrate": 0.4724,
+   "pnl": 125.99,
+   "avgPnlPerTrade": 0.3166,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4761,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.06",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 604,
+   "wins": 246,
+   "losses": 358,
+   "winrate": 0.4073,
+   "pnl": 190.96,
+   "avgPnlPerTrade": 0.3162,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7225,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "I-lateflip-0.3-0.6-0.3-0.45",
+  "name": "Antiflip tardif (flip à 30-60%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 114,
+   "wins": 49,
+   "losses": 65,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4298,
+   "pnl": 35.23,
+   "avgPnlPerTrade": 0.309,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1364,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "A-antiflip-0.3-0.5-d0s-w1",
+  "name": "Antiflip 0.3-0.5 +0s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 596,
+   "wins": 299,
+   "losses": 297,
+   "winrate": 0.5017,
+   "pnl": 180.61,
+   "avgPnlPerTrade": 0.303,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7129,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "J-antiflip-bounce0.05-0.3-0.4-e0.7",
+  "name": "Antiflip bounce+0.05 [0.3-0.4]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 323,
+   "wins": 121,
+   "losses": 202,
+   "winrate": 0.3746,
+   "pnl": 97.84,
+   "avgPnlPerTrade": 0.3029,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.3864,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "L-antiflip-d10s-0.38-0.48",
+  "name": "Antiflip 10s post-flip [0.38-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 254,
+   "wins": 120,
+   "losses": 134,
+   "winrate": 0.4724,
+   "pnl": 76.93,
+   "avgPnlPerTrade": 0.3029,
+   "avgCost": 4,
+   "avgWin": 5.11,
+   "tradesPerWindow": 0.3038
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d10s-0.46-0.5",
+  "name": "Antiflip 10s post-flip [0.46-0.5]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 142,
+   "wins": 73,
+   "losses": 69,
+   "winrate": 0.5141,
+   "pnl": 41.75,
+   "avgPnlPerTrade": 0.294,
+   "avgCost": 4,
+   "avgWin": 4.35,
+   "tradesPerWindow": 0.1699
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.12",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 461,
+   "wins": 207,
+   "losses": 254,
+   "winrate": 0.449,
+   "pnl": 130.57,
+   "avgPnlPerTrade": 0.2832,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5514,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "L-antiflip-d8s-0.46-0.5",
+  "name": "Antiflip 8s post-flip [0.46-0.5]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 157,
+   "wins": 81,
+   "losses": 76,
+   "winrate": 0.5159,
+   "pnl": 44.25,
+   "avgPnlPerTrade": 0.2818,
+   "avgCost": 4,
+   "avgWin": 4.3,
+   "tradesPerWindow": 0.1878
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.1",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 658,
+   "wins": 248,
+   "losses": 410,
+   "winrate": 0.3769,
+   "pnl": 181.27,
+   "avgPnlPerTrade": 0.2755,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7871,
+   "maxWin": 12,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "A-antiflip-0.35-0.5-d0s-w0.6",
+  "name": "Antiflip 0.35-0.5 +0s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 561,
+   "wins": 282,
+   "losses": 279,
+   "winrate": 0.5027,
+   "pnl": 152.69,
+   "avgPnlPerTrade": 0.2722,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6711,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.1",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 530,
+   "wins": 242,
+   "losses": 288,
+   "winrate": 0.4566,
+   "pnl": 143.73,
+   "avgPnlPerTrade": 0.2712,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.634,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "A-antiflip-0.35-0.55-d0s-w0.6",
+  "name": "Antiflip 0.35-0.55 +0s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 574,
+   "wins": 289,
+   "losses": 285,
+   "winrate": 0.5035,
+   "pnl": 155.57,
+   "avgPnlPerTrade": 0.271,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6866,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "J-antiflip-bounce0.08-0.35-0.5-e0.7",
+  "name": "Antiflip bounce+0.08 [0.35-0.5]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 376,
+   "wins": 176,
+   "losses": 200,
+   "winrate": 0.4681,
+   "pnl": 101.58,
+   "avgPnlPerTrade": 0.2702,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4498,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.35-0.5-d0s-w1",
+  "name": "Antiflip 0.35-0.5 +0s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 583,
+   "wins": 293,
+   "losses": 290,
+   "winrate": 0.5026,
+   "pnl": 157.48,
+   "avgPnlPerTrade": 0.2701,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6974,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.35-0.5-d0s",
+  "name": "Antiflip 0.35-0.5 +0s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 30,
+   "wins": 13,
+   "losses": 17,
+   "winrate": 0.4333,
+   "pnl": 8.06,
+   "avgPnlPerTrade": 0.2687,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0359,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.35-0.55-d0s",
+  "name": "Antiflip 0.35-0.55 +0s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 30,
+   "wins": 13,
+   "losses": 17,
+   "winrate": 0.4333,
+   "pnl": 8.06,
+   "avgPnlPerTrade": 0.2687,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0359,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "J-antiflip-bounce0.08-0.33-0.48-e0.9",
+  "name": "Antiflip bounce+0.08 [0.33-0.48]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 374,
+   "wins": 162,
+   "losses": 212,
+   "winrate": 0.4332,
+   "pnl": 98.81,
+   "avgPnlPerTrade": 0.2642,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4474,
+   "maxWin": 8.12,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.35-0.55-d0s-w1",
+  "name": "Antiflip 0.35-0.55 +0s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 597,
+   "wins": 300,
+   "losses": 297,
+   "winrate": 0.5025,
+   "pnl": 156.36,
+   "avgPnlPerTrade": 0.2619,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7141,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d10s-0.44-0.5",
+  "name": "Antiflip 10s post-flip [0.44-0.5]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 200,
+   "wins": 100,
+   "losses": 100,
+   "winrate": 0.5,
+   "pnl": 52.03,
+   "avgPnlPerTrade": 0.2601,
+   "avgCost": 4,
+   "avgWin": 4.52,
+   "tradesPerWindow": 0.2392
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.4-0.55-d0s-w1",
+  "name": "Antiflip 0.4-0.55 +0s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 573,
+   "wins": 290,
+   "losses": 283,
+   "winrate": 0.5061,
+   "pnl": 146.19,
+   "avgPnlPerTrade": 0.2551,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6854,
+   "maxWin": 6,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.06",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 546,
+   "wins": 248,
+   "losses": 298,
+   "winrate": 0.4542,
+   "pnl": 137.58,
+   "avgPnlPerTrade": 0.252,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6531,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.08",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 675,
+   "wins": 254,
+   "losses": 421,
+   "winrate": 0.3763,
+   "pnl": 169.99,
+   "avgPnlPerTrade": 0.2518,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.8074,
+   "maxWin": 12,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "A-antiflip-0.4-0.55-d0s-w0.6",
+  "name": "Antiflip 0.4-0.55 +0s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 552,
+   "wins": 279,
+   "losses": 273,
+   "winrate": 0.5054,
+   "pnl": 137.4,
+   "avgPnlPerTrade": 0.2489,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6603,
+   "maxWin": 6,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.3-0.5-d10s-w1",
+  "name": "Antiflip 0.3-0.5 +10s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 369,
+   "wins": 169,
+   "losses": 200,
+   "winrate": 0.458,
+   "pnl": 90.34,
+   "avgPnlPerTrade": 0.2448,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4414,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d12s-0.4-0.45",
+  "name": "Antiflip 12s post-flip [0.4-0.45]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 121,
+   "wins": 55,
+   "losses": 66,
+   "winrate": 0.4545,
+   "pnl": 28.47,
+   "avgPnlPerTrade": 0.2353,
+   "avgCost": 4,
+   "avgWin": 5.32,
+   "tradesPerWindow": 0.1447
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d8s-0.38-0.48",
+  "name": "Antiflip 8s post-flip [0.38-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 254,
+   "wins": 118,
+   "losses": 136,
+   "winrate": 0.4646,
+   "pnl": 59.72,
+   "avgPnlPerTrade": 0.2351,
+   "avgCost": 4,
+   "avgWin": 5.12,
+   "tradesPerWindow": 0.3038
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.12",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 637,
+   "wins": 237,
+   "losses": 400,
+   "winrate": 0.3721,
+   "pnl": 147.65,
+   "avgPnlPerTrade": 0.2318,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.762,
+   "maxWin": 12,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "L-antiflip-d12s-0.38-0.48",
+  "name": "Antiflip 12s post-flip [0.38-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 240,
+   "wins": 111,
+   "losses": 129,
+   "winrate": 0.4625,
+   "pnl": 55.34,
+   "avgPnlPerTrade": 0.2306,
+   "avgCost": 4,
+   "avgWin": 5.15,
+   "tradesPerWindow": 0.2871
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d15s-0.42-0.46",
+  "name": "Antiflip 15s post-flip [0.42-0.46]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 105,
+   "wins": 49,
+   "losses": 56,
+   "winrate": 0.4667,
+   "pnl": 22.97,
+   "avgPnlPerTrade": 0.2188,
+   "avgCost": 4,
+   "avgWin": 5.04,
+   "tradesPerWindow": 0.1256
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.3-0.45-d10s-w1",
+  "name": "Antiflip 0.3-0.45 +10s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 227,
+   "wins": 96,
+   "losses": 131,
+   "winrate": 0.4229,
+   "pnl": 48.59,
+   "avgPnlPerTrade": 0.2141,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.2715,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.3-0.5-d10s-w0.6",
+  "name": "Antiflip 0.3-0.5 +10s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 364,
+   "wins": 166,
+   "losses": 198,
+   "winrate": 0.456,
+   "pnl": 77.7,
+   "avgPnlPerTrade": 0.2135,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4354,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "J-antiflip-bounce0.08-0.3-0.4-e0.7",
+  "name": "Antiflip bounce+0.08 [0.3-0.4]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 271,
+   "wins": 100,
+   "losses": 171,
+   "winrate": 0.369,
+   "pnl": 56.28,
+   "avgPnlPerTrade": 0.2077,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.3242,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.1-l60000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 376,
+   "wins": 141,
+   "losses": 235,
+   "winrate": 0.375,
+   "pnl": 73.6,
+   "avgPnlPerTrade": 0.1957,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.4498,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "A-antiflip-0.35-0.55-d10s-w1",
+  "name": "Antiflip 0.35-0.55 +10s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 435,
+   "wins": 211,
+   "losses": 224,
+   "winrate": 0.4851,
+   "pnl": 82.58,
+   "avgPnlPerTrade": 0.1898,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5203,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "J-antiflip-bounce0.08-0.33-0.48-e0.7",
+  "name": "Antiflip bounce+0.08 [0.33-0.48]",
+  "best": {
+   "runId": "sweep3-1790144292379",
+   "budget": 4,
+   "trades": 349,
+   "wins": 149,
+   "losses": 200,
+   "winrate": 0.4269,
+   "pnl": 65.05,
+   "avgPnlPerTrade": 0.1864,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4175,
+   "maxWin": 8.12,
+   "maxLoss": -4
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.06",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 687,
+   "wins": 255,
+   "losses": 432,
+   "winrate": 0.3712,
+   "pnl": 125.55,
+   "avgPnlPerTrade": 0.1828,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.8218,
+   "maxWin": 12,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "L-antiflip-d15s-0.46-0.5",
+  "name": "Antiflip 15s post-flip [0.46-0.5]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 108,
+   "wins": 54,
+   "losses": 54,
+   "winrate": 0.5,
+   "pnl": 18.39,
+   "avgPnlPerTrade": 0.1703,
+   "avgCost": 4,
+   "avgWin": 4.34,
+   "tradesPerWindow": 0.1292
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.35-0.55-d10s-w0.6",
+  "name": "Antiflip 0.35-0.55 +10s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 429,
+   "wins": 207,
+   "losses": 222,
+   "winrate": 0.4825,
+   "pnl": 70.95,
+   "avgPnlPerTrade": 0.1654,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.5132,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.3-0.45-d10s-w0.6",
+  "name": "Antiflip 0.3-0.45 +10s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 222,
+   "wins": 93,
+   "losses": 129,
+   "winrate": 0.4189,
+   "pnl": 35.95,
+   "avgPnlPerTrade": 0.1619,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.2656,
+   "maxWin": 9.33,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d8s-0.44-0.5",
+  "name": "Antiflip 8s post-flip [0.44-0.5]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 218,
+   "wins": 107,
+   "losses": 111,
+   "winrate": 0.4908,
+   "pnl": 34.07,
+   "avgPnlPerTrade": 0.1563,
+   "avgCost": 4,
+   "avgWin": 4.47,
+   "tradesPerWindow": 0.2608
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "L-antiflip-d15s-0.38-0.48",
+  "name": "Antiflip 15s post-flip [0.38-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 206,
+   "wins": 93,
+   "losses": 113,
+   "winrate": 0.4515,
+   "pnl": 32.05,
+   "avgPnlPerTrade": 0.1556,
+   "avgCost": 4,
+   "avgWin": 5.2,
+   "tradesPerWindow": 0.2464
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.12-l60000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 390,
+   "wins": 143,
+   "losses": 247,
+   "winrate": 0.3667,
+   "pnl": 56.91,
+   "avgPnlPerTrade": 0.1459,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.4665,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "L-antiflip-d15s-0.42-0.48",
+  "name": "Antiflip 15s post-flip [0.42-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 146,
+   "wins": 68,
+   "losses": 78,
+   "winrate": 0.4658,
+   "pnl": 18.68,
+   "avgPnlPerTrade": 0.1279,
+   "avgCost": 4,
+   "avgWin": 4.86,
+   "tradesPerWindow": 0.1746
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.12",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 650,
+   "wins": 220,
+   "losses": 430,
+   "winrate": 0.3385,
+   "pnl": 82.57,
+   "avgPnlPerTrade": 0.127,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7775,
+   "maxWin": 12,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "A-antiflip-0.35-0.5-d10s-w1",
+  "name": "Antiflip 0.35-0.5 +10s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 341,
+   "wins": 156,
+   "losses": 185,
+   "winrate": 0.4575,
+   "pnl": 41.9,
+   "avgPnlPerTrade": 0.1229,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4079,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.08",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 669,
+   "wins": 226,
+   "losses": 443,
+   "winrate": 0.3378,
+   "pnl": 72.34,
+   "avgPnlPerTrade": 0.1081,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.8002,
+   "maxWin": 12,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.08-l60000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 393,
+   "wins": 141,
+   "losses": 252,
+   "winrate": 0.3588,
+   "pnl": 41,
+   "avgPnlPerTrade": 0.1043,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.4701,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "L-antiflip-d8s-0.44-0.48",
+  "name": "Antiflip 8s post-flip [0.44-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 142,
+   "wins": 67,
+   "losses": 75,
+   "winrate": 0.4718,
+   "pnl": 14.55,
+   "avgPnlPerTrade": 0.1025,
+   "avgCost": 4,
+   "avgWin": 4.69,
+   "tradesPerWindow": 0.1699
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "A-antiflip-0.35-0.5-d10s-w0.6",
+  "name": "Antiflip 0.35-0.5 +10s",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 338,
+   "wins": 154,
+   "losses": 184,
+   "winrate": 0.4556,
+   "pnl": 33.38,
+   "avgPnlPerTrade": 0.0988,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4043,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.1",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 655,
+   "wins": 220,
+   "losses": 435,
+   "winrate": 0.3359,
+   "pnl": 52.16,
+   "avgPnlPerTrade": 0.0796,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7835,
+   "maxWin": 12,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.12-l60000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 650,
+   "wins": 220,
+   "losses": 430,
+   "winrate": 0.3385,
+   "pnl": 40.87,
+   "avgPnlPerTrade": 0.0629,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7775,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.1-0.3-0.45",
+  "name": "Antiflip TP+0.3/SL-0.1 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 71,
+   "losses": 148,
+   "tpExits": 71,
+   "slExits": 148,
+   "winrate": 0.3242,
+   "pnl": 13.34,
+   "avgPnlPerTrade": 0.0609,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.12-l45000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 636,
+   "wins": 216,
+   "losses": 420,
+   "winrate": 0.3396,
+   "pnl": 38,
+   "avgPnlPerTrade": 0.0597,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7608,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.08-l45000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 669,
+   "wins": 226,
+   "losses": 443,
+   "winrate": 0.3378,
+   "pnl": 35.75,
+   "avgPnlPerTrade": 0.0534,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.8002,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.1",
+  "name": "Fav-band 0.55-0.7 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 704,
+   "wins": 448,
+   "losses": 256,
+   "winrate": 0.6364,
+   "pnl": 34.81,
+   "avgPnlPerTrade": 0.0494,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.8421,
+   "maxWin": 3.14,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.1",
+  "name": "Fav-band 0.7-0.82 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 625,
+   "wins": 466,
+   "losses": 159,
+   "winrate": 0.7456,
+   "pnl": 30.63,
+   "avgPnlPerTrade": 0.049,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7476,
+   "maxWin": 1.71,
+   "maxLoss": -4
+  },
+  "runsCount": 13
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.15",
+  "name": "Fav-band 0.7-0.82 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 625,
+   "wins": 466,
+   "losses": 159,
+   "winrate": 0.7456,
+   "pnl": 30.63,
+   "avgPnlPerTrade": 0.049,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7476,
+   "maxWin": 1.71,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.2",
+  "name": "Fav-band 0.7-0.82 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 625,
+   "wins": 466,
+   "losses": 159,
+   "winrate": 0.7456,
+   "pnl": 30.63,
+   "avgPnlPerTrade": 0.049,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7476,
+   "maxWin": 1.71,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.1-0.3-0.45",
+  "name": "Antiflip TP+0.15/SL-0.1 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 103,
+   "losses": 116,
+   "tpExits": 103,
+   "slExits": 116,
+   "winrate": 0.4703,
+   "pnl": 9.72,
+   "avgPnlPerTrade": 0.0444,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.1",
+  "name": "Fav-band 0.52-0.65 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 650,
+   "wins": 397,
+   "losses": 253,
+   "winrate": 0.6108,
+   "pnl": 26.31,
+   "avgPnlPerTrade": 0.0405,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7775,
+   "maxWin": 3.14,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.1-l60000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 655,
+   "wins": 220,
+   "losses": 435,
+   "winrate": 0.3359,
+   "pnl": 25.64,
+   "avgPnlPerTrade": 0.0391,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7835,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "I-lateflip-0.4-0.75-0.33-0.48",
+  "name": "Antiflip tardif (flip à 40-75%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 142,
+   "wins": 61,
+   "losses": 81,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4296,
+   "pnl": 5.45,
+   "avgPnlPerTrade": 0.0384,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1699,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "L-antiflip-d15s-0.44-0.5",
+  "name": "Antiflip 15s post-flip [0.44-0.5]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 156,
+   "wins": 74,
+   "losses": 82,
+   "winrate": 0.4744,
+   "pnl": 5.88,
+   "avgPnlPerTrade": 0.0377,
+   "avgCost": 4,
+   "avgWin": 4.51,
+   "tradesPerWindow": 0.1866
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.1",
+  "name": "Fav-band 0.55-0.8 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 770,
+   "wins": 510,
+   "losses": 260,
+   "winrate": 0.6623,
+   "pnl": 28.69,
+   "avgPnlPerTrade": 0.0373,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.9211,
+   "maxWin": 3.14,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.1-0.3-0.45",
+  "name": "Antiflip TP+0.25/SL-0.1 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 78,
+   "losses": 141,
+   "tpExits": 78,
+   "slExits": 141,
+   "winrate": 0.3562,
+   "pnl": 7.44,
+   "avgPnlPerTrade": 0.034,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "L-antiflip-d15s-0.44-0.48",
+  "name": "Antiflip 15s post-flip [0.44-0.48]",
+  "best": {
+   "runId": "sweep4-1790145048132",
+   "budget": 4,
+   "trades": 110,
+   "wins": 51,
+   "losses": 59,
+   "winrate": 0.4636,
+   "pnl": 3.48,
+   "avgPnlPerTrade": 0.0316,
+   "avgCost": 4,
+   "avgWin": 4.7,
+   "tradesPerWindow": 0.1316
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.08-0.3-0.45",
+  "name": "Antiflip TP+0.15/SL-0.08 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 92,
+   "losses": 127,
+   "tpExits": 92,
+   "slExits": 127,
+   "winrate": 0.4201,
+   "pnl": 6.3,
+   "avgPnlPerTrade": 0.0288,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.15-0.3-0.45",
+  "name": "Antiflip TP+0.3/SL-0.15 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 83,
+   "losses": 136,
+   "tpExits": 83,
+   "slExits": 136,
+   "winrate": 0.379,
+   "pnl": 6.07,
+   "avgPnlPerTrade": 0.0277,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.08-l60000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 672,
+   "wins": 224,
+   "losses": 448,
+   "winrate": 0.3333,
+   "pnl": 17.58,
+   "avgPnlPerTrade": 0.0262,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.8038,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.1-l45000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 643,
+   "wins": 215,
+   "losses": 428,
+   "winrate": 0.3344,
+   "pnl": 15.83,
+   "avgPnlPerTrade": 0.0246,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7691,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.08-l45000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 489,
+   "wins": 156,
+   "losses": 333,
+   "winrate": 0.319,
+   "pnl": 11.79,
+   "avgPnlPerTrade": 0.0241,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.5849,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.06",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790143955280",
+   "budget": 4,
+   "trades": 685,
+   "wins": 228,
+   "losses": 457,
+   "winrate": 0.3328,
+   "pnl": 15.71,
+   "avgPnlPerTrade": 0.0229,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.8194,
+   "maxWin": 12,
+   "maxLoss": -4
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.1-l90000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 207,
+   "wins": 77,
+   "losses": 130,
+   "winrate": 0.372,
+   "pnl": 4.39,
+   "avgPnlPerTrade": 0.0212,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.2476,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "I-lateflip-0.45-0.8-0.35-0.5",
+  "name": "Antiflip tardif (flip à 45-80%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 144,
+   "wins": 63,
+   "losses": 81,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4375,
+   "pnl": 2.6,
+   "avgPnlPerTrade": 0.0181,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1722,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.08-0.3-0.45",
+  "name": "Antiflip TP+0.3/SL-0.08 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 61,
+   "losses": 158,
+   "tpExits": 61,
+   "slExits": 158,
+   "winrate": 0.2785,
+   "pnl": 3.85,
+   "avgPnlPerTrade": 0.0176,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.1-0.3-0.45",
+  "name": "Antiflip TP+0.2/SL-0.1 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 87,
+   "losses": 132,
+   "tpExits": 87,
+   "slExits": 132,
+   "winrate": 0.3973,
+   "pnl": 3.67,
+   "avgPnlPerTrade": 0.0168,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "I-lateflip-0.4-0.75-0.35-0.5",
+  "name": "Antiflip tardif (flip à 40-75%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 167,
+   "wins": 73,
+   "losses": 94,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4371,
+   "pnl": 2.73,
+   "avgPnlPerTrade": 0.0163,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1998,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.15-0.3-0.4",
+  "name": "Antiflip TP+0.3/SL-0.15 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 28,
+   "losses": 47,
+   "tpExits": 28,
+   "slExits": 47,
+   "winrate": 0.3733,
+   "pnl": 0.86,
+   "avgPnlPerTrade": 0.0115,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.06-l60000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 685,
+   "wins": 228,
+   "losses": 457,
+   "winrate": 0.3328,
+   "pnl": 7.43,
+   "avgPnlPerTrade": 0.0108,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.8194,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.1-0.3-0.4",
+  "name": "Antiflip TP+0.15/SL-0.1 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 33,
+   "losses": 42,
+   "tpExits": 33,
+   "slExits": 42,
+   "winrate": 0.44,
+   "pnl": 0.78,
+   "avgPnlPerTrade": 0.0104,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.06-l90000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 476,
+   "wins": 150,
+   "losses": 326,
+   "winrate": 0.3151,
+   "pnl": 3.89,
+   "avgPnlPerTrade": 0.0082,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.5694,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.1-l60000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 485,
+   "wins": 155,
+   "losses": 330,
+   "winrate": 0.3196,
+   "pnl": 3.07,
+   "avgPnlPerTrade": 0.0063,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.5801,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.06-l90000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 617,
+   "wins": 201,
+   "losses": 416,
+   "winrate": 0.3258,
+   "pnl": 3.43,
+   "avgPnlPerTrade": 0.0056,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.738,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "S1-momentum",
+  "name": "Momentum favori",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "S2-early-lock",
+  "name": "Early lock favori",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S3-dip-revert",
+  "name": "Dip-revert favori",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S5-flip-confirm",
+  "name": "Flip-confirm (nouveau favori)",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S6-underdog-grid",
+  "name": "Grille maker underdog 0.10",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "S6b-underdog-grid-20",
+  "name": "Grille maker underdog 0.20",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S7-late-lock",
+  "name": "Late lock ≥0.90",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S8-breakout",
+  "name": "Breakout du range",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S10-maker-fav-75",
+  "name": "Maker limit favori 0.75",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S11-maker-fav-65",
+  "name": "Maker limit favori 0.65",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S12-double-maker-70",
+  "name": "Double maker 0.70 Up+Down",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S13-open-blowout",
+  "name": "Open blowout",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S14-sniper-60s",
+  "name": "Sniper T-60s ≥0.90",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S15-sniper-45s",
+  "name": "Sniper T-45s ≥0.88",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S16-momentum-SL",
+  "name": "Momentum + stop-loss -10¢",
+  "best": {
+   "runId": "run-1790142885722",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "S1-fav-band-60-80",
+  "name": "Fav-band 0.60-0.80",
+  "best": {
+   "runId": "run-1790143480193",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "sells": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "avgEntryElapsedSec": null,
+   "maxWin": 0,
+   "maxLoss": 0,
+   "profitFactor": 0,
+   "expectancyPerTrade": 0,
+   "tradesPerWindow": 0
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.15",
+  "name": "Fav-band 0.55-0.7 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.2",
+  "name": "Fav-band 0.55-0.7 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.1",
+  "name": "Fav-band 0.6-0.75 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.15",
+  "name": "Fav-band 0.6-0.75 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.2",
+  "name": "Fav-band 0.6-0.75 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.15",
+  "name": "Fav-band 0.55-0.8 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.2",
+  "name": "Fav-band 0.55-0.8 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.1",
+  "name": "Fav-band 0.65-0.8 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.15",
+  "name": "Fav-band 0.65-0.8 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.2",
+  "name": "Fav-band 0.65-0.8 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.15",
+  "name": "Fav-band 0.52-0.65 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.2",
+  "name": "Fav-band 0.52-0.65 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 9
+ },
+ {
+  "id": "D-doglimit-0.1-t60",
+  "name": "Underdog limit 0.1 (t+60s)",
+  "best": {
+   "runId": "final-1790144490682",
+   "budget": 4,
+   "trades": 570,
+   "wins": 47,
+   "losses": 523,
+   "winrate": 0.0825,
+   "pnl": -400,
+   "pnlPerTrade": -0.7018,
+   "avgCost": 4,
+   "maxWin": 36,
+   "maxLoss": -4,
+   "tradesPerWindow": 0.6818,
+   "wrUp": 0.0957,
+   "wrDown": 0.0694,
+   "nUp": 282,
+   "nDown": 288
+  },
+  "runsCount": 11
+ },
+ {
+  "id": "E-favlimit-0.6-t30s",
+  "name": "Favori limit 0.6 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "E-favlimit-0.6-t60s",
+  "name": "Favori limit 0.6 (t+60s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "E-favlimit-0.65-t30s",
+  "name": "Favori limit 0.65 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "E-favlimit-0.65-t60s",
+  "name": "Favori limit 0.65 (t+60s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "E-favlimit-0.7-t30s",
+  "name": "Favori limit 0.7 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 11
+ },
+ {
+  "id": "E-favlimit-0.7-t60s",
+  "name": "Favori limit 0.7 (t+60s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "E-favlimit-0.75-t30s",
+  "name": "Favori limit 0.75 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "E-favlimit-0.75-t60s",
+  "name": "Favori limit 0.75 (t+60s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "E-favlimit-0.8-t30s",
+  "name": "Favori limit 0.8 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "E-favlimit-0.8-t60s",
+  "name": "Favori limit 0.8 (t+60s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "F-diprev-0.55-0.7-d0.06",
+  "name": "Dip-revert favori 0.55-0.7 drop≥0.06",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 6
+ },
+ {
+  "id": "F-diprev-0.55-0.7-d0.08",
+  "name": "Dip-revert favori 0.55-0.7 drop≥0.08",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 6
+ },
+ {
+  "id": "F-diprev-0.55-0.7-d0.1",
+  "name": "Dip-revert favori 0.55-0.7 drop≥0.1",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 6
+ },
+ {
+  "id": "F-diprev-0.6-0.75-d0.06",
+  "name": "Dip-revert favori 0.6-0.75 drop≥0.06",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 6
+ },
+ {
+  "id": "F-diprev-0.6-0.75-d0.08",
+  "name": "Dip-revert favori 0.6-0.75 drop≥0.08",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 6
+ },
+ {
+  "id": "F-diprev-0.6-0.75-d0.1",
+  "name": "Dip-revert favori 0.6-0.75 drop≥0.1",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 6
+ },
+ {
+  "id": "F-diprev-0.55-0.65-d0.06",
+  "name": "Dip-revert favori 0.55-0.65 drop≥0.06",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 6
+ },
+ {
+  "id": "F-diprev-0.55-0.65-d0.08",
+  "name": "Dip-revert favori 0.55-0.65 drop≥0.08",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 6
+ },
+ {
+  "id": "F-diprev-0.55-0.65-d0.1",
+  "name": "Dip-revert favori 0.55-0.65 drop≥0.1",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 6
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.1-l45000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.1",
+  "best": {
+   "runId": "final-1790148593767",
+   "budget": 2,
+   "trades": 358,
+   "wins": 120,
+   "losses": 238,
+   "winrate": 0.3352,
+   "pnl": -17.85,
+   "pnlPerTrade": -0.0499,
+   "avgCost": 1.73,
+   "maxWin": 3.5,
+   "maxLoss": -2,
+   "tradesPerWindow": 0.4282,
+   "wrUp": 0.3632,
+   "wrDown": 0.3036,
+   "nUp": 190,
+   "nDown": 168
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.08-l45000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.08",
+  "best": {
+   "runId": "final-1790148593767",
+   "budget": 2,
+   "trades": 382,
+   "wins": 128,
+   "losses": 254,
+   "winrate": 0.3351,
+   "pnl": -18.7,
+   "pnlPerTrade": -0.049,
+   "avgCost": 1.72,
+   "maxWin": 3.5,
+   "maxLoss": -2,
+   "tradesPerWindow": 0.4569,
+   "wrUp": 0.3452,
+   "wrDown": 0.3243,
+   "nUp": 197,
+   "nDown": 185
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "K-antiflip-bounce0.08-floor0.4-m0.52",
+  "name": "Antiflip bounce+0.08 floor 0.4",
+  "best": {
+   "runId": "final-1790148593767",
+   "budget": 2,
+   "trades": 34,
+   "wins": 17,
+   "losses": 17,
+   "winrate": 0.5,
+   "pnl": 17,
+   "pnlPerTrade": 0.5,
+   "avgCost": 2,
+   "maxWin": 3,
+   "maxLoss": -2,
+   "tradesPerWindow": 0.0407,
+   "wrUp": 0.4706,
+   "wrDown": 0.5294,
+   "nUp": 17,
+   "nDown": 17
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "K-antiflip-bounce0.08-floor0.4-m0.6",
+  "name": "Antiflip bounce+0.08 floor 0.4",
+  "best": {
+   "runId": "final-1790148593767",
+   "budget": 2,
+   "trades": 27,
+   "wins": 12,
+   "losses": 15,
+   "winrate": 0.4444,
+   "pnl": 6,
+   "pnlPerTrade": 0.2222,
+   "avgCost": 2,
+   "maxWin": 3,
+   "maxLoss": -2,
+   "tradesPerWindow": 0.0323,
+   "wrUp": 0.4667,
+   "wrDown": 0.4167,
+   "nUp": 15,
+   "nDown": 12
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "K-antiflip-bounce0.05-floor0.4-m0.52",
+  "name": "Antiflip bounce+0.05 floor 0.4",
+  "best": {
+   "runId": "final-1790148593767",
+   "budget": 2,
+   "trades": 37,
+   "wins": 12,
+   "losses": 25,
+   "winrate": 0.3243,
+   "pnl": -14,
+   "pnlPerTrade": -0.3784,
+   "avgCost": 2,
+   "maxWin": 3,
+   "maxLoss": -2,
+   "tradesPerWindow": 0.0443,
+   "wrUp": 0.3684,
+   "wrDown": 0.2778,
+   "nUp": 19,
+   "nDown": 18
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "K-antiflip-bounce0.05-floor0.4-m0.6",
+  "name": "Antiflip bounce+0.05 floor 0.4",
+  "best": {
+   "runId": "final-1790148593767",
+   "budget": 2,
+   "trades": 30,
+   "wins": 9,
+   "losses": 21,
+   "winrate": 0.3,
+   "pnl": -15,
+   "pnlPerTrade": -0.5,
+   "avgCost": 2,
+   "maxWin": 3,
+   "maxLoss": -2,
+   "tradesPerWindow": 0.0359,
+   "wrUp": 0.3333,
+   "wrDown": 0.2667,
+   "nUp": 15,
+   "nDown": 15
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "K-antiflip-bounce0.03-floor0.33-m0.52",
+  "name": "Antiflip bounce+0.03 floor 0.33",
+  "best": {
+   "runId": "final-1790148593767",
+   "budget": 2,
+   "trades": 147,
+   "wins": 59,
+   "losses": 88,
+   "winrate": 0.4014,
+   "pnl": 29.25,
+   "pnlPerTrade": 0.199,
+   "avgCost": 1.81,
+   "maxWin": 3.35,
+   "maxLoss": -2,
+   "tradesPerWindow": 0.1758,
+   "wrUp": 0.381,
+   "wrDown": 0.4167,
+   "nUp": 63,
+   "nDown": 84
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "K-antiflip-bounce0.03-floor0.33-m0.6",
+  "name": "Antiflip bounce+0.03 floor 0.33",
+  "best": {
+   "runId": "final-1790148593767",
+   "budget": 2,
+   "trades": 124,
+   "wins": 48,
+   "losses": 76,
+   "winrate": 0.3871,
+   "pnl": 15.7,
+   "pnlPerTrade": 0.1266,
+   "avgCost": 1.81,
+   "maxWin": 3.35,
+   "maxLoss": -2,
+   "tradesPerWindow": 0.1483,
+   "wrUp": 0.3846,
+   "wrDown": 0.3889,
+   "nUp": 52,
+   "nDown": 72
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.1-t45",
+  "name": "Fav-band 0.7-0.82 écart≥0.1",
+  "best": {
+   "runId": "final-1790148638633",
+   "budget": 4,
+   "trades": 716,
+   "wins": 527,
+   "losses": 189,
+   "winrate": 0.736,
+   "pnl": 22.46,
+   "pnlPerTrade": 0.0314,
+   "avgCost": 4,
+   "maxWin": 1.71,
+   "maxLoss": -4,
+   "tradesPerWindow": 0.8565,
+   "wrUp": 0.7533,
+   "wrDown": 0.7168,
+   "nUp": 377,
+   "nDown": 339
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.1-t60",
+  "name": "Fav-band 0.7-0.82 écart≥0.1",
+  "best": {
+   "runId": "final-1790148638633",
+   "budget": 4,
+   "trades": 687,
+   "wins": 499,
+   "losses": 188,
+   "winrate": 0.7263,
+   "pnl": -29.52,
+   "pnlPerTrade": -0.043,
+   "avgCost": 4,
+   "maxWin": 1.71,
+   "maxLoss": -4,
+   "tradesPerWindow": 0.8218,
+   "wrUp": 0.7472,
+   "wrDown": 0.7045,
+   "nUp": 352,
+   "nDown": 335
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.1-t45",
+  "name": "Fav-band 0.55-0.7 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.1-t60",
+  "name": "Fav-band 0.55-0.7 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.1-t90",
+  "name": "Fav-band 0.55-0.7 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.15-t45",
+  "name": "Fav-band 0.55-0.7 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.15-t60",
+  "name": "Fav-band 0.55-0.7 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.15-t90",
+  "name": "Fav-band 0.55-0.7 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.2-t45",
+  "name": "Fav-band 0.55-0.7 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.2-t60",
+  "name": "Fav-band 0.55-0.7 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.7-sp0.2-t90",
+  "name": "Fav-band 0.55-0.7 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.1-t45",
+  "name": "Fav-band 0.6-0.75 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.1-t60",
+  "name": "Fav-band 0.6-0.75 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.1-t90",
+  "name": "Fav-band 0.6-0.75 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.15-t45",
+  "name": "Fav-band 0.6-0.75 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.15-t60",
+  "name": "Fav-band 0.6-0.75 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.15-t90",
+  "name": "Fav-band 0.6-0.75 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.2-t45",
+  "name": "Fav-band 0.6-0.75 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.2-t60",
+  "name": "Fav-band 0.6-0.75 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.6-0.75-sp0.2-t90",
+  "name": "Fav-band 0.6-0.75 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.1-t45",
+  "name": "Fav-band 0.55-0.8 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.1-t60",
+  "name": "Fav-band 0.55-0.8 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.1-t90",
+  "name": "Fav-band 0.55-0.8 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.15-t45",
+  "name": "Fav-band 0.55-0.8 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.15-t60",
+  "name": "Fav-band 0.55-0.8 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.15-t90",
+  "name": "Fav-band 0.55-0.8 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.2-t45",
+  "name": "Fav-band 0.55-0.8 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.2-t60",
+  "name": "Fav-band 0.55-0.8 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.55-0.8-sp0.2-t90",
+  "name": "Fav-band 0.55-0.8 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.1-t45",
+  "name": "Fav-band 0.65-0.8 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.1-t60",
+  "name": "Fav-band 0.65-0.8 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.1-t90",
+  "name": "Fav-band 0.65-0.8 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.15-t45",
+  "name": "Fav-band 0.65-0.8 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.15-t60",
+  "name": "Fav-band 0.65-0.8 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.15-t90",
+  "name": "Fav-band 0.65-0.8 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.2-t45",
+  "name": "Fav-band 0.65-0.8 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.2-t60",
+  "name": "Fav-band 0.65-0.8 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.65-0.8-sp0.2-t90",
+  "name": "Fav-band 0.65-0.8 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.1-t45",
+  "name": "Fav-band 0.52-0.65 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.1-t60",
+  "name": "Fav-band 0.52-0.65 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.1-t90",
+  "name": "Fav-band 0.52-0.65 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.15-t45",
+  "name": "Fav-band 0.52-0.65 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.15-t60",
+  "name": "Fav-band 0.52-0.65 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.15-t90",
+  "name": "Fav-band 0.52-0.65 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.2-t45",
+  "name": "Fav-band 0.52-0.65 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.2-t60",
+  "name": "Fav-band 0.52-0.65 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.52-0.65-sp0.2-t90",
+  "name": "Fav-band 0.52-0.65 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.1-t90",
+  "name": "Fav-band 0.7-0.82 écart≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.15-t45",
+  "name": "Fav-band 0.7-0.82 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.15-t60",
+  "name": "Fav-band 0.7-0.82 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.15-t90",
+  "name": "Fav-band 0.7-0.82 écart≥0.15",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.2-t45",
+  "name": "Fav-band 0.7-0.82 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.2-t60",
+  "name": "Fav-band 0.7-0.82 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "C-favband-0.7-0.82-sp0.2-t90",
+  "name": "Fav-band 0.7-0.82 écart≥0.2",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.7-d0.06-l30000",
+  "name": "Dip-revert favori 0.55-0.7 drop≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.7-d0.06-l60000",
+  "name": "Dip-revert favori 0.55-0.7 drop≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.7-d0.08-l30000",
+  "name": "Dip-revert favori 0.55-0.7 drop≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.7-d0.08-l60000",
+  "name": "Dip-revert favori 0.55-0.7 drop≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.7-d0.1-l30000",
+  "name": "Dip-revert favori 0.55-0.7 drop≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.7-d0.1-l60000",
+  "name": "Dip-revert favori 0.55-0.7 drop≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.6-0.75-d0.06-l30000",
+  "name": "Dip-revert favori 0.6-0.75 drop≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.6-0.75-d0.06-l60000",
+  "name": "Dip-revert favori 0.6-0.75 drop≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.6-0.75-d0.08-l30000",
+  "name": "Dip-revert favori 0.6-0.75 drop≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.6-0.75-d0.08-l60000",
+  "name": "Dip-revert favori 0.6-0.75 drop≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.6-0.75-d0.1-l30000",
+  "name": "Dip-revert favori 0.6-0.75 drop≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.6-0.75-d0.1-l60000",
+  "name": "Dip-revert favori 0.6-0.75 drop≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.65-d0.06-l30000",
+  "name": "Dip-revert favori 0.55-0.65 drop≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.65-d0.06-l60000",
+  "name": "Dip-revert favori 0.55-0.65 drop≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.65-d0.08-l30000",
+  "name": "Dip-revert favori 0.55-0.65 drop≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.65-d0.08-l60000",
+  "name": "Dip-revert favori 0.55-0.65 drop≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.65-d0.1-l30000",
+  "name": "Dip-revert favori 0.55-0.65 drop≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "F-diprev-0.55-0.65-d0.1-l60000",
+  "name": "Dip-revert favori 0.55-0.65 drop≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 0,
+   "wins": 0,
+   "losses": 0,
+   "winrate": 0,
+   "pnl": 0,
+   "avgPnlPerTrade": 0,
+   "avgCostPerTrade": 0,
+   "tradesPerWindow": 0,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "L-antiflip-d15s-0.4-0.48",
+  "name": "Antiflip 15s post-flip [0.4-0.48]",
+  "best": {
+   "runId": "sweep4-1790145272318",
+   "budget": 2.5,
+   "trades": 176,
+   "wins": 78,
+   "losses": 98,
+   "winrate": 0.4432,
+   "pnl": -0.2,
+   "avgPnlPerTrade": -0.0011,
+   "avgCost": 2.22,
+   "avgWin": 2.78,
+   "tradesPerWindow": 0.2105
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.08-0.3-0.45",
+  "name": "Antiflip TP+0.25/SL-0.08 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 67,
+   "losses": 152,
+   "tpExits": 67,
+   "slExits": 152,
+   "winrate": 0.3059,
+   "pnl": -0.76,
+   "avgPnlPerTrade": -0.0035,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.08-l90000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 213,
+   "wins": 78,
+   "losses": 135,
+   "winrate": 0.3662,
+   "pnl": -1.22,
+   "avgPnlPerTrade": -0.0057,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.2548,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.15-0.3-0.4",
+  "name": "Antiflip TP+0.25/SL-0.15 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 31,
+   "losses": 44,
+   "tpExits": 31,
+   "slExits": 44,
+   "winrate": 0.4133,
+   "pnl": -0.52,
+   "avgPnlPerTrade": -0.0069,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.12-l45000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 467,
+   "wins": 147,
+   "losses": 320,
+   "winrate": 0.3148,
+   "pnl": -3.66,
+   "avgPnlPerTrade": -0.0078,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.5586,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.12-l45000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 361,
+   "wins": 123,
+   "losses": 238,
+   "winrate": 0.3407,
+   "pnl": -3.48,
+   "avgPnlPerTrade": -0.0096,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.4318,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.06-l45000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 682,
+   "wins": 226,
+   "losses": 456,
+   "winrate": 0.3314,
+   "pnl": -7.01,
+   "avgPnlPerTrade": -0.0103,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.8158,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.12-l90000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 355,
+   "wins": 120,
+   "losses": 235,
+   "winrate": 0.338,
+   "pnl": -3.86,
+   "avgPnlPerTrade": -0.0109,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.4246,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.08-0.3-0.45",
+  "name": "Antiflip TP+0.2/SL-0.08 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 76,
+   "losses": 143,
+   "tpExits": 76,
+   "slExits": 143,
+   "winrate": 0.347,
+   "pnl": -2.81,
+   "avgPnlPerTrade": -0.0128,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.12-l60000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 502,
+   "wins": 158,
+   "losses": 344,
+   "winrate": 0.3147,
+   "pnl": -6.67,
+   "avgPnlPerTrade": -0.0133,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.6005,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.08-0.35-0.5",
+  "name": "Antiflip TP+0.15/SL-0.08 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 158,
+   "losses": 224,
+   "tpExits": 158,
+   "slExits": 224,
+   "winrate": 0.4136,
+   "pnl": -5.14,
+   "avgPnlPerTrade": -0.0135,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.1-l90000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 594,
+   "wins": 191,
+   "losses": 403,
+   "winrate": 0.3215,
+   "pnl": -8.3,
+   "avgPnlPerTrade": -0.014,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7105,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.1-l90000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 351,
+   "wins": 119,
+   "losses": 232,
+   "winrate": 0.339,
+   "pnl": -5.05,
+   "avgPnlPerTrade": -0.0144,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.4199,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.12-l90000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 583,
+   "wins": 186,
+   "losses": 397,
+   "winrate": 0.319,
+   "pnl": -9.51,
+   "avgPnlPerTrade": -0.0163,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.6974,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "A-antiflip-0.3-0.45-d10s",
+  "name": "Antiflip 0.3-0.45 +10s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 106,
+   "wins": 38,
+   "losses": 68,
+   "winrate": 0.3585,
+   "pnl": -1.75,
+   "avgPnlPerTrade": -0.0165,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.1268,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.3-0.5-d10s",
+  "name": "Antiflip 0.3-0.5 +10s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 106,
+   "wins": 38,
+   "losses": 68,
+   "winrate": 0.3585,
+   "pnl": -1.75,
+   "avgPnlPerTrade": -0.0165,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.1268,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.3-0.4-d10s",
+  "name": "Antiflip 0.3-0.4 +10s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 106,
+   "wins": 38,
+   "losses": 68,
+   "winrate": 0.3585,
+   "pnl": -1.75,
+   "avgPnlPerTrade": -0.0165,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.1268,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.3-0.4-d10s-w1",
+  "name": "Antiflip 0.3-0.4 +10s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 106,
+   "wins": 38,
+   "losses": 68,
+   "winrate": 0.3585,
+   "pnl": -1.75,
+   "avgPnlPerTrade": -0.0165,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.1268,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.06-l90000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 375,
+   "wins": 127,
+   "losses": 248,
+   "winrate": 0.3387,
+   "pnl": -6.7,
+   "avgPnlPerTrade": -0.0179,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.4486,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.15-0.3-0.45",
+  "name": "Antiflip TP+0.25/SL-0.15 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 90,
+   "losses": 129,
+   "tpExits": 90,
+   "slExits": 129,
+   "winrate": 0.411,
+   "pnl": -4.28,
+   "avgPnlPerTrade": -0.0195,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.15-0.3-0.4",
+  "name": "Antiflip TP+0.15/SL-0.15 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 38,
+   "losses": 37,
+   "tpExits": 38,
+   "slExits": 37,
+   "winrate": 0.5067,
+   "pnl": -1.48,
+   "avgPnlPerTrade": -0.0197,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "D-doglimit-0.08-t120",
+  "name": "Underdog limit 0.08 (t+120s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 606,
+   "wins": 48,
+   "losses": 558,
+   "winrate": 0.0792,
+   "pnl": -12,
+   "avgPnlPerTrade": -0.0198,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7249,
+   "maxWin": 23,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.1-0.35-0.5",
+  "name": "Antiflip TP+0.15/SL-0.1 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 171,
+   "losses": 211,
+   "tpExits": 171,
+   "slExits": 211,
+   "winrate": 0.4476,
+   "pnl": -8.46,
+   "avgPnlPerTrade": -0.0221,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.08-l90000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 358,
+   "wins": 120,
+   "losses": 238,
+   "winrate": 0.3352,
+   "pnl": -8.27,
+   "avgPnlPerTrade": -0.0231,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.4282,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.08-0.3-0.5",
+  "name": "Antiflip TP+0.15/SL-0.08 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 164,
+   "losses": 237,
+   "tpExits": 164,
+   "slExits": 237,
+   "winrate": 0.409,
+   "pnl": -10.65,
+   "avgPnlPerTrade": -0.0266,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.25-sl0.1-0.3-0.45-g0.08",
+  "name": "Dog-momentum TP+0.25 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 590,
+   "wins": 194,
+   "losses": 396,
+   "tpExits": 193,
+   "slExits": 396,
+   "winrate": 0.3288,
+   "pnl": -16.39,
+   "avgPnlPerTrade": -0.0278,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7057,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.15-0.3-0.45",
+  "name": "Antiflip TP+0.15/SL-0.15 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 112,
+   "losses": 107,
+   "tpExits": 112,
+   "slExits": 107,
+   "winrate": 0.5114,
+   "pnl": -6.28,
+   "avgPnlPerTrade": -0.0287,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.1-l45000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 462,
+   "wins": 144,
+   "losses": 318,
+   "winrate": 0.3117,
+   "pnl": -13.5,
+   "avgPnlPerTrade": -0.0292,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.5526,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.1-0.35-0.5",
+  "name": "Antiflip TP+0.2/SL-0.1 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 147,
+   "losses": 235,
+   "tpExits": 147,
+   "slExits": 235,
+   "winrate": 0.3848,
+   "pnl": -11.71,
+   "avgPnlPerTrade": -0.0307,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.1-0.3-0.5",
+  "name": "Antiflip TP+0.15/SL-0.1 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 178,
+   "losses": 223,
+   "tpExits": 178,
+   "slExits": 223,
+   "winrate": 0.4439,
+   "pnl": -12.4,
+   "avgPnlPerTrade": -0.0309,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.06-l60000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 400,
+   "wins": 135,
+   "losses": 265,
+   "winrate": 0.3375,
+   "pnl": -12.8,
+   "avgPnlPerTrade": -0.032,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.4785,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.1-0.35-0.5",
+  "name": "Antiflip TP+0.25/SL-0.1 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 130,
+   "losses": 252,
+   "tpExits": 130,
+   "slExits": 252,
+   "winrate": 0.3403,
+   "pnl": -12.83,
+   "avgPnlPerTrade": -0.0336,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.1-0.3-0.4",
+  "name": "Antiflip TP+0.25/SL-0.1 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 24,
+   "losses": 51,
+   "tpExits": 24,
+   "slExits": 51,
+   "winrate": 0.32,
+   "pnl": -2.53,
+   "avgPnlPerTrade": -0.0337,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.1-l90000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 449,
+   "wins": 138,
+   "losses": 311,
+   "winrate": 0.3073,
+   "pnl": -15.15,
+   "avgPnlPerTrade": -0.0337,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.5371,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.15-0.3-0.45",
+  "name": "Antiflip TP+0.2/SL-0.15 bande 0.3-0.45",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 219,
+   "wins": 99,
+   "losses": 120,
+   "tpExits": 99,
+   "slExits": 120,
+   "winrate": 0.4521,
+   "pnl": -7.45,
+   "avgPnlPerTrade": -0.034,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.262,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.25-sl0.1-0.3-0.45-g0.1",
+  "name": "Dog-momentum TP+0.25 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 569,
+   "wins": 187,
+   "losses": 382,
+   "tpExits": 186,
+   "slExits": 382,
+   "winrate": 0.3286,
+   "pnl": -21.2,
+   "avgPnlPerTrade": -0.0373,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6806,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.08-0.35-0.5",
+  "name": "Antiflip TP+0.2/SL-0.08 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 133,
+   "losses": 249,
+   "tpExits": 133,
+   "slExits": 249,
+   "winrate": 0.3482,
+   "pnl": -15.47,
+   "avgPnlPerTrade": -0.0405,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "I-lateflip-0.3-0.6-0.33-0.48",
+  "name": "Antiflip tardif (flip à 30-60%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 147,
+   "wins": 62,
+   "losses": 85,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4218,
+   "pnl": -6.31,
+   "avgPnlPerTrade": -0.0429,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1758,
+   "maxWin": 8.12,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.08-l60000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 498,
+   "wins": 155,
+   "losses": 343,
+   "winrate": 0.3112,
+   "pnl": -21.5,
+   "avgPnlPerTrade": -0.0432,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.5957,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.12-l90000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 207,
+   "wins": 74,
+   "losses": 133,
+   "winrate": 0.3575,
+   "pnl": -9.19,
+   "avgPnlPerTrade": -0.0444,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.2476,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.1-0.3-0.5",
+  "name": "Antiflip TP+0.25/SL-0.1 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 135,
+   "losses": 266,
+   "tpExits": 135,
+   "slExits": 266,
+   "winrate": 0.3367,
+   "pnl": -18.17,
+   "avgPnlPerTrade": -0.0453,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.1-0.3-0.5",
+  "name": "Antiflip TP+0.2/SL-0.1 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 152,
+   "losses": 249,
+   "tpExits": 152,
+   "slExits": 249,
+   "winrate": 0.3791,
+   "pnl": -20.8,
+   "avgPnlPerTrade": -0.0519,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.08-0.35-0.5",
+  "name": "Antiflip TP+0.25/SL-0.08 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 116,
+   "losses": 266,
+   "tpExits": 116,
+   "slExits": 266,
+   "winrate": 0.3037,
+   "pnl": -19.92,
+   "avgPnlPerTrade": -0.0521,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.1-0.3-0.4",
+  "name": "Antiflip TP+0.3/SL-0.1 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 21,
+   "losses": 54,
+   "tpExits": 21,
+   "slExits": 54,
+   "winrate": 0.28,
+   "pnl": -4.11,
+   "avgPnlPerTrade": -0.0548,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.08-0.3-0.5",
+  "name": "Antiflip TP+0.2/SL-0.08 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 138,
+   "losses": 263,
+   "tpExits": 138,
+   "slExits": 263,
+   "winrate": 0.3441,
+   "pnl": -22.13,
+   "avgPnlPerTrade": -0.0552,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.08-0.3-0.5",
+  "name": "Antiflip TP+0.25/SL-0.08 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 121,
+   "losses": 280,
+   "tpExits": 121,
+   "slExits": 280,
+   "winrate": 0.3017,
+   "pnl": -22.83,
+   "avgPnlPerTrade": -0.0569,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.12-l90000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 451,
+   "wins": 136,
+   "losses": 315,
+   "winrate": 0.3016,
+   "pnl": -25.85,
+   "avgPnlPerTrade": -0.0573,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.5395,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.15-0.35-0.5",
+  "name": "Antiflip TP+0.25/SL-0.15 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 153,
+   "losses": 229,
+   "tpExits": 153,
+   "slExits": 229,
+   "winrate": 0.4005,
+   "pnl": -22.34,
+   "avgPnlPerTrade": -0.0585,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.06-l45000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 498,
+   "wins": 154,
+   "losses": 344,
+   "winrate": 0.3092,
+   "pnl": -30.48,
+   "avgPnlPerTrade": -0.0612,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.5957,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.2-sl0.1-0.3-0.45-g0.08",
+  "name": "Dog-momentum TP+0.2 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 590,
+   "wins": 211,
+   "losses": 379,
+   "tpExits": 210,
+   "slExits": 379,
+   "winrate": 0.3576,
+   "pnl": -37.67,
+   "avgPnlPerTrade": -0.0638,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7057,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.15-0.35-0.5",
+  "name": "Antiflip TP+0.3/SL-0.15 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 138,
+   "losses": 244,
+   "tpExits": 138,
+   "slExits": 244,
+   "winrate": 0.3613,
+   "pnl": -24.55,
+   "avgPnlPerTrade": -0.0643,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.2-sl0.1-0.3-0.45-g0.1",
+  "name": "Dog-momentum TP+0.2 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 569,
+   "wins": 205,
+   "losses": 364,
+   "tpExits": 204,
+   "slExits": 364,
+   "winrate": 0.3603,
+   "pnl": -38.82,
+   "avgPnlPerTrade": -0.0682,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6806,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.4-g0.08-l90000",
+  "name": "Underdog momentum 0.25-0.4 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 607,
+   "wins": 190,
+   "losses": 417,
+   "winrate": 0.313,
+   "pnl": -41.48,
+   "avgPnlPerTrade": -0.0683,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7261,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.1-0.35-0.5",
+  "name": "Antiflip TP+0.3/SL-0.1 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 114,
+   "losses": 268,
+   "tpExits": 114,
+   "slExits": 268,
+   "winrate": 0.2984,
+   "pnl": -26.13,
+   "avgPnlPerTrade": -0.0684,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.12-l45000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 186,
+   "wins": 67,
+   "losses": 119,
+   "winrate": 0.3602,
+   "pnl": -12.89,
+   "avgPnlPerTrade": -0.0693,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.2225,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.15-0.35-0.5",
+  "name": "Antiflip TP+0.2/SL-0.15 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 169,
+   "losses": 213,
+   "tpExits": 169,
+   "slExits": 213,
+   "winrate": 0.4424,
+   "pnl": -26.67,
+   "avgPnlPerTrade": -0.0698,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.08-l60000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 221,
+   "wins": 79,
+   "losses": 142,
+   "winrate": 0.3575,
+   "pnl": -16.1,
+   "avgPnlPerTrade": -0.0729,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.2644,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.15-0.35-0.5",
+  "name": "Antiflip TP+0.15/SL-0.15 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 191,
+   "losses": 191,
+   "tpExits": 191,
+   "slExits": 191,
+   "winrate": 0.5,
+   "pnl": -28.25,
+   "avgPnlPerTrade": -0.074,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.15-sl0.1-0.3-0.45-g0.08",
+  "name": "Dog-momentum TP+0.15 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 590,
+   "wins": 240,
+   "losses": 350,
+   "tpExits": 239,
+   "slExits": 350,
+   "winrate": 0.4068,
+   "pnl": -43.92,
+   "avgPnlPerTrade": -0.0744,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7057,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "A-antiflip-0.3-0.4-d10s-w0.6",
+  "name": "Antiflip 0.3-0.4 +10s",
+  "best": {
+   "runId": "sweep-1790143864107",
+   "budget": 2,
+   "trades": 101,
+   "wins": 35,
+   "losses": 66,
+   "winrate": 0.3465,
+   "pnl": -8.07,
+   "avgPnlPerTrade": -0.0799,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.1208,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "G-dogmom-tp0.25-sl0.08-0.3-0.45-g0.1",
+  "name": "Dog-momentum TP+0.25 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 569,
+   "wins": 167,
+   "losses": 402,
+   "tpExits": 166,
+   "slExits": 402,
+   "winrate": 0.2935,
+   "pnl": -45.5,
+   "avgPnlPerTrade": -0.08,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6806,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.08-l90000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 461,
+   "wins": 138,
+   "losses": 323,
+   "winrate": 0.2993,
+   "pnl": -37.92,
+   "avgPnlPerTrade": -0.0823,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.5514,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "L-antiflip-d15s-0.4-0.45",
+  "name": "Antiflip 15s post-flip [0.4-0.45]",
+  "best": {
+   "runId": "sweep4-1790145272318",
+   "budget": 2.5,
+   "trades": 114,
+   "wins": 47,
+   "losses": 67,
+   "winrate": 0.4123,
+   "pnl": -9.4,
+   "avgPnlPerTrade": -0.0825,
+   "avgCost": 2.14,
+   "avgWin": 2.86,
+   "tradesPerWindow": 0.1364
+  },
+  "runsCount": 3
+ },
+ {
+  "id": "G-dogmom-tp0.15-sl0.1-0.3-0.45-g0.1",
+  "name": "Dog-momentum TP+0.15 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 569,
+   "wins": 233,
+   "losses": 336,
+   "tpExits": 232,
+   "slExits": 336,
+   "winrate": 0.4095,
+   "pnl": -47.09,
+   "avgPnlPerTrade": -0.0828,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6806,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.08-0.3-0.4",
+  "name": "Antiflip TP+0.15/SL-0.08 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 28,
+   "losses": 47,
+   "tpExits": 28,
+   "slExits": 47,
+   "winrate": 0.3733,
+   "pnl": -6.24,
+   "avgPnlPerTrade": -0.0832,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.1-0.3-0.5",
+  "name": "Antiflip TP+0.3/SL-0.1 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 118,
+   "losses": 283,
+   "tpExits": 118,
+   "slExits": 283,
+   "winrate": 0.2943,
+   "pnl": -33.67,
+   "avgPnlPerTrade": -0.084,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "I-lateflip-0.45-0.8-0.33-0.48",
+  "name": "Antiflip tardif (flip à 45-80%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 119,
+   "wins": 49,
+   "losses": 70,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4118,
+   "pnl": -10.36,
+   "avgPnlPerTrade": -0.0871,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.1423,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.06-l90000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 221,
+   "wins": 78,
+   "losses": 143,
+   "winrate": 0.3529,
+   "pnl": -19.72,
+   "avgPnlPerTrade": -0.0892,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.2644,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.25-sl0.08-0.3-0.45-g0.08",
+  "name": "Dog-momentum TP+0.25 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 590,
+   "wins": 172,
+   "losses": 418,
+   "tpExits": 171,
+   "slExits": 418,
+   "winrate": 0.2915,
+   "pnl": -53.1,
+   "avgPnlPerTrade": -0.09,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7057,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.25-0.45-g0.06-l60000",
+  "name": "Underdog momentum 0.25-0.45 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 504,
+   "wins": 153,
+   "losses": 351,
+   "winrate": 0.3036,
+   "pnl": -45.53,
+   "avgPnlPerTrade": -0.0903,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.6029,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.15-0.3-0.4",
+  "name": "Antiflip TP+0.2/SL-0.15 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 33,
+   "losses": 42,
+   "tpExits": 33,
+   "slExits": 42,
+   "winrate": 0.44,
+   "pnl": -7.02,
+   "avgPnlPerTrade": -0.0936,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.1-0.3-0.4",
+  "name": "Antiflip TP+0.2/SL-0.1 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 26,
+   "losses": 49,
+   "tpExits": 26,
+   "slExits": 49,
+   "winrate": 0.3467,
+   "pnl": -7.13,
+   "avgPnlPerTrade": -0.0951,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.3-0.45-g0.06-l45000",
+  "name": "Underdog momentum 0.3-0.45 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 400,
+   "wins": 131,
+   "losses": 269,
+   "winrate": 0.3275,
+   "pnl": -38.2,
+   "avgPnlPerTrade": -0.0955,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.4785,
+   "maxWin": 4.66,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.15-0.3-0.5",
+  "name": "Antiflip TP+0.25/SL-0.15 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 158,
+   "losses": 243,
+   "tpExits": 158,
+   "slExits": 243,
+   "winrate": 0.394,
+   "pnl": -39.53,
+   "avgPnlPerTrade": -0.0986,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.2-sl0.08-0.3-0.45-g0.1",
+  "name": "Dog-momentum TP+0.2 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 569,
+   "wins": 185,
+   "losses": 384,
+   "tpExits": 184,
+   "slExits": 384,
+   "winrate": 0.3251,
+   "pnl": -56.66,
+   "avgPnlPerTrade": -0.0996,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6806,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.08-0.35-0.5",
+  "name": "Antiflip TP+0.3/SL-0.08 bande 0.35-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 382,
+   "wins": 100,
+   "losses": 282,
+   "tpExits": 100,
+   "slExits": 282,
+   "winrate": 0.2618,
+   "pnl": -38.28,
+   "avgPnlPerTrade": -0.1002,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4569,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.15-sl0.15-0.3-0.5",
+  "name": "Antiflip TP+0.15/SL-0.15 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 198,
+   "losses": 203,
+   "tpExits": 198,
+   "slExits": 203,
+   "winrate": 0.4938,
+   "pnl": -42.35,
+   "avgPnlPerTrade": -0.1056,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.15-sl0.08-0.3-0.45-g0.1",
+  "name": "Dog-momentum TP+0.15 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 569,
+   "wins": 212,
+   "losses": 357,
+   "tpExits": 211,
+   "slExits": 357,
+   "winrate": 0.3726,
+   "pnl": -60.92,
+   "avgPnlPerTrade": -0.1071,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.6806,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.08-0.3-0.5",
+  "name": "Antiflip TP+0.3/SL-0.08 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 104,
+   "losses": 297,
+   "tpExits": 104,
+   "slExits": 297,
+   "winrate": 0.2594,
+   "pnl": -42.99,
+   "avgPnlPerTrade": -0.1072,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.15-0.3-0.5",
+  "name": "Antiflip TP+0.3/SL-0.15 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 142,
+   "losses": 259,
+   "tpExits": 142,
+   "slExits": 259,
+   "winrate": 0.3541,
+   "pnl": -44.34,
+   "avgPnlPerTrade": -0.1106,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.25-sl0.08-0.3-0.4",
+  "name": "Antiflip TP+0.25/SL-0.08 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 20,
+   "losses": 55,
+   "tpExits": 20,
+   "slExits": 55,
+   "winrate": 0.2667,
+   "pnl": -8.39,
+   "avgPnlPerTrade": -0.1119,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.1-l60000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 211,
+   "wins": 74,
+   "losses": 137,
+   "winrate": 0.3507,
+   "pnl": -23.9,
+   "avgPnlPerTrade": -0.1133,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.2524,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.1-l45000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.1",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 189,
+   "wins": 66,
+   "losses": 123,
+   "winrate": 0.3492,
+   "pnl": -21.5,
+   "avgPnlPerTrade": -0.1138,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.2261,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.2-sl0.08-0.3-0.45-g0.08",
+  "name": "Dog-momentum TP+0.2 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 590,
+   "wins": 189,
+   "losses": 401,
+   "tpExits": 188,
+   "slExits": 401,
+   "winrate": 0.3203,
+   "pnl": -68.52,
+   "avgPnlPerTrade": -0.1161,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7057,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.15-0.3-0.5",
+  "name": "Antiflip TP+0.2/SL-0.15 bande 0.3-0.5",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 401,
+   "wins": 174,
+   "losses": 227,
+   "tpExits": 174,
+   "slExits": 227,
+   "winrate": 0.4339,
+   "pnl": -47.61,
+   "avgPnlPerTrade": -0.1187,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.4797,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "A-antiflip-0.4-0.55-d0s",
+  "name": "Antiflip 0.4-0.55 +0s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 8,
+   "wins": 3,
+   "losses": 5,
+   "winrate": 0.375,
+   "pnl": -1,
+   "avgPnlPerTrade": -0.125,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0096,
+   "maxWin": 3,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "G-dogmom-tp0.15-sl0.08-0.3-0.45-g0.08",
+  "name": "Dog-momentum TP+0.15 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 590,
+   "wins": 216,
+   "losses": 374,
+   "tpExits": 215,
+   "slExits": 374,
+   "winrate": 0.3661,
+   "pnl": -74.33,
+   "avgPnlPerTrade": -0.126,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7057,
+   "maxWin": 8.9,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.12-l60000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.12",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 219,
+   "wins": 76,
+   "losses": 143,
+   "winrate": 0.347,
+   "pnl": -29.19,
+   "avgPnlPerTrade": -0.1333,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.262,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.06-l60000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 221,
+   "wins": 76,
+   "losses": 145,
+   "winrate": 0.3439,
+   "pnl": -32.17,
+   "avgPnlPerTrade": -0.1456,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.2644,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.06-l45000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.06",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 217,
+   "wins": 75,
+   "losses": 142,
+   "winrate": 0.3456,
+   "pnl": -32.87,
+   "avgPnlPerTrade": -0.1515,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.2596,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.25-sl0.1-0.25-0.4-g0.08",
+  "name": "Dog-momentum TP+0.25 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 672,
+   "wins": 199,
+   "losses": 473,
+   "tpExits": 198,
+   "slExits": 472,
+   "winrate": 0.2961,
+   "pnl": -103.73,
+   "avgPnlPerTrade": -0.1544,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.8038,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.3-sl0.08-0.3-0.4",
+  "name": "Antiflip TP+0.3/SL-0.08 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 17,
+   "losses": 58,
+   "tpExits": 17,
+   "slExits": 58,
+   "winrate": 0.2267,
+   "pnl": -11.8,
+   "avgPnlPerTrade": -0.1573,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.25-sl0.1-0.25-0.4-g0.1",
+  "name": "Dog-momentum TP+0.25 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 655,
+   "wins": 193,
+   "losses": 462,
+   "tpExits": 192,
+   "slExits": 461,
+   "winrate": 0.2947,
+   "pnl": -103.38,
+   "avgPnlPerTrade": -0.1578,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7835,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-antiflip-tp0.2-sl0.08-0.3-0.4",
+  "name": "Antiflip TP+0.2/SL-0.08 bande 0.3-0.4",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 75,
+   "wins": 22,
+   "losses": 53,
+   "tpExits": 22,
+   "slExits": 53,
+   "winrate": 0.2933,
+   "pnl": -12.83,
+   "avgPnlPerTrade": -0.1711,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.0897,
+   "maxWin": 0,
+   "maxLoss": 0
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.15-sl0.1-0.25-0.4-g0.1",
+  "name": "Dog-momentum TP+0.15 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 655,
+   "wins": 242,
+   "losses": 413,
+   "tpExits": 241,
+   "slExits": 412,
+   "winrate": 0.3695,
+   "pnl": -113.32,
+   "avgPnlPerTrade": -0.173,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7835,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "D-doglimit-0.1-t120",
+  "name": "Underdog limit 0.1 (t+120s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 615,
+   "wins": 56,
+   "losses": 559,
+   "winrate": 0.0911,
+   "pnl": -110,
+   "avgPnlPerTrade": -0.1789,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7356,
+   "maxWin": 18,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "G-dogmom-tp0.15-sl0.1-0.25-0.4-g0.08",
+  "name": "Dog-momentum TP+0.15 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 672,
+   "wins": 248,
+   "losses": 424,
+   "tpExits": 247,
+   "slExits": 423,
+   "winrate": 0.369,
+   "pnl": -121.56,
+   "avgPnlPerTrade": -0.1809,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.8038,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.2-sl0.1-0.25-0.4-g0.1",
+  "name": "Dog-momentum TP+0.2 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 655,
+   "wins": 211,
+   "losses": 444,
+   "tpExits": 210,
+   "slExits": 443,
+   "winrate": 0.3221,
+   "pnl": -122.04,
+   "avgPnlPerTrade": -0.1863,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7835,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.25-sl0.08-0.25-0.4-g0.1",
+  "name": "Dog-momentum TP+0.25 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 655,
+   "wins": 172,
+   "losses": 483,
+   "tpExits": 171,
+   "slExits": 482,
+   "winrate": 0.2626,
+   "pnl": -123.72,
+   "avgPnlPerTrade": -0.1889,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7835,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.15-sl0.08-0.25-0.4-g0.1",
+  "name": "Dog-momentum TP+0.15 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 655,
+   "wins": 220,
+   "losses": 435,
+   "tpExits": 219,
+   "slExits": 434,
+   "winrate": 0.3359,
+   "pnl": -124,
+   "avgPnlPerTrade": -0.1893,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7835,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.2-sl0.1-0.25-0.4-g0.08",
+  "name": "Dog-momentum TP+0.2 SL-0.1",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 672,
+   "wins": 217,
+   "losses": 455,
+   "tpExits": 216,
+   "slExits": 454,
+   "winrate": 0.3229,
+   "pnl": -131.86,
+   "avgPnlPerTrade": -0.1962,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.8038,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "B-dogmom-0.35-0.5-g0.08-l45000",
+  "name": "Underdog momentum 0.35-0.5 gain≥0.08",
+  "best": {
+   "runId": "sweep-1790148727534",
+   "budget": 2,
+   "trades": 207,
+   "wins": 69,
+   "losses": 138,
+   "winrate": 0.3333,
+   "pnl": -43.03,
+   "avgPnlPerTrade": -0.2079,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.2476,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.2-sl0.08-0.25-0.4-g0.1",
+  "name": "Dog-momentum TP+0.2 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 655,
+   "wins": 189,
+   "losses": 466,
+   "tpExits": 188,
+   "slExits": 465,
+   "winrate": 0.2885,
+   "pnl": -137.84,
+   "avgPnlPerTrade": -0.2104,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.7835,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.25-sl0.08-0.25-0.4-g0.08",
+  "name": "Dog-momentum TP+0.25 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 672,
+   "wins": 175,
+   "losses": 497,
+   "tpExits": 174,
+   "slExits": 496,
+   "winrate": 0.2604,
+   "pnl": -143.12,
+   "avgPnlPerTrade": -0.213,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.8038,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "G-dogmom-tp0.15-sl0.08-0.25-0.4-g0.08",
+  "name": "Dog-momentum TP+0.15 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 672,
+   "wins": 222,
+   "losses": 450,
+   "tpExits": 221,
+   "slExits": 449,
+   "winrate": 0.3304,
+   "pnl": -153.84,
+   "avgPnlPerTrade": -0.2289,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.8038,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "D-doglimit-0.08-t30",
+  "name": "Underdog limit 0.08 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 539,
+   "wins": 38,
+   "losses": 501,
+   "winrate": 0.0705,
+   "pnl": -128,
+   "avgPnlPerTrade": -0.2375,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.6447,
+   "maxWin": 23,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "G-dogmom-tp0.2-sl0.08-0.25-0.4-g0.08",
+  "name": "Dog-momentum TP+0.2 SL-0.08",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 672,
+   "wins": 192,
+   "losses": 480,
+   "tpExits": 191,
+   "slExits": 479,
+   "winrate": 0.2857,
+   "pnl": -166.42,
+   "avgPnlPerTrade": -0.2476,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.8038,
+   "maxWin": 8.9,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "D-doglimit-0.08-t60",
+  "name": "Underdog limit 0.08 (t+60s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 561,
+   "wins": 39,
+   "losses": 522,
+   "winrate": 0.0695,
+   "pnl": -147,
+   "avgPnlPerTrade": -0.262,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.6711,
+   "maxWin": 23,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.12-t120",
+  "name": "Underdog limit 0.12 (t+120s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 624,
+   "wins": 65,
+   "losses": 559,
+   "winrate": 0.1042,
+   "pnl": -165.1,
+   "avgPnlPerTrade": -0.2646,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7464,
+   "maxWin": 14.66,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "I-lateflip-0.3-0.6-0.35-0.5",
+  "name": "Antiflip tardif (flip à 30-60%)",
+  "best": {
+   "runId": "sweep2-1790144160197",
+   "budget": 4,
+   "trades": 181,
+   "wins": 74,
+   "losses": 107,
+   "tpExits": 0,
+   "slExits": 0,
+   "winrate": 0.4088,
+   "pnl": -53.43,
+   "avgPnlPerTrade": -0.2952,
+   "avgCostPerTrade": 4,
+   "tradesPerWindow": 0.2165,
+   "maxWin": 7.42,
+   "maxLoss": -4
+  },
+  "runsCount": 1
+ },
+ {
+  "id": "D-doglimit-0.25-t30",
+  "name": "Underdog limit 0.25 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 644,
+   "wins": 137,
+   "losses": 507,
+   "winrate": 0.2127,
+   "pnl": -192,
+   "avgPnlPerTrade": -0.2981,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7703,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.15-t120",
+  "name": "Underdog limit 0.15 (t+120s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 643,
+   "wins": 81,
+   "losses": 562,
+   "winrate": 0.126,
+   "pnl": -206.27,
+   "avgPnlPerTrade": -0.3208,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7691,
+   "maxWin": 11.33,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "A-antiflip-0.35-0.5-d10s",
+  "name": "Antiflip 0.35-0.5 +10s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 78,
+   "wins": 25,
+   "losses": 53,
+   "winrate": 0.3205,
+   "pnl": -25.96,
+   "avgPnlPerTrade": -0.3328,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0933,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "A-antiflip-0.35-0.55-d10s",
+  "name": "Antiflip 0.35-0.55 +10s",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 78,
+   "wins": 25,
+   "losses": 53,
+   "winrate": 0.3205,
+   "pnl": -25.96,
+   "avgPnlPerTrade": -0.3328,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.0933,
+   "maxWin": 3.71,
+   "maxLoss": -2
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "S6-underdog-grid-10",
+  "name": "Grille maker underdog 0.10",
+  "best": {
+   "runId": "run-1790143480193",
+   "budget": 2,
+   "trades": 570,
+   "wins": 47,
+   "losses": 523,
+   "sells": 0,
+   "winrate": 0.0825,
+   "pnl": -200,
+   "avgPnlPerTrade": -0.3509,
+   "avgCostPerTrade": 2,
+   "avgEntryElapsedSec": 160,
+   "maxWin": 18,
+   "maxLoss": -2,
+   "profitFactor": 0.19,
+   "expectancyPerTrade": -0.3509,
+   "tradesPerWindow": 0.6818
+  },
+  "runsCount": 2
+ },
+ {
+  "id": "D-doglimit-0.2-t30",
+  "name": "Underdog limit 0.2 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 607,
+   "wins": 100,
+   "losses": 507,
+   "winrate": 0.1647,
+   "pnl": -214,
+   "avgPnlPerTrade": -0.3526,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7261,
+   "maxWin": 8,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.15-t60",
+  "name": "Underdog limit 0.15 (t+60s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 599,
+   "wins": 74,
+   "losses": 525,
+   "winrate": 0.1235,
+   "pnl": -211.58,
+   "avgPnlPerTrade": -0.3532,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7165,
+   "maxWin": 11.33,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.1-t30",
+  "name": "Underdog limit 0.1 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 547,
+   "wins": 45,
+   "losses": 502,
+   "winrate": 0.0823,
+   "pnl": -194,
+   "avgPnlPerTrade": -0.3547,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.6543,
+   "maxWin": 18,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.18-t30",
+  "name": "Underdog limit 0.18 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 592,
+   "wins": 87,
+   "losses": 505,
+   "winrate": 0.147,
+   "pnl": -217.43,
+   "avgPnlPerTrade": -0.3673,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7081,
+   "maxWin": 9.11,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.25-t60",
+  "name": "Underdog limit 0.25 (t+60s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 660,
+   "wins": 131,
+   "losses": 529,
+   "winrate": 0.1985,
+   "pnl": -272,
+   "avgPnlPerTrade": -0.4121,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7895,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.18-t60",
+  "name": "Underdog limit 0.18 (t+60s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 613,
+   "wins": 87,
+   "losses": 526,
+   "winrate": 0.1419,
+   "pnl": -259.43,
+   "avgPnlPerTrade": -0.4232,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7333,
+   "maxWin": 9.11,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.12-t60",
+  "name": "Underdog limit 0.12 (t+60s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 577,
+   "wins": 54,
+   "losses": 523,
+   "winrate": 0.0936,
+   "pnl": -254.36,
+   "avgPnlPerTrade": -0.4408,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.6902,
+   "maxWin": 14.66,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.2-t60",
+  "name": "Underdog limit 0.2 (t+60s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 624,
+   "wins": 97,
+   "losses": 527,
+   "winrate": 0.1554,
+   "pnl": -278,
+   "avgPnlPerTrade": -0.4455,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7464,
+   "maxWin": 8,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.15-t30",
+  "name": "Underdog limit 0.15 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 570,
+   "wins": 66,
+   "losses": 504,
+   "winrate": 0.1158,
+   "pnl": -260.22,
+   "avgPnlPerTrade": -0.4565,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.6818,
+   "maxWin": 11.33,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.18-t120",
+  "name": "Underdog limit 0.18 (t+120s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 653,
+   "wins": 90,
+   "losses": 563,
+   "winrate": 0.1378,
+   "pnl": -306.1,
+   "avgPnlPerTrade": -0.4688,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7811,
+   "maxWin": 9.11,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.12-t30",
+  "name": "Underdog limit 0.12 (t+30s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 552,
+   "wins": 50,
+   "losses": 502,
+   "winrate": 0.0906,
+   "pnl": -271,
+   "avgPnlPerTrade": -0.4909,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.6603,
+   "maxWin": 14.66,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.2-t120",
+  "name": "Underdog limit 0.2 (t+120s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 660,
+   "wins": 97,
+   "losses": 563,
+   "winrate": 0.147,
+   "pnl": -350,
+   "avgPnlPerTrade": -0.5303,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.7895,
+   "maxWin": 8,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ },
+ {
+  "id": "D-doglimit-0.25-t120",
+  "name": "Underdog limit 0.25 (t+120s)",
+  "best": {
+   "runId": "sweep-1790143705586",
+   "budget": 2,
+   "trades": 684,
+   "wins": 120,
+   "losses": 564,
+   "winrate": 0.1754,
+   "pnl": -408,
+   "avgPnlPerTrade": -0.5965,
+   "avgCostPerTrade": 2,
+   "tradesPerWindow": 0.8182,
+   "maxWin": 6,
+   "maxLoss": -2
+  },
+  "runsCount": 4
+ }
+]

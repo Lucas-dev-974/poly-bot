@@ -1,0 +1,763 @@
+{
+ "runId": "sweep3-1790144292379",
+ "type": "sweep3",
+ "budget": 4,
+ "results": [
+  {
+   "strategyId": "J-antiflip-bounce0.03-0.3-0.45-e0.9",
+   "name": "Antiflip bounce+0.03 [0.3-0.45]",
+   "desc": "Post-flip: attend rebond ≥0.03 du plancher du déposé, bande [0.3-0.45], entrée avant 90%.",
+   "metrics": {
+    "trades": 461,
+    "wins": 206,
+    "losses": 255,
+    "winrate": 0.4469,
+    "pnl": 253.45,
+    "avgPnlPerTrade": 0.5498,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5514,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 279
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.03-0.3-0.45-e0.7",
+   "name": "Antiflip bounce+0.03 [0.3-0.45]",
+   "desc": "Post-flip: attend rebond ≥0.03 du plancher du déposé, bande [0.3-0.45], entrée avant 70%.",
+   "metrics": {
+    "trades": 442,
+    "wins": 195,
+    "losses": 247,
+    "winrate": 0.4412,
+    "pnl": 217.24,
+    "avgPnlPerTrade": 0.4915,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5287,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 291
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.08-0.3-0.45-e0.9",
+   "name": "Antiflip bounce+0.08 [0.3-0.45]",
+   "desc": "Post-flip: attend rebond ≥0.08 du plancher du déposé, bande [0.3-0.45], entrée avant 90%.",
+   "metrics": {
+    "trades": 360,
+    "wins": 154,
+    "losses": 206,
+    "winrate": 0.4278,
+    "pnl": 171.17,
+    "avgPnlPerTrade": 0.4755,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4306,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 314
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.03-0.33-0.48-e0.9",
+   "name": "Antiflip bounce+0.03 [0.33-0.48]",
+   "desc": "Post-flip: attend rebond ≥0.03 du plancher du déposé, bande [0.33-0.48], entrée avant 90%.",
+   "metrics": {
+    "trades": 484,
+    "wins": 225,
+    "losses": 259,
+    "winrate": 0.4649,
+    "pnl": 229.36,
+    "avgPnlPerTrade": 0.4739,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5789,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 306
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.05-0.33-0.48-e0.9",
+   "name": "Antiflip bounce+0.05 [0.33-0.48]",
+   "desc": "Post-flip: attend rebond ≥0.05 du plancher du déposé, bande [0.33-0.48], entrée avant 90%.",
+   "metrics": {
+    "trades": 446,
+    "wins": 208,
+    "losses": 238,
+    "winrate": 0.4664,
+    "pnl": 209.72,
+    "avgPnlPerTrade": 0.4702,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5335,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 308
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.05-0.33-0.48-e0.7",
+   "name": "Antiflip bounce+0.05 [0.33-0.48]",
+   "desc": "Post-flip: attend rebond ≥0.05 du plancher du déposé, bande [0.33-0.48], entrée avant 70%.",
+   "metrics": {
+    "trades": 428,
+    "wins": 200,
+    "losses": 228,
+    "winrate": 0.4673,
+    "pnl": 197.83,
+    "avgPnlPerTrade": 0.4622,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.512,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 319
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.03-0.33-0.48-e0.7",
+   "name": "Antiflip bounce+0.03 [0.33-0.48]",
+   "desc": "Post-flip: attend rebond ≥0.03 du plancher du déposé, bande [0.33-0.48], entrée avant 70%.",
+   "metrics": {
+    "trades": 471,
+    "wins": 218,
+    "losses": 253,
+    "winrate": 0.4628,
+    "pnl": 208.28,
+    "avgPnlPerTrade": 0.4422,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5634,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 302
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.05-0.3-0.45-e0.9",
+   "name": "Antiflip bounce+0.05 [0.3-0.45]",
+   "desc": "Post-flip: attend rebond ≥0.05 du plancher du déposé, bande [0.3-0.45], entrée avant 90%.",
+   "metrics": {
+    "trades": 424,
+    "wins": 182,
+    "losses": 242,
+    "winrate": 0.4292,
+    "pnl": 186.59,
+    "avgPnlPerTrade": 0.4401,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5072,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 304
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.08-floor0.4",
+   "name": "Antiflip bounce+0.08 floor 0.4",
+   "desc": "Post-flip: rebond ≥0.08 du plancher, ask ≥0.4 et ≤0.52.",
+   "metrics": {
+    "trades": 397,
+    "wins": 204,
+    "losses": 193,
+    "winrate": 0.5139,
+    "pnl": 170.38,
+    "avgPnlPerTrade": 0.4292,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4749,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 290
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.03-floor0.33",
+   "name": "Antiflip bounce+0.03 floor 0.33",
+   "desc": "Post-flip: rebond ≥0.03 du plancher, ask ≥0.33 et ≤0.52.",
+   "metrics": {
+    "trades": 525,
+    "wins": 257,
+    "losses": 268,
+    "winrate": 0.4895,
+    "pnl": 223.69,
+    "avgPnlPerTrade": 0.4261,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.628,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 285
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.05-0.35-0.5-e0.9",
+   "name": "Antiflip bounce+0.05 [0.35-0.5]",
+   "desc": "Post-flip: attend rebond ≥0.05 du plancher du déposé, bande [0.35-0.5], entrée avant 90%.",
+   "metrics": {
+    "trades": 460,
+    "wins": 222,
+    "losses": 238,
+    "winrate": 0.4826,
+    "pnl": 191.28,
+    "avgPnlPerTrade": 0.4158,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5502,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 312
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.05-0.35-0.5-e0.7",
+   "name": "Antiflip bounce+0.05 [0.35-0.5]",
+   "desc": "Post-flip: attend rebond ≥0.05 du plancher du déposé, bande [0.35-0.5], entrée avant 70%.",
+   "metrics": {
+    "trades": 444,
+    "wins": 214,
+    "losses": 230,
+    "winrate": 0.482,
+    "pnl": 176.94,
+    "avgPnlPerTrade": 0.3985,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5311,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 292
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.05-0.3-0.4-e0.9",
+   "name": "Antiflip bounce+0.05 [0.3-0.4]",
+   "desc": "Post-flip: attend rebond ≥0.05 du plancher du déposé, bande [0.3-0.4], entrée avant 90%.",
+   "metrics": {
+    "trades": 359,
+    "wins": 138,
+    "losses": 221,
+    "winrate": 0.3844,
+    "pnl": 142.96,
+    "avgPnlPerTrade": 0.3982,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4294,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 277
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.05-floor0.33",
+   "name": "Antiflip bounce+0.05 floor 0.33",
+   "desc": "Post-flip: rebond ≥0.05 du plancher, ask ≥0.33 et ≤0.52.",
+   "metrics": {
+    "trades": 489,
+    "wins": 237,
+    "losses": 252,
+    "winrate": 0.4847,
+    "pnl": 186.14,
+    "avgPnlPerTrade": 0.3807,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5849,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 294
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.05-floor0.36",
+   "name": "Antiflip bounce+0.05 floor 0.36",
+   "desc": "Post-flip: rebond ≥0.05 du plancher, ask ≥0.36 et ≤0.6.",
+   "metrics": {
+    "trades": 532,
+    "wins": 283,
+    "losses": 249,
+    "winrate": 0.532,
+    "pnl": 198.73,
+    "avgPnlPerTrade": 0.3736,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6364,
+    "maxWin": 7.11,
+    "maxLoss": -4
+   },
+   "elapsedMs": 286
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.05-floor0.33",
+   "name": "Antiflip bounce+0.05 floor 0.33",
+   "desc": "Post-flip: rebond ≥0.05 du plancher, ask ≥0.33 et ≤0.6.",
+   "metrics": {
+    "trades": 546,
+    "wins": 284,
+    "losses": 262,
+    "winrate": 0.5201,
+    "pnl": 202.66,
+    "avgPnlPerTrade": 0.3712,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6531,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 293
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.08-0.3-0.45-e0.7",
+   "name": "Antiflip bounce+0.08 [0.3-0.45]",
+   "desc": "Post-flip: attend rebond ≥0.08 du plancher du déposé, bande [0.3-0.45], entrée avant 70%.",
+   "metrics": {
+    "trades": 330,
+    "wins": 138,
+    "losses": 192,
+    "winrate": 0.4182,
+    "pnl": 121.88,
+    "avgPnlPerTrade": 0.3693,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.3947,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 287
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.05-floor0.36",
+   "name": "Antiflip bounce+0.05 floor 0.36",
+   "desc": "Post-flip: rebond ≥0.05 du plancher, ask ≥0.36 et ≤0.52.",
+   "metrics": {
+    "trades": 471,
+    "wins": 234,
+    "losses": 237,
+    "winrate": 0.4968,
+    "pnl": 173.83,
+    "avgPnlPerTrade": 0.3691,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5634,
+    "maxWin": 7.11,
+    "maxLoss": -4
+   },
+   "elapsedMs": 307
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.08-0.3-0.4-e0.9",
+   "name": "Antiflip bounce+0.08 [0.3-0.4]",
+   "desc": "Post-flip: attend rebond ≥0.08 du plancher du déposé, bande [0.3-0.4], entrée avant 90%.",
+   "metrics": {
+    "trades": 305,
+    "wins": 117,
+    "losses": 188,
+    "winrate": 0.3836,
+    "pnl": 112.52,
+    "avgPnlPerTrade": 0.3689,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.3648,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 294
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.05-floor0.4",
+   "name": "Antiflip bounce+0.05 floor 0.4",
+   "desc": "Post-flip: rebond ≥0.05 du plancher, ask ≥0.4 et ≤0.52.",
+   "metrics": {
+    "trades": 457,
+    "wins": 232,
+    "losses": 225,
+    "winrate": 0.5077,
+    "pnl": 164.59,
+    "avgPnlPerTrade": 0.3602,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5467,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 305
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.05-0.3-0.45-e0.7",
+   "name": "Antiflip bounce+0.05 [0.3-0.45]",
+   "desc": "Post-flip: attend rebond ≥0.05 du plancher du déposé, bande [0.3-0.45], entrée avant 70%.",
+   "metrics": {
+    "trades": 398,
+    "wins": 168,
+    "losses": 230,
+    "winrate": 0.4221,
+    "pnl": 142.82,
+    "avgPnlPerTrade": 0.3588,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4761,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 279
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.05-floor0.4",
+   "name": "Antiflip bounce+0.05 floor 0.4",
+   "desc": "Post-flip: rebond ≥0.05 du plancher, ask ≥0.4 et ≤0.6.",
+   "metrics": {
+    "trades": 522,
+    "wins": 282,
+    "losses": 240,
+    "winrate": 0.5402,
+    "pnl": 187.21,
+    "avgPnlPerTrade": 0.3586,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6244,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 282
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.08-floor0.4",
+   "name": "Antiflip bounce+0.08 floor 0.4",
+   "desc": "Post-flip: rebond ≥0.08 du plancher, ask ≥0.4 et ≤0.6.",
+   "metrics": {
+    "trades": 492,
+    "wins": 270,
+    "losses": 222,
+    "winrate": 0.5488,
+    "pnl": 175.25,
+    "avgPnlPerTrade": 0.3562,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5885,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 276
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.03-0.3-0.4-e0.9",
+   "name": "Antiflip bounce+0.03 [0.3-0.4]",
+   "desc": "Post-flip: attend rebond ≥0.03 du plancher du déposé, bande [0.3-0.4], entrée avant 90%.",
+   "metrics": {
+    "trades": 396,
+    "wins": 152,
+    "losses": 244,
+    "winrate": 0.3838,
+    "pnl": 140.14,
+    "avgPnlPerTrade": 0.3539,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4737,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 357
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.03-floor0.36",
+   "name": "Antiflip bounce+0.03 floor 0.36",
+   "desc": "Post-flip: rebond ≥0.03 du plancher, ask ≥0.36 et ≤0.52.",
+   "metrics": {
+    "trades": 511,
+    "wins": 253,
+    "losses": 258,
+    "winrate": 0.4951,
+    "pnl": 180.75,
+    "avgPnlPerTrade": 0.3537,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6112,
+    "maxWin": 7.11,
+    "maxLoss": -4
+   },
+   "elapsedMs": 291
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.08-floor0.36",
+   "name": "Antiflip bounce+0.08 floor 0.36",
+   "desc": "Post-flip: rebond ≥0.08 du plancher, ask ≥0.36 et ≤0.52.",
+   "metrics": {
+    "trades": 419,
+    "wins": 206,
+    "losses": 213,
+    "winrate": 0.4916,
+    "pnl": 147.98,
+    "avgPnlPerTrade": 0.3532,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5012,
+    "maxWin": 7.11,
+    "maxLoss": -4
+   },
+   "elapsedMs": 309
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.03-floor0.33",
+   "name": "Antiflip bounce+0.03 floor 0.33",
+   "desc": "Post-flip: rebond ≥0.03 du plancher, ask ≥0.33 et ≤0.6.",
+   "metrics": {
+    "trades": 565,
+    "wins": 289,
+    "losses": 276,
+    "winrate": 0.5115,
+    "pnl": 194.87,
+    "avgPnlPerTrade": 0.3449,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6758,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 295
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.03-floor0.4",
+   "name": "Antiflip bounce+0.03 floor 0.4",
+   "desc": "Post-flip: rebond ≥0.03 du plancher, ask ≥0.4 et ≤0.52.",
+   "metrics": {
+    "trades": 499,
+    "wins": 252,
+    "losses": 247,
+    "winrate": 0.505,
+    "pnl": 171.21,
+    "avgPnlPerTrade": 0.3431,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5969,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 290
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.03-0.35-0.5-e0.7",
+   "name": "Antiflip bounce+0.03 [0.35-0.5]",
+   "desc": "Post-flip: attend rebond ≥0.03 du plancher du déposé, bande [0.35-0.5], entrée avant 70%.",
+   "metrics": {
+    "trades": 483,
+    "wins": 231,
+    "losses": 252,
+    "winrate": 0.4783,
+    "pnl": 163.57,
+    "avgPnlPerTrade": 0.3387,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5778,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 287
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.03-0.35-0.5-e0.9",
+   "name": "Antiflip bounce+0.03 [0.35-0.5]",
+   "desc": "Post-flip: attend rebond ≥0.03 du plancher du déposé, bande [0.35-0.5], entrée avant 90%.",
+   "metrics": {
+    "trades": 494,
+    "wins": 235,
+    "losses": 259,
+    "winrate": 0.4757,
+    "pnl": 159.32,
+    "avgPnlPerTrade": 0.3225,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5909,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 314
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.08-floor0.33",
+   "name": "Antiflip bounce+0.08 floor 0.33",
+   "desc": "Post-flip: rebond ≥0.08 du plancher, ask ≥0.33 et ≤0.52.",
+   "metrics": {
+    "trades": 438,
+    "wins": 208,
+    "losses": 230,
+    "winrate": 0.4749,
+    "pnl": 140.76,
+    "avgPnlPerTrade": 0.3214,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5239,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 308
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.03-0.3-0.4-e0.7",
+   "name": "Antiflip bounce+0.03 [0.3-0.4]",
+   "desc": "Post-flip: attend rebond ≥0.03 du plancher du déposé, bande [0.3-0.4], entrée avant 70%.",
+   "metrics": {
+    "trades": 366,
+    "wins": 139,
+    "losses": 227,
+    "winrate": 0.3798,
+    "pnl": 117.42,
+    "avgPnlPerTrade": 0.3208,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4378,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 316
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.08-floor0.36",
+   "name": "Antiflip bounce+0.08 floor 0.36",
+   "desc": "Post-flip: rebond ≥0.08 du plancher, ask ≥0.36 et ≤0.6.",
+   "metrics": {
+    "trades": 508,
+    "wins": 271,
+    "losses": 237,
+    "winrate": 0.5335,
+    "pnl": 162.51,
+    "avgPnlPerTrade": 0.3199,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6077,
+    "maxWin": 7.11,
+    "maxLoss": -4
+   },
+   "elapsedMs": 301
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.08-0.35-0.5-e0.9",
+   "name": "Antiflip bounce+0.08 [0.35-0.5]",
+   "desc": "Post-flip: attend rebond ≥0.08 du plancher du déposé, bande [0.35-0.5], entrée avant 90%.",
+   "metrics": {
+    "trades": 398,
+    "wins": 188,
+    "losses": 210,
+    "winrate": 0.4724,
+    "pnl": 125.99,
+    "avgPnlPerTrade": 0.3166,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4761,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 292
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.03-floor0.36",
+   "name": "Antiflip bounce+0.03 floor 0.36",
+   "desc": "Post-flip: rebond ≥0.03 du plancher, ask ≥0.36 et ≤0.6.",
+   "metrics": {
+    "trades": 555,
+    "wins": 288,
+    "losses": 267,
+    "winrate": 0.5189,
+    "pnl": 170.99,
+    "avgPnlPerTrade": 0.3081,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6639,
+    "maxWin": 7.11,
+    "maxLoss": -4
+   },
+   "elapsedMs": 296
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.05-0.3-0.4-e0.7",
+   "name": "Antiflip bounce+0.05 [0.3-0.4]",
+   "desc": "Post-flip: attend rebond ≥0.05 du plancher du déposé, bande [0.3-0.4], entrée avant 70%.",
+   "metrics": {
+    "trades": 323,
+    "wins": 121,
+    "losses": 202,
+    "winrate": 0.3746,
+    "pnl": 97.84,
+    "avgPnlPerTrade": 0.3029,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.3864,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 282
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.08-floor0.33",
+   "name": "Antiflip bounce+0.08 floor 0.33",
+   "desc": "Post-flip: rebond ≥0.08 du plancher, ask ≥0.33 et ≤0.6.",
+   "metrics": {
+    "trades": 521,
+    "wins": 271,
+    "losses": 250,
+    "winrate": 0.5202,
+    "pnl": 153.07,
+    "avgPnlPerTrade": 0.2938,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6232,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 283
+  },
+  {
+   "strategyId": "K-antiflip-bounce0.03-floor0.4",
+   "name": "Antiflip bounce+0.03 floor 0.4",
+   "desc": "Post-flip: rebond ≥0.03 du plancher, ask ≥0.4 et ≤0.6.",
+   "metrics": {
+    "trades": 545,
+    "wins": 287,
+    "losses": 258,
+    "winrate": 0.5266,
+    "pnl": 158.13,
+    "avgPnlPerTrade": 0.2901,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6519,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 306
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.08-0.35-0.5-e0.7",
+   "name": "Antiflip bounce+0.08 [0.35-0.5]",
+   "desc": "Post-flip: attend rebond ≥0.08 du plancher du déposé, bande [0.35-0.5], entrée avant 70%.",
+   "metrics": {
+    "trades": 376,
+    "wins": 176,
+    "losses": 200,
+    "winrate": 0.4681,
+    "pnl": 101.58,
+    "avgPnlPerTrade": 0.2702,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4498,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 289
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.08-0.33-0.48-e0.9",
+   "name": "Antiflip bounce+0.08 [0.33-0.48]",
+   "desc": "Post-flip: attend rebond ≥0.08 du plancher du déposé, bande [0.33-0.48], entrée avant 90%.",
+   "metrics": {
+    "trades": 374,
+    "wins": 162,
+    "losses": 212,
+    "winrate": 0.4332,
+    "pnl": 98.81,
+    "avgPnlPerTrade": 0.2642,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4474,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 266
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.08-0.3-0.4-e0.7",
+   "name": "Antiflip bounce+0.08 [0.3-0.4]",
+   "desc": "Post-flip: attend rebond ≥0.08 du plancher du déposé, bande [0.3-0.4], entrée avant 70%.",
+   "metrics": {
+    "trades": 271,
+    "wins": 100,
+    "losses": 171,
+    "winrate": 0.369,
+    "pnl": 56.28,
+    "avgPnlPerTrade": 0.2077,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.3242,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 305
+  },
+  {
+   "strategyId": "J-antiflip-bounce0.08-0.33-0.48-e0.7",
+   "name": "Antiflip bounce+0.08 [0.33-0.48]",
+   "desc": "Post-flip: attend rebond ≥0.08 du plancher du déposé, bande [0.33-0.48], entrée avant 70%.",
+   "metrics": {
+    "trades": 349,
+    "wins": 149,
+    "losses": 200,
+    "winrate": 0.4269,
+    "pnl": 65.05,
+    "avgPnlPerTrade": 0.1864,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4175,
+    "maxWin": 8.12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 295
+  }
+ ]
+}

@@ -1,0 +1,1018 @@
+{
+ "runId": "run-1790143480193",
+ "startedAt": 1790143489031,
+ "budget": 2,
+ "results": [
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S1-fav-band-60-80",
+   "name": "Fav-band 0.60-0.80",
+   "desc": "Achète le favori (ask max) 0.60-0.80, écart ≥15¢, après 60s. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-20": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-21": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-22": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-23": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S2-early-lock",
+   "name": "Early lock ≥0.82",
+   "desc": "Favori ask ≥0.82 (≤0.92) dans les 90 premières s. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-20": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-21": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-22": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-23": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S3-dip-revert",
+   "name": "Dip-revert favori",
+   "desc": "Favori décote après spike adverse (drop ≥8¢ en 20s), ask 0.55-0.75. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-20": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-21": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-22": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-23": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S4-antiflip",
+   "name": "Antiflip (ancien favori)",
+   "desc": "Après un flip, achète l'ancien favori si ask 0.35-0.55. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 60,
+    "wins": 30,
+    "losses": 30,
+    "sells": 0,
+    "winrate": 0.5,
+    "pnl": 37.89,
+    "avgPnlPerTrade": 0.6315,
+    "avgCostPerTrade": 2,
+    "avgEntryElapsedSec": 55,
+    "maxWin": 3.71,
+    "maxLoss": -2,
+    "profitFactor": 0.34,
+    "expectancyPerTrade": 0.6315,
+    "tradesPerWindow": 0.0718
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 15,
+     "wins": 8,
+     "pnl": 13.03
+    },
+    "2026-09-20": {
+     "trades": 18,
+     "wins": 9,
+     "pnl": 10.9
+    },
+    "2026-09-21": {
+     "trades": 18,
+     "wins": 8,
+     "pnl": 6.06
+    },
+    "2026-09-22": {
+     "trades": 8,
+     "wins": 4,
+     "pnl": 4.64
+    },
+    "2026-09-23": {
+     "trades": 1,
+     "wins": 1,
+     "pnl": 3.26
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S5-flip-confirm",
+   "name": "Flip-confirm (nouveau favori)",
+   "desc": "Flip avant 150s → achète le nouveau favori si ask 0.55-0.70. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-20": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-21": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-22": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-23": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S6-underdog-grid-10",
+   "name": "Grille maker underdog 0.10",
+   "desc": "Limit BUY 0.10 sur l'underdog (t+60s). Payout 1:9 si gagnant.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 570,
+    "wins": 47,
+    "losses": 523,
+    "sells": 0,
+    "winrate": 0.0825,
+    "pnl": -200,
+    "avgPnlPerTrade": -0.3509,
+    "avgCostPerTrade": 2,
+    "avgEntryElapsedSec": 160,
+    "maxWin": 18,
+    "maxLoss": -2,
+    "profitFactor": 0.19,
+    "expectancyPerTrade": -0.3509,
+    "tradesPerWindow": 0.6818
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 123,
+     "wins": 10,
+     "pnl": -46
+    },
+    "2026-09-20": {
+     "trades": 201,
+     "wins": 22,
+     "pnl": 38
+    },
+    "2026-09-21": {
+     "trades": 171,
+     "wins": 12,
+     "pnl": -102
+    },
+    "2026-09-22": {
+     "trades": 59,
+     "wins": 2,
+     "pnl": -78
+    },
+    "2026-09-23": {
+     "trades": 16,
+     "wins": 1,
+     "pnl": -12
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S6b-underdog-grid-20",
+   "name": "Grille maker underdog 0.20",
+   "desc": "Limit BUY 0.20 sur l'underdog (t+60s). Payout 1:4 si gagnant.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 624,
+    "wins": 97,
+    "losses": 527,
+    "sells": 0,
+    "winrate": 0.1554,
+    "pnl": -278,
+    "avgPnlPerTrade": -0.4455,
+    "avgCostPerTrade": 2,
+    "avgEntryElapsedSec": 117,
+    "maxWin": 8,
+    "maxLoss": -2,
+    "profitFactor": 0.26,
+    "expectancyPerTrade": -0.4455,
+    "tradesPerWindow": 0.7464
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 132,
+     "wins": 18,
+     "pnl": -84
+    },
+    "2026-09-20": {
+     "trades": 224,
+     "wins": 43,
+     "pnl": -18
+    },
+    "2026-09-21": {
+     "trades": 185,
+     "wins": 26,
+     "pnl": -110
+    },
+    "2026-09-22": {
+     "trades": 65,
+     "wins": 7,
+     "pnl": -60
+    },
+    "2026-09-23": {
+     "trades": 18,
+     "wins": 3,
+     "pnl": -6
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S7-late-lock",
+   "name": "Late lock ≥0.90 (référence)",
+   "desc": "Favori ask 0.88-0.95 après 120s. Ticket 10$ (référence).",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 777,
+    "wins": 692,
+    "losses": 85,
+    "sells": 0,
+    "winrate": 0.8906,
+    "pnl": -79.72,
+    "avgPnlPerTrade": -0.1026,
+    "avgCostPerTrade": 10,
+    "avgEntryElapsedSec": 169,
+    "maxWin": 1.36,
+    "maxLoss": -10,
+    "profitFactor": 0.09,
+    "expectancyPerTrade": -0.1026,
+    "tradesPerWindow": 0.9294
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 170,
+     "wins": 150,
+     "pnl": -36.77
+    },
+    "2026-09-20": {
+     "trades": 256,
+     "wins": 218,
+     "pnl": -136.38
+    },
+    "2026-09-21": {
+     "trades": 247,
+     "wins": 227,
+     "pnl": 54.95
+    },
+    "2026-09-22": {
+     "trades": 82,
+     "wins": 76,
+     "pnl": 24.17
+    },
+    "2026-09-23": {
+     "trades": 22,
+     "wins": 21,
+     "pnl": 14.31
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S8-breakout",
+   "name": "Breakout du range",
+   "desc": "Favori casse 0.70 après un range ≤0.68. Entry ask 0.70-0.78. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {}
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S9-underdog-momentum",
+   "name": "Underdog momentum",
+   "desc": "Underdog gagne ≥8¢ en 60s, ask 0.30-0.45. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 330,
+    "wins": 117,
+    "losses": 213,
+    "sells": 0,
+    "winrate": 0.3545,
+    "pnl": 19.7,
+    "avgPnlPerTrade": 0.0597,
+    "avgCostPerTrade": 2,
+    "avgEntryElapsedSec": 117,
+    "maxWin": 4.66,
+    "maxLoss": -2,
+    "profitFactor": 0.04,
+    "expectancyPerTrade": 0.0597,
+    "tradesPerWindow": 0.3947
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 56,
+     "wins": 19,
+     "pnl": -1.21
+    },
+    "2026-09-20": {
+     "trades": 120,
+     "wins": 41,
+     "pnl": 1.57
+    },
+    "2026-09-21": {
+     "trades": 111,
+     "wins": 40,
+     "pnl": 8.27
+    },
+    "2026-09-22": {
+     "trades": 32,
+     "wins": 14,
+     "pnl": 14.12
+    },
+    "2026-09-23": {
+     "trades": 11,
+     "wins": 3,
+     "pnl": -3.05
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S10-maker-fav-75",
+   "name": "Maker limit favori 0.75",
+   "desc": "Limit BUY 0.75 sur le favori (t+30s). Fill = dip du favori au niveau.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-20": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-21": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-22": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-23": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S11-maker-fav-65",
+   "name": "Maker limit favori 0.65",
+   "desc": "Limit BUY 0.65 sur le favori (t+30s). Payout 1:1.54.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-20": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-21": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-22": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-23": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S12-double-maker-70",
+   "name": "Double maker 0.70 Up+Down",
+   "desc": "Limit BUY 0.70 sur les 2 tokens (budget split). Payout 1:1.43 par fill.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-20": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-21": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-22": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-23": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S13-open-blowout",
+   "name": "Open blowout",
+   "desc": "Favori ask 0.70-0.80 dans les 30 premières s. Hold.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-20": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-21": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-22": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-23": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S14-sniper-60s",
+   "name": "Sniper T-60s ≥0.90",
+   "desc": "À T-60s, achète le favori si ask ≥0.90. Ticket 10$ (référence).",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 249,
+    "wins": 234,
+    "losses": 15,
+    "sells": 0,
+    "winrate": 0.9398,
+    "pnl": -56.23,
+    "avgPnlPerTrade": -0.2258,
+    "avgCostPerTrade": 9.99,
+    "avgEntryElapsedSec": 240,
+    "maxWin": 1.11,
+    "maxLoss": -10,
+    "profitFactor": 0.37,
+    "expectancyPerTrade": -0.2258,
+    "tradesPerWindow": 0.2978
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 68,
+     "wins": 59,
+     "pnl": -67.39
+    },
+    "2026-09-20": {
+     "trades": 73,
+     "wins": 70,
+     "pnl": -3.39
+    },
+    "2026-09-21": {
+     "trades": 76,
+     "wins": 74,
+     "pnl": 12.03
+    },
+    "2026-09-22": {
+     "trades": 23,
+     "wins": 22,
+     "pnl": -0.19
+    },
+    "2026-09-23": {
+     "trades": 9,
+     "wins": 9,
+     "pnl": 2.71
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S15-sniper-45s",
+   "name": "Sniper T-45s ≥0.88",
+   "desc": "À T-45s, achète le favori si ask ≥0.88. Ticket 5$ (référence).",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 203,
+    "wins": 186,
+    "losses": 17,
+    "sells": 0,
+    "winrate": 0.9163,
+    "pnl": -46.17,
+    "avgPnlPerTrade": -0.2274,
+    "avgCostPerTrade": 5,
+    "avgEntryElapsedSec": 255,
+    "maxWin": 0.68,
+    "maxLoss": -5,
+    "profitFactor": 0.54,
+    "expectancyPerTrade": -0.2274,
+    "tradesPerWindow": 0.2428
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 60,
+     "wins": 49,
+     "pnl": -43.93
+    },
+    "2026-09-20": {
+     "trades": 68,
+     "wins": 66,
+     "pnl": 4.3
+    },
+    "2026-09-21": {
+     "trades": 49,
+     "wins": 46,
+     "pnl": -6.21
+    },
+    "2026-09-22": {
+     "trades": 23,
+     "wins": 22,
+     "pnl": -0.96
+    },
+    "2026-09-23": {
+     "trades": 3,
+     "wins": 3,
+     "pnl": 0.63
+    }
+   }
+  },
+  {
+   "runId": "run-1790143480193",
+   "strategyId": "S16-momentum-SL",
+   "name": "Fav-band + stop-loss -10¢",
+   "desc": "Comme S1 + SL : vend au bid si l'ask tenu descend de 10¢ sous l'entrée.",
+   "params": {
+    "budget": 2,
+    "maxShares": 40,
+    "minTicks": 100
+   },
+   "dataset": {
+    "windows": 836,
+    "period": [
+     "btc-updown-5m-1789800000",
+     "btc-updown-5m-1790142300"
+    ]
+   },
+   "metrics": {
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "sells": 0,
+    "winrate": 0,
+    "pnl": 0,
+    "avgPnlPerTrade": 0,
+    "avgCostPerTrade": 0,
+    "avgEntryElapsedSec": null,
+    "maxWin": 0,
+    "maxLoss": 0,
+    "profitFactor": 0,
+    "expectancyPerTrade": 0,
+    "tradesPerWindow": 0
+   },
+   "perDay": {
+    "2026-09-19": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-20": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-21": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-22": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    },
+    "2026-09-23": {
+     "trades": 0,
+     "wins": 0,
+     "pnl": 0
+    }
+   }
+  }
+ ]
+}

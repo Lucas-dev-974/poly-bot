@@ -1,0 +1,3373 @@
+{
+ "runId": "sweep-1790143955280",
+ "type": "sweep",
+ "budget": 4,
+ "results": [
+  {
+   "strategyId": "A-antiflip-0.3-0.4-d5s-w0.6",
+   "name": "Antiflip 0.3-0.4 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.4], délai 5s.",
+   "metrics": {
+    "trades": 75,
+    "wins": 38,
+    "losses": 37,
+    "winrate": 0.5067,
+    "pnl": 115.51,
+    "avgPnlPerTrade": 1.5401,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.0897,
+    "maxWin": 8.9,
+    "maxLoss": -4
+   },
+   "elapsedMs": 307
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.4-d0s-w0.6",
+   "name": "Antiflip 0.3-0.4 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.4], délai 0s.",
+   "metrics": {
+    "trades": 40,
+    "wins": 19,
+    "losses": 21,
+    "winrate": 0.475,
+    "pnl": 51.3,
+    "avgPnlPerTrade": 1.2825,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.0478,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 323
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.4-d5s-w1",
+   "name": "Antiflip 0.3-0.4 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.4], délai 5s.",
+   "metrics": {
+    "trades": 83,
+    "wins": 39,
+    "losses": 44,
+    "winrate": 0.4699,
+    "pnl": 94.93,
+    "avgPnlPerTrade": 1.1437,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.0993,
+    "maxWin": 8.9,
+    "maxLoss": -4
+   },
+   "elapsedMs": 298
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.45-d0s-w0.6",
+   "name": "Antiflip 0.3-0.45 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.45], délai 0s.",
+   "metrics": {
+    "trades": 128,
+    "wins": 64,
+    "losses": 64,
+    "winrate": 0.5,
+    "pnl": 112.55,
+    "avgPnlPerTrade": 0.8793,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.1531,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 333
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.45-d5s-w0.6",
+   "name": "Antiflip 0.3-0.45 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.45], délai 5s.",
+   "metrics": {
+    "trades": 219,
+    "wins": 103,
+    "losses": 116,
+    "winrate": 0.4703,
+    "pnl": 143.2,
+    "avgPnlPerTrade": 0.6539,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.262,
+    "maxWin": 8.9,
+    "maxLoss": -4
+   },
+   "elapsedMs": 317
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.45-d5s-w1",
+   "name": "Antiflip 0.3-0.45 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.45], délai 5s.",
+   "metrics": {
+    "trades": 230,
+    "wins": 107,
+    "losses": 123,
+    "winrate": 0.4652,
+    "pnl": 139.21,
+    "avgPnlPerTrade": 0.6053,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.2751,
+    "maxWin": 8.9,
+    "maxLoss": -4
+   },
+   "elapsedMs": 333
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.1",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 60s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 569,
+    "wins": 245,
+    "losses": 324,
+    "winrate": 0.4306,
+    "pnl": 342.99,
+    "avgPnlPerTrade": 0.6028,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6806,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 333
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.45-d0s-w1",
+   "name": "Antiflip 0.3-0.45 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.45], délai 0s.",
+   "metrics": {
+    "trades": 142,
+    "wins": 67,
+    "losses": 75,
+    "winrate": 0.4718,
+    "pnl": 84.03,
+    "avgPnlPerTrade": 0.5918,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.1699,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 295
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.08",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 60s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 590,
+    "wins": 249,
+    "losses": 341,
+    "winrate": 0.422,
+    "pnl": 298.1,
+    "avgPnlPerTrade": 0.5053,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7057,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 290
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.4-d0s-w1",
+   "name": "Antiflip 0.3-0.4 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.4], délai 0s.",
+   "metrics": {
+    "trades": 47,
+    "wins": 19,
+    "losses": 28,
+    "winrate": 0.4043,
+    "pnl": 23.3,
+    "avgPnlPerTrade": 0.4957,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.0562,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 300
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.12",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 60s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 562,
+    "wins": 234,
+    "losses": 328,
+    "winrate": 0.4164,
+    "pnl": 271,
+    "avgPnlPerTrade": 0.4822,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6722,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 347
+  },
+  {
+   "strategyId": "A-antiflip-0.4-0.55-d10s-w1",
+   "name": "Antiflip 0.4-0.55 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.4-0.55], délai 10s.",
+   "metrics": {
+    "trades": 371,
+    "wins": 194,
+    "losses": 177,
+    "winrate": 0.5229,
+    "pnl": 158.38,
+    "avgPnlPerTrade": 0.4269,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4438,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 290
+  },
+  {
+   "strategyId": "A-antiflip-0.4-0.55-d10s-w0.6",
+   "name": "Antiflip 0.4-0.55 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.4-0.55], délai 10s.",
+   "metrics": {
+    "trades": 367,
+    "wins": 191,
+    "losses": 176,
+    "winrate": 0.5204,
+    "pnl": 149.27,
+    "avgPnlPerTrade": 0.4067,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.439,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 321
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.55-d5s-w1",
+   "name": "Antiflip 0.35-0.55 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.55], délai 5s.",
+   "metrics": {
+    "trades": 500,
+    "wins": 253,
+    "losses": 247,
+    "winrate": 0.506,
+    "pnl": 184.96,
+    "avgPnlPerTrade": 0.3699,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5981,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 297
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.08",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 90s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 484,
+    "wins": 221,
+    "losses": 263,
+    "winrate": 0.4566,
+    "pnl": 172.19,
+    "avgPnlPerTrade": 0.3558,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5789,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 299
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.5-d0s-w0.6",
+   "name": "Antiflip 0.3-0.5 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.5], délai 0s.",
+   "metrics": {
+    "trades": 571,
+    "wins": 288,
+    "losses": 283,
+    "winrate": 0.5044,
+    "pnl": 187.82,
+    "avgPnlPerTrade": 0.3289,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.683,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 306
+  },
+  {
+   "strategyId": "A-antiflip-0.4-0.55-d5s-w1",
+   "name": "Antiflip 0.4-0.55 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.4-0.55], délai 5s.",
+   "metrics": {
+    "trades": 456,
+    "wins": 233,
+    "losses": 223,
+    "winrate": 0.511,
+    "pnl": 145.09,
+    "avgPnlPerTrade": 0.3182,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5455,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 303
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.55-d5s-w0.6",
+   "name": "Antiflip 0.35-0.55 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.55], délai 5s.",
+   "metrics": {
+    "trades": 486,
+    "wins": 243,
+    "losses": 243,
+    "winrate": 0.5,
+    "pnl": 154.47,
+    "avgPnlPerTrade": 0.3178,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5813,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 308
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.06",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 60s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 604,
+    "wins": 246,
+    "losses": 358,
+    "winrate": 0.4073,
+    "pnl": 190.96,
+    "avgPnlPerTrade": 0.3162,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7225,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 282
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.5-d0s-w1",
+   "name": "Antiflip 0.3-0.5 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.5], délai 0s.",
+   "metrics": {
+    "trades": 596,
+    "wins": 299,
+    "losses": 297,
+    "winrate": 0.5017,
+    "pnl": 180.61,
+    "avgPnlPerTrade": 0.303,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7129,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 294
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.08",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 60s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 541,
+    "wins": 248,
+    "losses": 293,
+    "winrate": 0.4584,
+    "pnl": 163.08,
+    "avgPnlPerTrade": 0.3014,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6471,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 313
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.12",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 90s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 461,
+    "wins": 207,
+    "losses": 254,
+    "winrate": 0.449,
+    "pnl": 130.57,
+    "avgPnlPerTrade": 0.2832,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5514,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 344
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.1",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 60s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 658,
+    "wins": 248,
+    "losses": 410,
+    "winrate": 0.3769,
+    "pnl": 181.27,
+    "avgPnlPerTrade": 0.2755,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7871,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 355
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.5-d0s-w0.6",
+   "name": "Antiflip 0.35-0.5 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.5], délai 0s.",
+   "metrics": {
+    "trades": 561,
+    "wins": 282,
+    "losses": 279,
+    "winrate": 0.5027,
+    "pnl": 152.69,
+    "avgPnlPerTrade": 0.2722,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6711,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 303
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.1",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 60s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 530,
+    "wins": 242,
+    "losses": 288,
+    "winrate": 0.4566,
+    "pnl": 143.73,
+    "avgPnlPerTrade": 0.2712,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.634,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 291
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.55-d0s-w0.6",
+   "name": "Antiflip 0.35-0.55 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.55], délai 0s.",
+   "metrics": {
+    "trades": 574,
+    "wins": 289,
+    "losses": 285,
+    "winrate": 0.5035,
+    "pnl": 155.57,
+    "avgPnlPerTrade": 0.271,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6866,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 287
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.12",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 45s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 556,
+    "wins": 224,
+    "losses": 332,
+    "winrate": 0.4029,
+    "pnl": 150.3,
+    "avgPnlPerTrade": 0.2703,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6651,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 420
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.5-d0s-w1",
+   "name": "Antiflip 0.35-0.5 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.5], délai 0s.",
+   "metrics": {
+    "trades": 583,
+    "wins": 293,
+    "losses": 290,
+    "winrate": 0.5026,
+    "pnl": 157.48,
+    "avgPnlPerTrade": 0.2701,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6974,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 293
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.1",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 90s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 473,
+    "wins": 211,
+    "losses": 262,
+    "winrate": 0.4461,
+    "pnl": 124.49,
+    "avgPnlPerTrade": 0.2632,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5658,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 335
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.5-d5s-w1",
+   "name": "Antiflip 0.3-0.5 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.5], délai 5s.",
+   "metrics": {
+    "trades": 414,
+    "wins": 192,
+    "losses": 222,
+    "winrate": 0.4638,
+    "pnl": 108.63,
+    "avgPnlPerTrade": 0.2624,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4952,
+    "maxWin": 8.9,
+    "maxLoss": -4
+   },
+   "elapsedMs": 295
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.55-d0s-w1",
+   "name": "Antiflip 0.35-0.55 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.55], délai 0s.",
+   "metrics": {
+    "trades": 597,
+    "wins": 300,
+    "losses": 297,
+    "winrate": 0.5025,
+    "pnl": 156.36,
+    "avgPnlPerTrade": 0.2619,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7141,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 301
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.5-d5s-w0.6",
+   "name": "Antiflip 0.3-0.5 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.5], délai 5s.",
+   "metrics": {
+    "trades": 401,
+    "wins": 186,
+    "losses": 215,
+    "winrate": 0.4638,
+    "pnl": 103.77,
+    "avgPnlPerTrade": 0.2588,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4797,
+    "maxWin": 8.9,
+    "maxLoss": -4
+   },
+   "elapsedMs": 278
+  },
+  {
+   "strategyId": "A-antiflip-0.4-0.55-d5s-w0.6",
+   "name": "Antiflip 0.4-0.55 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.4-0.55], délai 5s.",
+   "metrics": {
+    "trades": 445,
+    "wins": 224,
+    "losses": 221,
+    "winrate": 0.5034,
+    "pnl": 114.02,
+    "avgPnlPerTrade": 0.2562,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5323,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 287
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.1",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 45s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 564,
+    "wins": 228,
+    "losses": 336,
+    "winrate": 0.4043,
+    "pnl": 144.52,
+    "avgPnlPerTrade": 0.2562,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6746,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 330
+  },
+  {
+   "strategyId": "A-antiflip-0.4-0.55-d0s-w1",
+   "name": "Antiflip 0.4-0.55 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.4-0.55], délai 0s.",
+   "metrics": {
+    "trades": 573,
+    "wins": 290,
+    "losses": 283,
+    "winrate": 0.5061,
+    "pnl": 146.19,
+    "avgPnlPerTrade": 0.2551,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6854,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 284
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.06",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 60s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 546,
+    "wins": 248,
+    "losses": 298,
+    "winrate": 0.4542,
+    "pnl": 137.58,
+    "avgPnlPerTrade": 0.252,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6531,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 328
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.08",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 60s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 675,
+    "wins": 254,
+    "losses": 421,
+    "winrate": 0.3763,
+    "pnl": 169.99,
+    "avgPnlPerTrade": 0.2518,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8074,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 293
+  },
+  {
+   "strategyId": "A-antiflip-0.4-0.55-d0s-w0.6",
+   "name": "Antiflip 0.4-0.55 +0s",
+   "desc": "Après flip: achète l'ancien favori [0.4-0.55], délai 0s.",
+   "metrics": {
+    "trades": 552,
+    "wins": 279,
+    "losses": 273,
+    "winrate": 0.5054,
+    "pnl": 137.4,
+    "avgPnlPerTrade": 0.2489,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6603,
+    "maxWin": 6,
+    "maxLoss": -4
+   },
+   "elapsedMs": 315
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.5-d10s-w1",
+   "name": "Antiflip 0.3-0.5 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.5], délai 10s.",
+   "metrics": {
+    "trades": 369,
+    "wins": 169,
+    "losses": 200,
+    "winrate": 0.458,
+    "pnl": 90.34,
+    "avgPnlPerTrade": 0.2448,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4414,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 298
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.08",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 45s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 670,
+    "wins": 249,
+    "losses": 421,
+    "winrate": 0.3716,
+    "pnl": 160.83,
+    "avgPnlPerTrade": 0.24,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8014,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 337
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.06",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 90s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 493,
+    "wins": 220,
+    "losses": 273,
+    "winrate": 0.4462,
+    "pnl": 116.66,
+    "avgPnlPerTrade": 0.2366,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5897,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 320
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.12",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 45s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 637,
+    "wins": 237,
+    "losses": 400,
+    "winrate": 0.3721,
+    "pnl": 147.65,
+    "avgPnlPerTrade": 0.2318,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.762,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 328
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.1",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 45s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 644,
+    "wins": 241,
+    "losses": 403,
+    "winrate": 0.3742,
+    "pnl": 142.79,
+    "avgPnlPerTrade": 0.2217,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7703,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 307
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.5-d5s-w1",
+   "name": "Antiflip 0.35-0.5 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.5], délai 5s.",
+   "metrics": {
+    "trades": 392,
+    "wins": 183,
+    "losses": 209,
+    "winrate": 0.4668,
+    "pnl": 85.57,
+    "avgPnlPerTrade": 0.2183,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4689,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 285
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.45-d10s-w1",
+   "name": "Antiflip 0.3-0.45 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.45], délai 10s.",
+   "metrics": {
+    "trades": 227,
+    "wins": 96,
+    "losses": 131,
+    "winrate": 0.4229,
+    "pnl": 48.59,
+    "avgPnlPerTrade": 0.2141,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.2715,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 316
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.5-d10s-w0.6",
+   "name": "Antiflip 0.3-0.5 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.5], délai 10s.",
+   "metrics": {
+    "trades": 364,
+    "wins": 166,
+    "losses": 198,
+    "winrate": 0.456,
+    "pnl": 77.7,
+    "avgPnlPerTrade": 0.2135,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4354,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 291
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.08",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 45s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 587,
+    "wins": 233,
+    "losses": 354,
+    "winrate": 0.3969,
+    "pnl": 121.53,
+    "avgPnlPerTrade": 0.207,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7022,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 309
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.12",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 60s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 518,
+    "wins": 232,
+    "losses": 286,
+    "winrate": 0.4479,
+    "pnl": 104,
+    "avgPnlPerTrade": 0.2008,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6196,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 299
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.12",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 60s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 653,
+    "wins": 238,
+    "losses": 415,
+    "winrate": 0.3645,
+    "pnl": 127.2,
+    "avgPnlPerTrade": 0.1948,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7811,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 321
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.55-d10s-w1",
+   "name": "Antiflip 0.35-0.55 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.55], délai 10s.",
+   "metrics": {
+    "trades": 435,
+    "wins": 211,
+    "losses": 224,
+    "winrate": 0.4851,
+    "pnl": 82.58,
+    "avgPnlPerTrade": 0.1898,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5203,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 304
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.06",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 60s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 687,
+    "wins": 255,
+    "losses": 432,
+    "winrate": 0.3712,
+    "pnl": 125.55,
+    "avgPnlPerTrade": 0.1828,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8218,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 293
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.5-d5s-w0.6",
+   "name": "Antiflip 0.35-0.5 +5s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.5], délai 5s.",
+   "metrics": {
+    "trades": 382,
+    "wins": 177,
+    "losses": 205,
+    "winrate": 0.4634,
+    "pnl": 68.71,
+    "avgPnlPerTrade": 0.1799,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4569,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 311
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.08",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 90s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 529,
+    "wins": 205,
+    "losses": 324,
+    "winrate": 0.3875,
+    "pnl": 91.72,
+    "avgPnlPerTrade": 0.1734,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6328,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 353
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.06",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 90s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 542,
+    "wins": 210,
+    "losses": 332,
+    "winrate": 0.3875,
+    "pnl": 90.92,
+    "avgPnlPerTrade": 0.1677,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6483,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 299
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.12",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 90s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 509,
+    "wins": 196,
+    "losses": 313,
+    "winrate": 0.3851,
+    "pnl": 84.69,
+    "avgPnlPerTrade": 0.1664,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6089,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 342
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.55-d10s-w0.6",
+   "name": "Antiflip 0.35-0.55 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.55], délai 10s.",
+   "metrics": {
+    "trades": 429,
+    "wins": 207,
+    "losses": 222,
+    "winrate": 0.4825,
+    "pnl": 70.95,
+    "avgPnlPerTrade": 0.1654,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5132,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 287
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.45-d10s-w0.6",
+   "name": "Antiflip 0.3-0.45 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.45], délai 10s.",
+   "metrics": {
+    "trades": 222,
+    "wins": 93,
+    "losses": 129,
+    "winrate": 0.4189,
+    "pnl": 35.95,
+    "avgPnlPerTrade": 0.1619,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.2656,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 301
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.06",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 90s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 620,
+    "wins": 222,
+    "losses": 398,
+    "winrate": 0.3581,
+    "pnl": 99.39,
+    "avgPnlPerTrade": 0.1603,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7416,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 313
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.06",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 45s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 605,
+    "wins": 237,
+    "losses": 368,
+    "winrate": 0.3917,
+    "pnl": 85.45,
+    "avgPnlPerTrade": 0.1412,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7237,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 298
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.06",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 45s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 683,
+    "wins": 250,
+    "losses": 433,
+    "winrate": 0.366,
+    "pnl": 88.33,
+    "avgPnlPerTrade": 0.1293,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.817,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 335
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.12",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 60s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 650,
+    "wins": 220,
+    "losses": 430,
+    "winrate": 0.3385,
+    "pnl": 82.57,
+    "avgPnlPerTrade": 0.127,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7775,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 299
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.5-d10s-w1",
+   "name": "Antiflip 0.35-0.5 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.5], délai 10s.",
+   "metrics": {
+    "trades": 341,
+    "wins": 156,
+    "losses": 185,
+    "winrate": 0.4575,
+    "pnl": 41.9,
+    "avgPnlPerTrade": 0.1229,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4079,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 347
+  },
+  {
+   "strategyId": "B-dogmom-0.3-0.45-g0.1",
+   "name": "Underdog momentum 0.3-0.45 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 90s, ask 0.3-0.45.",
+   "metrics": {
+    "trades": 519,
+    "wins": 199,
+    "losses": 320,
+    "winrate": 0.3834,
+    "pnl": 62.93,
+    "avgPnlPerTrade": 0.1213,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6208,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 370
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.12",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 45s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 636,
+    "wins": 216,
+    "losses": 420,
+    "winrate": 0.3396,
+    "pnl": 76.76,
+    "avgPnlPerTrade": 0.1207,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7608,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 295
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.08",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 45s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 669,
+    "wins": 226,
+    "losses": 443,
+    "winrate": 0.3378,
+    "pnl": 72.34,
+    "avgPnlPerTrade": 0.1081,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8002,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 296
+  },
+  {
+   "strategyId": "A-antiflip-0.35-0.5-d10s-w0.6",
+   "name": "Antiflip 0.35-0.5 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.35-0.5], délai 10s.",
+   "metrics": {
+    "trades": 338,
+    "wins": 154,
+    "losses": 184,
+    "winrate": 0.4556,
+    "pnl": 33.38,
+    "avgPnlPerTrade": 0.0988,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4043,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 291
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.12",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 45s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 502,
+    "wins": 221,
+    "losses": 281,
+    "winrate": 0.4402,
+    "pnl": 49.6,
+    "avgPnlPerTrade": 0.0988,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6005,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 369
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.1",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 90s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 598,
+    "wins": 211,
+    "losses": 387,
+    "winrate": 0.3528,
+    "pnl": 52.77,
+    "avgPnlPerTrade": 0.0882,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7153,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 295
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.1",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 45s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 515,
+    "wins": 226,
+    "losses": 289,
+    "winrate": 0.4388,
+    "pnl": 43.39,
+    "avgPnlPerTrade": 0.0843,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.616,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 312
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.1",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 60s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 655,
+    "wins": 220,
+    "losses": 435,
+    "winrate": 0.3359,
+    "pnl": 52.16,
+    "avgPnlPerTrade": 0.0796,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7835,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 303
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.12",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 90s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 587,
+    "wins": 204,
+    "losses": 383,
+    "winrate": 0.3475,
+    "pnl": 37.86,
+    "avgPnlPerTrade": 0.0645,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7022,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 304
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.08",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 60s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 672,
+    "wins": 224,
+    "losses": 448,
+    "winrate": 0.3333,
+    "pnl": 35.98,
+    "avgPnlPerTrade": 0.0535,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8038,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 274
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.1",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 45s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 643,
+    "wins": 215,
+    "losses": 428,
+    "winrate": 0.3344,
+    "pnl": 32.48,
+    "avgPnlPerTrade": 0.0505,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7691,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 281
+  },
+  {
+   "strategyId": "C-favband-0.55-0.7-sp0.1",
+   "name": "Fav-band 0.55-0.7 écart≥0.1",
+   "desc": "Favori ask 0.55-0.7, écart ≥0.1¢, après 45s.",
+   "metrics": {
+    "trades": 704,
+    "wins": 448,
+    "losses": 256,
+    "winrate": 0.6364,
+    "pnl": 34.81,
+    "avgPnlPerTrade": 0.0494,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8421,
+    "maxWin": 3.14,
+    "maxLoss": -4
+   },
+   "elapsedMs": 317
+  },
+  {
+   "strategyId": "C-favband-0.7-0.82-sp0.1",
+   "name": "Fav-band 0.7-0.82 écart≥0.1",
+   "desc": "Favori ask 0.7-0.82, écart ≥0.1¢, après 90s.",
+   "metrics": {
+    "trades": 625,
+    "wins": 466,
+    "losses": 159,
+    "winrate": 0.7456,
+    "pnl": 30.63,
+    "avgPnlPerTrade": 0.049,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7476,
+    "maxWin": 1.71,
+    "maxLoss": -4
+   },
+   "elapsedMs": 350
+  },
+  {
+   "strategyId": "C-favband-0.7-0.82-sp0.15",
+   "name": "Fav-band 0.7-0.82 écart≥0.15",
+   "desc": "Favori ask 0.7-0.82, écart ≥0.15¢, après 90s.",
+   "metrics": {
+    "trades": 625,
+    "wins": 466,
+    "losses": 159,
+    "winrate": 0.7456,
+    "pnl": 30.63,
+    "avgPnlPerTrade": 0.049,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7476,
+    "maxWin": 1.71,
+    "maxLoss": -4
+   },
+   "elapsedMs": 339
+  },
+  {
+   "strategyId": "C-favband-0.7-0.82-sp0.2",
+   "name": "Fav-band 0.7-0.82 écart≥0.2",
+   "desc": "Favori ask 0.7-0.82, écart ≥0.2¢, après 90s.",
+   "metrics": {
+    "trades": 625,
+    "wins": 466,
+    "losses": 159,
+    "winrate": 0.7456,
+    "pnl": 30.63,
+    "avgPnlPerTrade": 0.049,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7476,
+    "maxWin": 1.71,
+    "maxLoss": -4
+   },
+   "elapsedMs": 302
+  },
+  {
+   "strategyId": "C-favband-0.52-0.65-sp0.1",
+   "name": "Fav-band 0.52-0.65 écart≥0.1",
+   "desc": "Favori ask 0.52-0.65, écart ≥0.1¢, après 45s.",
+   "metrics": {
+    "trades": 650,
+    "wins": 397,
+    "losses": 253,
+    "winrate": 0.6108,
+    "pnl": 26.31,
+    "avgPnlPerTrade": 0.0405,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7775,
+    "maxWin": 3.14,
+    "maxLoss": -4
+   },
+   "elapsedMs": 359
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.08",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 45s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 538,
+    "wins": 234,
+    "losses": 304,
+    "winrate": 0.4349,
+    "pnl": 21.31,
+    "avgPnlPerTrade": 0.0396,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6435,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 317
+  },
+  {
+   "strategyId": "C-favband-0.55-0.8-sp0.1",
+   "name": "Fav-band 0.55-0.8 écart≥0.1",
+   "desc": "Favori ask 0.55-0.8, écart ≥0.1¢, après 45s.",
+   "metrics": {
+    "trades": 770,
+    "wins": 510,
+    "losses": 260,
+    "winrate": 0.6623,
+    "pnl": 28.69,
+    "avgPnlPerTrade": 0.0373,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.9211,
+    "maxWin": 3.14,
+    "maxLoss": -4
+   },
+   "elapsedMs": 291
+  },
+  {
+   "strategyId": "B-dogmom-0.35-0.5-g0.06",
+   "name": "Underdog momentum 0.35-0.5 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 45s, ask 0.35-0.5.",
+   "metrics": {
+    "trades": 546,
+    "wins": 236,
+    "losses": 310,
+    "winrate": 0.4322,
+    "pnl": 18.02,
+    "avgPnlPerTrade": 0.033,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6531,
+    "maxWin": 7.42,
+    "maxLoss": -4
+   },
+   "elapsedMs": 317
+  },
+  {
+   "strategyId": "C-favband-0.7-0.82-sp0.1",
+   "name": "Fav-band 0.7-0.82 écart≥0.1",
+   "desc": "Favori ask 0.7-0.82, écart ≥0.1¢, après 45s.",
+   "metrics": {
+    "trades": 716,
+    "wins": 527,
+    "losses": 189,
+    "winrate": 0.736,
+    "pnl": 22.46,
+    "avgPnlPerTrade": 0.0314,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8565,
+    "maxWin": 1.71,
+    "maxLoss": -4
+   },
+   "elapsedMs": 381
+  },
+  {
+   "strategyId": "C-favband-0.7-0.82-sp0.15",
+   "name": "Fav-band 0.7-0.82 écart≥0.15",
+   "desc": "Favori ask 0.7-0.82, écart ≥0.15¢, après 45s.",
+   "metrics": {
+    "trades": 716,
+    "wins": 527,
+    "losses": 189,
+    "winrate": 0.736,
+    "pnl": 22.46,
+    "avgPnlPerTrade": 0.0314,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8565,
+    "maxWin": 1.71,
+    "maxLoss": -4
+   },
+   "elapsedMs": 350
+  },
+  {
+   "strategyId": "C-favband-0.7-0.82-sp0.2",
+   "name": "Fav-band 0.7-0.82 écart≥0.2",
+   "desc": "Favori ask 0.7-0.82, écart ≥0.2¢, après 45s.",
+   "metrics": {
+    "trades": 716,
+    "wins": 527,
+    "losses": 189,
+    "winrate": 0.736,
+    "pnl": 22.46,
+    "avgPnlPerTrade": 0.0314,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8565,
+    "maxWin": 1.71,
+    "maxLoss": -4
+   },
+   "elapsedMs": 318
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.45-g0.08",
+   "name": "Underdog momentum 0.25-0.45 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 90s, ask 0.25-0.45.",
+   "metrics": {
+    "trades": 610,
+    "wins": 212,
+    "losses": 398,
+    "winrate": 0.3475,
+    "pnl": 16.35,
+    "avgPnlPerTrade": 0.0268,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7297,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 292
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.06",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 60s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 685,
+    "wins": 228,
+    "losses": 457,
+    "winrate": 0.3328,
+    "pnl": 15.71,
+    "avgPnlPerTrade": 0.0229,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8194,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 297
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.06",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 90s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 617,
+    "wins": 201,
+    "losses": 416,
+    "winrate": 0.3258,
+    "pnl": 7.5,
+    "avgPnlPerTrade": 0.0122,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.738,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 325
+  },
+  {
+   "strategyId": "C-favband-0.55-0.8-sp0.2",
+   "name": "Fav-band 0.55-0.8 écart≥0.2",
+   "desc": "Favori ask 0.55-0.8, écart ≥0.2¢, après 45s.",
+   "metrics": {
+    "trades": 770,
+    "wins": 521,
+    "losses": 249,
+    "winrate": 0.6766,
+    "pnl": -10.62,
+    "avgPnlPerTrade": -0.0138,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.9211,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 344
+  },
+  {
+   "strategyId": "C-favband-0.65-0.8-sp0.1",
+   "name": "Fav-band 0.65-0.8 écart≥0.1",
+   "desc": "Favori ask 0.65-0.8, écart ≥0.1¢, après 45s.",
+   "metrics": {
+    "trades": 770,
+    "wins": 537,
+    "losses": 233,
+    "winrate": 0.6974,
+    "pnl": -11.07,
+    "avgPnlPerTrade": -0.0144,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.9211,
+    "maxWin": 2.15,
+    "maxLoss": -4
+   },
+   "elapsedMs": 323
+  },
+  {
+   "strategyId": "C-favband-0.65-0.8-sp0.15",
+   "name": "Fav-band 0.65-0.8 écart≥0.15",
+   "desc": "Favori ask 0.65-0.8, écart ≥0.15¢, après 45s.",
+   "metrics": {
+    "trades": 770,
+    "wins": 537,
+    "losses": 233,
+    "winrate": 0.6974,
+    "pnl": -11.07,
+    "avgPnlPerTrade": -0.0144,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.9211,
+    "maxWin": 2.15,
+    "maxLoss": -4
+   },
+   "elapsedMs": 317
+  },
+  {
+   "strategyId": "C-favband-0.65-0.8-sp0.2",
+   "name": "Fav-band 0.65-0.8 écart≥0.2",
+   "desc": "Favori ask 0.65-0.8, écart ≥0.2¢, après 45s.",
+   "metrics": {
+    "trades": 770,
+    "wins": 537,
+    "losses": 233,
+    "winrate": 0.6974,
+    "pnl": -11.07,
+    "avgPnlPerTrade": -0.0144,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.9211,
+    "maxWin": 2.15,
+    "maxLoss": -4
+   },
+   "elapsedMs": 338
+  },
+  {
+   "strategyId": "C-favband-0.65-0.8-sp0.1",
+   "name": "Fav-band 0.65-0.8 écart≥0.1",
+   "desc": "Favori ask 0.65-0.8, écart ≥0.1¢, après 60s.",
+   "metrics": {
+    "trades": 750,
+    "wins": 528,
+    "losses": 222,
+    "winrate": 0.704,
+    "pnl": -12.94,
+    "avgPnlPerTrade": -0.0173,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8971,
+    "maxWin": 2.15,
+    "maxLoss": -4
+   },
+   "elapsedMs": 300
+  },
+  {
+   "strategyId": "C-favband-0.65-0.8-sp0.15",
+   "name": "Fav-band 0.65-0.8 écart≥0.15",
+   "desc": "Favori ask 0.65-0.8, écart ≥0.15¢, après 60s.",
+   "metrics": {
+    "trades": 750,
+    "wins": 528,
+    "losses": 222,
+    "winrate": 0.704,
+    "pnl": -12.94,
+    "avgPnlPerTrade": -0.0173,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8971,
+    "maxWin": 2.15,
+    "maxLoss": -4
+   },
+   "elapsedMs": 299
+  },
+  {
+   "strategyId": "C-favband-0.65-0.8-sp0.2",
+   "name": "Fav-band 0.65-0.8 écart≥0.2",
+   "desc": "Favori ask 0.65-0.8, écart ≥0.2¢, après 60s.",
+   "metrics": {
+    "trades": 750,
+    "wins": 528,
+    "losses": 222,
+    "winrate": 0.704,
+    "pnl": -12.94,
+    "avgPnlPerTrade": -0.0173,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8971,
+    "maxWin": 2.15,
+    "maxLoss": -4
+   },
+   "elapsedMs": 303
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.06",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.06",
+   "desc": "Underdog +0.06¢ en 45s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 682,
+    "wins": 226,
+    "losses": 456,
+    "winrate": 0.3314,
+    "pnl": -13.13,
+    "avgPnlPerTrade": -0.0193,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8158,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 312
+  },
+  {
+   "strategyId": "C-favband-0.6-0.75-sp0.2",
+   "name": "Fav-band 0.6-0.75 écart≥0.2",
+   "desc": "Favori ask 0.6-0.75, écart ≥0.2¢, après 45s.",
+   "metrics": {
+    "trades": 740,
+    "wins": 491,
+    "losses": 249,
+    "winrate": 0.6635,
+    "pnl": -16.73,
+    "avgPnlPerTrade": -0.0226,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8852,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 294
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.1",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.1",
+   "desc": "Underdog +0.1¢ en 90s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 594,
+    "wins": 191,
+    "losses": 403,
+    "winrate": 0.3215,
+    "pnl": -15.94,
+    "avgPnlPerTrade": -0.0268,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7105,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 319
+  },
+  {
+   "strategyId": "C-favband-0.55-0.7-sp0.2",
+   "name": "Fav-band 0.55-0.7 écart≥0.2",
+   "desc": "Favori ask 0.55-0.7, écart ≥0.2¢, après 45s.",
+   "metrics": {
+    "trades": 701,
+    "wins": 454,
+    "losses": 247,
+    "winrate": 0.6476,
+    "pnl": -20.09,
+    "avgPnlPerTrade": -0.0287,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8385,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 299
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.12",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.12",
+   "desc": "Underdog +0.12¢ en 90s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 583,
+    "wins": 186,
+    "losses": 397,
+    "winrate": 0.319,
+    "pnl": -18.4,
+    "avgPnlPerTrade": -0.0316,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6974,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 276
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.4-d10s-w1",
+   "name": "Antiflip 0.3-0.4 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.4], délai 10s.",
+   "metrics": {
+    "trades": 106,
+    "wins": 38,
+    "losses": 68,
+    "winrate": 0.3585,
+    "pnl": -3.36,
+    "avgPnlPerTrade": -0.0317,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.1268,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 306
+  },
+  {
+   "strategyId": "D-doglimit-0.08-t120",
+   "name": "Underdog limit 0.08 (t+120s)",
+   "desc": "Limit BUY 0.08 sur l'underdog (placé t+120s). Payout 1:11.5.",
+   "metrics": {
+    "trades": 606,
+    "wins": 48,
+    "losses": 558,
+    "winrate": 0.0792,
+    "pnl": -19.2,
+    "avgPnlPerTrade": -0.0317,
+    "avgCostPerTrade": 3.2,
+    "tradesPerWindow": 0.7249,
+    "maxWin": 36.8,
+    "maxLoss": -3.2
+   },
+   "elapsedMs": 311
+  },
+  {
+   "strategyId": "C-favband-0.7-0.82-sp0.1",
+   "name": "Fav-band 0.7-0.82 écart≥0.1",
+   "desc": "Favori ask 0.7-0.82, écart ≥0.1¢, après 60s.",
+   "metrics": {
+    "trades": 687,
+    "wins": 499,
+    "losses": 188,
+    "winrate": 0.7263,
+    "pnl": -29.52,
+    "avgPnlPerTrade": -0.043,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8218,
+    "maxWin": 1.71,
+    "maxLoss": -4
+   },
+   "elapsedMs": 376
+  },
+  {
+   "strategyId": "C-favband-0.7-0.82-sp0.15",
+   "name": "Fav-band 0.7-0.82 écart≥0.15",
+   "desc": "Favori ask 0.7-0.82, écart ≥0.15¢, après 60s.",
+   "metrics": {
+    "trades": 687,
+    "wins": 499,
+    "losses": 188,
+    "winrate": 0.7263,
+    "pnl": -29.52,
+    "avgPnlPerTrade": -0.043,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8218,
+    "maxWin": 1.71,
+    "maxLoss": -4
+   },
+   "elapsedMs": 296
+  },
+  {
+   "strategyId": "C-favband-0.7-0.82-sp0.2",
+   "name": "Fav-band 0.7-0.82 écart≥0.2",
+   "desc": "Favori ask 0.7-0.82, écart ≥0.2¢, après 60s.",
+   "metrics": {
+    "trades": 687,
+    "wins": 499,
+    "losses": 188,
+    "winrate": 0.7263,
+    "pnl": -29.52,
+    "avgPnlPerTrade": -0.043,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8218,
+    "maxWin": 1.71,
+    "maxLoss": -4
+   },
+   "elapsedMs": 299
+  },
+  {
+   "strategyId": "C-favband-0.55-0.8-sp0.2",
+   "name": "Fav-band 0.55-0.8 écart≥0.2",
+   "desc": "Favori ask 0.55-0.8, écart ≥0.2¢, après 90s.",
+   "metrics": {
+    "trades": 694,
+    "wins": 477,
+    "losses": 217,
+    "winrate": 0.6873,
+    "pnl": -30.75,
+    "avgPnlPerTrade": -0.0443,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8301,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 359
+  },
+  {
+   "strategyId": "C-favband-0.65-0.8-sp0.1",
+   "name": "Fav-band 0.65-0.8 écart≥0.1",
+   "desc": "Favori ask 0.65-0.8, écart ≥0.1¢, après 90s.",
+   "metrics": {
+    "trades": 694,
+    "wins": 489,
+    "losses": 205,
+    "winrate": 0.7046,
+    "pnl": -30.81,
+    "avgPnlPerTrade": -0.0444,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8301,
+    "maxWin": 2.15,
+    "maxLoss": -4
+   },
+   "elapsedMs": 309
+  },
+  {
+   "strategyId": "C-favband-0.65-0.8-sp0.15",
+   "name": "Fav-band 0.65-0.8 écart≥0.15",
+   "desc": "Favori ask 0.65-0.8, écart ≥0.15¢, après 90s.",
+   "metrics": {
+    "trades": 694,
+    "wins": 489,
+    "losses": 205,
+    "winrate": 0.7046,
+    "pnl": -30.81,
+    "avgPnlPerTrade": -0.0444,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8301,
+    "maxWin": 2.15,
+    "maxLoss": -4
+   },
+   "elapsedMs": 299
+  },
+  {
+   "strategyId": "C-favband-0.65-0.8-sp0.2",
+   "name": "Fav-band 0.65-0.8 écart≥0.2",
+   "desc": "Favori ask 0.65-0.8, écart ≥0.2¢, après 90s.",
+   "metrics": {
+    "trades": 694,
+    "wins": 489,
+    "losses": 205,
+    "winrate": 0.7046,
+    "pnl": -30.81,
+    "avgPnlPerTrade": -0.0444,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8301,
+    "maxWin": 2.15,
+    "maxLoss": -4
+   },
+   "elapsedMs": 298
+  },
+  {
+   "strategyId": "C-favband-0.52-0.65-sp0.2",
+   "name": "Fav-band 0.52-0.65 écart≥0.2",
+   "desc": "Favori ask 0.52-0.65, écart ≥0.2¢, après 45s.",
+   "metrics": {
+    "trades": 627,
+    "wins": 389,
+    "losses": 238,
+    "winrate": 0.6204,
+    "pnl": -35.03,
+    "avgPnlPerTrade": -0.0559,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.75,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 361
+  },
+  {
+   "strategyId": "C-favband-0.55-0.8-sp0.15",
+   "name": "Fav-band 0.55-0.8 écart≥0.15",
+   "desc": "Favori ask 0.55-0.8, écart ≥0.15¢, après 45s.",
+   "metrics": {
+    "trades": 770,
+    "wins": 509,
+    "losses": 261,
+    "winrate": 0.661,
+    "pnl": -44.47,
+    "avgPnlPerTrade": -0.0578,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.9211,
+    "maxWin": 3.01,
+    "maxLoss": -4
+   },
+   "elapsedMs": 302
+  },
+  {
+   "strategyId": "C-favband-0.6-0.75-sp0.2",
+   "name": "Fav-band 0.6-0.75 écart≥0.2",
+   "desc": "Favori ask 0.6-0.75, écart ≥0.2¢, après 60s.",
+   "metrics": {
+    "trades": 720,
+    "wins": 478,
+    "losses": 242,
+    "winrate": 0.6639,
+    "pnl": -46.51,
+    "avgPnlPerTrade": -0.0646,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8612,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 314
+  },
+  {
+   "strategyId": "C-favband-0.6-0.75-sp0.1",
+   "name": "Fav-band 0.6-0.75 écart≥0.1",
+   "desc": "Favori ask 0.6-0.75, écart ≥0.1¢, après 45s.",
+   "metrics": {
+    "trades": 740,
+    "wins": 482,
+    "losses": 258,
+    "winrate": 0.6514,
+    "pnl": -51,
+    "avgPnlPerTrade": -0.0689,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8852,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 287
+  },
+  {
+   "strategyId": "C-favband-0.55-0.8-sp0.1",
+   "name": "Fav-band 0.55-0.8 écart≥0.1",
+   "desc": "Favori ask 0.55-0.8, écart ≥0.1¢, après 90s.",
+   "metrics": {
+    "trades": 694,
+    "wins": 463,
+    "losses": 231,
+    "winrate": 0.6671,
+    "pnl": -53.16,
+    "avgPnlPerTrade": -0.0766,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8301,
+    "maxWin": 3.14,
+    "maxLoss": -4
+   },
+   "elapsedMs": 308
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.65-d0.1",
+   "name": "Dip-revert favori 0.55-0.65 drop≥0.1",
+   "desc": "Favori décote 0.1¢ en 60s puis racheté 0.55-0.65.",
+   "metrics": {
+    "trades": 381,
+    "wins": 221,
+    "losses": 160,
+    "winrate": 0.5801,
+    "pnl": -29.17,
+    "avgPnlPerTrade": -0.0766,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4557,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 315
+  },
+  {
+   "strategyId": "C-favband-0.6-0.75-sp0.15",
+   "name": "Fav-band 0.6-0.75 écart≥0.15",
+   "desc": "Favori ask 0.6-0.75, écart ≥0.15¢, après 45s.",
+   "metrics": {
+    "trades": 740,
+    "wins": 481,
+    "losses": 259,
+    "winrate": 0.65,
+    "pnl": -57.54,
+    "avgPnlPerTrade": -0.0778,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8852,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 300
+  },
+  {
+   "strategyId": "C-favband-0.55-0.8-sp0.2",
+   "name": "Fav-band 0.55-0.8 écart≥0.2",
+   "desc": "Favori ask 0.55-0.8, écart ≥0.2¢, après 60s.",
+   "metrics": {
+    "trades": 750,
+    "wins": 508,
+    "losses": 242,
+    "winrate": 0.6773,
+    "pnl": -58.39,
+    "avgPnlPerTrade": -0.0779,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8971,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 285
+  },
+  {
+   "strategyId": "C-favband-0.55-0.7-sp0.15",
+   "name": "Fav-band 0.55-0.7 écart≥0.15",
+   "desc": "Favori ask 0.55-0.7, écart ≥0.15¢, après 45s.",
+   "metrics": {
+    "trades": 702,
+    "wins": 443,
+    "losses": 259,
+    "winrate": 0.6311,
+    "pnl": -54.91,
+    "avgPnlPerTrade": -0.0782,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8397,
+    "maxWin": 3.01,
+    "maxLoss": -4
+   },
+   "elapsedMs": 324
+  },
+  {
+   "strategyId": "C-favband-0.55-0.8-sp0.15",
+   "name": "Fav-band 0.55-0.8 écart≥0.15",
+   "desc": "Favori ask 0.55-0.8, écart ≥0.15¢, après 90s.",
+   "metrics": {
+    "trades": 694,
+    "wins": 468,
+    "losses": 226,
+    "winrate": 0.6744,
+    "pnl": -58.5,
+    "avgPnlPerTrade": -0.0843,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8301,
+    "maxWin": 2.89,
+    "maxLoss": -4
+   },
+   "elapsedMs": 330
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.7-d0.1",
+   "name": "Dip-revert favori 0.55-0.7 drop≥0.1",
+   "desc": "Favori décote 0.1¢ en 60s puis racheté 0.55-0.7.",
+   "metrics": {
+    "trades": 402,
+    "wins": 238,
+    "losses": 164,
+    "winrate": 0.592,
+    "pnl": -34.08,
+    "avgPnlPerTrade": -0.0848,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4809,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 309
+  },
+  {
+   "strategyId": "C-favband-0.55-0.7-sp0.2",
+   "name": "Fav-band 0.55-0.7 écart≥0.2",
+   "desc": "Favori ask 0.55-0.7, écart ≥0.2¢, après 90s.",
+   "metrics": {
+    "trades": 594,
+    "wins": 380,
+    "losses": 214,
+    "winrate": 0.6397,
+    "pnl": -54.63,
+    "avgPnlPerTrade": -0.092,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7105,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 306
+  },
+  {
+   "strategyId": "C-favband-0.55-0.7-sp0.1",
+   "name": "Fav-band 0.55-0.7 écart≥0.1",
+   "desc": "Favori ask 0.55-0.7, écart ≥0.1¢, après 90s.",
+   "metrics": {
+    "trades": 598,
+    "wins": 371,
+    "losses": 227,
+    "winrate": 0.6204,
+    "pnl": -56.28,
+    "avgPnlPerTrade": -0.0941,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7153,
+    "maxWin": 3.14,
+    "maxLoss": -4
+   },
+   "elapsedMs": 292
+  },
+  {
+   "strategyId": "C-favband-0.55-0.7-sp0.2",
+   "name": "Fav-band 0.55-0.7 écart≥0.2",
+   "desc": "Favori ask 0.55-0.7, écart ≥0.2¢, après 60s.",
+   "metrics": {
+    "trades": 661,
+    "wins": 422,
+    "losses": 239,
+    "winrate": 0.6384,
+    "pnl": -69.23,
+    "avgPnlPerTrade": -0.1047,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7907,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 308
+  },
+  {
+   "strategyId": "C-favband-0.52-0.65-sp0.15",
+   "name": "Fav-band 0.52-0.65 écart≥0.15",
+   "desc": "Favori ask 0.52-0.65, écart ≥0.15¢, après 45s.",
+   "metrics": {
+    "trades": 637,
+    "wins": 384,
+    "losses": 253,
+    "winrate": 0.6028,
+    "pnl": -70.93,
+    "avgPnlPerTrade": -0.1114,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.762,
+    "maxWin": 3.01,
+    "maxLoss": -4
+   },
+   "elapsedMs": 327
+  },
+  {
+   "strategyId": "C-favband-0.6-0.75-sp0.2",
+   "name": "Fav-band 0.6-0.75 écart≥0.2",
+   "desc": "Favori ask 0.6-0.75, écart ≥0.2¢, après 90s.",
+   "metrics": {
+    "trades": 641,
+    "wins": 421,
+    "losses": 220,
+    "winrate": 0.6568,
+    "pnl": -72.43,
+    "avgPnlPerTrade": -0.113,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7667,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 330
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.7-d0.06",
+   "name": "Dip-revert favori 0.55-0.7 drop≥0.06",
+   "desc": "Favori décote 0.06¢ en 60s puis racheté 0.55-0.7.",
+   "metrics": {
+    "trades": 466,
+    "wins": 276,
+    "losses": 190,
+    "winrate": 0.5923,
+    "pnl": -55.89,
+    "avgPnlPerTrade": -0.1199,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5574,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 357
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.65-d0.06",
+   "name": "Dip-revert favori 0.55-0.65 drop≥0.06",
+   "desc": "Favori décote 0.06¢ en 60s puis racheté 0.55-0.65.",
+   "metrics": {
+    "trades": 436,
+    "wins": 251,
+    "losses": 185,
+    "winrate": 0.5757,
+    "pnl": -53.61,
+    "avgPnlPerTrade": -0.123,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5215,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 343
+  },
+  {
+   "strategyId": "C-favband-0.55-0.7-sp0.15",
+   "name": "Fav-band 0.55-0.7 écart≥0.15",
+   "desc": "Favori ask 0.55-0.7, écart ≥0.15¢, après 90s.",
+   "metrics": {
+    "trades": 595,
+    "wins": 372,
+    "losses": 223,
+    "winrate": 0.6252,
+    "pnl": -77.34,
+    "avgPnlPerTrade": -0.13,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7117,
+    "maxWin": 2.89,
+    "maxLoss": -4
+   },
+   "elapsedMs": 287
+  },
+  {
+   "strategyId": "C-favband-0.55-0.8-sp0.1",
+   "name": "Fav-band 0.55-0.8 écart≥0.1",
+   "desc": "Favori ask 0.55-0.8, écart ≥0.1¢, après 60s.",
+   "metrics": {
+    "trades": 750,
+    "wins": 488,
+    "losses": 262,
+    "winrate": 0.6507,
+    "pnl": -100.24,
+    "avgPnlPerTrade": -0.1337,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8971,
+    "maxWin": 3.14,
+    "maxLoss": -4
+   },
+   "elapsedMs": 292
+  },
+  {
+   "strategyId": "B-dogmom-0.25-0.4-g0.08",
+   "name": "Underdog momentum 0.25-0.4 gain≥0.08",
+   "desc": "Underdog +0.08¢ en 90s, ask 0.25-0.4.",
+   "metrics": {
+    "trades": 607,
+    "wins": 190,
+    "losses": 417,
+    "winrate": 0.313,
+    "pnl": -82.31,
+    "avgPnlPerTrade": -0.1356,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7261,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 283
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.7-d0.06",
+   "name": "Dip-revert favori 0.55-0.7 drop≥0.06",
+   "desc": "Favori décote 0.06¢ en 30s puis racheté 0.55-0.7.",
+   "metrics": {
+    "trades": 536,
+    "wins": 322,
+    "losses": 214,
+    "winrate": 0.6007,
+    "pnl": -73.16,
+    "avgPnlPerTrade": -0.1365,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6411,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 330
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.65-d0.1",
+   "name": "Dip-revert favori 0.55-0.65 drop≥0.1",
+   "desc": "Favori décote 0.1¢ en 30s puis racheté 0.55-0.65.",
+   "metrics": {
+    "trades": 425,
+    "wins": 245,
+    "losses": 180,
+    "winrate": 0.5765,
+    "pnl": -58.9,
+    "avgPnlPerTrade": -0.1386,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5084,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 315
+  },
+  {
+   "strategyId": "C-favband-0.52-0.65-sp0.2",
+   "name": "Fav-band 0.52-0.65 écart≥0.2",
+   "desc": "Favori ask 0.52-0.65, écart ≥0.2¢, après 60s.",
+   "metrics": {
+    "trades": 587,
+    "wins": 356,
+    "losses": 231,
+    "winrate": 0.6065,
+    "pnl": -87.55,
+    "avgPnlPerTrade": -0.1491,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7022,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 316
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.65-d0.08",
+   "name": "Dip-revert favori 0.55-0.65 drop≥0.08",
+   "desc": "Favori décote 0.08¢ en 60s puis racheté 0.55-0.65.",
+   "metrics": {
+    "trades": 405,
+    "wins": 231,
+    "losses": 174,
+    "winrate": 0.5704,
+    "pnl": -60.62,
+    "avgPnlPerTrade": -0.1497,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4844,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 317
+  },
+  {
+   "strategyId": "C-favband-0.55-0.7-sp0.1",
+   "name": "Fav-band 0.55-0.7 écart≥0.1",
+   "desc": "Favori ask 0.55-0.7, écart ≥0.1¢, après 60s.",
+   "metrics": {
+    "trades": 665,
+    "wins": 407,
+    "losses": 258,
+    "winrate": 0.612,
+    "pnl": -99.87,
+    "avgPnlPerTrade": -0.1502,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7955,
+    "maxWin": 3.14,
+    "maxLoss": -4
+   },
+   "elapsedMs": 332
+  },
+  {
+   "strategyId": "F-diprev-0.6-0.75-d0.1",
+   "name": "Dip-revert favori 0.6-0.75 drop≥0.1",
+   "desc": "Favori décote 0.1¢ en 60s puis racheté 0.6-0.75.",
+   "metrics": {
+    "trades": 321,
+    "wins": 202,
+    "losses": 119,
+    "winrate": 0.6293,
+    "pnl": -48.94,
+    "avgPnlPerTrade": -0.1525,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.384,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 309
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.7-d0.08",
+   "name": "Dip-revert favori 0.55-0.7 drop≥0.08",
+   "desc": "Favori décote 0.08¢ en 60s puis racheté 0.55-0.7.",
+   "metrics": {
+    "trades": 431,
+    "wins": 252,
+    "losses": 179,
+    "winrate": 0.5847,
+    "pnl": -65.83,
+    "avgPnlPerTrade": -0.1527,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5156,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 318
+  },
+  {
+   "strategyId": "A-antiflip-0.3-0.4-d10s-w0.6",
+   "name": "Antiflip 0.3-0.4 +10s",
+   "desc": "Après flip: achète l'ancien favori [0.3-0.4], délai 10s.",
+   "metrics": {
+    "trades": 101,
+    "wins": 35,
+    "losses": 66,
+    "winrate": 0.3465,
+    "pnl": -16,
+    "avgPnlPerTrade": -0.1584,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.1208,
+    "maxWin": 9.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 299
+  },
+  {
+   "strategyId": "C-favband-0.52-0.65-sp0.1",
+   "name": "Fav-band 0.52-0.65 écart≥0.1",
+   "desc": "Favori ask 0.52-0.65, écart ≥0.1¢, après 60s.",
+   "metrics": {
+    "trades": 611,
+    "wins": 357,
+    "losses": 254,
+    "winrate": 0.5843,
+    "pnl": -96.92,
+    "avgPnlPerTrade": -0.1586,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7309,
+    "maxWin": 3.14,
+    "maxLoss": -4
+   },
+   "elapsedMs": 385
+  },
+  {
+   "strategyId": "C-favband-0.55-0.8-sp0.15",
+   "name": "Fav-band 0.55-0.8 écart≥0.15",
+   "desc": "Favori ask 0.55-0.8, écart ≥0.15¢, après 60s.",
+   "metrics": {
+    "trades": 750,
+    "wins": 493,
+    "losses": 257,
+    "winrate": 0.6573,
+    "pnl": -119.81,
+    "avgPnlPerTrade": -0.1597,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8971,
+    "maxWin": 2.89,
+    "maxLoss": -4
+   },
+   "elapsedMs": 293
+  },
+  {
+   "strategyId": "C-favband-0.6-0.75-sp0.1",
+   "name": "Fav-band 0.6-0.75 écart≥0.1",
+   "desc": "Favori ask 0.6-0.75, écart ≥0.1¢, après 60s.",
+   "metrics": {
+    "trades": 720,
+    "wins": 464,
+    "losses": 256,
+    "winrate": 0.6444,
+    "pnl": -116.07,
+    "avgPnlPerTrade": -0.1612,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8612,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 345
+  },
+  {
+   "strategyId": "C-favband-0.6-0.75-sp0.1",
+   "name": "Fav-band 0.6-0.75 écart≥0.1",
+   "desc": "Favori ask 0.6-0.75, écart ≥0.1¢, après 90s.",
+   "metrics": {
+    "trades": 641,
+    "wins": 413,
+    "losses": 228,
+    "winrate": 0.6443,
+    "pnl": -106.45,
+    "avgPnlPerTrade": -0.1661,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7667,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 313
+  },
+  {
+   "strategyId": "C-favband-0.52-0.65-sp0.1",
+   "name": "Fav-band 0.52-0.65 écart≥0.1",
+   "desc": "Favori ask 0.52-0.65, écart ≥0.1¢, après 90s.",
+   "metrics": {
+    "trades": 544,
+    "wins": 318,
+    "losses": 226,
+    "winrate": 0.5846,
+    "pnl": -90.72,
+    "avgPnlPerTrade": -0.1668,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6507,
+    "maxWin": 3.14,
+    "maxLoss": -4
+   },
+   "elapsedMs": 305
+  },
+  {
+   "strategyId": "C-favband-0.6-0.75-sp0.15",
+   "name": "Fav-band 0.6-0.75 écart≥0.15",
+   "desc": "Favori ask 0.6-0.75, écart ≥0.15¢, après 60s.",
+   "metrics": {
+    "trades": 720,
+    "wins": 463,
+    "losses": 257,
+    "winrate": 0.6431,
+    "pnl": -122.82,
+    "avgPnlPerTrade": -0.1706,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8612,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 297
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.7-d0.1",
+   "name": "Dip-revert favori 0.55-0.7 drop≥0.1",
+   "desc": "Favori décote 0.1¢ en 30s puis racheté 0.55-0.7.",
+   "metrics": {
+    "trades": 462,
+    "wins": 273,
+    "losses": 189,
+    "winrate": 0.5909,
+    "pnl": -79.08,
+    "avgPnlPerTrade": -0.1712,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5526,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 307
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.65-d0.06",
+   "name": "Dip-revert favori 0.55-0.65 drop≥0.06",
+   "desc": "Favori décote 0.06¢ en 30s puis racheté 0.55-0.65.",
+   "metrics": {
+    "trades": 488,
+    "wins": 280,
+    "losses": 208,
+    "winrate": 0.5738,
+    "pnl": -84.38,
+    "avgPnlPerTrade": -0.1729,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5837,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 303
+  },
+  {
+   "strategyId": "C-favband-0.52-0.65-sp0.2",
+   "name": "Fav-band 0.52-0.65 écart≥0.2",
+   "desc": "Favori ask 0.52-0.65, écart ≥0.2¢, après 90s.",
+   "metrics": {
+    "trades": 521,
+    "wins": 314,
+    "losses": 207,
+    "winrate": 0.6027,
+    "pnl": -91.59,
+    "avgPnlPerTrade": -0.1758,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6232,
+    "maxWin": 2.55,
+    "maxLoss": -4
+   },
+   "elapsedMs": 392
+  },
+  {
+   "strategyId": "C-favband-0.6-0.75-sp0.15",
+   "name": "Fav-band 0.6-0.75 écart≥0.15",
+   "desc": "Favori ask 0.6-0.75, écart ≥0.15¢, après 90s.",
+   "metrics": {
+    "trades": 641,
+    "wins": 412,
+    "losses": 229,
+    "winrate": 0.6427,
+    "pnl": -112.88,
+    "avgPnlPerTrade": -0.1761,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7667,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 314
+  },
+  {
+   "strategyId": "C-favband-0.52-0.65-sp0.15",
+   "name": "Fav-band 0.52-0.65 écart≥0.15",
+   "desc": "Favori ask 0.52-0.65, écart ≥0.15¢, après 90s.",
+   "metrics": {
+    "trades": 530,
+    "wins": 314,
+    "losses": 216,
+    "winrate": 0.5925,
+    "pnl": -96.97,
+    "avgPnlPerTrade": -0.183,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.634,
+    "maxWin": 3.14,
+    "maxLoss": -4
+   },
+   "elapsedMs": 328
+  },
+  {
+   "strategyId": "F-diprev-0.6-0.75-d0.08",
+   "name": "Dip-revert favori 0.6-0.75 drop≥0.08",
+   "desc": "Favori décote 0.08¢ en 60s puis racheté 0.6-0.75.",
+   "metrics": {
+    "trades": 369,
+    "wins": 231,
+    "losses": 138,
+    "winrate": 0.626,
+    "pnl": -69.4,
+    "avgPnlPerTrade": -0.1881,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4414,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 318
+  },
+  {
+   "strategyId": "C-favband-0.55-0.7-sp0.15",
+   "name": "Fav-band 0.55-0.7 écart≥0.15",
+   "desc": "Favori ask 0.55-0.7, écart ≥0.15¢, après 60s.",
+   "metrics": {
+    "trades": 662,
+    "wins": 408,
+    "losses": 254,
+    "winrate": 0.6163,
+    "pnl": -130.95,
+    "avgPnlPerTrade": -0.1978,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7919,
+    "maxWin": 2.89,
+    "maxLoss": -4
+   },
+   "elapsedMs": 335
+  },
+  {
+   "strategyId": "F-diprev-0.6-0.75-d0.1",
+   "name": "Dip-revert favori 0.6-0.75 drop≥0.1",
+   "desc": "Favori décote 0.1¢ en 30s puis racheté 0.6-0.75.",
+   "metrics": {
+    "trades": 414,
+    "wins": 261,
+    "losses": 153,
+    "winrate": 0.6304,
+    "pnl": -87.05,
+    "avgPnlPerTrade": -0.2103,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.4952,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 319
+  },
+  {
+   "strategyId": "C-favband-0.52-0.65-sp0.15",
+   "name": "Fav-band 0.52-0.65 écart≥0.15",
+   "desc": "Favori ask 0.52-0.65, écart ≥0.15¢, après 60s.",
+   "metrics": {
+    "trades": 598,
+    "wins": 351,
+    "losses": 247,
+    "winrate": 0.587,
+    "pnl": -132.31,
+    "avgPnlPerTrade": -0.2213,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7153,
+    "maxWin": 2.89,
+    "maxLoss": -4
+   },
+   "elapsedMs": 292
+  },
+  {
+   "strategyId": "E-favlimit-0.6-t30s",
+   "name": "Favori limit 0.6 (t+30s)",
+   "desc": "Limit BUY 0.6 sur le favori (placé t+30s).",
+   "metrics": {
+    "trades": 635,
+    "wins": 359,
+    "losses": 276,
+    "winrate": 0.5654,
+    "pnl": -149.06,
+    "avgPnlPerTrade": -0.2347,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7596,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 292
+  },
+  {
+   "strategyId": "F-diprev-0.6-0.75-d0.08",
+   "name": "Dip-revert favori 0.6-0.75 drop≥0.08",
+   "desc": "Favori décote 0.08¢ en 30s puis racheté 0.6-0.75.",
+   "metrics": {
+    "trades": 460,
+    "wins": 288,
+    "losses": 172,
+    "winrate": 0.6261,
+    "pnl": -109.49,
+    "avgPnlPerTrade": -0.238,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5502,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 299
+  },
+  {
+   "strategyId": "F-diprev-0.6-0.75-d0.06",
+   "name": "Dip-revert favori 0.6-0.75 drop≥0.06",
+   "desc": "Favori décote 0.06¢ en 30s puis racheté 0.6-0.75.",
+   "metrics": {
+    "trades": 515,
+    "wins": 323,
+    "losses": 192,
+    "winrate": 0.6272,
+    "pnl": -124.26,
+    "avgPnlPerTrade": -0.2413,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.616,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 310
+  },
+  {
+   "strategyId": "F-diprev-0.6-0.75-d0.06",
+   "name": "Dip-revert favori 0.6-0.75 drop≥0.06",
+   "desc": "Favori décote 0.06¢ en 60s puis racheté 0.6-0.75.",
+   "metrics": {
+    "trades": 418,
+    "wins": 258,
+    "losses": 160,
+    "winrate": 0.6172,
+    "pnl": -110.01,
+    "avgPnlPerTrade": -0.2632,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 332
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.7-d0.08",
+   "name": "Dip-revert favori 0.55-0.7 drop≥0.08",
+   "desc": "Favori décote 0.08¢ en 30s puis racheté 0.55-0.7.",
+   "metrics": {
+    "trades": 494,
+    "wins": 284,
+    "losses": 210,
+    "winrate": 0.5749,
+    "pnl": -140.34,
+    "avgPnlPerTrade": -0.2841,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5909,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 331
+  },
+  {
+   "strategyId": "F-diprev-0.55-0.65-d0.08",
+   "name": "Dip-revert favori 0.55-0.65 drop≥0.08",
+   "desc": "Favori décote 0.08¢ en 30s puis racheté 0.55-0.65.",
+   "metrics": {
+    "trades": 455,
+    "wins": 253,
+    "losses": 202,
+    "winrate": 0.556,
+    "pnl": -129.65,
+    "avgPnlPerTrade": -0.2849,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.5443,
+    "maxWin": 3.27,
+    "maxLoss": -4
+   },
+   "elapsedMs": 339
+  },
+  {
+   "strategyId": "E-favlimit-0.65-t30s",
+   "name": "Favori limit 0.65 (t+30s)",
+   "desc": "Limit BUY 0.65 sur le favori (placé t+30s).",
+   "metrics": {
+    "trades": 681,
+    "wins": 405,
+    "losses": 276,
+    "winrate": 0.5947,
+    "pnl": -233.25,
+    "avgPnlPerTrade": -0.3425,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8146,
+    "maxWin": 2.15,
+    "maxLoss": -4
+   },
+   "elapsedMs": 334
+  },
+  {
+   "strategyId": "D-doglimit-0.1-t120",
+   "name": "Underdog limit 0.1 (t+120s)",
+   "desc": "Limit BUY 0.1 sur l'underdog (placé t+120s). Payout 1:9.0.",
+   "metrics": {
+    "trades": 615,
+    "wins": 56,
+    "losses": 559,
+    "winrate": 0.0911,
+    "pnl": -220,
+    "avgPnlPerTrade": -0.3577,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7356,
+    "maxWin": 36,
+    "maxLoss": -4
+   },
+   "elapsedMs": 273
+  },
+  {
+   "strategyId": "E-favlimit-0.6-t60s",
+   "name": "Favori limit 0.6 (t+60s)",
+   "desc": "Limit BUY 0.6 sur le favori (placé t+60s).",
+   "metrics": {
+    "trades": 569,
+    "wins": 310,
+    "losses": 259,
+    "winrate": 0.5448,
+    "pnl": -211.4,
+    "avgPnlPerTrade": -0.3715,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6806,
+    "maxWin": 2.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 304
+  },
+  {
+   "strategyId": "D-doglimit-0.08-t30",
+   "name": "Underdog limit 0.08 (t+30s)",
+   "desc": "Limit BUY 0.08 sur l'underdog (placé t+30s). Payout 1:11.5.",
+   "metrics": {
+    "trades": 539,
+    "wins": 38,
+    "losses": 501,
+    "winrate": 0.0705,
+    "pnl": -204.8,
+    "avgPnlPerTrade": -0.38,
+    "avgCostPerTrade": 3.2,
+    "tradesPerWindow": 0.6447,
+    "maxWin": 36.8,
+    "maxLoss": -3.2
+   },
+   "elapsedMs": 332
+  },
+  {
+   "strategyId": "D-doglimit-0.08-t60",
+   "name": "Underdog limit 0.08 (t+60s)",
+   "desc": "Limit BUY 0.08 sur l'underdog (placé t+60s). Payout 1:11.5.",
+   "metrics": {
+    "trades": 561,
+    "wins": 39,
+    "losses": 522,
+    "winrate": 0.0695,
+    "pnl": -235.2,
+    "avgPnlPerTrade": -0.4193,
+    "avgCostPerTrade": 3.2,
+    "tradesPerWindow": 0.6711,
+    "maxWin": 36.8,
+    "maxLoss": -3.2
+   },
+   "elapsedMs": 307
+  },
+  {
+   "strategyId": "E-favlimit-0.65-t60s",
+   "name": "Favori limit 0.65 (t+60s)",
+   "desc": "Limit BUY 0.65 sur le favori (placé t+60s).",
+   "metrics": {
+    "trades": 612,
+    "wins": 353,
+    "losses": 259,
+    "winrate": 0.5768,
+    "pnl": -277.05,
+    "avgPnlPerTrade": -0.4527,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7321,
+    "maxWin": 2.15,
+    "maxLoss": -4
+   },
+   "elapsedMs": 311
+  },
+  {
+   "strategyId": "E-favlimit-0.7-t30s",
+   "name": "Favori limit 0.7 (t+30s)",
+   "desc": "Limit BUY 0.7 sur le favori (placé t+30s).",
+   "metrics": {
+    "trades": 725,
+    "wins": 449,
+    "losses": 276,
+    "winrate": 0.6193,
+    "pnl": -336.21,
+    "avgPnlPerTrade": -0.4637,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8672,
+    "maxWin": 1.71,
+    "maxLoss": -4
+   },
+   "elapsedMs": 315
+  },
+  {
+   "strategyId": "D-doglimit-0.12-t120",
+   "name": "Underdog limit 0.12 (t+120s)",
+   "desc": "Limit BUY 0.12 sur l'underdog (placé t+120s). Payout 1:7.3.",
+   "metrics": {
+    "trades": 624,
+    "wins": 65,
+    "losses": 559,
+    "winrate": 0.1042,
+    "pnl": -329.55,
+    "avgPnlPerTrade": -0.5281,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7464,
+    "maxWin": 29.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 366
+  },
+  {
+   "strategyId": "E-favlimit-0.7-t60s",
+   "name": "Favori limit 0.7 (t+60s)",
+   "desc": "Limit BUY 0.7 sur le favori (placé t+60s).",
+   "metrics": {
+    "trades": 656,
+    "wins": 397,
+    "losses": 259,
+    "winrate": 0.6052,
+    "pnl": -357.13,
+    "avgPnlPerTrade": -0.5444,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7847,
+    "maxWin": 1.71,
+    "maxLoss": -4
+   },
+   "elapsedMs": 327
+  },
+  {
+   "strategyId": "D-doglimit-0.25-t30",
+   "name": "Underdog limit 0.25 (t+30s)",
+   "desc": "Limit BUY 0.25 sur l'underdog (placé t+30s). Payout 1:3.0.",
+   "metrics": {
+    "trades": 644,
+    "wins": 137,
+    "losses": 507,
+    "winrate": 0.2127,
+    "pnl": -384,
+    "avgPnlPerTrade": -0.5963,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7703,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 335
+  },
+  {
+   "strategyId": "E-favlimit-0.75-t60s",
+   "name": "Favori limit 0.75 (t+60s)",
+   "desc": "Limit BUY 0.75 sur le favori (placé t+60s).",
+   "metrics": {
+    "trades": 713,
+    "wins": 453,
+    "losses": 260,
+    "winrate": 0.6353,
+    "pnl": -437.51,
+    "avgPnlPerTrade": -0.6136,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8529,
+    "maxWin": 1.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 374
+  },
+  {
+   "strategyId": "D-doglimit-0.15-t120",
+   "name": "Underdog limit 0.15 (t+120s)",
+   "desc": "Limit BUY 0.15 sur l'underdog (placé t+120s). Payout 1:5.7.",
+   "metrics": {
+    "trades": 643,
+    "wins": 81,
+    "losses": 562,
+    "winrate": 0.126,
+    "pnl": -412.54,
+    "avgPnlPerTrade": -0.6416,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7691,
+    "maxWin": 22.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 296
+  },
+  {
+   "strategyId": "E-favlimit-0.75-t30s",
+   "name": "Favori limit 0.75 (t+30s)",
+   "desc": "Limit BUY 0.75 sur le favori (placé t+30s).",
+   "metrics": {
+    "trades": 769,
+    "wins": 484,
+    "losses": 285,
+    "winrate": 0.6294,
+    "pnl": -496.28,
+    "avgPnlPerTrade": -0.6454,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.9199,
+    "maxWin": 1.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 333
+  },
+  {
+   "strategyId": "D-doglimit-0.1-t60",
+   "name": "Underdog limit 0.1 (t+60s)",
+   "desc": "Limit BUY 0.1 sur l'underdog (placé t+60s). Payout 1:9.0.",
+   "metrics": {
+    "trades": 570,
+    "wins": 47,
+    "losses": 523,
+    "winrate": 0.0825,
+    "pnl": -400,
+    "avgPnlPerTrade": -0.7018,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6818,
+    "maxWin": 36,
+    "maxLoss": -4
+   },
+   "elapsedMs": 286
+  },
+  {
+   "strategyId": "D-doglimit-0.2-t30",
+   "name": "Underdog limit 0.2 (t+30s)",
+   "desc": "Limit BUY 0.2 sur l'underdog (placé t+30s). Payout 1:4.0.",
+   "metrics": {
+    "trades": 607,
+    "wins": 100,
+    "losses": 507,
+    "winrate": 0.1647,
+    "pnl": -428,
+    "avgPnlPerTrade": -0.7051,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7261,
+    "maxWin": 16,
+    "maxLoss": -4
+   },
+   "elapsedMs": 317
+  },
+  {
+   "strategyId": "D-doglimit-0.15-t60",
+   "name": "Underdog limit 0.15 (t+60s)",
+   "desc": "Limit BUY 0.15 sur l'underdog (placé t+60s). Payout 1:5.7.",
+   "metrics": {
+    "trades": 599,
+    "wins": 74,
+    "losses": 525,
+    "winrate": 0.1235,
+    "pnl": -423.16,
+    "avgPnlPerTrade": -0.7064,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7165,
+    "maxWin": 22.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 327
+  },
+  {
+   "strategyId": "D-doglimit-0.1-t30",
+   "name": "Underdog limit 0.1 (t+30s)",
+   "desc": "Limit BUY 0.1 sur l'underdog (placé t+30s). Payout 1:9.0.",
+   "metrics": {
+    "trades": 547,
+    "wins": 45,
+    "losses": 502,
+    "winrate": 0.0823,
+    "pnl": -388,
+    "avgPnlPerTrade": -0.7093,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6543,
+    "maxWin": 36,
+    "maxLoss": -4
+   },
+   "elapsedMs": 325
+  },
+  {
+   "strategyId": "D-doglimit-0.18-t30",
+   "name": "Underdog limit 0.18 (t+30s)",
+   "desc": "Limit BUY 0.18 sur l'underdog (placé t+30s). Payout 1:4.6.",
+   "metrics": {
+    "trades": 592,
+    "wins": 87,
+    "losses": 505,
+    "winrate": 0.147,
+    "pnl": -434.86,
+    "avgPnlPerTrade": -0.7346,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7081,
+    "maxWin": 18.22,
+    "maxLoss": -4
+   },
+   "elapsedMs": 296
+  },
+  {
+   "strategyId": "E-favlimit-0.8-t60s",
+   "name": "Favori limit 0.8 (t+60s)",
+   "desc": "Limit BUY 0.8 sur le favori (placé t+60s).",
+   "metrics": {
+    "trades": 742,
+    "wins": 482,
+    "losses": 260,
+    "winrate": 0.6496,
+    "pnl": -558,
+    "avgPnlPerTrade": -0.752,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8876,
+    "maxWin": 1,
+    "maxLoss": -4
+   },
+   "elapsedMs": 289
+  },
+  {
+   "strategyId": "E-favlimit-0.8-t30s",
+   "name": "Favori limit 0.8 (t+30s)",
+   "desc": "Limit BUY 0.8 sur le favori (placé t+30s).",
+   "metrics": {
+    "trades": 792,
+    "wins": 507,
+    "losses": 285,
+    "winrate": 0.6402,
+    "pnl": -633,
+    "avgPnlPerTrade": -0.7992,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.9474,
+    "maxWin": 1,
+    "maxLoss": -4
+   },
+   "elapsedMs": 307
+  },
+  {
+   "strategyId": "D-doglimit-0.25-t60",
+   "name": "Underdog limit 0.25 (t+60s)",
+   "desc": "Limit BUY 0.25 sur l'underdog (placé t+60s). Payout 1:3.0.",
+   "metrics": {
+    "trades": 660,
+    "wins": 131,
+    "losses": 529,
+    "winrate": 0.1985,
+    "pnl": -544,
+    "avgPnlPerTrade": -0.8242,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7895,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 352
+  },
+  {
+   "strategyId": "D-doglimit-0.18-t60",
+   "name": "Underdog limit 0.18 (t+60s)",
+   "desc": "Limit BUY 0.18 sur l'underdog (placé t+60s). Payout 1:4.6.",
+   "metrics": {
+    "trades": 613,
+    "wins": 87,
+    "losses": 526,
+    "winrate": 0.1419,
+    "pnl": -518.86,
+    "avgPnlPerTrade": -0.8464,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7333,
+    "maxWin": 18.22,
+    "maxLoss": -4
+   },
+   "elapsedMs": 333
+  },
+  {
+   "strategyId": "D-doglimit-0.12-t60",
+   "name": "Underdog limit 0.12 (t+60s)",
+   "desc": "Limit BUY 0.12 sur l'underdog (placé t+60s). Payout 1:7.3.",
+   "metrics": {
+    "trades": 577,
+    "wins": 54,
+    "losses": 523,
+    "winrate": 0.0936,
+    "pnl": -508.18,
+    "avgPnlPerTrade": -0.8807,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6902,
+    "maxWin": 29.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 370
+  },
+  {
+   "strategyId": "D-doglimit-0.2-t60",
+   "name": "Underdog limit 0.2 (t+60s)",
+   "desc": "Limit BUY 0.2 sur l'underdog (placé t+60s). Payout 1:4.0.",
+   "metrics": {
+    "trades": 624,
+    "wins": 97,
+    "losses": 527,
+    "winrate": 0.1554,
+    "pnl": -556,
+    "avgPnlPerTrade": -0.891,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7464,
+    "maxWin": 16,
+    "maxLoss": -4
+   },
+   "elapsedMs": 297
+  },
+  {
+   "strategyId": "D-doglimit-0.15-t30",
+   "name": "Underdog limit 0.15 (t+30s)",
+   "desc": "Limit BUY 0.15 sur l'underdog (placé t+30s). Payout 1:5.7.",
+   "metrics": {
+    "trades": 570,
+    "wins": 66,
+    "losses": 504,
+    "winrate": 0.1158,
+    "pnl": -520.44,
+    "avgPnlPerTrade": -0.9131,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6818,
+    "maxWin": 22.66,
+    "maxLoss": -4
+   },
+   "elapsedMs": 333
+  },
+  {
+   "strategyId": "D-doglimit-0.18-t120",
+   "name": "Underdog limit 0.18 (t+120s)",
+   "desc": "Limit BUY 0.18 sur l'underdog (placé t+120s). Payout 1:4.6.",
+   "metrics": {
+    "trades": 653,
+    "wins": 90,
+    "losses": 563,
+    "winrate": 0.1378,
+    "pnl": -612.2,
+    "avgPnlPerTrade": -0.9375,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7811,
+    "maxWin": 18.22,
+    "maxLoss": -4
+   },
+   "elapsedMs": 291
+  },
+  {
+   "strategyId": "D-doglimit-0.12-t30",
+   "name": "Underdog limit 0.12 (t+30s)",
+   "desc": "Limit BUY 0.12 sur l'underdog (placé t+30s). Payout 1:7.3.",
+   "metrics": {
+    "trades": 552,
+    "wins": 50,
+    "losses": 502,
+    "winrate": 0.0906,
+    "pnl": -541.5,
+    "avgPnlPerTrade": -0.981,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.6603,
+    "maxWin": 29.33,
+    "maxLoss": -4
+   },
+   "elapsedMs": 307
+  },
+  {
+   "strategyId": "D-doglimit-0.2-t120",
+   "name": "Underdog limit 0.2 (t+120s)",
+   "desc": "Limit BUY 0.2 sur l'underdog (placé t+120s). Payout 1:4.0.",
+   "metrics": {
+    "trades": 660,
+    "wins": 97,
+    "losses": 563,
+    "winrate": 0.147,
+    "pnl": -700,
+    "avgPnlPerTrade": -1.0606,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.7895,
+    "maxWin": 16,
+    "maxLoss": -4
+   },
+   "elapsedMs": 284
+  },
+  {
+   "strategyId": "D-doglimit-0.25-t120",
+   "name": "Underdog limit 0.25 (t+120s)",
+   "desc": "Limit BUY 0.25 sur l'underdog (placé t+120s). Payout 1:3.0.",
+   "metrics": {
+    "trades": 684,
+    "wins": 120,
+    "losses": 564,
+    "winrate": 0.1754,
+    "pnl": -816,
+    "avgPnlPerTrade": -1.193,
+    "avgCostPerTrade": 4,
+    "tradesPerWindow": 0.8182,
+    "maxWin": 12,
+    "maxLoss": -4
+   },
+   "elapsedMs": 298
+  }
+ ]
+}

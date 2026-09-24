@@ -1,0 +1,552 @@
+{
+ "runId": "sweep4-1790145048132",
+ "type": "sweep4",
+ "budget": 4,
+ "maxShares": 40,
+ "results": [
+  {
+   "strategyId": "L-antiflip-d8s-0.44-0.48",
+   "name": "Antiflip 8s post-flip [0.44-0.48]",
+   "desc": "1er flip → attend 8s → achète le déposé [0.44-0.48], hold.",
+   "metrics": {
+    "trades": 142,
+    "wins": 67,
+    "losses": 75,
+    "winrate": 0.4718,
+    "pnl": 14.55,
+    "avgPnlPerTrade": 0.1025,
+    "avgCost": 4,
+    "avgWin": 4.69,
+    "tradesPerWindow": 0.1699
+   },
+   "elapsedMs": 311
+  },
+  {
+   "strategyId": "L-antiflip-d8s-0.42-0.48",
+   "name": "Antiflip 8s post-flip [0.42-0.48]",
+   "desc": "1er flip → attend 8s → achète le déposé [0.42-0.48], hold.",
+   "metrics": {
+    "trades": 192,
+    "wins": 96,
+    "losses": 96,
+    "winrate": 0.5,
+    "pnl": 86.89,
+    "avgPnlPerTrade": 0.4526,
+    "avgCost": 4,
+    "avgWin": 4.91,
+    "tradesPerWindow": 0.2297
+   },
+   "elapsedMs": 338
+  },
+  {
+   "strategyId": "L-antiflip-d8s-0.44-0.5",
+   "name": "Antiflip 8s post-flip [0.44-0.5]",
+   "desc": "1er flip → attend 8s → achète le déposé [0.44-0.5], hold.",
+   "metrics": {
+    "trades": 218,
+    "wins": 107,
+    "losses": 111,
+    "winrate": 0.4908,
+    "pnl": 34.07,
+    "avgPnlPerTrade": 0.1563,
+    "avgCost": 4,
+    "avgWin": 4.47,
+    "tradesPerWindow": 0.2608
+   },
+   "elapsedMs": 323
+  },
+  {
+   "strategyId": "L-antiflip-d8s-0.4-0.48",
+   "name": "Antiflip 8s post-flip [0.4-0.48]",
+   "desc": "1er flip → attend 8s → achète le déposé [0.4-0.48], hold.",
+   "metrics": {
+    "trades": 227,
+    "wins": 109,
+    "losses": 118,
+    "winrate": 0.4802,
+    "pnl": 74.39,
+    "avgPnlPerTrade": 0.3277,
+    "avgCost": 4,
+    "avgWin": 5.01,
+    "tradesPerWindow": 0.2715
+   },
+   "elapsedMs": 324
+  },
+  {
+   "strategyId": "L-antiflip-d8s-0.46-0.5",
+   "name": "Antiflip 8s post-flip [0.46-0.5]",
+   "desc": "1er flip → attend 8s → achète le déposé [0.46-0.5], hold.",
+   "metrics": {
+    "trades": 157,
+    "wins": 81,
+    "losses": 76,
+    "winrate": 0.5159,
+    "pnl": 44.25,
+    "avgPnlPerTrade": 0.2818,
+    "avgCost": 4,
+    "avgWin": 4.3,
+    "tradesPerWindow": 0.1878
+   },
+   "elapsedMs": 324
+  },
+  {
+   "strategyId": "L-antiflip-d8s-0.4-0.45",
+   "name": "Antiflip 8s post-flip [0.4-0.45]",
+   "desc": "1er flip → attend 8s → achète le déposé [0.4-0.45], hold.",
+   "metrics": {
+    "trades": 146,
+    "wins": 68,
+    "losses": 78,
+    "winrate": 0.4658,
+    "pnl": 49.66,
+    "avgPnlPerTrade": 0.3401,
+    "avgCost": 4,
+    "avgWin": 5.32,
+    "tradesPerWindow": 0.1746
+   },
+   "elapsedMs": 313
+  },
+  {
+   "strategyId": "L-antiflip-d8s-0.42-0.46",
+   "name": "Antiflip 8s post-flip [0.42-0.46]",
+   "desc": "1er flip → attend 8s → achète le déposé [0.42-0.46], hold.",
+   "metrics": {
+    "trades": 135,
+    "wins": 67,
+    "losses": 68,
+    "winrate": 0.4963,
+    "pnl": 70.44,
+    "avgPnlPerTrade": 0.5218,
+    "avgCost": 4,
+    "avgWin": 5.11,
+    "tradesPerWindow": 0.1615
+   },
+   "elapsedMs": 320
+  },
+  {
+   "strategyId": "L-antiflip-d8s-0.38-0.48",
+   "name": "Antiflip 8s post-flip [0.38-0.48]",
+   "desc": "1er flip → attend 8s → achète le déposé [0.38-0.48], hold.",
+   "metrics": {
+    "trades": 254,
+    "wins": 118,
+    "losses": 136,
+    "winrate": 0.4646,
+    "pnl": 59.72,
+    "avgPnlPerTrade": 0.2351,
+    "avgCost": 4,
+    "avgWin": 5.12,
+    "tradesPerWindow": 0.3038
+   },
+   "elapsedMs": 309
+  },
+  {
+   "strategyId": "L-antiflip-d10s-0.44-0.48",
+   "name": "Antiflip 10s post-flip [0.44-0.48]",
+   "desc": "1er flip → attend 10s → achète le déposé [0.44-0.48], hold.",
+   "metrics": {
+    "trades": 144,
+    "wins": 72,
+    "losses": 72,
+    "winrate": 0.5,
+    "pnl": 49.95,
+    "avgPnlPerTrade": 0.3469,
+    "avgCost": 4,
+    "avgWin": 4.69,
+    "tradesPerWindow": 0.1722
+   },
+   "elapsedMs": 296
+  },
+  {
+   "strategyId": "L-antiflip-d10s-0.42-0.48",
+   "name": "Antiflip 10s post-flip [0.42-0.48]",
+   "desc": "1er flip → attend 10s → achète le déposé [0.42-0.48], hold.",
+   "metrics": {
+    "trades": 190,
+    "wins": 94,
+    "losses": 96,
+    "winrate": 0.4947,
+    "pnl": 71.87,
+    "avgPnlPerTrade": 0.3783,
+    "avgCost": 4,
+    "avgWin": 4.85,
+    "tradesPerWindow": 0.2273
+   },
+   "elapsedMs": 300
+  },
+  {
+   "strategyId": "L-antiflip-d10s-0.44-0.5",
+   "name": "Antiflip 10s post-flip [0.44-0.5]",
+   "desc": "1er flip → attend 10s → achète le déposé [0.44-0.5], hold.",
+   "metrics": {
+    "trades": 200,
+    "wins": 100,
+    "losses": 100,
+    "winrate": 0.5,
+    "pnl": 52.03,
+    "avgPnlPerTrade": 0.2601,
+    "avgCost": 4,
+    "avgWin": 4.52,
+    "tradesPerWindow": 0.2392
+   },
+   "elapsedMs": 320
+  },
+  {
+   "strategyId": "L-antiflip-d10s-0.4-0.48",
+   "name": "Antiflip 10s post-flip [0.4-0.48]",
+   "desc": "1er flip → attend 10s → achète le déposé [0.4-0.48], hold.",
+   "metrics": {
+    "trades": 220,
+    "wins": 110,
+    "losses": 110,
+    "winrate": 0.5,
+    "pnl": 109.62,
+    "avgPnlPerTrade": 0.4983,
+    "avgCost": 4,
+    "avgWin": 5,
+    "tradesPerWindow": 0.2632
+   },
+   "elapsedMs": 339
+  },
+  {
+   "strategyId": "L-antiflip-d10s-0.46-0.5",
+   "name": "Antiflip 10s post-flip [0.46-0.5]",
+   "desc": "1er flip → attend 10s → achète le déposé [0.46-0.5], hold.",
+   "metrics": {
+    "trades": 142,
+    "wins": 73,
+    "losses": 69,
+    "winrate": 0.5141,
+    "pnl": 41.75,
+    "avgPnlPerTrade": 0.294,
+    "avgCost": 4,
+    "avgWin": 4.35,
+    "tradesPerWindow": 0.1699
+   },
+   "elapsedMs": 327
+  },
+  {
+   "strategyId": "L-antiflip-d10s-0.4-0.45",
+   "name": "Antiflip 10s post-flip [0.4-0.45]",
+   "desc": "1er flip → attend 10s → achète le déposé [0.4-0.45], hold.",
+   "metrics": {
+    "trades": 134,
+    "wins": 65,
+    "losses": 69,
+    "winrate": 0.4851,
+    "pnl": 69.95,
+    "avgPnlPerTrade": 0.522,
+    "avgCost": 4,
+    "avgWin": 5.32,
+    "tradesPerWindow": 0.1603
+   },
+   "elapsedMs": 308
+  },
+  {
+   "strategyId": "L-antiflip-d10s-0.42-0.46",
+   "name": "Antiflip 10s post-flip [0.42-0.46]",
+   "desc": "1er flip → attend 10s → achète le déposé [0.42-0.46], hold.",
+   "metrics": {
+    "trades": 135,
+    "wins": 66,
+    "losses": 69,
+    "winrate": 0.4889,
+    "pnl": 55.93,
+    "avgPnlPerTrade": 0.4143,
+    "avgCost": 4,
+    "avgWin": 5.03,
+    "tradesPerWindow": 0.1615
+   },
+   "elapsedMs": 366
+  },
+  {
+   "strategyId": "L-antiflip-d10s-0.38-0.48",
+   "name": "Antiflip 10s post-flip [0.38-0.48]",
+   "desc": "1er flip → attend 10s → achète le déposé [0.38-0.48], hold.",
+   "metrics": {
+    "trades": 254,
+    "wins": 120,
+    "losses": 134,
+    "winrate": 0.4724,
+    "pnl": 76.93,
+    "avgPnlPerTrade": 0.3029,
+    "avgCost": 4,
+    "avgWin": 5.11,
+    "tradesPerWindow": 0.3038
+   },
+   "elapsedMs": 347
+  },
+  {
+   "strategyId": "L-antiflip-d12s-0.44-0.48",
+   "name": "Antiflip 12s post-flip [0.44-0.48]",
+   "desc": "1er flip → attend 12s → achète le déposé [0.44-0.48], hold.",
+   "metrics": {
+    "trades": 125,
+    "wins": 64,
+    "losses": 61,
+    "winrate": 0.512,
+    "pnl": 55.77,
+    "avgPnlPerTrade": 0.4462,
+    "avgCost": 4,
+    "avgWin": 4.68,
+    "tradesPerWindow": 0.1495
+   },
+   "elapsedMs": 321
+  },
+  {
+   "strategyId": "L-antiflip-d12s-0.42-0.48",
+   "name": "Antiflip 12s post-flip [0.42-0.48]",
+   "desc": "1er flip → attend 12s → achète le déposé [0.42-0.48], hold.",
+   "metrics": {
+    "trades": 173,
+    "wins": 86,
+    "losses": 87,
+    "winrate": 0.4971,
+    "pnl": 69.91,
+    "avgPnlPerTrade": 0.4041,
+    "avgCost": 4,
+    "avgWin": 4.86,
+    "tradesPerWindow": 0.2069
+   },
+   "elapsedMs": 345
+  },
+  {
+   "strategyId": "L-antiflip-d12s-0.44-0.5",
+   "name": "Antiflip 12s post-flip [0.44-0.5]",
+   "desc": "1er flip → attend 12s → achète le déposé [0.44-0.5], hold.",
+   "metrics": {
+    "trades": 174,
+    "wins": 89,
+    "losses": 85,
+    "winrate": 0.5115,
+    "pnl": 62.49,
+    "avgPnlPerTrade": 0.3591,
+    "avgCost": 4,
+    "avgWin": 4.52,
+    "tradesPerWindow": 0.2081
+   },
+   "elapsedMs": 302
+  },
+  {
+   "strategyId": "L-antiflip-d12s-0.4-0.48",
+   "name": "Antiflip 12s post-flip [0.4-0.48]",
+   "desc": "1er flip → attend 12s → achète le déposé [0.4-0.48], hold.",
+   "metrics": {
+    "trades": 200,
+    "wins": 98,
+    "losses": 102,
+    "winrate": 0.49,
+    "pnl": 79.66,
+    "avgPnlPerTrade": 0.3983,
+    "avgCost": 4,
+    "avgWin": 4.98,
+    "tradesPerWindow": 0.2392
+   },
+   "elapsedMs": 336
+  },
+  {
+   "strategyId": "L-antiflip-d12s-0.46-0.5",
+   "name": "Antiflip 12s post-flip [0.46-0.5]",
+   "desc": "1er flip → attend 12s → achète le déposé [0.46-0.5], hold.",
+   "metrics": {
+    "trades": 128,
+    "wins": 68,
+    "losses": 60,
+    "winrate": 0.5313,
+    "pnl": 57.91,
+    "avgPnlPerTrade": 0.4524,
+    "avgCost": 4,
+    "avgWin": 4.38,
+    "tradesPerWindow": 0.1531
+   },
+   "elapsedMs": 324
+  },
+  {
+   "strategyId": "L-antiflip-d12s-0.4-0.45",
+   "name": "Antiflip 12s post-flip [0.4-0.45]",
+   "desc": "1er flip → attend 12s → achète le déposé [0.4-0.45], hold.",
+   "metrics": {
+    "trades": 121,
+    "wins": 55,
+    "losses": 66,
+    "winrate": 0.4545,
+    "pnl": 28.47,
+    "avgPnlPerTrade": 0.2353,
+    "avgCost": 4,
+    "avgWin": 5.32,
+    "tradesPerWindow": 0.1447
+   },
+   "elapsedMs": 322
+  },
+  {
+   "strategyId": "L-antiflip-d12s-0.42-0.46",
+   "name": "Antiflip 12s post-flip [0.42-0.46]",
+   "desc": "1er flip → attend 12s → achète le déposé [0.42-0.46], hold.",
+   "metrics": {
+    "trades": 123,
+    "wins": 62,
+    "losses": 61,
+    "winrate": 0.5041,
+    "pnl": 67.83,
+    "avgPnlPerTrade": 0.5515,
+    "avgCost": 4,
+    "avgWin": 5.03,
+    "tradesPerWindow": 0.1471
+   },
+   "elapsedMs": 326
+  },
+  {
+   "strategyId": "L-antiflip-d12s-0.38-0.48",
+   "name": "Antiflip 12s post-flip [0.38-0.48]",
+   "desc": "1er flip → attend 12s → achète le déposé [0.38-0.48], hold.",
+   "metrics": {
+    "trades": 240,
+    "wins": 111,
+    "losses": 129,
+    "winrate": 0.4625,
+    "pnl": 55.34,
+    "avgPnlPerTrade": 0.2306,
+    "avgCost": 4,
+    "avgWin": 5.15,
+    "tradesPerWindow": 0.2871
+   },
+   "elapsedMs": 308
+  },
+  {
+   "strategyId": "L-antiflip-d15s-0.44-0.48",
+   "name": "Antiflip 15s post-flip [0.44-0.48]",
+   "desc": "1er flip → attend 15s → achète le déposé [0.44-0.48], hold.",
+   "metrics": {
+    "trades": 110,
+    "wins": 51,
+    "losses": 59,
+    "winrate": 0.4636,
+    "pnl": 3.48,
+    "avgPnlPerTrade": 0.0316,
+    "avgCost": 4,
+    "avgWin": 4.7,
+    "tradesPerWindow": 0.1316
+   },
+   "elapsedMs": 317
+  },
+  {
+   "strategyId": "L-antiflip-d15s-0.42-0.48",
+   "name": "Antiflip 15s post-flip [0.42-0.48]",
+   "desc": "1er flip → attend 15s → achète le déposé [0.42-0.48], hold.",
+   "metrics": {
+    "trades": 146,
+    "wins": 68,
+    "losses": 78,
+    "winrate": 0.4658,
+    "pnl": 18.68,
+    "avgPnlPerTrade": 0.1279,
+    "avgCost": 4,
+    "avgWin": 4.86,
+    "tradesPerWindow": 0.1746
+   },
+   "elapsedMs": 327
+  },
+  {
+   "strategyId": "L-antiflip-d15s-0.44-0.5",
+   "name": "Antiflip 15s post-flip [0.44-0.5]",
+   "desc": "1er flip → attend 15s → achète le déposé [0.44-0.5], hold.",
+   "metrics": {
+    "trades": 156,
+    "wins": 74,
+    "losses": 82,
+    "winrate": 0.4744,
+    "pnl": 5.88,
+    "avgPnlPerTrade": 0.0377,
+    "avgCost": 4,
+    "avgWin": 4.51,
+    "tradesPerWindow": 0.1866
+   },
+   "elapsedMs": 386
+  },
+  {
+   "strategyId": "L-antiflip-d15s-0.4-0.48",
+   "name": "Antiflip 15s post-flip [0.4-0.48]",
+   "desc": "1er flip → attend 15s → achète le déposé [0.4-0.48], hold.",
+   "metrics": {
+    "trades": 176,
+    "wins": 78,
+    "losses": 98,
+    "winrate": 0.4432,
+    "pnl": -3.32,
+    "avgPnlPerTrade": -0.0189,
+    "avgCost": 4,
+    "avgWin": 4.98,
+    "tradesPerWindow": 0.2105
+   },
+   "elapsedMs": 353
+  },
+  {
+   "strategyId": "L-antiflip-d15s-0.46-0.5",
+   "name": "Antiflip 15s post-flip [0.46-0.5]",
+   "desc": "1er flip → attend 15s → achète le déposé [0.46-0.5], hold.",
+   "metrics": {
+    "trades": 108,
+    "wins": 54,
+    "losses": 54,
+    "winrate": 0.5,
+    "pnl": 18.39,
+    "avgPnlPerTrade": 0.1703,
+    "avgCost": 4,
+    "avgWin": 4.34,
+    "tradesPerWindow": 0.1292
+   },
+   "elapsedMs": 353
+  },
+  {
+   "strategyId": "L-antiflip-d15s-0.4-0.45",
+   "name": "Antiflip 15s post-flip [0.4-0.45]",
+   "desc": "1er flip → attend 15s → achète le déposé [0.4-0.45], hold.",
+   "metrics": {
+    "trades": 114,
+    "wins": 47,
+    "losses": 67,
+    "winrate": 0.4123,
+    "pnl": -19.31,
+    "avgPnlPerTrade": -0.1694,
+    "avgCost": 4,
+    "avgWin": 5.29,
+    "tradesPerWindow": 0.1364
+   },
+   "elapsedMs": 360
+  },
+  {
+   "strategyId": "L-antiflip-d15s-0.42-0.46",
+   "name": "Antiflip 15s post-flip [0.42-0.46]",
+   "desc": "1er flip → attend 15s → achète le déposé [0.42-0.46], hold.",
+   "metrics": {
+    "trades": 105,
+    "wins": 49,
+    "losses": 56,
+    "winrate": 0.4667,
+    "pnl": 22.97,
+    "avgPnlPerTrade": 0.2188,
+    "avgCost": 4,
+    "avgWin": 5.04,
+    "tradesPerWindow": 0.1256
+   },
+   "elapsedMs": 322
+  },
+  {
+   "strategyId": "L-antiflip-d15s-0.38-0.48",
+   "name": "Antiflip 15s post-flip [0.38-0.48]",
+   "desc": "1er flip → attend 15s → achète le déposé [0.38-0.48], hold.",
+   "metrics": {
+    "trades": 206,
+    "wins": 93,
+    "losses": 113,
+    "winrate": 0.4515,
+    "pnl": 32.05,
+    "avgPnlPerTrade": 0.1556,
+    "avgCost": 4,
+    "avgWin": 5.2,
+    "tradesPerWindow": 0.2464
+   },
+   "elapsedMs": 332
+  }
+ ]
+}

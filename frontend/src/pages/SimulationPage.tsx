@@ -1,6 +1,7 @@
 import { For, Show, createMemo, createSignal, onMount } from "solid-js";
 import type { JSX } from "solid-js";
 import { api, type SimEngineState, type SimConfigPatch, type SimTrade, type SimRestingOrder } from "../api/client";
+import type { SimulatedPosition } from "../types";
 import { ActiveMarkets } from "../components/panels/ActiveMarkets";
 import { EmptyState } from "../components/ui/EmptyState";
 import { Panel } from "../components/ui/Panel";
@@ -25,7 +26,7 @@ import {
   simResolvedPositions,
   simStats,
 } from "../stores/simStore";
-import { countdown, fmtPrice, fmtShares, fmtUsd, timeStr } from "../utils/format";
+import { countdown, fmtPrice, fmtShares, fmtUsd, pct, timeStr } from "../utils/format";
 import { addLog } from "../stores/logStore";
 import { pushError } from "../stores/toastStore";
 
@@ -53,6 +54,25 @@ function marketTitleForToken(tokenId: string): string {
     if (m.books.some((b) => b.tokenId === tokenId)) return m.title;
   }
   return tokenId.length > 14 ? `${tokenId.slice(0, 14)}…` : tokenId;
+}
+
+/**
+ * Bid live d'un tokenId (store markets SSE). Appelée dans le JSX d'une ligne :
+ * les lectures du store sont trackées → la cellule se met à jour à chaque tick.
+ */
+function liveBidForToken(tokenId: string): number | null {
+  for (const m of Object.values(markets)) {
+    const book = m.books.find((b) => b.tokenId === tokenId);
+    if (book?.bestBid != null) return book.bestBid;
+  }
+  return null;
+}
+
+/** P&L non réalisé d'une position ouverte, au prix de sortie (bid live). */
+function unrealizedPnl(p: SimulatedPosition): number | null {
+  const bid = liveBidForToken(p.tokenId);
+  if (bid == null) return null;
+  return (bid - p.fillPrice) * p.size;
 }
 
 export function SimulationPage(): JSX.Element {
@@ -197,15 +217,17 @@ export function SimulationPage(): JSX.Element {
     void loadInitialState();
   });
 
-  // Listes triées : plus récent d'abord (les listes SSE sont insérées en tête,
-  // le reverse ne s'applique qu'au rendu pour ne pas perturber le store).
+  // Listes triées : "Plus récent d'abord" trié explicitement (le store peut
+  // contenir un mélange hydratation REST + events SSE insérés en queue).
   const sortedResolved = createMemo(() => {
     const list = [...simResolvedPositions()];
+    list.sort((a, b) => (b.resolvedAt ?? b.windowEnd * 1000) - (a.resolvedAt ?? a.windowEnd * 1000));
     return reverseOrder() ? list : list.reverse();
   });
 
   const sortedJournal = createMemo(() => {
     const list = [...journal()];
+    list.sort((a, b) => b.ts - a.ts);
     return reverseOrder() ? list : list.reverse();
   });
 
@@ -392,6 +414,7 @@ export function SimulationPage(): JSX.Element {
                   <th>Fill</th>
                   <th>Size</th>
                   <th>Coût</th>
+                  <th>P&L en cours</th>
                   <th>Fin de fenêtre</th>
                   <th>Type</th>
                 </tr>
@@ -406,6 +429,14 @@ export function SimulationPage(): JSX.Element {
                       <td>{fmtPrice(p.fillPrice)}</td>
                       <td>{fmtShares(p.size)}</td>
                       <td>{fmtUsd(p.cost)}</td>
+                      <td class={pnlClass(unrealizedPnl(p) ?? 0)}>
+                        <Show when={unrealizedPnl(p) != null} fallback="—">
+                          {fmtUsd(unrealizedPnl(p)!)}
+                          <Show when={p.cost > 0}>
+                            <span class="sim-pnl-pct"> ({pct((unrealizedPnl(p)! / p.cost) * 100)})</span>
+                          </Show>
+                        </Show>
+                      </td>
                       <td class={countdownClass(p.windowEnd, now())}>
                         {countdown(p.windowEnd, now())}
                       </td>

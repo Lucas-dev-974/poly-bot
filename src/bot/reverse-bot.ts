@@ -63,7 +63,10 @@ export class ReverseBot {
     private readonly config: BotConfig,
     private readonly trader: Trader,
     private readonly repos?: Repositories,
-    private readonly paper?: { isEnabled(): boolean; onBooks(event: UpDownEvent, books: TokenBook[], nowMs: number): void },
+    private readonly paper?: {
+      isEnabled(): boolean;
+      onBooks(event: UpDownEvent, books: TokenBook[], nowMs: number, opts?: { trading?: boolean }): void;
+    },
   ) {
     this.tracker = new TradeTracker(
       repos?.positions,
@@ -437,9 +440,11 @@ export class ReverseBot {
     const books = await this.scanner.getTokenBooks(event);
     this.assertTickActive(session);
     // Paper trading : la sim reçoit les books dès qu'ils sont fetchés, avant
-    // les gates trading/pause — elle gère sa propre fenêtre de trading.
+    // les gates trading/pause — elle gère sa propre fenêtre de trading. Le
+    // flag `trading` de la famille est respecté : pas d'ouverture de positions
+    // sim sur une famille désactivée au trading (miroir du gate live).
     if (this.paper?.isEnabled()) {
-      this.paper.onBooks(event, books, Date.now());
+      this.paper.onBooks(event, books, Date.now(), { trading: flags.trading });
     }
     if (flags.recording) {
       this.snapshots.insertBooks(event, books, tickTs);

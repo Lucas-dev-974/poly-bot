@@ -91,6 +91,23 @@
   color: var(--muted, #8b93a3);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Barre de configuration : groupes Stratégie | Capital + actions */
 .sim-control-bar {
   display: flex;
@@ -343,6 +360,13 @@
 
 .pnl-neg {
   color: var(--red, #e74c3c);
+}
+
+/* Pourcentage de P&L affiché à côté du montant (positions ouvertes). */
+.sim-pnl-pct {
+  font-size: 10.5px;
+  opacity: 0.75;
+  font-weight: 400;
 }
 
 .sim-muted {

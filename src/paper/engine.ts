@@ -178,18 +178,31 @@ export class PaperTradingEngine {
   }
 
   /** Point d'entrée par tick : books temps réel du bot live. */
-  onBooks(event: UpDownEvent, books: TokenBook[], nowMs: number): void {
+  onBooks(
+    event: UpDownEvent,
+    books: TokenBook[],
+    nowMs: number,
+    opts?: { trading?: boolean },
+  ): void {
     if (!this.enabled) return;
+    // Mémorise les derniers bids (P&L latent page Simulation) — même sur les
+    // familles non-tradables : valorisation P&L sans ouvrir de position.
+    for (const book of books) {
+      if (book.bestBid !== null) this.lastBids.set(book.tokenId, book.bestBid);
+    }
+
+    // Respecte la règle de famille (market_rules) : pas de nouvelle entrée sim
+    // sur une famille désactivée au trading — miroir du gate live
+    // (`if (!flags.trading) return`). Ne bloque que les NOUVELLES entrées :
+    // la gestion des positions existantes (resolveDue) tourne par ailleurs.
+    if (opts?.trading === false) return;
+
     // Reconstruit le resting book depuis la DB pour ce slug au premier tick
     // après un restart (BacktestRestingBook est mémoire seule, le tracker
     // recharge ses postedOrders depuis sim_posted_orders).
     if (!this.restingSyncedSlugs.has(event.slug)) {
       this.syncRestingFromTracker(event);
       this.restingSyncedSlugs.add(event.slug);
-    }
-    // Mémorise les derniers bids (P&L latent pour la page Simulation).
-    for (const book of books) {
-      if (book.bestBid !== null) this.lastBids.set(book.tokenId, book.bestBid);
     }
 
     processTick({
@@ -218,6 +231,18 @@ export class PaperTradingEngine {
   /** Résolution des fenêtres passées (crédit $1/share aux gagnants). */
   async resolveDue(): Promise<void> {
     const nowMs = Date.now();
+    // Purge des GTC resting dont la fenêtre est passée (miroir closeWindow du
+    // backtest) : sans cela ils resteraient en mémoire + dans sim_posted_orders
+    // (panneau "Ordres en attente" pollué, reservedNotional capital fantôme).
+    // processTick ne les matchera plus (slug non plus scanné après fenêtre).
+    const nowSec = Math.floor(nowMs / 1000);
+    for (const order of this.resting.listAll()) {
+      if (order.context.windowEnd + 60 < nowSec) {
+        this.resting.remove(order.key);
+        this.tracker.removePostedOrder(order.key);
+        this.tracker.unmark(order.key);
+      }
+    }
     for (const position of this.tracker.getOpenPositions()) {
       if (position.windowEnd * 1000 > nowMs) continue;
       const winner = await resolveWindowWinner(
@@ -399,6 +424,11 @@ export class PaperTradingEngine {
   }
 
   private emitBalance(): void {
+    // Persiste le cash à chaque émission (5s) : sans cela, les crédits de
+    // résolution (ledger.credit dans resolveDue) ne sont jamais écrits en DB
+    // (seuls les débits d'entrée l'étaient via onPositionOpened) → au restart,
+    // un cash tronqué et des payouts perdus. Écriture idempotente, coût négligeable.
+    this.repos?.simState.set("capitalCash", String(this.ledger.getBalance()));
     const state = this.getState();
     bus.emit({
       type: "simBalance",

@@ -8,14 +8,57 @@ import { log } from "./logger.js";
 import { asStrategyId, type StrategyId } from "./strategy/ids.js";
 import { MIN_CLOB_SHARES } from "./utils/prices.js";
 import type {
-  KeyRepository,
-  PairRepository,
-  PositionRepository,
-  PostedOrderRepository,
   PostedOrderRow,
-  RetryRepository,
-  WindowClaimRepository,
+  WindowClaimRow,
 } from "./db/repositories.js";
+
+// Interfaces structurelles : le tracker accepte aussi bien les repos live
+// (PositionRepository...) que leurs miroirs paper trading (SimPositionRepository...).
+interface TrackerPositionsRepo {
+  open(): SimulatedPosition[];
+  recentResolved(limit: number): SimulatedPosition[];
+  byPairIds(ids: string[]): SimulatedPosition[];
+  countLegsByKind(pairId: string, kind: string): number;
+  getAggregateStats(): { pnl: number; wins: number; losses: number };
+  insert(position: SimulatedPosition): void;
+  updateStatus(position: SimulatedPosition): void;
+}
+
+interface TrackerPairsRepo {
+  unresolved(): SimulatedArbPair[];
+  recentResolved(limit: number): SimulatedArbPair[];
+  getAggregateStats(): {
+    arbPnl: number;
+    directionalPnl: number;
+    coveredCount: number;
+    uncoveredCount: number;
+  };
+  upsert(pair: SimulatedArbPair): void;
+}
+
+interface TrackerKeysRepo {
+  all(): Array<{ key: string; createdAt: number }>;
+  mark(key: string): void;
+  delete(key: string): void;
+}
+
+interface TrackerRetriesRepo {
+  all(): Map<string, { count: number; updatedAt: number }>;
+  increment(key: string): number;
+}
+
+interface TrackerWindowClaimsRepo {
+  all(): Map<string, WindowClaimRow>;
+  set(pairId: string, claim: WindowClaimRow): void;
+  delete(pairId: string): void;
+}
+
+interface TrackerPostedOrdersRepo {
+  all(): PostedOrderRow[];
+  insert(order: PostedOrderRow): void;
+  delete(key: string): void;
+  pruneStale(nowSeconds: number): void;
+}
 
 interface WindowClaim {
   cheapOutcome: string;
@@ -66,12 +109,12 @@ export class TradeTracker {
   };
 
   constructor(
-    private readonly positionsRepo?: PositionRepository,
-    private readonly pairsRepo?: PairRepository,
-    private readonly keysRepo?: KeyRepository,
-    private readonly retriesRepo?: RetryRepository,
-    private readonly windowClaimsRepo?: WindowClaimRepository,
-    private readonly postedOrdersRepo?: PostedOrderRepository,
+    private readonly positionsRepo?: TrackerPositionsRepo,
+    private readonly pairsRepo?: TrackerPairsRepo,
+    private readonly keysRepo?: TrackerKeysRepo,
+    private readonly retriesRepo?: TrackerRetriesRepo,
+    private readonly windowClaimsRepo?: TrackerWindowClaimsRepo,
+    private readonly postedOrdersRepo?: TrackerPostedOrdersRepo,
   ) {}
 
   loadFromDb(): void {

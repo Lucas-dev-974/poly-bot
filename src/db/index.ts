@@ -22,6 +22,14 @@ import {
   BacktestPositionRepository,
   BacktestRunRepository,
   BacktestTradeRepository,
+  SimKeyRepository,
+  SimPairRepository,
+  SimPositionRepository,
+  SimPostedOrderRepository,
+  SimRetryRepository,
+  SimStateRepository,
+  SimTradeRepository,
+  SimWindowClaimRepository,
 } from "./repositories.js";
 import { StrategyGraphRepository } from "./strategy-graph-repo.js";
 
@@ -50,6 +58,14 @@ export interface Repositories {
   backtestTrades: BacktestTradeRepository;
   backtestPositions: BacktestPositionRepository;
   strategyGraphs: StrategyGraphRepository;
+  simPositions: SimPositionRepository;
+  simPairs: SimPairRepository;
+  simTrades: SimTradeRepository;
+  simState: SimStateRepository;
+  simPostedOrders: SimPostedOrderRepository;
+  simKeys: SimKeyRepository;
+  simRetries: SimRetryRepository;
+  simWindowClaims: SimWindowClaimRepository;
 }
 
 export function createRepositories(db: Database): Repositories {
@@ -78,5 +94,13 @@ export function createRepositories(db: Database): Repositories {
     backtestTrades: new BacktestTradeRepository(db),
     backtestPositions: new BacktestPositionRepository(db),
     strategyGraphs: new StrategyGraphRepository(db),
+    simPositions: new SimPositionRepository(db),
+    simPairs: new SimPairRepository(db),
+    simTrades: new SimTradeRepository(db),
+    simState: new SimStateRepository(db),
+    simPostedOrders: new SimPostedOrderRepository(db),
+    simKeys: new SimKeyRepository(db),
+    simRetries: new SimRetryRepository(db),
+    simWindowClaims: new SimWindowClaimRepository(db),
   };
 }

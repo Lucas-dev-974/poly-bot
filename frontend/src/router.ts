@@ -1,4 +1,4 @@
-export type AppRoute = "dashboard" | "guide" | "backtest" | "strategy-editor" | "donnees";
+export type AppRoute = "dashboard" | "guide" | "backtest" | "strategy-editor" | "donnees" | "simulation";
 
 export function currentRoute(): AppRoute {
   const p = window.location.pathname;
@@ -6,10 +6,13 @@ export function currentRoute(): AppRoute {
   if (p === "/backtest" || p.startsWith("/backtest/")) return "backtest";
   if (p === "/strategy-editor" || p.startsWith("/strategy-editor/")) return "strategy-editor";
   if (p === "/donnees" || p.startsWith("/donnees/")) return "donnees";
+  if (p === "/simulation" || p.startsWith("/simulation/")) return "simulation";
   return "dashboard";
 }
 
-export function navigate(to: "/" | "/guide" | "/backtest" | "/strategy-editor" | "/donnees"): void {
+export function navigate(
+  to: "/" | "/guide" | "/backtest" | "/strategy-editor" | "/donnees" | "/simulation",
+): void {
   if (window.location.pathname === to) return;
   history.pushState({}, "", to);
   window.dispatchEvent(new PopStateEvent("popstate"));
@@ -20,7 +23,7 @@ export function navigate(to: "/" | "/guide" | "/backtest" | "/strategy-editor" |
  * The pathname must still match an AppRoute for routing to work.
  */
 export function navigateWithQuery(
-  to: "/" | "/guide" | "/backtest" | "/strategy-editor" | "/donnees",
+  to: "/" | "/guide" | "/backtest" | "/strategy-editor" | "/donnees" | "/simulation",
   query: Record<string, string>,
 ): void {
   const qs = new URLSearchParams(query).toString();

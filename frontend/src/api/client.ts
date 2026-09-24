@@ -1,5 +1,61 @@
 import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, EngineStatsRow, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, ManualBuyResult, MarketHistoryResponse, MarketRuleRow, MarketRulesResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, StrategyId, ToggleMarketRuleResponse, WalletQuote, WalletTradesResponse, WithdrawalRow, WithdrawResponse, FavBandWhipsawStatus } from "../types";
 
+/** Réponse GET /api/sim/state (hydratation de la page Simulation). */
+export interface SimStateResponse {
+  ok: boolean;
+  state: SimEngineState;
+  open: SimulatedPosition[];
+  resolved: SimulatedPosition[];
+  resting: SimRestingOrder[];
+  trades: SimTrade[];
+}
+
+/** Ligne de l'historique des ordres simulés (sim_trades). */
+export interface SimTrade {
+  ts: number;
+  eventSlug: string;
+  kind: string;
+  outcome: string;
+  side: string;
+  limitPrice: number;
+  fillPrice: number | null;
+  size: number;
+  filled: number;
+  reason: string | null;
+  fillReason: string | null;
+  orderType: string | null;
+  pairId: string | null;
+  pnl: number | null;
+}
+
+export interface SimRestingOrder {
+  key: string;
+  tokenId: string;
+  outcome: string;
+  kind: string;
+  limitPrice: number;
+  size: number;
+  cost: number;
+  windowEnd: number;
+}
+
+export interface SimEngineState {
+  enabled: boolean;
+  cash: number;
+  positionsValue: number;
+  total: number;
+  capitalInitial: number;
+  strategyId: string;
+  presetId: string | null;
+  stats: import("../types").SimulatedStats;
+}
+
+export interface SimConfigPatch {
+  strategyId?: string;
+  presetId?: string | null;
+  capital?: number;
+}
+
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
   if (!res.ok) {
@@ -372,4 +428,32 @@ export const api = {
     request<{ ok: boolean; error?: string }>("/api/strategy/status/reset", {
       method: "POST",
     }),
+
+  // ---- Simulation live (paper trading) ----
+  simState: () =>
+    request<SimStateResponse>("/api/sim/state"),
+  simControl: (enabled: boolean) =>
+    request<{ ok: boolean; enabled?: boolean; error?: string }>("/api/sim/control", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ enabled }),
+    }),
+  simUpdateConfig: (patch: SimConfigPatch) =>
+    request<{ ok: boolean; error?: string }>("/api/sim/config", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patch),
+    }),
+  simReset: () =>
+    request<{ ok: boolean; error?: string }>("/api/sim/reset", { method: "POST" }),
+  simPositions: (status: "open" | "resolved" = "open") =>
+    request<{ positions: SimulatedPosition[] }>(
+      `/api/sim/positions?status=${status}`,
+    ),
+  simTrades: (limit = 200) =>
+    request<{ trades: SimTrade[] }>(`/api/sim/trades?limit=${limit}`),
+  simResting: (slug: string) =>
+    request<{ resting: SimRestingOrder[] }>(
+      `/api/sim/resting?slug=${encodeURIComponent(slug)}`,
+    ),
 };

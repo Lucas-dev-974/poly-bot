@@ -11,7 +11,7 @@ import { createStrategy } from "../strategy/registry.js";
 import type { TradingStrategy } from "../strategy/trading-strategy.js";
 import { TradeTracker } from "../trade-tracker.js";
 import { Trader } from "../trader.js";
-import type { UpDownEvent } from "../types.js";
+import type { TokenBook, UpDownEvent } from "../types.js";
 import { BalanceGuard } from "./balance-guard.js";
 import { LiveOrderLifecycle } from "./live-order-lifecycle.js";
 import { OpportunityExecutor } from "./opportunity-executor.js";
@@ -63,6 +63,7 @@ export class ReverseBot {
     private readonly config: BotConfig,
     private readonly trader: Trader,
     private readonly repos?: Repositories,
+    private readonly paper?: { isEnabled(): boolean; onBooks(event: UpDownEvent, books: TokenBook[], nowMs: number): void },
   ) {
     this.tracker = new TradeTracker(
       repos?.positions,
@@ -435,6 +436,11 @@ export class ReverseBot {
     // reposés (manageLiveResting), on fetch donc toujours sauf famille 0/0.
     const books = await this.scanner.getTokenBooks(event);
     this.assertTickActive(session);
+    // Paper trading : la sim reçoit les books dès qu'ils sont fetchés, avant
+    // les gates trading/pause — elle gère sa propre fenêtre de trading.
+    if (this.paper?.isEnabled()) {
+      this.paper.onBooks(event, books, Date.now());
+    }
     if (flags.recording) {
       this.snapshots.insertBooks(event, books, tickTs);
     }

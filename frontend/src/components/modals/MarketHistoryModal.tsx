@@ -274,7 +274,7 @@ function positionTsSec(ts: number | undefined): number {
   return ts > 1e12 ? Math.floor(ts / 1000) : ts;
 }
 
-type TradeOrigin = "bot" | "api" | "position";
+type TradeOrigin = "bot" | "api" | "position" | "sim";
 type DisplayTrade = TradePoint & {
   origin: TradeOrigin;
   dryRun?: boolean;
@@ -316,14 +316,22 @@ function pairTradesFromStore(conditionId: string): DisplayTrade[] {
  *  1. fills du bot (table orders) → heure et prix exacts,
  *  2. trades de l'API Data (souvent une seule jambe),
  *  3. positions de la liste (heure approximative).
+ * Les trades de simulation (origine "sim") contournent la priorité : le
+ * capital étant séparé, ils s'ajoutent aux trades réels au lieu de les masquer.
  */
-function buildTrades(bot: DisplayTrade[], apiTrades: DisplayTrade[], legs: DisplayTrade[]): DisplayTrade[] {
+function buildTrades(
+  bot: DisplayTrade[],
+  apiTrades: DisplayTrade[],
+  legs: DisplayTrade[],
+  sim: DisplayTrade[],
+): DisplayTrade[] {
   const out: DisplayTrade[] = [...bot];
   const covered = new Set(bot.map((t) => t.outcomeIndex));
   const apiMissing = apiTrades.filter((t) => !covered.has(t.outcomeIndex));
   out.push(...apiMissing);
   for (const t of apiMissing) covered.add(t.outcomeIndex);
   out.push(...legs.filter((t) => !covered.has(t.outcomeIndex)));
+  out.push(...sim);
   return out.sort((a, b) => a.timestamp - b.timestamp);
 }
 
@@ -409,6 +417,13 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
     async (conditionId) => api.marketTrades(conditionId),
   );
 
+  // Trades de simulation : fetch global (tous marchés), filtré sur le slug de
+  // la cible. Filled uniquement — les ordres non remplis restent dans l'onglet
+  // "resting" de la page simulation.
+  const [simTradesResource] = createResource(target.slug, async (slug) =>
+    (await api.simTrades(1000)).trades.filter((t) => t.eventSlug === slug && t.filled === 1),
+  );
+
   const displayTrades = createMemo<DisplayTrade[]>(() => {
     const bot: DisplayTrade[] = (botFillsResource()?.fills ?? []).map((f) => ({
       ...f,
@@ -420,7 +435,25 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
       origin: "api",
       strategyId: strategyFromBotStore(tokenIdForOutcome(t.outcomeIndex, target)),
     }));
-    return buildTrades(bot, apiTrades, pairTradesFromStore(target.conditionId));
+    const upLabel = target.upOutcome.toLowerCase();
+    const downLabel = target.downOutcome.toLowerCase();
+    const simTrades: DisplayTrade[] = (simTradesResource() ?? []).map((t) => {
+      const label = t.outcome.toLowerCase();
+      const outcomeIndex =
+        label === upLabel ? 0 : label === downLabel ? 1 : t.outcome === "Up" ? 0 : 1;
+      const price = t.fillPrice ?? t.limitPrice;
+      return {
+        timestamp: positionTsSec(t.ts),
+        price,
+        size: t.size,
+        side: (t.side === "SELL" ? "SELL" : "BUY") as "BUY" | "SELL",
+        outcome: t.outcome,
+        outcomeIndex,
+        origin: "sim" as const,
+        strategyId: undefined,
+      };
+    });
+    return buildTrades(bot, apiTrades, pairTradesFromStore(target.conditionId), simTrades);
   });
 
   // --- Live (SSE → marketStore) --------------------------------------------
@@ -916,7 +949,13 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
                         <td>{trade.size}</td>
                         <td>{trade.strategyId ?? "—"}</td>
                         <td class="muted">
-                          {trade.origin === "bot" ? (trade.dryRun ? "bot (sim)" : "bot") : trade.origin === "api" ? "API" : "position"}
+                          {trade.origin === "bot"
+                            ? (trade.dryRun ? "bot (sim)" : "bot")
+                            : trade.origin === "sim"
+                              ? "simulation"
+                              : trade.origin === "api"
+                                ? "API"
+                                : "position"}
                         </td>
                       </tr>
                     )}

@@ -1,0 +1,392 @@
+/* Simulation live (paper trading) — page /simulation */
+
+/* Header */
+.sim-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sim-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sim-back {
+  text-decoration: none;
+  padding: 5px 12px;
+}
+
+.sim-header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.sim-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sim-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.sim-badge.on {
+  background: rgba(46, 204, 113, 0.15);
+  color: var(--green, #2ecc71);
+  border: 1px solid rgba(46, 204, 113, 0.35);
+}
+
+.sim-badge.off {
+  background: rgba(139, 147, 163, 0.12);
+  color: var(--muted, #8b93a3);
+  border: 1px solid rgba(139, 147, 163, 0.3);
+}
+
+/* Cartes KPI */
+.sim-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sim-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  background: var(--panel, #171a21);
+  border: 1px solid var(--border, #262b36);
+  border-radius: 10px;
+}
+
+.sim-kpi-label {
+  font-size: 11px;
+  color: var(--muted, #8b93a3);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.sim-kpi-value {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.sim-kpi-capital .sim-kpi-value {
+  font-size: 26px;
+  color: var(--accent, #4f8cff);
+}
+
+.sim-kpi-sub {
+  font-size: 11px;
+  color: var(--muted, #8b93a3);
+}
+
+/* Barre de configuration : groupes Stratégie | Capital + actions */
+.sim-control-bar {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: var(--panel, #171a21);
+  border: 1px solid var(--border, #262b36);
+  border-radius: 10px;
+}
+
+.sim-cb-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sim-cb-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted, #8b93a3);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.sim-cb-fields {
+  display: flex;
+  gap: 12px;
+}
+
+.sim-cb-hint {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted, #8b93a3);
+  font-style: italic;
+  max-width: 420px;
+}
+
+.sim-cb-hint.warn {
+  color: var(--amber, #f1c40f);
+  font-style: normal;
+}
+
+.sim-cb-divider {
+  width: 1px;
+  background: var(--border, #262b36);
+  align-self: stretch;
+}
+
+.sim-cb-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.sim-cb-revert {
+  opacity: 0.85;
+}
+
+.sim-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--muted, #8b93a3);
+}
+
+.sim-field select,
+.sim-field input {
+  min-width: 130px;
+  padding: 7px 10px;
+  background: var(--bg, #0f1115);
+  color: var(--text, #e6e8ee);
+  border: 1px solid var(--border, #262b36);
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  height: 34px;
+  box-sizing: border-box;
+}
+
+.sim-field select:focus,
+.sim-field input:focus {
+  outline: none;
+  border-color: var(--accent, #4f8cff);
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
+}
+
+.sim-field select:hover,
+.sim-field input:hover:not(:focus) {
+  border-color: var(--accent, #4f8cff);
+}
+
+/* Champ avec unité suffixe (ex. pUSD) affichée à droite. */
+.sim-field-control {
+  position: relative;
+  display: flex;
+}
+
+.sim-field-control input {
+  width: 100%;
+  padding-right: 52px;
+}
+
+.sim-field-unit {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted, #8b93a3);
+  pointer-events: none;
+  letter-spacing: 0.3px;
+}
+
+/* Chevron custom sur les selects (appearance none + SVG inline) */
+.sim-field select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b93a3' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+.sim-field select option {
+  background: var(--panel, #171a21);
+  color: var(--text, #e6e8ee);
+}
+
+/* Masque les spinners du champ number (cohérence visuelle) */
+.sim-field input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.sim-field input[type="number"]::-webkit-outer-spin-button,
+.sim-field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.sim-field input::placeholder {
+  color: var(--muted, #8b93a3);
+}
+
+/* Ordres en attente */
+.sim-resting-row {
+  opacity: 0.65;
+  font-style: italic;
+}
+
+/* Espace au-dessus du panneau Marché actif. */
+.sim-active-markets {
+  margin-top: 20px;
+}
+
+/* Espace au-dessus de la section historique (positions résolues | journal). */
+.sim-history {
+  margin-top: 20px;
+}
+
+/* Onglets historique */
+.sim-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px 0;
+  border-bottom: 1px solid var(--border, #262b36);
+}
+
+.sim-tab {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted, #8b93a3);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 8px 12px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.sim-tab:hover {
+  color: var(--text, #e6e8ee);
+}
+
+.sim-tab.active {
+  color: var(--accent, #4f8cff);
+  border-bottom: 2px solid var(--accent, #4f8cff);
+}
+
+.sim-tab-toggle {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted, #8b93a3);
+  cursor: pointer;
+  padding-bottom: 8px;
+}
+
+.sim-tab-toggle input {
+  accent-color: var(--accent, #4f8cff);
+}
+
+/* Tables */
+.sim-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.sim-table th,
+.sim-table td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border, #262b36);
+}
+
+.sim-table th {
+  color: var(--muted, #8b93a3);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Countdown urgence (miroir ActiveMarkets) */
+.am-countdown--hot {
+  color: var(--red, #e74c3c);
+  font-weight: 600;
+}
+
+.am-countdown--warm {
+  color: var(--amber, #f1c40f);
+  font-weight: 500;
+}
+
+.pnl-pos {
+  color: var(--green, #2ecc71);
+}
+
+.pnl-neg {
+  color: var(--red, #e74c3c);
+}
+
+.sim-muted {
+  font-size: 12px;
+  color: var(--muted, #8b93a3);
+  font-style: italic;
+}
+
+/* Responsive : KPI 2x2 puis empilées ; barre de config empilée. */
+@media (max-width: 1100px) {
+  .sim-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .sim-kpis {
+    grid-template-columns: 1fr;
+  }
+  .sim-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sim-control-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .sim-cb-divider {
+    width: auto;
+    height: 1px;
+    align-self: stretch;
+  }
+  .sim-cb-fields {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sim-cb-actions {
+    margin-left: 0;
+  }
+  .sim-cb-hint {
+    max-width: none;
+  }
+  .sim-field select,
+  .sim-field input {
+    min-width: 0;
+  }
+}

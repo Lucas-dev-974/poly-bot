@@ -8,6 +8,13 @@ import {
 } from "../stores/positionStore";
 import { addOrder, markOrderCancelled, markOrderFilled } from "../stores/orderStore";
 import { setSimStats } from "../stores/statsStore";
+import {
+  resolveSimPosition,
+  setSimBalance,
+  setSimConfigState,
+  upsertSimOpen,
+  setSimEngineStats,
+} from "../stores/simStore";
 import { replacePolyPositions } from "../stores/polyStore";
 import { updateRelayerQuota } from "../stores/quotaStore";
 import { addLog } from "../stores/logStore";
@@ -97,6 +104,26 @@ export function dispatchEvent(event: BotEvent): void {
     case "resolvedPosition":
       addResolved(event.position);
       removeOpen(event.position.id);
+      break;
+
+    case "simOpenedPosition":
+      upsertSimOpen(event.position);
+      break;
+
+    case "simResolvedPosition":
+      resolveSimPosition(event.position);
+      break;
+
+    case "simBalance":
+      setSimBalance(event.balance);
+      break;
+
+    case "simStats":
+      setSimEngineStats(event.stats);
+      break;
+
+    case "simConfig":
+      setSimConfigState(event.simConfig);
       break;
 
     case "simulatedStats":

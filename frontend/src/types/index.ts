@@ -105,6 +105,8 @@ export interface SimulatedPosition {
   orderType?: "GTC" | "FOK" | "FAK" | "SIM";
   /** Moteur qui a pris la position. Absent sur les lignes antérieures à la migration. */
   strategyId?: StrategyId;
+  /** Prix de vente si la position a été sold (defend / edge-sell). `null` = non vendue. */
+  sellPrice?: number | null;
 }
 
 export type ArbPairStatus = "open" | "partial" | "covered" | "resolved";
@@ -140,6 +142,19 @@ export interface SimulatedStats {
   coveredCount: number;
   uncoveredCount: number;
   coverRate: number;
+}
+
+export interface SimBalance {
+  cash: number;
+  positionsValue: number;
+  total: number;
+}
+
+export interface SimConfigState {
+  enabled: boolean;
+  strategyId: string;
+  presetId: string | null;
+  capitalInitial: number;
 }
 
 export interface BotConfig {
@@ -467,6 +482,11 @@ export type BotEvent =
   | { type: "config"; config: BotConfig }
   | { type: "balance"; balance: BalanceSnapshot }
   | { type: "simulatedBalance"; balance: number }
+  | { type: "simBalance"; balance: SimBalance }
+  | { type: "simStats"; stats: SimulatedStats }
+  | { type: "simConfig"; simConfig: SimConfigState }
+  | { type: "simOpenedPosition"; position: SimulatedPosition }
+  | { type: "simResolvedPosition"; position: SimulatedPosition }
   | { type: "scan"; count: number; slugs?: string[] }
   | { type: "watching"; event: UpDownEvent; books: TokenBook[] }
   | { type: "opportunity"; opportunity: TradeOpportunity }

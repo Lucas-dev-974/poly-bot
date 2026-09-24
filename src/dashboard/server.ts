@@ -7,6 +7,17 @@ import { extname, join, resolve, sep } from "node:path";
 import { type BotConfig, toPublicConfig } from "../config.js";
 import type { Repositories } from "../db/index.js";
 import { bus, type BotEvent } from "./events.js";
+import {
+  handleSimConfigPatch,
+  handleSimControl,
+  handleSimPositions,
+  handleSimReset,
+  handleSimResting,
+  handleSimState,
+  handleSimTrades,
+  originForbidden,
+  simEngineMissing,
+} from "./sim-handlers.js";
 import { getRelayerQuota } from "../relayer-quota.js";
 import {
   getOnChainPusdBalance,
@@ -169,6 +180,12 @@ export class DashboardServer {
     this.bot = bot;
   }
 
+  /** Moteur paper trading (simulation live) — optionnel si init a échoué. */
+  private simEngine: import("../paper/engine.js").PaperTradingEngine | null = null;
+  setSimEngine(engine: import("../paper/engine.js").PaperTradingEngine): void {
+    this.simEngine = engine;
+  }
+
   start(): void {
     const server = createServer((req, res) => {
       const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
@@ -180,6 +197,8 @@ export class DashboardServer {
         url.pathname === "/backtest" ||
         url.pathname === "/strategy-editor" ||
         url.pathname === "/donnees" ||
+        url.pathname === "/simulation" ||
+        url.pathname.startsWith("/simulation/") ||
         url.pathname.startsWith("/donnees/")
       ) {
         void this.serveHtml(res);
@@ -243,6 +262,51 @@ export class DashboardServer {
 
       if (url.pathname === "/api/orders") {
         this.handleOrders(res);
+        return;
+      }
+
+      if (url.pathname === "/api/sim/state") {
+        if (!this.simEngine) return simEngineMissing(res);
+        handleSimState(this.simEngine, res);
+        return;
+      }
+
+      if (url.pathname === "/api/sim/control" && req.method === "POST") {
+        if (!this.isAllowedOrigin(req)) return originForbidden(res);
+        if (!this.simEngine) return simEngineMissing(res);
+        void handleSimControl(this.simEngine, req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/sim/config" && req.method === "PATCH") {
+        if (!this.isAllowedOrigin(req)) return originForbidden(res);
+        if (!this.simEngine) return simEngineMissing(res);
+        void handleSimConfigPatch(this.simEngine, req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/sim/reset" && req.method === "POST") {
+        if (!this.isAllowedOrigin(req)) return originForbidden(res);
+        if (!this.simEngine) return simEngineMissing(res);
+        handleSimReset(this.simEngine, res);
+        return;
+      }
+
+      if (url.pathname === "/api/sim/positions") {
+        if (!this.simEngine) return simEngineMissing(res);
+        handleSimPositions(this.simEngine, url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/sim/trades") {
+        if (!this.simEngine) return simEngineMissing(res);
+        handleSimTrades(this.simEngine, url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/sim/resting") {
+        if (!this.simEngine) return simEngineMissing(res);
+        handleSimResting(this.simEngine, url, res);
         return;
       }
 

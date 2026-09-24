@@ -15,6 +15,11 @@ export type BotEvent =
   | { type: "config"; config: BotConfig }
   | { type: "balance"; balance: BalanceSnapshot }
   | { type: "simulatedBalance"; balance: number }
+  | { type: "simBalance"; balance: SimBalance }
+  | { type: "simStats"; stats: SimulatedStats }
+  | { type: "simConfig"; simConfig: SimConfigEvent }
+  | { type: "simOpenedPosition"; position: SimulatedPosition }
+  | { type: "simResolvedPosition"; position: SimulatedPosition }
   | { type: "scan"; count: number; slugs?: string[] }
   | { type: "watching"; event: UpDownEvent; books: TokenBook[] }
   | { type: "opportunity"; opportunity: TradeOpportunity }
@@ -44,6 +49,19 @@ export interface BalanceSnapshot {
   availableCollateral: number;
   positionsValue: number;
   totalValue: number;
+}
+
+export interface SimBalance {
+  cash: number;
+  positionsValue: number;
+  total: number;
+}
+
+export interface SimConfigEvent {
+  enabled: boolean;
+  strategyId: string;
+  presetId: string | null;
+  capitalInitial: number;
 }
 
 export interface PolymarketPosition {

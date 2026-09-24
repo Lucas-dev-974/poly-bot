@@ -52,6 +52,11 @@ export class BacktestRestingBook {
     return [...this.orders.values()].filter((order) => order.context.eventSlug === eventSlug);
   }
 
+  /** Tous les GTC resting (tous slugs) — vue globale page Simulation. */
+  listAll(): RestingGtc[] {
+    return [...this.orders.values()];
+  }
+
   reservedNotional(excludeKey?: string): number {
     let total = 0;
     for (const order of this.orders.values()) {

@@ -310,6 +310,105 @@ export class Database {
         pnl REAL
       );
       CREATE INDEX IF NOT EXISTS idx_backtest_trades_run ON backtest_trades(runId);
+
+      CREATE TABLE IF NOT EXISTS sim_positions (
+        id TEXT PRIMARY KEY,
+        eventSlug TEXT NOT NULL,
+        eventTitle TEXT NOT NULL,
+        tokenId TEXT NOT NULL,
+        outcome TEXT NOT NULL,
+        outcomeIndex INTEGER NOT NULL,
+        kind TEXT NOT NULL,
+        limitPrice REAL NOT NULL,
+        fillPrice REAL NOT NULL,
+        size REAL NOT NULL,
+        cost REAL NOT NULL,
+        windowEnd INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        resolvedAt INTEGER,
+        pnl REAL,
+        fillReason TEXT NOT NULL,
+        pairId TEXT NOT NULL,
+        bestAskAtFill REAL,
+        orderType TEXT,
+        strategyId TEXT,
+        sellPrice REAL,
+        createdAt INTEGER NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_sim_positions_status ON sim_positions(status);
+      CREATE INDEX IF NOT EXISTS idx_sim_positions_pair_kind ON sim_positions(pairId, kind);
+
+      CREATE TABLE IF NOT EXISTS sim_pairs (
+        id TEXT PRIMARY KEY,
+        eventSlug TEXT NOT NULL,
+        eventTitle TEXT NOT NULL,
+        windowEnd INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        realizedPnl REAL,
+        resolvedAt INTEGER,
+        directional INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS sim_trades (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ts INTEGER NOT NULL,
+        eventSlug TEXT NOT NULL,
+        kind TEXT NOT NULL,
+        outcome TEXT NOT NULL,
+        side TEXT NOT NULL,
+        limitPrice REAL NOT NULL,
+        fillPrice REAL,
+        size REAL NOT NULL,
+        filled INTEGER NOT NULL,
+        reason TEXT,
+        fillReason TEXT,
+        orderType TEXT,
+        pairId TEXT,
+        pnl REAL
+      );
+      CREATE INDEX IF NOT EXISTS idx_sim_trades_ts ON sim_trades(ts);
+
+      CREATE TABLE IF NOT EXISTS sim_state (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS sim_posted_orders (
+        key TEXT PRIMARY KEY,
+        eventSlug TEXT NOT NULL,
+        windowEnd INTEGER NOT NULL,
+        cost REAL NOT NULL,
+        createdAt INTEGER NOT NULL,
+        orderId TEXT,
+        tokenId TEXT,
+        outcome TEXT,
+        outcomeIndex INTEGER,
+        kind TEXT,
+        limitPrice REAL,
+        size REAL,
+        pairId TEXT,
+        eventTitle TEXT,
+        bestAskAtFill REAL,
+        strategyId TEXT
+      );
+      CREATE INDEX IF NOT EXISTS idx_sim_posted_orders_slug ON sim_posted_orders(eventSlug);
+
+      CREATE TABLE IF NOT EXISTS sim_trade_keys (
+        key TEXT PRIMARY KEY,
+        createdAt INTEGER NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS sim_retry_counts (
+        key TEXT PRIMARY KEY,
+        count INTEGER NOT NULL,
+        updatedAt INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS sim_window_claims (
+        pairId TEXT PRIMARY KEY,
+        cheapOutcome TEXT NOT NULL,
+        expensiveOutcome TEXT NOT NULL
+      );
     `);
 
     this.addColumnIfMissing("posted_orders", "orderId", "TEXT");
@@ -412,6 +511,14 @@ export class Database {
       DELETE FROM backtest_runs;
       DELETE FROM backtest_trades;
       DELETE FROM backtest_positions;
+      DELETE FROM sim_positions;
+      DELETE FROM sim_pairs;
+      DELETE FROM sim_trades;
+      DELETE FROM sim_state;
+      DELETE FROM sim_posted_orders;
+      DELETE FROM sim_trade_keys;
+      DELETE FROM sim_retry_counts;
+      DELETE FROM sim_window_claims;
     `);
   }
 

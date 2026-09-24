@@ -8,12 +8,14 @@ import { Database } from "./db/database.js";
 import { createRepositories } from "./db/index.js";
 import { logError } from "./logger.js";
 import { leadsWithEdgeFor } from "./strategy/registry.js";
+import { PaperTradingEngine } from "./paper/engine.js";
 import { Trader } from "./trader.js";
 
 let db: Database | null = null;
 let autoRedeemer: AutoRedeemer | null = null;
 let balanceTracker: BalanceTracker | null = null;
 let botRef: ReverseBot | null = null;
+let paperRef: PaperTradingEngine | null = null;
 
 async function main(): Promise<void> {
   const config = loadConfig();
@@ -46,7 +48,19 @@ async function main(): Promise<void> {
     balanceTracker.start(() => trader.getAvailableCollateral());
   }
 
-  const bot = new ReverseBot(config, trader, repos);
+  // Simulation live (paper trading) : moteur isolé, alimenté par les books
+  // du bot live. Toujours instancié ; il ne trade que si activé (sim_state).
+  let paperEngine: PaperTradingEngine | undefined;
+  try {
+    paperEngine = new PaperTradingEngine(config, repos);
+    paperEngine.init();
+    paperEngine.start();
+    paperRef = paperEngine;
+  } catch (error) {
+    logError(error);
+  }
+
+  const bot = new ReverseBot(config, trader, repos, paperEngine);
   botRef = bot;
 
   if (config.enableDashboard) {
@@ -55,9 +69,15 @@ async function main(): Promise<void> {
     dashboard.setTracker(bot.tracker);
     dashboard.setMarketRuleStore(bot.rules);
     dashboard.setTrader(trader);
+    if (paperEngine) {
+      dashboard.setSimEngine(paperEngine);
+    }
     dashboard.setResetHandler(() => {
       db?.reset();
       bot.reset();
+      // Réaligne le moteur papier (cash/resting en mémoire) avec les tables
+      // sim_* vidées par db.reset().
+      paperRef?.reset();
       bus.clear();
     });
     dashboard.setConfigHandler((changed) => bot.onRuntimeSettingsChanged(changed));
@@ -69,8 +89,8 @@ async function main(): Promise<void> {
     dashboard.setManualBuyHandler((tokenId, shares, mode) =>
       bot.manualBuy(tokenId, shares, mode),
     );
-        dashboard.setBot(bot);
-      }
+    dashboard.setBot(bot);
+  }
 
   autoRedeemer = new AutoRedeemer(config, trader, repos.redeems);
   autoRedeemer.start();
@@ -87,6 +107,7 @@ main().catch((error) => {
 function shutdown(): void {
   autoRedeemer?.stop();
   balanceTracker?.stop();
+  paperRef?.stop();
   void botRef?.stop();
   db?.close();
   process.exit(0);

@@ -51,6 +51,9 @@ export function Header(props: {
       <a href="/donnees" class="btn guide-nav-link">
         Données
       </a>
+      <a href="/simulation" class="btn guide-nav-link">
+        Simulation
+      </a>
       {badge()}
       <BotToggle />
       <Show when={props.onOpenWallet}>

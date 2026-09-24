@@ -5,6 +5,7 @@ import { StrategyGuidePage } from "./pages/StrategyGuidePage";
 import { BacktestPage } from "./pages/BacktestPage";
 import { StrategyEditorPage } from "./pages/StrategyEditorPage";
 import { DataPage } from "./pages/DataPage";
+import { SimulationPage } from "./pages/SimulationPage";
 import { ToastHost } from "./components/toasts/ToastHost";
 import { currentRoute, type AppRoute } from "./router";
 import "./styles/variables.css";
@@ -14,6 +15,7 @@ import "./styles/guide.css";
 import "./styles/backtest.css";
 import "./styles/strategy-editor.css";
 import "./styles/data.css";
+import "./styles/sim.css";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Root element #root not found");
@@ -41,6 +43,9 @@ function Root() {
       </Show>
       <Show when={route() === "donnees"}>
         <DataPage />
+      </Show>
+      <Show when={route() === "simulation"}>
+        <SimulationPage />
       </Show>
       <Show when={route() === "dashboard"}>
         <App />

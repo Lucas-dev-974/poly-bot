@@ -15,6 +15,11 @@ describe("strategy presets", () => {
     const presets = listStrategyPresets();
     const ids = presets.map((preset) => preset.id).sort();
     assert.deepEqual(ids, [
+      "antiflip-5m-bounce",
+      "antiflip-5m-reentry",
+      "antiflip-5m-sharp",
+      "antiflip-5m-tp10",
+      "antiflip-5m-tp20",
       "antiflip-revert",
       "ask-lock",
       "conservative",
@@ -115,8 +120,15 @@ describe("strategy presets", () => {
       ["dip-revert"],
     );
     assert.deepEqual(
-      presetsForStrategy("antiflip-revert").map((preset) => preset.id),
-      ["antiflip-revert"],
+      presetsForStrategy("antiflip-revert").map((preset) => preset.id).sort(),
+      [
+        "antiflip-5m-bounce",
+        "antiflip-5m-reentry",
+        "antiflip-5m-sharp",
+        "antiflip-5m-tp10",
+        "antiflip-5m-tp20",
+        "antiflip-revert",
+      ],
     );
     assert.deepEqual(
       presetsForStrategy("flip-confirm").map((preset) => preset.id),

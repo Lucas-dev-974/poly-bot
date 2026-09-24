@@ -119,6 +119,7 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     antiflipMaxElapsedSec: null,
     antiflipMaxSpread: 0.05,
     antiflipOrderUsdc: 15,
+    antiflipTakeProfitPct: 0,
     flipConfirmBandMin: 0.55,
     flipConfirmBandMax: 0.65,
     flipConfirmFlipLookbackMs: 90_000,

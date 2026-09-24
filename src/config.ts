@@ -373,13 +373,47 @@ export interface BotConfig {
    */
   antiflipBandMin: number;
   antiflipBandMax: number;
-  antiflipDeposedAskMin: number;
+  /** Plancher de prix du déchu (null = désactivé). */
+  antiflipDeposedAskMin: number | null;
   antiflipFlipLookbackMs: number;
   antiflipMinElapsedSec: number;
   /** Optional upper elapsed cap (null = until close / minutesBeforeClose). */
   antiflipMaxElapsedSec: number | null;
   antiflipMaxSpread: number;
   antiflipOrderUsdc: number;
+  /**
+   * Antiflip 5m-only guard: refuse entries on markets whose window duration
+   * is not exactly 5 minutes. Default false (historical 15m behavior); the
+   * bundled 5m presets set it to true so the engine can be activated ONLY on
+   * btc-updown-5m style windows (live AND paper trading).
+   */
+  antiflip5mOnly: boolean;
+  /** Delay between the observed flip and the first allowed entry (0 = immediate). */
+  antiflipEntryDelaySec: number;
+  /**
+   * Sharp-drop filter (0 = off): the deposed ask must have dropped at least
+   * this much below its pre-flip peak (market overreaction evidence).
+   */
+  antiflipSharpDropMin: number;
+  /**
+   * Bounce confirmation (0 = off): track the post-flip low of the deposed
+   * ask; enter only when the ask has rebounded >= this from that low.
+   */
+  antiflipBounceMin: number;
+  /** Bounce mode price floor (null = off): deposed ask must stay >= floor. */
+  antiflipBounceFloor: number | null;
+  /** Uncertainty band of the NEW favorite (default 0.45-0.65, 15m calibration). */
+  antiflipFavAskMin: number;
+  antiflipFavAskMax: number;
+  /**
+   * Intra-market take-profit as a % of stake (0 = off, hold to resolution).
+   * When > 0, an open antiflip position is sold at the CURRENT BEST BID as
+   * soon as bid >= entryPrice * (1 + antiflipTakeProfitPct). Validated by
+   * audit 13 (audits/5min-strategies/results/13-intrabar-tp.md): TP 10%/20%
+   * yields WR 80-86% on closed trades with +0.11-0.13 $/trade EV vs +0.71 $
+   * for the hold baseline — a lower-EV but high-frequency, short-hold profile.
+   */
+  antiflipTakeProfitPct: number;
   /**
    * Flip-confirm: buy the NEW favorite shortly after an early identity flip.
    * Entry window [flipConfirmMinElapsedSec, flipConfirmMaxElapsedSec] (the
@@ -564,6 +598,14 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     antiflipMaxElapsedSec: null,
     antiflipMaxSpread: 0.05,
     antiflipOrderUsdc: 15,
+    antiflip5mOnly: false,
+    antiflipEntryDelaySec: 0,
+    antiflipSharpDropMin: 0,
+    antiflipBounceMin: 0,
+    antiflipBounceFloor: null,
+    antiflipFavAskMin: 0.45,
+    antiflipFavAskMax: 0.65,
+    antiflipTakeProfitPct: 0,
     flipConfirmBandMin: 0.55,
     flipConfirmBandMax: 0.65,
     flipConfirmFlipLookbackMs: 90_000,
@@ -1061,6 +1103,37 @@ export function validateConfigCoherence(
     }
     if (config.antiflipMaxSpread < 0) {
       throw new Error("antiflipMaxSpread must be >= 0");
+    }
+    if (config.antiflipEntryDelaySec < 0) {
+      throw new Error("antiflipEntryDelaySec must be >= 0");
+    }
+    if (config.antiflipSharpDropMin < 0) {
+      throw new Error("antiflipSharpDropMin must be >= 0");
+    }
+    if (config.antiflipBounceMin < 0) {
+      throw new Error("antiflipBounceMin must be >= 0");
+    }
+    if (
+      config.antiflipBounceFloor != null &&
+      (config.antiflipBounceFloor < config.antiflipBandMin ||
+        config.antiflipBounceFloor > config.antiflipBandMax)
+    ) {
+      throw new Error(
+        "antiflipBounceFloor must be null or within [antiflipBandMin, antiflipBandMax]",
+      );
+    }
+    if (config.antiflipFavAskMin >= config.antiflipFavAskMax) {
+      throw new Error("antiflipFavAskMin must be < antiflipFavAskMax");
+    }
+    if (
+      !Number.isFinite(config.antiflipTakeProfitPct) ||
+      config.antiflipTakeProfitPct < 0 ||
+      config.antiflipTakeProfitPct > 0.9
+    ) {
+      throw new Error("antiflipTakeProfitPct must be between 0 and 0.9 (0 = off, hold to resolution)");
+    }
+    if (config.antiflipTakeProfitPct < 0 || config.antiflipTakeProfitPct >= 1) {
+      throw new Error("antiflipTakeProfitPct must be in [0, 1[ (0 = off, hold to resolution)");
     }
     if (!(config.antiflipOrderUsdc > 0)) {
       throw new Error("antiflipOrderUsdc must be > 0 for antiflip-revert");

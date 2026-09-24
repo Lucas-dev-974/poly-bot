@@ -12,6 +12,11 @@ import flipConfirm from "../../../config/presets/flip-confirm.json";
 import earlyConviction from "../../../config/presets/early-conviction.json";
 import openEntry from "../../../config/presets/open-entry.json";
 import probabilityRepricing from "../../../config/presets/probability-repricing.json";
+import antiflip5mReentry from "../../../config/presets/antiflip-5m-reentry.json";
+import antiflip5mSharp from "../../../config/presets/antiflip-5m-sharp.json";
+import antiflip5mBounce from "../../../config/presets/antiflip-5m-bounce.json";
+import antiflip5mTp10 from "../../../config/presets/antiflip-5m-tp10.json";
+import antiflip5mTp20 from "../../../config/presets/antiflip-5m-tp20.json";
 
 export type { NativeStrategyId, StrategyId };
 
@@ -53,6 +58,11 @@ export const STRATEGY_PRESETS: StrategyPreset[] = [
   earlyConviction as StrategyPreset,
   openEntry as StrategyPreset,
   probabilityRepricing as StrategyPreset,
+  antiflip5mReentry as StrategyPreset,
+  antiflip5mSharp as StrategyPreset,
+  antiflip5mBounce as StrategyPreset,
+  antiflip5mTp10 as StrategyPreset,
+  antiflip5mTp20 as StrategyPreset,
 ];
 
 export function presetsForStrategy(id: string): StrategyPreset[] {

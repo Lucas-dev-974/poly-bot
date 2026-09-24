@@ -11,6 +11,7 @@ import {
   STRATEGY_ENGINE_OPTIONS,
   type StrategyId,
 } from "../config/strategyPresets";
+import { SIM_5M_STRATEGIES, type Sim5mStrategyDef } from "../config/sim5mStrategies";
 import { useEventSource } from "../hooks/useEventSource";
 import { useInterval } from "../hooks/useInterval";
 import { dispatchEvent } from "../stores/dispatcher";
@@ -198,6 +199,41 @@ export function SimulationPage(): JSX.Element {
   const presets = createMemo(() => allPresetsForStrategy(engine(), []));
   const currentPreset = createMemo(() => presets().find((p) => p.id === presetId()));
 
+  // ── Sélection rapide des 3 stratégies 5m (presets du backtest audits/5min-strategies).
+  // Chaque carte = (moteur antiflip-revert, preset 5m). "Active" = config de travail
+  // du moteur sim correspond à ce preset. Une seule position à la fois : les 3
+  // variantes sont mutuellement exclusives au niveau du moteur sim (un preset à la
+  // fois), mais restent combinables en multi-moteurs via le live.
+  const sim5mActiveId = createMemo(() => {
+    const c = simConfigState();
+    if (!c || c.strategyId !== "antiflip-revert" || !c.presetId) return null;
+    return SIM_5M_STRATEGIES.some((s) => s.presetId === c.presetId) ? c.presetId : null;
+  });
+
+  async function activateSim5mStrategy(def: Sim5mStrategyDef): Promise<void> {
+    if (sending()) return;
+    setSending(true);
+    try {
+      // 1. Appliquer le preset au moteur sim (swap à chaud, sans toucher au cash).
+      const res = await api.simUpdateConfig({
+        strategyId: def.strategyId,
+        presetId: def.presetId,
+      });
+      if (!res.ok) throw new Error(res.error ?? "Échec de l'activation");
+      // 2. Démarrer la sim si elle est à l'arrêt (activation = prête à trader).
+      if (!simConfigState()?.enabled) {
+        const start = await api.simControl(true);
+        if (!start.ok) throw new Error(start.error ?? "Échec du démarrage");
+      }
+      await loadInitialState();
+      addLog(`Simulation 5m : stratégie ${def.name} activée (marchés 5m uniquement)`);
+    } catch (e) {
+      pushError("Simulation : " + toMessage(e), { group: "sim-error", replaceGroup: true });
+    } finally {
+      setSending(false);
+    }
+  }
+
   // État "modifié" : compare la copie de travail à la config active du moteur.
   const capitalDirty = createMemo(() => {
     const n = Number(capitalInput());
@@ -312,6 +348,58 @@ export function SimulationPage(): JSX.Element {
           </Show>
         </div>
       </div>
+
+      {/* Sélection rapide : 3 stratégies 5m validées par backtest (audits/5min-strategies).
+          Le gate "5m uniquement" est dans le moteur (antiflip5mOnly) : impossible
+          d'ouvrir une position papier sur un marché 15m avec ces presets. */}
+      <div class="sim-5m-cards">
+        <For each={SIM_5M_STRATEGIES}>
+          {(def) => {
+            const isActive = () => sim5mActiveId() === def.presetId;
+            const isRunning = () => isActive() && simConfigState()?.enabled === true;
+            return (
+              <button
+                type="button"
+                class={`sim-5m-card ${isActive() ? "sim-5m-card--active" : ""} ${isRunning() ? "sim-5m-card--running" : ""}`}
+                onClick={() => void activateSim5mStrategy(def)}
+                disabled={sending()}
+                title={isRunning()
+                  ? "Active — cliquer pour ré-appliquer (idempotent)"
+                  : "Activer en paper trading (marchés 5m uniquement)"}
+              >
+                <div class="sim-5m-card-top">
+                  <span class="sim-5m-card-name">{def.name}</span>
+                  <span class="sim-5m-card-rank">#{def.rank} · {def.tag}</span>
+                </div>
+                <p class="sim-5m-card-desc">{def.description}</p>
+                <div class="sim-5m-card-stats">
+                  <For each={def.stats}>
+                    {(s) => (
+                      <span class={s.ok ? "ok" : ""}>
+                        {s.label} {s.value}
+                      </span>
+                    )}
+                  </For>
+                </div>
+                <Show when={def.warn}>
+                  <p class="sim-5m-card-warn">⚠ {def.warn}</p>
+                </Show>
+                <div class="sim-5m-card-foot">
+                  <span class="sim-5m-card-badge">
+                    {isRunning() ? "● active (en cours)" : isActive() ? "● configurée (à l'arrêt)" : "cliquer pour activer"}
+                  </span>
+                  <span class="sim-5m-card-badge">5m only</span>
+                </div>
+              </button>
+            );
+          }}
+        </For>
+      </div>
+      <p class="sim-5m-note">
+        Ces 3 stratégies proviennent du backtest <code>audits/5min-strategies</code> (836 fenêtres BTC
+        Up/Down 5m, 402k ticks). Le moteur <code>antiflip-revert</code> avec preset 5m
+        refuse toute entrée sur un marché non-5m — la protection est active en paper trading comme en live.
+      </p>
 
       {/* Barre de configuration : groupes Stratégie | Capital + actions */}
       <div class="sim-control-bar">

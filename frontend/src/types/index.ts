@@ -295,12 +295,19 @@ export interface BotConfig {
   /** Antiflip-revert: buy the DEPOSED favorite right after a fresh identity flip. */
   antiflipBandMin: number;
   antiflipBandMax: number;
-  antiflipDeposedAskMin: number;
+  antiflipDeposedAskMin: number | null;
   antiflipFlipLookbackMs: number;
   antiflipMinElapsedSec: number;
   antiflipMaxElapsedSec: number | null;
   antiflipMaxSpread: number;
   antiflipOrderUsdc: number;
+  antiflip5mOnly: boolean;
+  antiflipEntryDelaySec: number;
+  antiflipSharpDropMin: number;
+  antiflipBounceMin: number;
+  antiflipBounceFloor: number | null;
+  antiflipFavAskMin: number;
+  antiflipFavAskMax: number;
   /** Flip-confirm: buy the NEW favorite shortly after an early identity flip. */
   flipConfirmBandMin: number;
   flipConfirmBandMax: number;

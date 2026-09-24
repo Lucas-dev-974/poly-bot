@@ -197,6 +197,29 @@ export class PaperTradingEngine {
     // la gestion des positions existantes (resolveDue) tourne par ailleurs.
     if (opts?.trading === false) return;
 
+    // Intra-market take-profit (antiflipTakeProfitPct > 0) : vente au bid
+    // courant dès que bid >= fillPrice * (1 + TP%). Indépendant du flag
+    // trading : gérer les positions ouvertes n'ouvre rien de nouveau.
+    // Audit 13 (audits/5min-strategies/13-intrabar-tp.mjs) : TP10%/TP20% =
+    // WR 80-86% sur trades soldés à ~1/4 du hold ; SL destructive (jamais
+    // implémentée ici). Aucune re-entrée TP → hold → résolution.
+    const tpPct = this.effectiveConfig.antiflipTakeProfitPct ?? 0;
+    if (tpPct > 0) {
+      for (const position of this.tracker.getOpenPositions()) {
+        if (position.eventSlug !== event.slug) continue;
+        const bid = books.find((b) => b.tokenId === position.tokenId)?.bestBid ?? null;
+        if (bid == null) continue;
+        const target = round2(position.fillPrice * (1 + tpPct));
+        if (bid >= target) {
+          this.ledger.credit(round2(bid * position.size));
+          this.tracker.closePositionAsSold(position.id, bid, undefined, nowMs);
+          bus.emit({ type: "simResolvedPosition", position: { ...position, status: "sold", sellPrice: bid, pnl: round2(bid * position.size - position.cost) } });
+        }
+        // Un seul exit par tick : le prochain tick re-vérifiera le reste.
+        break;
+      }
+    }
+
     // Reconstruit le resting book depuis la DB pour ce slug au premier tick
     // après un restart (BacktestRestingBook est mémoire seule, le tracker
     // recharge ses postedOrders depuis sim_posted_orders).

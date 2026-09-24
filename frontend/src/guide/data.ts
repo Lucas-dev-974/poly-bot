@@ -51,7 +51,7 @@ export const ENGINE_META: Record<
   },
   "antiflip-revert": {
     label: "Antiflip-revert — le favori déchu",
-    subtitle: "Le favori FLIPPE et le marché sur-réagit : l'ancien favori, replacé 0.35-0.45, re-gagne ~52% du temps.",
+    subtitle: "Le favori FLIPPE et le marché sur-réagit : l'ancien favori, replacé 0.35-0.45, re-gagne ~52% du temps. 3 presets 5m (re-entry/sharp/bounce) activables depuis la page Simulation.",
     order: "Flip d'identité → FOK favori déchu (≤90s après) → hold jusqu'à la résolution",
     risk: "Élevée — variance par trade la plus élevée du panel, sizing prudent",
     tone: "warning",
@@ -222,8 +222,10 @@ export const BOT_STEPS: Record<EngineId, string[]> = {
   "antiflip-revert": [
     "Suivre l'identité du favori à chaque tick (Up mène / Down mène) ; un changement = FLIP horodaté.",
     "Si le flip survient après antiflipMinElapsedSec (240 s) et date de ≤ antiflipFlipLookbackMs (90 s)…",
-    "…et que le NOUVEAU favori cote 0.45-0.65 (incertitude) : cibler le token DÉCHU.",
+    "…et que le NOUVEAU favori cote dans [antiflipFavAskMin, antiflipFavAskMax] (0.45-0.65 défaut) : cibler le token DÉCHU.",
     "FOK buy du déchu si son ask ∈ [antiflipBandMin, antiflipBandMax] et ≥ antiflipDeposedAskMin (floor 0.40), spread ≤ antiflipMaxSpread.",
+    "Gates 5m optionnels : délai antiflipEntryDelaySec (A), chute ≥ antiflipSharpDropMin du sommet pré-flip (H), rebond ≥ antiflipBounceMin + floor antiflipBounceFloor (K).",
+    "antiflip5mOnly : refuse les marchés non-5m (live + paper trading).",
     "Une seule entrée par fenêtre ; hold jusqu'à la résolution ; pas de hedge, pas de défense.",
   ],
   "flip-confirm": [

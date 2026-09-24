@@ -103,6 +103,13 @@ export type ConfigFormState = {
   antiflipMaxElapsedSec: string;
   antiflipMaxSpread: string;
   antiflipOrderUsdc: string;
+  antiflip5mOnly: boolean;
+  antiflipEntryDelaySec: string;
+  antiflipSharpDropMin: string;
+  antiflipBounceMin: string;
+  antiflipBounceFloor: string;
+  antiflipFavAskMin: string;
+  antiflipFavAskMax: string;
   flipConfirmBandMin: string;
   flipConfirmBandMax: string;
   flipConfirmFlipLookbackMs: string;
@@ -283,7 +290,8 @@ export function configToForm(config: BotConfig): ConfigFormState {
     dipRevertExitWinAsk: String(config.dipRevertExitWinAsk ?? 0.85),
     antiflipBandMin: String(config.antiflipBandMin ?? 0.35),
     antiflipBandMax: String(config.antiflipBandMax ?? 0.45),
-    antiflipDeposedAskMin: String(config.antiflipDeposedAskMin ?? 0.4),
+    antiflipDeposedAskMin:
+      config.antiflipDeposedAskMin == null ? "" : String(config.antiflipDeposedAskMin),
     antiflipFlipLookbackMs: String(config.antiflipFlipLookbackMs ?? 90000),
     antiflipMinElapsedSec: String(config.antiflipMinElapsedSec ?? 240),
     antiflipMaxElapsedSec:
@@ -292,6 +300,14 @@ export function configToForm(config: BotConfig): ConfigFormState {
         : String(config.antiflipMaxElapsedSec),
     antiflipMaxSpread: String(config.antiflipMaxSpread ?? 0.05),
     antiflipOrderUsdc: String(config.antiflipOrderUsdc ?? 15),
+    antiflip5mOnly: config.antiflip5mOnly === true,
+    antiflipEntryDelaySec: String(config.antiflipEntryDelaySec ?? 0),
+    antiflipSharpDropMin: String(config.antiflipSharpDropMin ?? 0),
+    antiflipBounceMin: String(config.antiflipBounceMin ?? 0),
+    antiflipBounceFloor:
+      config.antiflipBounceFloor == null ? "" : String(config.antiflipBounceFloor),
+    antiflipFavAskMin: String(config.antiflipFavAskMin ?? 0.45),
+    antiflipFavAskMax: String(config.antiflipFavAskMax ?? 0.65),
     flipConfirmBandMin: String(config.flipConfirmBandMin ?? 0.55),
     flipConfirmBandMax: String(config.flipConfirmBandMax ?? 0.65),
     flipConfirmFlipLookbackMs: String(config.flipConfirmFlipLookbackMs ?? 90000),
@@ -506,7 +522,10 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     dipRevertExitWinAsk: parseNum(form.dipRevertExitWinAsk, "Dip-revert take-profit ask"),
     antiflipBandMin: parseNum(form.antiflipBandMin, "Antiflip band min"),
     antiflipBandMax: parseNum(form.antiflipBandMax, "Antiflip band max"),
-    antiflipDeposedAskMin: parseNum(form.antiflipDeposedAskMin, "Antiflip deposed ask floor"),
+    antiflipDeposedAskMin:
+      form.antiflipDeposedAskMin.trim() === ""
+        ? null
+        : parseNum(form.antiflipDeposedAskMin, "Antiflip deposed ask floor"),
     antiflipFlipLookbackMs: parseNum(form.antiflipFlipLookbackMs, "Antiflip flip lookback ms"),
     antiflipMinElapsedSec: parseNum(form.antiflipMinElapsedSec, "Antiflip min elapsed"),
     antiflipMaxElapsedSec:
@@ -515,6 +534,16 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
         : parseNum(form.antiflipMaxElapsedSec, "Antiflip max elapsed"),
     antiflipMaxSpread: parseNum(form.antiflipMaxSpread, "Antiflip max spread"),
     antiflipOrderUsdc: parseNum(form.antiflipOrderUsdc, "Antiflip order USDC"),
+    antiflip5mOnly: form.antiflip5mOnly === true,
+    antiflipEntryDelaySec: parseNum(form.antiflipEntryDelaySec, "Antiflip entry delay sec"),
+    antiflipSharpDropMin: parseNum(form.antiflipSharpDropMin, "Antiflip sharp drop min"),
+    antiflipBounceMin: parseNum(form.antiflipBounceMin, "Antiflip bounce min"),
+    antiflipBounceFloor:
+      form.antiflipBounceFloor.trim() === ""
+        ? null
+        : parseNum(form.antiflipBounceFloor, "Antiflip bounce floor"),
+    antiflipFavAskMin: parseNum(form.antiflipFavAskMin, "Antiflip fav ask min"),
+    antiflipFavAskMax: parseNum(form.antiflipFavAskMax, "Antiflip fav ask max"),
     flipConfirmBandMin: parseNum(form.flipConfirmBandMin, "Flip-confirm band min"),
     flipConfirmBandMax: parseNum(form.flipConfirmBandMax, "Flip-confirm band max"),
     flipConfirmFlipLookbackMs: parseNum(form.flipConfirmFlipLookbackMs, "Flip-confirm lookback ms"),

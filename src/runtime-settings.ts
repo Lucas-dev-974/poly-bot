@@ -107,6 +107,14 @@ export const EDITABLE_CONFIG_KEYS = [
   "antiflipMaxElapsedSec",
   "antiflipMaxSpread",
   "antiflipOrderUsdc",
+  "antiflip5mOnly",
+  "antiflipEntryDelaySec",
+  "antiflipSharpDropMin",
+  "antiflipBounceMin",
+  "antiflipBounceFloor",
+  "antiflipFavAskMin",
+  "antiflipFavAskMax",
+  "antiflipTakeProfitPct",
   "flipConfirmBandMin",
   "flipConfirmBandMax",
   "flipConfirmFlipLookbackMs",
@@ -265,6 +273,14 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   antiflipMaxElapsedSec: "ANTIFLIP_MAX_ELAPSED_SEC",
   antiflipMaxSpread: "ANTIFLIP_MAX_SPREAD",
   antiflipOrderUsdc: "ANTIFLIP_ORDER_USDC",
+  antiflip5mOnly: "ANTIFLIP_5M_ONLY",
+  antiflipEntryDelaySec: "ANTIFLIP_ENTRY_DELAY_SEC",
+  antiflipSharpDropMin: "ANTIFLIP_SHARP_DROP_MIN",
+  antiflipBounceMin: "ANTIFLIP_BOUNCE_MIN",
+  antiflipBounceFloor: "ANTIFLIP_BOUNCE_FLOOR",
+  antiflipFavAskMin: "ANTIFLIP_FAV_ASK_MIN",
+  antiflipFavAskMax: "ANTIFLIP_FAV_ASK_MAX",
+  antiflipTakeProfitPct: "ANTIFLIP_TAKE_PROFIT_PCT",
   flipConfirmBandMin: "FLIP_CONFIRM_BAND_MIN",
   flipConfirmBandMax: "FLIP_CONFIRM_BAND_MAX",
   flipConfirmFlipLookbackMs: "FLIP_CONFIRM_FLIP_LOOKBACK_MS",
@@ -431,11 +447,16 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "dipRevertExitWinAsk":
     case "antiflipBandMin":
     case "antiflipBandMax":
-    case "antiflipDeposedAskMin":
     case "antiflipFlipLookbackMs":
     case "antiflipMinElapsedSec":
     case "antiflipMaxSpread":
     case "antiflipOrderUsdc":
+    case "antiflipEntryDelaySec":
+    case "antiflipSharpDropMin":
+    case "antiflipBounceMin":
+    case "antiflipFavAskMin":
+    case "antiflipFavAskMax":
+    case "antiflipTakeProfitPct":
     case "flipConfirmBandMin":
     case "flipConfirmBandMax":
     case "flipConfirmFlipLookbackMs":
@@ -521,6 +542,8 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "favBandImbalanceMaxSpread":
     case "dipRevertMaxElapsedSec":
     case "antiflipMaxElapsedSec":
+    case "antiflipDeposedAskMin":
+    case "antiflipBounceFloor":
     case "flipConfirmMaxElapsedSec":
       return parseNullableNumber(value, key);
     case "enableExpensiveHedge":
@@ -541,6 +564,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "favBandExitSwitchEnabled":
     case "openEntrySlEnabled":
     case "repricingModeAEnabled":
+    case "antiflip5mOnly":
       return parseBoolean(value, key);
     case "reverseMaxGridLevels":
       return parseNullableNumber(value, key);
@@ -708,7 +732,7 @@ const DIP_REVERT_KEYS: readonly EditableConfigKey[] = [
   "dipRevertExitWinAsk",
 ];
 
-/** Antiflip-revert : bande du déchu, floor, lookback de flip, budget. */
+/** Antiflip-revert : bande du déchu, floor, lookback de flip, budget, modes 5m (A/H/K). */
 const ANTIFLIP_KEYS: readonly EditableConfigKey[] = [
   "antiflipBandMin",
   "antiflipBandMax",
@@ -718,6 +742,14 @@ const ANTIFLIP_KEYS: readonly EditableConfigKey[] = [
   "antiflipMaxElapsedSec",
   "antiflipMaxSpread",
   "antiflipOrderUsdc",
+  "antiflip5mOnly",
+  "antiflipEntryDelaySec",
+  "antiflipSharpDropMin",
+  "antiflipBounceMin",
+  "antiflipBounceFloor",
+  "antiflipFavAskMin",
+  "antiflipFavAskMax",
+  "antiflipTakeProfitPct",
   "enableExpensiveHedge",
 ];
 

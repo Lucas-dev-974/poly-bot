@@ -5,6 +5,18 @@ import type { TradeTracker } from "./trade-tracker.js";
 import type { SimulatedPosition } from "./types.js";
 import { SeededRng } from "./utils/random.js";
 
+/** Verdict de règlement d'un marché binaire. */
+export type SettlementVerdict = "win" | "lose" | "void";
+
+/** Prix de remboursement par token sur un règlement 50/50 (void). */
+export const VOID_SETTLEMENT_PRICE = 0.5;
+
+/**
+ * winnerOutcomeIndex réservé au verdict "void" (settlement 50/50, aucun
+ * gagnant) dans market_resolutions — 0=Up, 1=Down, 2=void.
+ */
+export const VOID_WINNER_INDEX = 2;
+
 export interface GammaMarketResult {
   // Gamma may return these as JSON-serialized STRINGS (e.g. '["Up","Down"]')
   // or as already-parsed arrays depending on the endpoint/version.
@@ -78,8 +90,8 @@ export class PositionResolver {
       return;
     }
 
-    const won = await this.determineWinner(position);
-    if (won === null) {
+    const verdict = await this.determineWinner(position);
+    if (verdict === null) {
       log("Position left open - no winner could be determined (fallback=none)", {
         market: position.eventTitle,
         outcome: position.outcome,
@@ -93,6 +105,13 @@ export class PositionResolver {
       return;
     }
 
+    if (verdict === "void") {
+      this.resolveVoid(position);
+      return;
+    }
+
+    const won = verdict === "win";
+
     const credit = won ? position.size : 0;
 
     position.status = won ? "won" : "lost";
@@ -101,17 +120,7 @@ export class PositionResolver {
 
     this.tracker.resolvePosition(position);
 
-    const pair = this.tracker.getPair(position.pairId);
-    if (pair) {
-      const legs = position.kind === "cheap" ? pair.cheapLegs : pair.expensiveLegs;
-      const otherLegs = position.kind === "cheap" ? pair.expensiveLegs : pair.cheapLegs;
-      const allLegsResolved =
-        legs.every((leg) => leg.status !== "open") &&
-        otherLegs.every((leg) => leg.status !== "open");
-      if (allLegsResolved) {
-        this.tracker.finalizePair(pair);
-      }
-    }
+    this.finalizePairIfComplete(position);
 
     bus.emit({ type: "resolvedPosition", position });
     log(`Position resolved (${won ? "won" : "lost"})`, {
@@ -126,15 +135,59 @@ export class PositionResolver {
     });
   }
 
+  /**
+   * Règlement 50/50 (void) : aucun gagnant — les deux tokens sont remboursés
+   * au prix de settlement (0.5). Avant ce chemin : un payload uma-resolved
+   * 0.5/0.5 créditait les DEUX jambes comme gagnantes ($1 au lieu de $0.5,
+   * l'ancien `price >= 0.5` s'appliquant des deux côtés), et un payload
+   * 0.5/0.5 sans flag uma laissait la position ouverte pour toujours.
+   */
+  private resolveVoid(position: SimulatedPosition): void {
+    const credit = round2(position.size * VOID_SETTLEMENT_PRICE);
+    position.status = "void";
+    position.resolvedAt = Date.now();
+    position.pnl = round2(credit - position.cost);
+
+    this.tracker.resolvePosition(position);
+
+    this.finalizePairIfComplete(position);
+
+    bus.emit({ type: "resolvedPosition", position });
+    log("Position resolved (void 50/50 — refunded at settlement price)", {
+      market: position.eventTitle,
+      outcome: position.outcome,
+      kind: position.kind,
+      fillPrice: position.fillPrice,
+      size: position.size,
+      cost: position.cost,
+      credit,
+      pnl: position.pnl,
+    });
+  }
+
+  /** Finalise la paire quand toutes ses jambes sont hors statut "open". */
+  private finalizePairIfComplete(position: SimulatedPosition): void {
+    const pair = this.tracker.getPair(position.pairId);
+    if (!pair) return;
+    const legs = position.kind === "cheap" ? pair.cheapLegs : pair.expensiveLegs;
+    const otherLegs = position.kind === "cheap" ? pair.expensiveLegs : pair.cheapLegs;
+    const allLegsResolved =
+      legs.every((leg) => leg.status !== "open") &&
+      otherLegs.every((leg) => leg.status !== "open");
+    if (allLegsResolved) {
+      this.tracker.finalizePair(pair);
+    }
+  }
+
   private async determineWinner(
     position: SimulatedPosition,
-  ): Promise<boolean | null> {
+  ): Promise<SettlementVerdict | null> {
     for (let attempt = 0; attempt < this.config.simResolveMaxRetries; attempt++) {
       try {
         const result = await this.fetchMarketResult(position.eventSlug);
         if (result) {
-          const winner = this.extractWinner(result, position);
-          if (winner !== null) return winner;
+          const verdict = extractSettlement(result, position);
+          if (verdict !== null) return verdict;
         }
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -158,7 +211,7 @@ export class PositionResolver {
       message: "Resolution fallback (probabilistic) after retries exhausted",
       data: { market: position.eventTitle, outcome: position.outcome },
     });
-    return this.probabilisticWinner(position);
+    return this.probabilisticWinner(position) ? "win" : "lose";
   }
 
   private async fetchMarketResult(
@@ -197,17 +250,61 @@ export class PositionResolver {
     }
   }
 
-  private extractWinner(
-    result: GammaMarketResult,
-    position: SimulatedPosition,
-  ): boolean | null {
-    return extractWinner(result, position);
-  }
-
   private probabilisticWinner(position: SimulatedPosition): boolean {
     const p = clamp01(position.bestAskAtFill ?? position.fillPrice);
     return this.rng.chance(p);
   }
+}
+
+/**
+ * Lit le règlement d'un marché binaire depuis un payload Gamma.
+ * Retourne le verdict complet : "win", "lose" OU "void" (settlement 50/50,
+ * prix intermédiaires égaux — les deux tokens sont alors remboursés au prix
+ * de settlement). `null` = marché pas encore résolu.
+ */
+export function extractSettlement(
+  result: GammaMarketResult,
+  position: Pick<SimulatedPosition, "outcome"> &
+    Partial<Pick<SimulatedPosition, "outcomeIndex">>,
+): SettlementVerdict | null {
+  const prices = parseGammaList(result.outcomePrices);
+  const outcomes = parseGammaList(result.outcomes);
+  if (prices && outcomes) {
+    let idx = outcomes.findIndex(
+      (name) => name.toLowerCase() === position.outcome.toLowerCase(),
+    );
+    if (idx < 0 && position.outcomeIndex != null) {
+      idx = position.outcomeIndex;
+    }
+    if (idx >= 0 && idx < prices.length) {
+      const price = Number(prices[idx]);
+      if (!Number.isNaN(price)) {
+        if (price >= 0.99) return "win";
+        if (price <= 0.01) return "lose";
+        if (result.umaResolutionStatus === "resolved") {
+          // Settlement officiel UMA : prix intermédiaires possibles.
+          // Égaux des deux côtés (≈ 0.5/0.5) → void, pas un gagnant.
+          const otherIdx = idx === 0 ? 1 : 0;
+          const otherPrice =
+            otherIdx < prices.length ? Number(prices[otherIdx]) : NaN;
+          if (
+            !Number.isNaN(otherPrice) &&
+            Math.abs(price - otherPrice) < 1e-6
+          ) {
+            return "void";
+          }
+          return price >= 0.5 ? "win" : "lose";
+        }
+        return null;
+      }
+    }
+  }
+  if (result.winningOutcome !== undefined && result.winningOutcome !== "") {
+    return result.winningOutcome.toLowerCase() === position.outcome.toLowerCase()
+      ? "win"
+      : "lose";
+  }
+  return null;
 }
 
 function parseGammaList(value: unknown): string[] | null {
@@ -228,6 +325,10 @@ export function extractWinner(
   position: Pick<SimulatedPosition, "outcome"> &
     Partial<Pick<SimulatedPosition, "outcomeIndex">>,
 ): boolean | null {
+  // Wrapper rétro-compatible : les consumers historiques (backtest winnerIndex,
+  // tests) raisonnent en booléen. Un void renvoie `true` pour "Up" — les
+  // deux tokens valent 0.5, l'un n'est pas plus gagnant que l'autre ; les
+  // chemins de CRÉDIT passent par extractSettlement, pas par ce wrapper.
     // Polymarket's Gamma API exposes the winner via `outcomePrices` — a
     // JSON-serialized string (or already-parsed array) holding prices
     // parallel to `outcomes`. The winning outcome has "1", the loser "0".
@@ -246,31 +347,9 @@ export function extractWinner(
     // resolved when it is >= 0.99 or <= 0.01 — unless Gamma reports
     // `umaResolutionStatus=resolved`, in which case the official winner
     // is already known even if prices have not snapped yet.
-    const prices = parseGammaList(result.outcomePrices);
-    const outcomes = parseGammaList(result.outcomes);
-    if (prices && outcomes) {
-      let idx = outcomes.findIndex(
-        (name) => name.toLowerCase() === position.outcome.toLowerCase(),
-      );
-      if (idx < 0 && position.outcomeIndex != null) {
-        idx = position.outcomeIndex;
-      }
-      if (idx >= 0 && idx < prices.length) {
-        const price = Number(prices[idx]);
-        if (!Number.isNaN(price)) {
-          if (price >= 0.99) return true;
-          if (price <= 0.01) return false;
-          if (result.umaResolutionStatus === "resolved") {
-            return price >= 0.5;
-          }
-          return null;
-        }
-      }
-    }
-    if (result.winningOutcome !== undefined && result.winningOutcome !== "") {
-      return result.winningOutcome.toLowerCase() === position.outcome.toLowerCase();
-    }
-    return null;
+    const verdict = extractSettlement(result, position);
+    if (verdict === null) return null;
+    return verdict === "win" || verdict === "void";
 }
 
 function round2(value: number): number {

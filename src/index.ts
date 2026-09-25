@@ -58,6 +58,10 @@ async function main(): Promise<void> {
     paperRef = paperEngine;
   } catch (error) {
     logError(error);
+    // Ne pas laisser un moteur partiellement initialisé (tracker/ledger
+    // undefined si init() a jeté) être exposé au dashboard : un poll
+    // /api/sim/* sur ce handle crasherait le process.
+    paperEngine = undefined;
   }
 
   const bot = new ReverseBot(config, trader, repos, paperEngine);

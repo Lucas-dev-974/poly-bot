@@ -6,6 +6,7 @@ import { buildEffectiveConfig } from "../backtest/config-builder.js";
 import { BacktestLedger, round2 } from "../backtest/ledger.js";
 import { BacktestRestingBook } from "../backtest/resting.js";
 import { resolveWindowWinner } from "../backtest/resolve.js";
+import { VOID_SETTLEMENT_PRICE, VOID_WINNER_INDEX } from "../position-resolver.js";
 import { processTick, type TickExecutorSink } from "../backtest/tick-executor.js";
 import { createStrategy } from "../strategy/registry.js";
 import type { TradingStrategy } from "../strategy/trading-strategy.js";
@@ -295,11 +296,20 @@ export class PaperTradingEngine {
       const slugPositions = this.tracker
         .getOpenPositions()
         .filter((p) => p.eventSlug === position.eventSlug && p.windowEnd === position.windowEnd);
+      // Void 50/50 (winnerOutcomeIndex 2) : remboursement au prix de
+      // settlement (0.5) pour les deux jambes, statut "void" (hors winrate).
+      const isVoid = winner.winnerOutcomeIndex === VOID_WINNER_INDEX;
       for (const pos of slugPositions) {
-        const won = pos.outcomeIndex === winner.winnerOutcomeIndex;
-        const credit = won ? pos.size : 0;
+        let credit: number;
+        if (isVoid) {
+          credit = round2(pos.size * VOID_SETTLEMENT_PRICE);
+          pos.status = "void";
+        } else {
+          const won = pos.outcomeIndex === winner.winnerOutcomeIndex;
+          credit = won ? pos.size : 0;
+          pos.status = won ? "won" : "lost";
+        }
         this.ledger.credit(credit);
-        pos.status = won ? "won" : "lost";
         pos.resolvedAt = nowMs;
         pos.pnl = round2(credit - pos.cost);
         this.tracker.resolvePosition(pos);

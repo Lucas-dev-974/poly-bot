@@ -85,8 +85,9 @@ export interface OrderBook {
   asks?: Array<{ price: string; size: string }>;
 }
 
-/** "sold" = cheap leg sold via pair defense (defendPair) before resolution. */
-export type PositionStatus = "open" | "won" | "lost" | "sold";
+/** "sold" = cheap leg sold via pair defense (defendPair) before resolution.
+ *  "void" = market settled 50/50 (no winner) — refunded at the settlement price. */
+export type PositionStatus = "open" | "won" | "lost" | "sold" | "void";
 export type FillReason = "marketable" | "probabilistic" | "resting" | "manual";
 
 export interface SimulatedPosition {

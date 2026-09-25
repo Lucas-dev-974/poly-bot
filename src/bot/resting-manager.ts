@@ -573,7 +573,12 @@ export class RestingManager {
         // buy a favorite already outside the band.
         await this.deps.lifecycle.cancelRestingHedgesForPair(pairId, "cheap sold by pair defense");
       } else if (result.reason === "sell-unconfirmed") {
-        log("defendPair: SELL unconfirmed — not treating cheap as held for hedge", {
+        // La vente n'est PAS confirmée (balance unknown) — ne pas marquer la
+        // clé comme si la défense avait eu lieu : le tradeKey est marqué à
+        // l'ENQUEUE (orchestrate), le defaire ici permet au band-defend du
+        // tick suivant de retenter une fois le book/solde lisible.
+        this.deps.tracker.unmark(`policy-a-defend:${pairId}`);
+        log("defendPair: SELL unconfirmed — retry allowed next tick", {
           pairId,
           cheapTokenId,
           bestBid,

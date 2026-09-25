@@ -7,6 +7,7 @@ import type {
 import { log } from "./logger.js";
 import { asStrategyId, type StrategyId } from "./strategy/ids.js";
 import { MIN_CLOB_SHARES } from "./utils/prices.js";
+import { VOID_SETTLEMENT_PRICE } from "./position-resolver.js";
 import type {
   PostedOrderRow,
   WindowClaimRow,
@@ -793,6 +794,10 @@ export class TradeTracker {
     this.cumulativeRealizedPnl += position.pnl ?? 0;
     if (position.status === "won") this.cumulativeWins++;
     if (position.status === "lost") this.cumulativeLosses++;
+    // "void"/"sold" ne comptent ni victoire ni défaite : le PnL ci-dessus
+    // rentre quand même dans le réalisé (getAggregateStats compte sur
+    // status != 'open'), mais le winrate les exclut — un remboursement 50/50
+    // n'est ni un bon ni un mauvais call directionnel.
     this.resolvedPositions.push(position);
     if (this.positionsRepo && this.resolvedPositions.length > MAX_RESOLVED_IN_MEMORY) {
       this.resolvedPositions.shift();
@@ -1081,9 +1086,14 @@ export class TradeTracker {
     const legCredit = (leg: SimulatedPosition): number =>
       leg.status === "won"
         ? leg.size
-        : leg.status === "sold"
-          ? Math.round(((leg.pnl ?? 0) + leg.cost) * 100) / 100
-          : 0;
+        : leg.status === "void"
+          ? // Règlement 50/50 : remboursement au prix de settlement,
+            // pas $1 — sinon une paire void compterait 2 × 0.5 de crédit
+            // pour 1.0 de coût (perte fantôme).
+            Math.round(leg.size * VOID_SETTLEMENT_PRICE * 100) / 100
+          : leg.status === "sold"
+            ? Math.round(((leg.pnl ?? 0) + leg.cost) * 100) / 100
+            : 0;
     const totalCheapCredit = cheapLegs.reduce((sum, leg) => sum + legCredit(leg), 0);
     const totalExpensiveCredit = expensiveLegs.reduce((sum, leg) => sum + legCredit(leg), 0);
     const totalCheapCost = cheapLegs.reduce((sum, leg) => sum + leg.cost, 0);

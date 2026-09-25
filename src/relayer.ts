@@ -221,9 +221,23 @@ export function createRelayClient(config: BotConfig): RelayClient {
     });
     if (!loggedRelayerAuthMode) {
       loggedRelayerAuthMode = true;
+      const fallbackToSigner = !config.relayerApiKeyAddress;
       log("Relayer auth: RELAYER_API_KEY (Builder HMAC disabled to bypass daily quota)", {
         signer: keyAddress,
+        keyAddressSource: fallbackToSigner
+          ? "RELAYER_API_KEY_ADDRESS absente — fallback sur l'EOA signer"
+          : "env RELAYER_API_KEY_ADDRESS",
       });
+      if (fallbackToSigner) {
+        // L'alias env est censé être le signer EOA propriétaire de la clé.
+        // S'il pointait ailleurs (typiquement une confusion avec
+        // FUNDER_ADDRESS / le deposit wallet), le quota dédié casse
+        // silencieusement. On loggue une seule fois au boot.
+        log(
+          "RELAYER_API_KEY_ADDRESS not set — set it to the SIGNER EOA (key owner), never FUNDER_ADDRESS",
+          { signer: account.address },
+        );
+      }
     }
   } else if (!loggedRelayerAuthMode) {
     loggedRelayerAuthMode = true;

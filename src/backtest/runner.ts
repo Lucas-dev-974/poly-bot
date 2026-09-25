@@ -3,6 +3,10 @@ import type { Repositories } from "../db/index.js";
 import type { BacktestPositionRow } from "../db/repositories.js";
 import { createStrategy } from "../strategy/registry.js";
 import { TradeTracker } from "../trade-tracker.js";
+import {
+  VOID_SETTLEMENT_PRICE,
+  VOID_WINNER_INDEX,
+} from "../position-resolver.js";
 import type { SimulatedPosition, TokenBook, UpDownEvent } from "../types.js";
 import { BacktestLedger, round2 } from "./ledger.js";
 import { BacktestRestingBook } from "./resting.js";
@@ -270,13 +274,22 @@ async function closeWindow(params: {
 
   if (winner) {
     const resolvedAt = params.window.windowEnd * 1000;
+    // Void 50/50 (winnerOutcomeIndex 2) : aucun gagnant — les deux tokens
+    // sont remboursés au prix de settlement (0.5), pas $1.
+    const isVoid = winner.winnerOutcomeIndex === VOID_WINNER_INDEX;
     for (const position of open) {
-      const won = position.outcomeIndex === winner.winnerOutcomeIndex;
-      const credit = won ? position.size : 0;
-      params.ledger.credit(credit);
-      position.status = won ? "won" : "lost";
+      let credit: number;
+      if (isVoid) {
+        credit = round2(position.size * VOID_SETTLEMENT_PRICE);
+        position.status = "void";
+      } else {
+        const won = position.outcomeIndex === winner.winnerOutcomeIndex;
+        credit = won ? position.size : 0;
+        position.status = won ? "won" : "lost";
+      }
       position.resolvedAt = resolvedAt;
       position.pnl = round2(credit - position.cost);
+      params.ledger.credit(credit);
       params.tracker.resolvePosition(position);
     }
     const pair = params.tracker.getPair(`${params.window.eventSlug}:${params.window.windowEnd}`);

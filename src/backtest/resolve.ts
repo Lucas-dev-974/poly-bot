@@ -1,9 +1,6 @@
 import type { BotConfig } from "../config.js";
 import type { Repositories } from "../db/index.js";
-import {
-  extractWinner,
-  type GammaMarketResult,
-} from "../position-resolver.js";
+import { extractWinner, extractSettlement, type GammaMarketResult } from "../position-resolver.js";
 import { getMarketHistory } from "../dashboard/market-history.js";
 
 export interface WindowWinner {
@@ -25,9 +22,12 @@ function parsePrices(value: unknown): number[] | null {
 }
 
 function winnerIndexFromGamma(result: GammaMarketResult): number | null {
-  const upWon = extractWinner(result, { outcome: "Up", outcomeIndex: 0 });
-  if (upWon === true) return 0;
-  if (upWon === false) return 1;
+  // Void 50/50 : les deux tokens valent 0.5 — étiqueter "Up gagnant" fausserait
+  // market_resolutions (et donc le dataset ML). On persiste un verdict 2.
+  const settlement = extractSettlement(result, { outcome: "Up", outcomeIndex: 0 });
+  if (settlement === "void") return 2;
+  if (settlement === "win") return 0;
+  if (settlement === "lose") return 1;
   const prices = parsePrices(result.outcomePrices);
   if (!prices) return null;
   if (prices[0] >= 0.99) return 0;

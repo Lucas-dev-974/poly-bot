@@ -113,6 +113,87 @@ avec #1 à 2 $.
 
 ## Plan de mise en œuvre recommandé
 
+### Implémentation dans le bot (fait le 2026-09-24)
+
+Le moteur `antiflip-revert` du bot a été étendu pour porter les 3 variantes 5m :
+
+- **Nouveaux paramètres** (`src/config.ts` + `runtime-settings.ts`) :
+  `antiflip5mOnly` (gate fenêtre 5 minutes stricte, actif en live ET paper
+  trading), `antiflipEntryDelaySec` (délai post-flip), `antiflipSharpDropMin`
+  (chute minimale du sommet pré-flip), `antiflipBounceMin` +
+  `antiflipBounceFloor` (rebond + plancher), `antiflipFavAskMin/Max`
+  (bande d'incertitude du nouveau favori, désactivable à 0/1).
+- **Presets** (`config/presets/`) : `antiflip-5m-reentry` (A), `antiflip-5m-sharp`
+  (H), `antiflip-5m-bounce` (K) — chacun avec `marketSlugPrefixes:
+  ["btc-updown-5m"]`, 5 shares max, budget 2 $ (A/H) ou 3 $ (K).
+- **Page Simulation** : 3 cartes de sélection rapide (moteur + preset appliqués
+  au moteur paper en un clic, sim démarrée automatiquement). Le gate 5m vit
+  dans le moteur → il est impossible d'ouvrir une position papier sur un
+  marché 15m avec ces presets.
+- Note : `antiflipDeposedAskMin` est désormais réellement nullable (null =
+  floor désactivé), alignement backend/front/form.
+
+### Plafond de winrate à mise 2 $ (audit 12/12b/12c du 2026-09-24)
+
+À la demande d'une stratégie « WR > 60 %, mise 2 $, gain ≥ 3 $ », un balayage
+exhaustif des conditions (underdog/leader/dislocation × momentum × tranche ×
+post-flip × rebond, répliques exactes A/H incluses) sur les 402k ticks donne :
+
+- **Aucune condition à prix ≤ 0.40 ne dépasse 45 % de WR** (n ≥ 120), IS/OOS.
+- Le plafond observé : ~45 % (A-EXACT d5s, bande 0.33-0.40, n=153).
+- L'arbitrage deux-jambes (acheter les deux côtés quand la somme des asks < 1)
+  exige une mise ≥ 4.50 $ (5 shares × 2 jambes) : hors contrainte 2 $.
+- Conclusion mathématique : gain ≥ 3 $ ⇒ prix ≤ 0.40 ⇒ breakeven 40 %. Le
+  marché 5m est efficient dans cette zone : les états à P(win) > 60 % cotent
+  0.55-0.85, inaccessibles à 2 $/5 shares. Un WR > 60 % à mise 2 $ et gain ≥ 3 $
+  **n'existe pas** sur ce dataset (et sa découverte passée serait suspecte :
+  overfitting).
+
+### Intra-market : TP en % de la mise (audit 13 du 2026-09-24)
+
+Test de la clôture anticipée « vente dès +X% de la mise » (script
+`13-intrabar-tp.mjs`, sortie au **bid réel** du tick, entrées = répliques exactes
+A et H, 836 fenêtres, 58 variantes : TP {8-30%} × SL {aucun,10%,20%} × time-stop).
+
+| Variante | Trades | WR soldés | EV/trade | PnL total | Hold moyen |
+|---|---|---|---|---|---|
+| **A-hold (baseline)** | 75 | 50.7 % | **+0.71 $** | **+53.10 $** | 241 s |
+| A-TP10% | 75 | 85.3 % | +0.11 $ | +8.05 $ | 66 s |
+| A-TP20% (meilleur TP) | 75 | 80.0 % | +0.13 $ | +9.75 $ | 86 s |
+| H-TP10% | 71 | 85.9 % | +0.12 $ | +8.25 $ | 65 s |
+| A-TP8%-SL10% | 75 | 46.7 % | −0.01 $ | −0.75 $ | 6 s |
+
+**Verdict : le hold-to-resolution écrase tous les TP testés en EV absolue**
+(+0.71 $/trade vs +0.11 à +0.14 $/trade) : la résolution crédite 1 $/share là où
+une vente au bid laisse la demi-spread en chemin. Le TP a néanmoins un profil
+valable pour **séparer les trades** : WR soldé 80-86 % (vs 50.7 % en hold),
+trades ~4× plus courts (60-90 s vs 241 s), drawdown par trade quasi nul
+(avg loss −1.87 $ concentré sur les rares résolutions perdues). Toute forme de
+**SL est destructrice** (−0.01 à −0.06 $/trade) : le SL couperait les rebonds
+qui font l'edge antiflip. Si l'objectif est un flux de petits gains réguliers
+plutôt que l'EV max, la variante **TP10%/TP20% sans SL** est exploitable ; sinon
+le hold reste supérieur.
+
+**Implémentation (2026-09-24)** : le moteur `antiflip-revert` porte désormais le
+paramètre `antiflipTakeProfitPct` (0 = off) — en paper trading, toute position
+antiflip est vendue au bid courant dès que bid ≥ prix d'entrée × (1 + TP%),
+sinon hold → résolution. Deux presets : `antiflip-5m-tp10` (TP 10 %, WR soldés
+85.3 %, EV +0.11 $) et `antiflip-5m-tp20` (TP 20 %, WR 80.0 %, EV +0.13 $) —
+cartes #4 et #5 de la page Simulation, gate 5m actif comme les rangs 1-3.
+
+### La cible « WR > 60 % à mise 2 $ / gain ≥ 3 $ » (audit du 2026-09-24)
+
+Recherche exhaustive (scripts `12-calibrate-60wr.mjs`, `12b-calibrate-60wr-max.mjs`,
+`12c-both-sides.mjs`, 836 fenêtres × 402k ticks) : **aucune condition observable
+à prix ≤ 0.40 ne dépasse 51 % de WR** (et la réplique exacte du backtest A
+confirme 43-45 % en balayage tick-par-tick). Le plafond mesuré à mise ≤ 2 $ est
+**WR ≈ 45-51 %**, avec EV positive seulement dans la zone antiflip post-flip.
+L'arbitrage deux-jambes (somme des asks < 1) n'existe que sur 196 ticks, mise
+minimale 4,50 $ — hors contrainte. Conclusion inchangée : à mise 2 $, viser
+EV/trade positif (WR ~50 % vs breakeven ~37 %), pas WR > 60 %.
+
+### Ensuite
+
 1. Lancer le collecteur en continu pour accumuler du live : `node audits/5min-strategies/01-collector.mjs`
 2. **Paper-trader la #1** (A-antiflip-0.3-0.45-d5s) 2-3 jours, comparer le WR
    live au backtest (50.7 %).

@@ -22,6 +22,12 @@ Recherche de stratégies pour les marchés Polymarket **BTC Up/Down 5 minutes** 
 | `09c-calibrate-flip.mjs` | Calibration "flip marginal" (force du nouveau leader) |
 | `09d-calibrate-leader.mjs` | Leader vs Other par tranche de fenêtre × bande de prix |
 | `10-sweep-v4.mjs` | Sweep L (délai post-flip × bande fine, issu de la calibration) |
+| `12-calibrate-60wr.mjs` | Recherche ciblée WR > 60 % à prix ≤ 0.40 (5 shares) |
+| `12b-calibrate-60wr-max.mjs` | Balayage exhaustif : plafond de WR observé à coût ≤ 2 $ |
+| `12c-both-sides.mjs` | Piste arbitrage deux-jambes (somme des asks < 1) |
+| `13-intrabar-tp.mjs` | Intra-market : TP en % de la mise (sortie au bid réel), entrées A/H |
+| `13-intrabar-tp.mjs` | Intra-market : TP en % de la mise, sortie au bid réel (entrées A/H) |
+| `13-intrabar-tp.mjs` | Intra-market : entrées A/H, sortie quand +X% de la mise (TP au bid réel, SL, time-stop) |
 | `lib/api.js` | Client Gamma/CLOB/data-api réutilisable |
 | `lib/tickdb.js` | Schéma et accès à la base SQLite `5m-data.db` |
 | `lib/strategies.js` | 16 stratégies de base S1-S16 |

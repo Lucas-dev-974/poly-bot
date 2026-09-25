@@ -1,9 +1,9 @@
 export type TabId = "story" | "arch" | "hedge" | "ui" | "ship";
-export type EngineId = "arb" | "barbell" | "edge-lead" | "reverse" | "dip-revert" | "antiflip-revert" | "flip-confirm" | "early-conviction" | "open-entry";
+export type EngineId = "arb" | "barbell" | "edge-lead" | "reverse" | "dip-revert" | "fav-band" | "antiflip-revert" | "flip-confirm" | "early-conviction" | "open-entry" | "probability-repricing";
 export type PhaseId = "mid" | "done";
 
 export const TABS: { id: TabId; label: string }[] = [
-  { id: "story", label: "Les 5 moteurs" },
+  { id: "story", label: "Les 11 moteurs" },
   { id: "arch", label: "Architecture" },
   { id: "hedge", label: "Hedge au POST" },
   { id: "ui", label: "Moteur & presets" },
@@ -49,6 +49,13 @@ export const ENGINE_META: Record<
     risk: "Élevée — un seul pari directionnel, pas de hedge, pas de défense",
     tone: "warning",
   },
+  "fav-band": {
+    label: "Fav-band — le favori mid-band",
+    subtitle: "Après ~200 s, un favori coté 0.70-0.85 gagne ~78 % du temps : son ask sous-estime encore sa probabilité de victoire.",
+    order: "Favori mid-band → FOK unique → hold jusqu'à la résolution",
+    risk: "Élevée — un seul pari directionnel, pas de hedge, pas de défense",
+    tone: "warning",
+  },
   "antiflip-revert": {
     label: "Antiflip-revert — le favori déchu",
     subtitle: "Le favori FLIPPE et le marché sur-réagit : l'ancien favori, replacé 0.35-0.45, re-gagne ~52% du temps. 3 presets 5m (re-entry/sharp/bounce) activables depuis la page Simulation.",
@@ -75,6 +82,13 @@ export const ENGINE_META: Record<
     subtitle: "À l'ouverture le marché est FAIR (somme des asks ≈ 1.01) et sans inclinaison : l'edge vit dans le favori qui émerge (écart 0.10 à p50 6 s).",
     order: "Favori mène de 0.15 dans les 300 premières s, marché ouvert fair → FOK → SL dual-scale ou hold",
     risk: "Moyenne — t 2.88 sur 724 fenêtres (un régime) ; les SL coupent les rebonds à sizing L1",
+    tone: "info",
+  },
+  "probability-repricing": {
+    label: "Probability-repricing — la désynchronisation",
+    subtitle: "Un ask qui se décroche sous sa propre moyenne récente (z-score) est temporairement mal coté : achat FOK, sortie rapide au bid.",
+    order: "Dislocation détectée → FOK au ask → TP/stop au bid (inventaire plat avant la clôture)",
+    risk: "Moyenne — path trade à exits stricts ; seuils placeholders à calibrer (papier §13)",
     tone: "info",
   },
 };
@@ -115,13 +129,13 @@ export const COMPARE_ROWS: [string, string, string][] = [
   ["Après défense", "cancel GTC hedge", "cancel GTC hedge (toujours)"],
 ];
 
-export const STRATEGY_COMPARE_ROWS: [string, string, string, string, string, string, string, string, string, string][] = [
-  ["Ordre d'achat", "Outsider → favori", "Outsider → favori (ratio)", "Favori → cheap (après fill edge)", "Grilles simultanées underdog + favori", "Favori seul (après chute + rebond)", "Favori déchu seul (après flip récent)", "Nouveau favori seul (après flip précoce)", "Favori seul (conviction immédiate)", "Favori seul (émergent, ouverture fair)"],
-  ["Signal d'entrée", "Bandes cheap/favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant", "Min (sous-coté) et l'autre token, niveaux grille", "Ask favori chuté ≥ minDrop puis rebond", "Flip d'identité ≥ 240s, frais ≤ 90s, déchu 0.35-0.45", "Flip précoce, entrée en [120,180]s, favori 0.55-0.65", "Favori ≥ 0.60 dès les 45 premières s", "Favori mène de 0.15 ≤ 300s, ouverture fair (askSum ≤ 1.02)"],
-  ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeSizingMode : shares / pUSD / dynamic", "Budget USDC par niveau de grille", "Budget USDC unique (dipRevertOrderUsdc)", "Budget USDC unique (antiflipOrderUsdc)", "Budget USDC unique (flipConfirmOrderUsdc)", "Budget USDC unique (earlyConvictionOrderUsdc)", "Budget USDC unique (openEntryOrderUsdc)"],
-  ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés", "Pas de lock — asymétrie + amortissement", "Pas de lock — mean-reversion", "Pas de lock — sur-réaction", "Pas de lock — momentum", "Pas de lock — trend précoce", "Pas de lock — momentum d'ouverture"],
-  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Vend l'edge nu si en perte soutenue (FOK SELL)", "Aucune — grilles tenues jusqu'à la clôture", "Aucune — hold jusqu'à résolution (ou take-profit optionnel)", "Aucune — hold jusqu'à résolution", "Aucune — hold jusqu'à résolution", "Aucune — hold jusqu'à résolution", "SL dual-scale (flip confirmé + dégât / tardif) sinon hold"],
-  ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu (vendu si perte)", "La plupart des underdogs expirent à 0 ¢", "Le favori chuté perd vraiment (variance)", "Le flip était un vrai changement (variance haute)", "Le flip précoce était du bruit (fenêtre étroite)", "t-stat 1.93 < 2.0 — le moins établi des trois", "SL coûtent −$35 vs hold à sizing L1 — volatilité vs espérance"],
+export const STRATEGY_COMPARE_ROWS: [string, string, string, string, string, string, string, string, string, string, string, string][] = [
+  ["Ordre d'achat", "Outsider → favori", "Outsider → favori (ratio)", "Favori → cheap (après fill edge)", "Grilles simultanées underdog + favori", "Favori seul (après chute + rebond)", "Favori seul (mid-band, elapsed ≥ 200 s)", "Favori déchu seul (après flip récent)", "Nouveau favori seul (après flip précoce)", "Favori seul (conviction immédiate)", "Favori seul (émergent, ouverture fair)", "Token désynchronisé seul (FOK au ask, exit au bid)"],
+  ["Signal d'entrée", "Bandes cheap/favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant", "Min (sous-coté) et l'autre token, niveaux grille", "Ask favori chuté ≥ minDrop puis rebond", "Ask favori ∈ [0.70, 0.85], elapsed ≥ 200 s", "Flip d'identité ≥ 240s, frais ≤ 90s, déchu 0.35-0.45", "Flip précoce, entrée en [120,180]s, favori 0.55-0.65", "Favori ≥ 0.60 dès les 45 premières s", "Favori mène de 0.15 ≤ 300s, ouverture fair (askSum ≤ 1.02)", "Z-score ask ≤ −1.0 vs historique 15 s, p ≤ 0.22, edge_est ≥ 0.025, tau ≥ 90 s"],
+  ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeSizingMode : shares / pUSD / dynamic", "Budget USDC par niveau de grille", "Budget USDC unique (dipRevertOrderUsdc)", "Budget USDC unique (favBandOrderUsdc)", "Budget USDC unique (antiflipOrderUsdc)", "Budget USDC unique (flipConfirmOrderUsdc)", "Budget USDC unique (earlyConvictionOrderUsdc)", "Budget USDC unique (openEntryOrderUsdc)", "Budget USDC unique (repricingOrderUsdc)"],
+  ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés", "Pas de lock — asymétrie + amortissement", "Pas de lock — mean-reversion", "Pas de lock — favori mid-band", "Pas de lock — sur-réaction", "Pas de lock — momentum", "Pas de lock — trend précoce", "Pas de lock — momentum d'ouverture", "Pas de lock — path trade"],
+  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Vend l'edge nu si en perte soutenue (FOK SELL)", "Aucune — grilles tenues jusqu'à la clôture", "Aucune — hold jusqu'à résolution (ou take-profit optionnel)", "Aucune — hold jusqu'à résolution (whipsaw pause après pertes)", "Aucune — hold jusqu'à résolution", "Aucune — hold jusqu'à résolution", "Aucune — hold jusqu'à résolution", "SL dual-scale (flip confirmé + dégât / tardif) sinon hold", "Exits systématiques au bid : TP abs/rel, stop, time-stop, tau_force, spread"],
+  ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu (vendu si perte)", "La plupart des underdogs expirent à 0 ¢", "Le favori chuté perd vraiment (variance)", "Favori surcoté en fin de fenêtre (bande ≤ 0.85)", "Le flip était un vrai changement (variance haute)", "Le flip précoce était du bruit (fenêtre étroite)", "t-stat 1.93 < 2.0 — le moins établi des trois", "SL coûtent −$35 vs hold à sizing L1 — volatilité vs espérance", "Seuils placeholders à calibrer — edge_est théorique (papier §13)"],
 ];
 
 export const EDGE_LEAD_PARAM_ROWS: [string, string][] = [
@@ -164,6 +178,11 @@ export const RESOLUTION_ROWS: Record<EngineId, [string, string][]> = {
     ["L'outsider gagne", "Le favori expire à 0 — perte = coût d'entrée. La chute était un signal de faiblesse réel."],
     ["Take-profit activé, ask ≥ seuil", "Vente au bid (~seuil − 1¢) : gain verrouillé avant la clôture. Désactivé par défaut — en backtest le hold intégral reste meilleur."],
   ],
+  "fav-band": [
+    ["Le favori gagne", "Favori × 1 $ − coût (~0.77) ≈ +0.23/share. Le scénario cible (~78 %) — la bande mid-band sous-évalue le favori établi."],
+    ["L'outsider gagne", "Le favori expire à 0 — perte = coût. Les favoris « certitude » (> 0.90) sont surcotés : la bande s'arrête à 0.85."],
+    ["Whipsaw pause", "3 pertes consécutives suspendent les entrées pendant 8 fenêtres (favBandWhipsawEnabled) — anti-régime retournement."],
+  ],
   "antiflip-revert": [
     ["Le favori déchu re-gagne", "Déchu × 1 $ − coût (~0.43) ≈ +0.57/share. Le scénario cible (~52%) — le marché avait sur-réagi au flip."],
     ["Le nouveau favori s'installe", "Le déchu expire à 0 — perte = coût (~0.43). Le flip était un vrai changement de régime."],
@@ -181,6 +200,12 @@ export const RESOLUTION_ROWS: Record<EngineId, [string, string][]> = {
     ["SL déclenché puis l'autre gagne", "Vendu au bid (perte ≈ dégât) — le SL a coupé avant un effondrement plus profond (cas visé par la double échelle)."],
     ["SL déclenché puis rebond", "Vendu bas puis le marché revient — le coût des SL (−$35 vs hold en backtest runner)."],
     ["L'outsider gagne (hold)", "Le favori expire à 0 — perte = coût. La thèse d'ouverture était du bruit (~37 % hold)."],
+  ],
+  "probability-repricing": [
+    ["TP atteint au bid", "Vendu à entry + targetAbs (~0.06) : gain verrouillé avant la clôture. Le scénario cible du path trade."],
+    ["Stop / time-stop", "Vendu au bid en perte plafonnée (stopAbs ~0.08 ou holdMaxSec 120) — inventaire plat, jamais tenu jusqu'à la résolution."],
+    ["tau_force / spread_exit", "Sortie forcée proche clôture ou spread trop large : priorité à l'inventaire plat, P&L secondaire."],
+    ["forced_settlement", "Inventaire encore ouvert à τ ≤ 0 — compté comme échec d'exit (loggué, phase FLAT + flag)."],
   ],
 };
 
@@ -247,6 +272,21 @@ export const BOT_STEPS: Record<EngineId, string[]> = {
     "Hold tant que rien ne casse : SL structurel si l'autre jambe mène de ≥ 0.20 depuis ≥ 20 s ET l'ask tenu a perdu ≥ 0.10 ; SL tardif passé 300 s si petit dégât (≥ 0.06). Sinon hold jusqu'à la résolution.",
     "Pas de hedge. TP re-confirmé mort (4e audit). Les SL dégradent early-conviction — ne pas copier ce bloc sur un autre moteur.",
   ],
+  "fav-band": [
+    "Après favBandMinElapsedSec (200 s) : repérer le favori (token au best ask le plus haut).",
+    "Si son ask ∈ [favBandAskMin, favBandAskMax] (0.70-0.85) : FOK buy au ask (budget favBandOrderUsdc), profondeur ≥ ~80 % de la taille.",
+    "Une seule entrée par fenêtre ; hold jusqu'à la résolution ; pas de hedge, pas de défense.",
+    "Whipsaw (favBandWhipsawEnabled) : 3 pertes consécutives suspendent les entrées pendant 8 fenêtres ; reset manuel possible depuis le dashboard.",
+    "Optionnel : inverse GTC (favBandInverseEnabled, off par défaut) et exit détérioration (favBandExitEnabled, off par défaut).",
+  ],
+  "probability-repricing": [
+    "À chaque tick : pousser l'ask dans l'historique glissant par token (repricingHistoryWindowMs, 15 s), puis scorer AVANT d'inclure l'ask courant.",
+    "Mode C : z-score de dislocation ≤ −repricingDislocationMin (−1.0) + cheapness — le ask se décroche sous sa moyenne récente.",
+    "Gates d'entrée : tau ≥ repricingTauMinSec (90 s), spread ≤ repricingSpreadMax (0.03), p ≤ repricingPEntryMax (0.22), edge_est ≥ repricingEdgeMin (0.025), TTL signal 3 s (anti re-arm même tick).",
+    "FOK buy au ask (repricingOrderUsdc), plafonné par repricingNotionalMaxPerMarket (30 $) — une position à la fois.",
+    "Exits systématiques au bid (jamais au mid) : TP abs/rel (targetAbs 0.06), stop (stopAbs 0.08), time-stop (holdMaxSec 120), tau_force (25 s avant clôture), spread_exit (0.05).",
+    "Mode A optionnel (repricingModeAEnabled, off par défaut) : rebond après chute. forced_settlement = inventaire ouvert à τ ≤ 0, loggé comme échec d'exit.",
+  ],
 };
 
 export const HEDGE_TREE: [string, string, string][] = [
@@ -292,6 +332,9 @@ export const NEW_FILES: [string, string][] = [
   ["src/strategy/flip-confirm-strategy.ts", "Politique flip-confirm — nouveau favori post-flip précoce, FOK, hold"],
   ["src/strategy/early-conviction-strategy.ts", "Politique early-conviction — favori précoce établi, FOK, hold"],
   ["src/strategy/open-entry-strategy.ts", "Politique open-entry — favori émergent, FOK, SL dual-scale + hold"],
+  ["src/strategy/fav-band-strategy.ts", "Politique fav-band — favori mid-band, FOK, hold (+ whipsaw / inverse / exit)"],
+  ["src/strategy/probability-repricing-strategy.ts", "Politique probability-repricing — dislocation z-score, exits bid stricts"],
+  ["probability-repricing-implementation.md", "Doc d'implémentation probability-repricing (racine du repo)"],
   ["src/strategy/barbell-sizing.ts", "pairLockOk toujours true"],
   ["src/strategy/registry.ts", "createStrategy(id, repos) natif + custom"],
   ["src/strategy/graph/", "DSL + interpréteur GraphStrategy"],
@@ -496,6 +539,39 @@ export const OPENENTRY_LIFE_EDGES: LifeEdge[] = [
   { from: "filled", to: "sl", label: "flip ≥ 0.20 × 20s + dégât / > 300s dégât 0.06" },
   { from: "filled", to: "won", label: "hold → résolution" },
   { from: "filled", to: "lost", label: "hold → résolution" },
+];
+
+export const FAVBAND_LIFE_NODES: LifeNode[] = [
+  { id: "scan", label: "Fenêtre 15m scannée", sub: "Gamma + 2 order books", tone: "neutral" },
+  { id: "band", label: "Favori mid-band", sub: "ask 0.70-0.85, elapsed ≥ 200 s", tone: "accent" },
+  { id: "filled", label: "FOK favori fillé", sub: "budget USDC, profondeur ≥ 80 %", tone: "warning" },
+  { id: "won", label: "Le favori gagne", sub: "redeem 1 $ (~78 %)", tone: "success" },
+  { id: "lost", label: "L'outsider gagne", sub: "expire à 0", tone: "danger" },
+];
+
+export const FAVBAND_LIFE_EDGES: LifeEdge[] = [
+  { from: "scan", to: "band", label: "ask dans la bande" },
+  { from: "band", to: "filled", label: "FOK profondeur OK" },
+  { from: "filled", to: "won", label: "résolution" },
+  { from: "filled", to: "lost", label: "résolution" },
+];
+
+export const REPRICING_LIFE_NODES: LifeNode[] = [
+  { id: "scan", label: "Fenêtre 15m scannée", sub: "Gamma + 2 order books", tone: "neutral" },
+  { id: "dislocation", label: "Dislocation détectée", sub: "z-score ≤ −1.0 vs historique 15 s", tone: "accent" },
+  { id: "filled", label: "FOK au ask fillé", sub: "budget USDC, plafond notional 30 $", tone: "warning" },
+  { id: "exited", label: "Exits au bid", sub: "TP abs/rel · stop · time-stop · tau_force", tone: "neutral" },
+  { id: "forced", label: "forced_settlement", sub: "inventaire ouvert à τ ≤ 0 — échec d'exit", tone: "danger" },
+  { id: "flat", label: "Inventaire plat", sub: "P&L réalisé, plus d'exposition", tone: "success" },
+];
+
+export const REPRICING_LIFE_EDGES: LifeEdge[] = [
+  { from: "scan", to: "dislocation", label: "mode C (+ mode A optionnel)" },
+  { from: "dislocation", to: "filled", label: "gates OK (tau, spread, p, edge_est)" },
+  { from: "filled", to: "exited", label: "bid exécutable (jamais mid)" },
+  { from: "filled", to: "forced", label: "aucun exit avant τ ≤ 0" },
+  { from: "exited", to: "flat", label: "" },
+  { from: "forced", to: "flat", label: "" },
 ];
 
 export type SlotKind = "covered" | "needHedge" | "keepBet";

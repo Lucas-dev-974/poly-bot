@@ -1,12 +1,12 @@
 ---
 description: Synchroniser la page guide stratégie avec tout changement de code stratégie
-globs: src/strategy/**,src/strategy.ts,src/bot.ts,STRATEGY.md,frontend/src/guide/**,frontend/src/pages/StrategyGuidePage.tsx,frontend/src/**/configForm.ts,frontend/src/**/SettingsModal.tsx,frontend/src/**/ConfigBar.tsx,config/presets/**
+globs: src/strategy/**,src/strategy.ts,src/bot.ts,README.md,frontend/src/guide/**,frontend/src/pages/StrategyGuidePage.tsx,frontend/src/**/configForm.ts,frontend/src/**/SettingsModal.tsx,frontend/src/**/ConfigBar.tsx,config/presets/**
 alwaysApply: false
 ---
 
 # Stratégie ↔ page guide
 
-Tout changement de **comportement**, **API**, **config** ou **UI** lié aux moteurs (`arb`, `barbell`) doit être reflété dans la page guide (`/guide`).
+Tout changement de **comportement**, **API**, **config** ou **UI** lié aux moteurs doit être reflété dans la page guide (`/guide`) et le README.
 
 ## Fichiers guide à maintenir
 
@@ -16,7 +16,9 @@ Tout changement de **comportement**, **API**, **config** ou **UI** lié aux mote
 | Onglets & texte | `frontend/src/guide/GuideTabs.tsx` |
 | Diagrammes SVG | `frontend/src/guide/Diagrams.tsx` |
 | Shell page | `frontend/src/pages/StrategyGuidePage.tsx` |
-| Doc technique | `STRATEGY.md` (si le contrat ou les règles changent) |
+| README | moteur listé dans l'intro + section dédiée si nouveau moteur |
+
+> `STRATEGY.md` a été supprimé (commit ask-lock) — le README est la doc technique de référence.
 
 ## Déclencheurs (exemples)
 
@@ -25,16 +27,25 @@ Mettre à jour le guide si tu modifies :
 - `TradingStrategy` (méthodes, sémantique skip/defend/post, sizing)
 - `hedgeAtPostTime`, `defendShares`, `cheapOrderAction`, prédicats / bandes
 - `strategyId`, `barbellHedgeRatio`, presets, champs dashboard « Moteur »
-- Cycles de vie paire, comparaison arb vs barbell, arbre hedge au POST
+- Cycles de vie paire, tableau comparatif `STRATEGY_COMPARE_ROWS` (tuple à arité fixe : élargir la déclaration ET chaque ligne), arbre hedge au POST
+
+## Nouveau moteur : checklist guide
+
+1. `EngineId` dans `frontend/src/guide/data.ts` (type exhaustif — tsc force les Records)
+2. `ENGINE_META`, `RESOLUTION_ROWS`, `BOT_STEPS` pour cet id
+3. Pill dans `EngineSelector` **et** `<Show when={engine() === "<id>"}><...Story /></Show>` dans `StoryTab` — une pill sans story = tab vide silencieux (pas d'erreur tsc)
+4. Bloc `<Show>` lifecycle dans `LifecycleCard` si le moteur a un diagramme
+5. `STRATEGY_COMPARE_ROWS` : élargir le tuple ET toutes les lignes en lockstep
+6. README : intro moteurs + section si le moteur a des paramètres
 
 ## Checklist avant de terminer
 
 1. Le guide décrit encore fidèlement la **politique** implémentée (pas seulement le code).
 2. Tableaux comparatifs, arbre hedge et cycles de vie SVG sont **cohérents** avec le backend.
-3. L’onglet **Livrables** reste à jour si de nouveaux fichiers / todos apparaissent.
+3. L'onglet **Livrables** reste à jour si de nouveaux fichiers / todos apparaissent.
 4. `npm run build` dans `frontend/` passe après les edits guide.
 
 ## Ne pas dupliquer inutilement
 
 - Ne pas éditer `data/bot-settings.json` live (gitignored).
-- Garder le guide **pédagogique** : expliquer l’effet métier, pas copier-coller le diff.
+- Garder le guide **pédagogique** : expliquer l'effet métier, pas copier-coller le diff.

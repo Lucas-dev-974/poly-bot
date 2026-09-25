@@ -48,6 +48,10 @@ import {
   EARLYCONV_LIFE_EDGES,
   OPENENTRY_LIFE_NODES,
   OPENENTRY_LIFE_EDGES,
+  FAVBAND_LIFE_NODES,
+  FAVBAND_LIFE_EDGES,
+  REPRICING_LIFE_NODES,
+  REPRICING_LIFE_EDGES,
 } from "./data";
 
 function EngineSelector(props: {
@@ -71,8 +75,23 @@ function EngineSelector(props: {
       <GuidePill active={props.engine() === "dip-revert"} onClick={() => props.setEngine("dip-revert")}>
         Dip-revert — favori chuté
       </GuidePill>
+      <GuidePill active={props.engine() === "fav-band"} onClick={() => props.setEngine("fav-band")}>
+        Fav-band — favori mid-band
+      </GuidePill>
+      <GuidePill active={props.engine() === "antiflip-revert"} onClick={() => props.setEngine("antiflip-revert")}>
+        Antiflip-revert — favori déchu
+      </GuidePill>
+      <GuidePill active={props.engine() === "flip-confirm"} onClick={() => props.setEngine("flip-confirm")}>
+        Flip-confirm — nouveau favori
+      </GuidePill>
+      <GuidePill active={props.engine() === "early-conviction"} onClick={() => props.setEngine("early-conviction")}>
+        Early-conviction — conviction immédiate
+      </GuidePill>
       <GuidePill active={props.engine() === "open-entry"} onClick={() => props.setEngine("open-entry")}>
         Open-entry — favori émergent
+      </GuidePill>
+      <GuidePill active={props.engine() === "probability-repricing"} onClick={() => props.setEngine("probability-repricing")}>
+        Prob-repricing — désynchronisation
       </GuidePill>
     </GuideRow>
   );
@@ -96,7 +115,11 @@ function LifecycleCard(props: { engine: EngineId }): JSX.Element {
                   ? "Flip-confirm"
                   : props.engine === "open-entry"
                     ? "Open-entry"
-                    : "Early-conviction";
+                    : props.engine === "fav-band"
+                      ? "Fav-band"
+                      : props.engine === "probability-repricing"
+                        ? "Probability-repricing"
+                        : "Early-conviction";
 
   return (
     <GuideCard title={`Cycle de vie — ${title()}`}>
@@ -233,6 +256,36 @@ function LifecycleCard(props: { engine: EngineId }): JSX.Element {
             ÉMERGE. La fair-ness d&apos;ouverture est mémorisée au premier tick
             deux-côtés ; les SL à double échelle sont activables/désactivables
             (openEntrySlEnabled) — hold intégral sinon.
+          </p>
+        </Show>
+        <Show when={props.engine === "fav-band"}>
+          <LifecycleDiagram
+            nodes={FAVBAND_LIFE_NODES}
+            edges={FAVBAND_LIFE_EDGES}
+            markerId="life-arrow-favband"
+            ariaLabel="Cycle de vie d'une position fav-band"
+          />
+          <p class="guide-muted guide-small">
+            Après <code>favBandMinElapsedSec</code> (200 s), le favori (token au best ask
+            le plus haut) est acheté en FOK si son ask est dans la bande
+            <code>[favBandAskMin, favBandAskMax]</code> (0.70-0.85). Une seule entrée par
+            fenêtre, hold jusqu&apos;à la résolution. Le filtre whipsaw suspend les
+            entrées après 3 pertes consécutives (8 fenêtres de pause).
+          </p>
+        </Show>
+        <Show when={props.engine === "probability-repricing"}>
+          <LifecycleDiagram
+            nodes={REPRICING_LIFE_NODES}
+            edges={REPRICING_LIFE_EDGES}
+            markerId="life-arrow-repricing"
+            ariaLabel="Cycle de vie d'une position probability-repricing"
+          />
+          <p class="guide-muted guide-small">
+            C&apos;est un <strong>path trade</strong>, pas un pari de résolution : le
+            moteur détecte une désynchronisation du ask (z-score vs historique 15 s),
+            achète en FOK puis <strong>vend toujours au bid</strong> avant la clôture
+            (TP, stop, time-stop, tau_force). Inventaire plat obligatoire à τ ≤ 0 —
+            sinon <code>forced_settlement</code> est loggé comme échec d&apos;exit.
           </p>
         </Show>
       </GuideStack>
@@ -820,6 +873,145 @@ function OpenEntryStory(): JSX.Element {
   );
 }
 
+function FavBandStory(): JSX.Element {
+  return (
+    <GuideStack>
+      <GuideCallout tone={ENGINE_META["fav-band"].tone} title={ENGINE_META["fav-band"].label}>
+        <p>{ENGINE_META["fav-band"].subtitle}</p>
+        <p class="guide-muted guide-small" style={{ "margin-top": "8px" }}>
+          <strong>Ordre :</strong> {ENGINE_META["fav-band"].order} ·{" "}
+          <strong>Risque :</strong> {ENGINE_META["fav-band"].risk}
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">Le favori établi reste sous-évalué à mi-fenêtre</h3>
+      <p>
+        Après ~200 s, un favori qui cote encore 0.70-0.85 est un trend déjà établi mais
+        pas encore « évident » : il gagne ~78 % du temps, bien au-dessus de son prix
+        d&apos;entrée moyen (~0.77). Les favoris « certitude » (&gt; 0.90) sont eux
+        <strong> surcotés</strong> — la bande s&apos;arrête volontairement à 0.85, et le
+        moteur n&apos;achète jamais la certitude chère.
+      </p>
+
+      <GuideGrid columns={2}>
+        <GuideCard title="Bande d'entrée">
+          <p>
+            Favori = token au <strong>best ask le plus haut</strong>. FOK buy si son ask
+            ∈ <code>[favBandAskMin, favBandAskMax]</code> (0.70-0.85) après
+            <code>favBandMinElapsedSec</code> (200 s), profondeur ≥ ~80 % de la taille.
+            Budget <code>favBandOrderUsdc</code>.
+          </p>
+        </GuideCard>
+        <GuideCard title="Whipsaw — pause après pertes">
+          <p>
+            3 pertes consécutives suspendent les entrées pendant 8 fenêtres
+            (<code>favBandWhipsawEnabled</code>, <code>favBandWhipsawPauseAfterLosses</code>{" "}
+            / <code>favBandWhipsawPauseWindows</code>). Reset manuel possible depuis le
+            dashboard.
+          </p>
+        </GuideCard>
+      </GuideGrid>
+
+      <LifecycleCard engine="fav-band" />
+
+      <GuideCallout tone="warning" title="Pas de filet">
+        <p>
+          Une seule jambe, pas de hedge, pas de défense — hold jusqu&apos;à la résolution.
+          Les options inverse GTC (<code>favBandInverseEnabled</code>) et exit
+          détérioration (<code>favBandExitEnabled</code>) restent <strong>off par
+          défaut</strong> : la config recommandée est le hold intégral.
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">À la fin des 15 minutes</h3>
+      <GuideTable
+        headers={["Scénario", "Résultat"]}
+        rows={RESOLUTION_ROWS["fav-band"]}
+        rowTone={RESOLUTION_ROWS["fav-band"].map((_, i) => (i === 0 ? "success" : "danger"))}
+      />
+
+      <GuideDetails title="Les étapes — Fav-band" defaultOpen>
+        <GuideStack gap={8}>
+          <For each={BOT_STEPS["fav-band"]}>
+            {(step, i) => <p>{i() + 1}. {step}</p>}
+          </For>
+        </GuideStack>
+      </GuideDetails>
+    </GuideStack>
+  );
+}
+
+function ProbabilityRepricingStory(): JSX.Element {
+  return (
+    <GuideStack>
+      <GuideCallout tone={ENGINE_META["probability-repricing"].tone} title={ENGINE_META["probability-repricing"].label}>
+        <p>{ENGINE_META["probability-repricing"].subtitle}</p>
+        <p class="guide-muted guide-small" style={{ "margin-top": "8px" }}>
+          <strong>Ordre :</strong> {ENGINE_META["probability-repricing"].order} ·{" "}
+          <strong>Risque :</strong> {ENGINE_META["probability-repricing"].risk}
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">Un path trade, pas un pari de résolution</h3>
+      <p>
+        Tous les autres moteurs tiennent jusqu&apos;à la résolution (redeem 1 $ / 0 $).
+        Ici non : le moteur détecte une <strong>désynchronisation</strong> du ask — un
+        décrochage sous sa propre moyenne récente (z-score ≤ −1.0 sur l&apos;historique
+        glissant 15 s, mode C) — achète en FOK, puis <strong>vend toujours au bid</strong>{" "}
+        dès qu&apos;un seuil de sortie est touché. L&apos;inventaire doit être plat avant
+        la clôture.
+      </p>
+
+      <GuideGrid columns={2}>
+        <GuideCard title="Entrée — gates stricts">
+          <p>
+            tau ≥ <code>repricingTauMinSec</code> (90 s), spread ≤ 0.03, p ≤ 0.22,
+            edge_est ≥ <code>repricingEdgeMin</code> (0.025), TTL signal 3 s (anti
+            re-arm). FOK au ask, plafond <code>repricingNotionalMaxPerMarket</code> (30 $).
+          </p>
+        </GuideCard>
+        <GuideCard title="Sorties — cinq raisons">
+          <p>
+            TP abs/rel (<code>repricingTargetAbs</code> 0.06), stop (0.08), time-stop
+            (120 s), tau_force (25 s avant clôture), spread_exit (0.05). Toujours au
+            <strong> bid exécutable</strong>, jamais au mid.
+          </p>
+        </GuideCard>
+      </GuideGrid>
+
+      <LifecycleCard engine="probability-repricing" />
+
+      <GuideCallout tone="warning" title="Seuils placeholders — à calibrer">
+        <p>
+          Les défauts viennent du papier (§13), pas d&apos;un backtest calibré : ce
+          moteur n&apos;a <strong>pas encore de backtest validé</strong> dans
+          <code> audits/backtest/</code>. Pas de feed spot/Binance branché — le signal
+          utilise l&apos;historique ask CLOB (<code>repricingFeedMaxAgeMs</code> accepté
+          mais ignoré). <code>forced_settlement</code> (inventaire ouvert à τ ≤ 0) est
+          loggé comme échec d&apos;exit.
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">Les quatre sorties possibles</h3>
+      <GuideTable
+        headers={["Scénario", "Résultat"]}
+        rows={RESOLUTION_ROWS["probability-repricing"]}
+        rowTone={RESOLUTION_ROWS["probability-repricing"].map((_, i) =>
+          i === 0 ? "success" : i === 3 ? "danger" : "warning",
+        )}
+      />
+
+      <GuideDetails title="Les étapes — Probability-repricing" defaultOpen>
+        <GuideStack gap={8}>
+          <For each={BOT_STEPS["probability-repricing"]}>
+            {(step, i) => <p>{i() + 1}. {step}</p>}
+          </For>
+        </GuideStack>
+      </GuideDetails>
+    </GuideStack>
+  );
+}
+
 export function StoryTab(): JSX.Element {
   const [engine, setEngine] = createSignal<EngineId>("arb");
   const [phase, setPhase] = createSignal<PhaseId>("mid");
@@ -828,7 +1020,7 @@ export function StoryTab(): JSX.Element {
     <GuideStack>
       <p>
         Toutes les 15 minutes, Polymarket pose une question : le Bitcoin va-t-il monter ou
-        descendre ?         Deux billets, un seul paie 1 $ à la fin. Cinq moteurs jouent ce marché
+        descendre ?         Deux billets, un seul paie 1 $ à la fin. Onze moteurs jouent ce marché
         différemment — choisis-en un pour voir sa logique.
       </p>
 
@@ -877,10 +1069,16 @@ export function StoryTab(): JSX.Element {
       <Show when={engine() === "open-entry"}>
         <OpenEntryStory />
       </Show>
+      <Show when={engine() === "fav-band"}>
+        <FavBandStory />
+      </Show>
+      <Show when={engine() === "probability-repricing"}>
+        <ProbabilityRepricingStory />
+      </Show>
 
       <GuideDetails title="Comparer les moteurs">
         <GuideTable
-          headers={["Règle", "Arb", "Barbell", "Edge-lead", "Reverse", "Dip-revert", "Antiflip", "Flip-confirm", "Early-conviction", "Open-entry"]}
+          headers={["Règle", "Arb", "Barbell", "Edge-lead", "Reverse", "Dip-revert", "Fav-band", "Antiflip", "Flip-confirm", "Early-conviction", "Open-entry", "Prob-repricing"]}
           rows={STRATEGY_COMPARE_ROWS}
           rowTone={STRATEGY_COMPARE_ROWS.map((_, i) =>
             i === 0 || i === 2 ? "info" : "neutral",
@@ -906,8 +1104,11 @@ export function ArchTab(): JSX.Element {
           <FlowDag />
           <p class="guide-muted guide-small">
             Production : <code>this.strategy</code> via <code>createStrategy(config.strategyId)</code>
-            . Cinq moteurs : <code>arb</code>, <code>barbell</code>, <code>edge-lead</code>,{" "}
-            <code>reverse</code>, <code>dip-revert</code>. Le
+            . Onze moteurs natifs : <code>arb</code>, <code>barbell</code>, <code>edge-lead</code>,{" "}
+            <code>reverse</code>, <code>dip-revert</code>, <code>fav-band</code>,{" "}
+            <code>antiflip-revert</code>, <code>flip-confirm</code>,{" "}
+            <code>early-conviction</code>, <code>open-entry</code>,{" "}
+            <code>probability-repricing</code> (+ <code>custom:…</code> graph). Le
             barrel <code>findOpportunities()</code> reste <strong>arb-only</strong> pour les tests
             existants.
           </p>
@@ -1034,7 +1235,7 @@ export function UiTab(): JSX.Element {
         headers={["Étape", "Effet"]}
         rows={[
           [
-            "Select Moteur (arb / barbell / edge-lead / reverse / fav-band / dip-revert / custom:…)",
+            "Select Moteur (11 moteurs natifs arb … probability-repricing, ou custom:…)",
             "Filtre les profils ; un custom n'a pas de presets — règles chart dans /strategy-editor",
           ],
           ["Ratio hedge", "Onglet hedge ; hint « ignoré par B1 » si arb ; N/A edge-lead"],

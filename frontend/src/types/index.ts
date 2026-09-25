@@ -126,6 +126,8 @@ export interface SimulatedArbPair {
 
 export interface SimulatedStats {
   realizedPnl: number;
+  /** P&L latent des positions ouvertes (Σ bid live × size − cost). */
+  unrealizedPnl: number;
   arbRealizedPnl: number;
   directionalRealizedPnl: number;
   openExposure: number;

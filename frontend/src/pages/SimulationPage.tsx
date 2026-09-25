@@ -209,6 +209,10 @@ export function SimulationPage(): JSX.Element {
     if (!c || c.strategyId !== "antiflip-revert" || !c.presetId) return null;
     return SIM_5M_STRATEGIES.some((s) => s.presetId === c.presetId) ? c.presetId : null;
   });
+  const selectedSim5m = createMemo(() => {
+    const id = sim5mActiveId();
+    return SIM_5M_STRATEGIES.find((s) => s.presetId === id) ?? null;
+  });
 
   async function activateSim5mStrategy(def: Sim5mStrategyDef): Promise<void> {
     if (sending()) return;
@@ -317,9 +321,18 @@ export function SimulationPage(): JSX.Element {
           <span class="sim-kpi-label">P&L réalisé</span>
           <Show when={simStats()} fallback={<span class="sim-kpi-value sim-muted">—</span>}>
             {(s) => (
-              <span class={`sim-kpi-value ${pnlClass(s().realizedPnl)}`}>
-                {fmtUsd(s().realizedPnl)}
-              </span>
+              <div class="sim-kpi-pnl-row">
+                <span class={`sim-kpi-value ${pnlClass(s().realizedPnl)}`}>
+                  {fmtUsd(s().realizedPnl)}
+                </span>
+                <span
+                  class={`sim-kpi-latent ${s().unrealizedPnl > 0 ? "pos" : s().unrealizedPnl < 0 ? "neg" : ""}`}
+                  title="P&L latent des positions ouvertes (bid live)"
+                >
+                  {s().unrealizedPnl >= 0 ? "+" : "−"}
+                  {fmtUsd(Math.abs(s().unrealizedPnl)).slice(1)} latent
+                </span>
+              </div>
             )}
           </Show>
         </div>
@@ -349,54 +362,54 @@ export function SimulationPage(): JSX.Element {
         </div>
       </div>
 
-      {/* Sélection rapide : 3 stratégies 5m validées par backtest (audits/5min-strategies).
-          Le gate "5m uniquement" est dans le moteur (antiflip5mOnly) : impossible
-          d'ouvrir une position papier sur un marché 15m avec ces presets. */}
-      <div class="sim-5m-cards">
-        <For each={SIM_5M_STRATEGIES}>
-          {(def) => {
-            const isActive = () => sim5mActiveId() === def.presetId;
-            const isRunning = () => isActive() && simConfigState()?.enabled === true;
-            return (
-              <button
-                type="button"
-                class={`sim-5m-card ${isActive() ? "sim-5m-card--active" : ""} ${isRunning() ? "sim-5m-card--running" : ""}`}
-                onClick={() => void activateSim5mStrategy(def)}
-                disabled={sending()}
-                title={isRunning()
-                  ? "Active — cliquer pour ré-appliquer (idempotent)"
-                  : "Activer en paper trading (marchés 5m uniquement)"}
-              >
-                <div class="sim-5m-card-top">
-                  <span class="sim-5m-card-name">{def.name}</span>
-                  <span class="sim-5m-card-rank">#{def.rank} · {def.tag}</span>
-                </div>
-                <p class="sim-5m-card-desc">{def.description}</p>
-                <div class="sim-5m-card-stats">
-                  <For each={def.stats}>
-                    {(s) => (
-                      <span class={s.ok ? "ok" : ""}>
-                        {s.label} {s.value}
-                      </span>
-                    )}
+      {/* Sélecteur dédié : les 5 stratégies 5m (hold A/H/K + TP10/TP20), backtest audits/5min-strategies.
+          Le gate "5m uniquement" vit dans le moteur (antiflip5mOnly) : impossible d'ouvrir
+          une position papier sur un marché non-5m. Le select reflète l'état réel du moteur
+          (valeur = preset actif), un changement déclenche l'activation immédiate. */}
+      <div class="sim-5m-select-block">
+        <label class="sim-5m-select-label" for="sim-5m-strategy-select">Stratégie 5m</label>
+        <select
+          id="sim-5m-strategy-select"
+          class={sim5mActiveId() ? "sim-5m-select sim-5m-select--active" : "sim-5m-select"}
+          disabled={sending()}
+          value={sim5mActiveId() ?? ""}
+          onChange={(e) => {
+            const id = e.currentTarget.value;
+            const def = SIM_5M_STRATEGIES.find((s) => s.presetId === id);
+            if (def) void activateSim5mStrategy(def);
+          }}
+        >
+          <option value="">— Sélectionner une stratégie 5m —</option>
+          <For each={SIM_5M_STRATEGIES}>
+            {(def) => (
+              <option value={def.presetId}>
+                #{def.rank} · {def.name} ({def.tag})
+              </option>
+            )}
+          </For>
+        </select>
+        <div class="sim-5m-detail">
+          <p class="sim-5m-detail-desc">
+            {selectedSim5m()?.description ?? "Sélectionnez une stratégie 5m pour voir sa description et ses stats."}
+          </p>
+          <Show when={selectedSim5m()}>
+            {(def) => (
+              <>
+                <div class="sim-5m-detail-stats">
+                  <For each={def().stats}>
+                    {(s) => <span class={s.ok ? "ok" : ""}>{s.label} {s.value}</span>}
                   </For>
                 </div>
-                <Show when={def.warn}>
-                  <p class="sim-5m-card-warn">⚠ {def.warn}</p>
+                <Show when={def().warn}>
+                  <p class="sim-5m-detail-warn">⚠ {def().warn}</p>
                 </Show>
-                <div class="sim-5m-card-foot">
-                  <span class="sim-5m-card-badge">
-                    {isRunning() ? "● active (en cours)" : isActive() ? "● configurée (à l'arrêt)" : "cliquer pour activer"}
-                  </span>
-                  <span class="sim-5m-card-badge">5m only</span>
-                </div>
-              </button>
-            );
-          }}
-        </For>
+              </>
+            )}
+          </Show>
+        </div>
       </div>
       <p class="sim-5m-note">
-        Ces 3 stratégies proviennent du backtest <code>audits/5min-strategies</code> (836 fenêtres BTC
+        Ces stratégies proviennent du backtest <code>audits/5min-strategies</code> (836 fenêtres BTC
         Up/Down 5m, 402k ticks). Le moteur <code>antiflip-revert</code> avec preset 5m
         refuse toute entrée sur un marché non-5m — la protection est active en paper trading comme en live.
       </p>

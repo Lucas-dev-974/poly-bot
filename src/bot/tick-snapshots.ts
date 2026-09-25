@@ -123,6 +123,8 @@ export class TickSnapshots {
 
     return {
       realizedPnl: this.deps.tracker.getRealizedPnl(),
+      // P&L latent sim uniquement : le live n'a pas de lastBids (0 ici).
+      unrealizedPnl: 0,
       arbRealizedPnl: this.deps.tracker.getArbRealizedPnl(),
       directionalRealizedPnl: this.deps.tracker.getDirectionalRealizedPnl(),
       openExposure: this.deps.tracker.getOpenExposure(),

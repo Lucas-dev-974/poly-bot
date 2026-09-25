@@ -418,6 +418,16 @@ export class PaperTradingEngine {
     return total;
   }
 
+  /** P&L latent des positions ouvertes : Σ (bid live × size − cost). 0 si aucune. */
+  private unrealizedPnl(): number {
+    let total = 0;
+    for (const position of this.tracker.getOpenPositions()) {
+      const bid = this.lastBids.get(position.tokenId) ?? position.fillPrice;
+      total = round2(total + (bid - position.fillPrice) * position.size);
+    }
+    return total;
+  }
+
   private computeStats(): SimulatedStats {
     const openPositions = this.tracker.getOpenPositions();
     const wins = this.tracker.getCumulativeWins();
@@ -427,6 +437,7 @@ export class PaperTradingEngine {
     const uncoveredCount = this.tracker.getUncoveredCount();
     return {
       realizedPnl: this.tracker.getRealizedPnl(),
+      unrealizedPnl: this.unrealizedPnl(),
       arbRealizedPnl: this.tracker.getArbRealizedPnl(),
       directionalRealizedPnl: this.tracker.getDirectionalRealizedPnl(),
       openExposure: this.tracker.getOpenExposure(),

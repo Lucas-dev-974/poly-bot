@@ -146,7 +146,23 @@ export class PaperTradingEngine {
     if (patch.strategyId || patch.presetId !== undefined || patch.settings) {
       const strategyId = patch.strategyId ?? this.effectiveConfig.strategyId;
       const presetId = patch.presetId === undefined ? this.simConfig?.presetId : patch.presetId;
-      const settings = patch.settings ?? this.simConfig?.settings;
+      // Sémantique du patch :
+      //  - preset explicite (ou null) SANS settings → REMPLACE tout : les
+      //    settings hérités d'un preset/édition précédent sont purgés, sinon
+      //    le vieux patch primerait sur le nouveau preset (bug « panneau ne
+      //    suit pas le select »).
+      //  - preset + settings ensemble → les settings sont une édition du
+      //    nouveau preset (buildEffectiveConfig applique preset puis settings).
+      //  - settings seuls → FUSION avec les settings courants (édition runtime
+      //    champ par champ, le blob simConfig.settings est cumulatif).
+      const presetChanged = patch.presetId !== undefined;
+      const inherited = patch.settings
+        ? { ...(presetChanged ? {} : (this.simConfig?.settings ?? {})), ...patch.settings }
+        : presetChanged
+          ? undefined
+          : this.simConfig?.settings;
+      const settings =
+        inherited && Object.keys(inherited).length > 0 ? (inherited as RuntimeSettingsPatch) : undefined;
       this.simConfig = { strategyId, presetId: presetId ?? undefined, settings };
       this.presetId = presetId ?? null;
       this.effectiveConfig = buildEffectiveConfig(this.liveConfig, this.repos, {
@@ -317,6 +333,11 @@ export class PaperTradingEngine {
     return this.tracker.getOpenPositions();
   }
 
+  /** Config effective du moteur (preset + settings appliqués) — pour le panneau config sim. */
+  getEffectiveConfig(): BotConfig {
+    return this.effectiveConfig;
+  }
+
   getResolvedPositions(): SimulatedPosition[] {
     return this.tracker.getResolvedPositions();
   }
@@ -354,6 +375,7 @@ export class PaperTradingEngine {
       strategyId: this.effectiveConfig.strategyId,
       presetId: this.presetId,
       capitalInitial: this.capitalInitial,
+      effectiveConfig: this.effectiveConfig,
     };
   }
 

@@ -157,6 +157,8 @@ export interface SimConfigState {
   strategyId: string;
   presetId: string | null;
   capitalInitial: number;
+  /** Config effective (preset + settings) — resynchronise le panneau 5m. */
+  effectiveConfig?: BotConfig;
 }
 
 export interface BotConfig {
@@ -230,6 +232,10 @@ export interface BotConfig {
   edgeSellExpensiveLossPct: number;
   /** Edge-lead : durée de perte continue requise (ms) avant la vente. */
   edgeSellExpensiveLossWindowMs: number;
+  /** Edge-lead : n'émettre l'edge que si l'ask cheap est déjà dans la bande (hedgeable au fill). */
+  edgeRequireCheapReady: boolean;
+  /** Edge-lead : plafond ask_edge + ask_cheap à l'entrée (null = désactivé). */
+  edgeAskSumMax: number | null;
   /** Reverse Phase 2: cancel resting cheap if ask left cheap band. */
   reverseCancelCheapOffBand: boolean;
   /** Reverse Phase 2: FOK-sell uncovered cheap when favorite ask > max. */
@@ -308,6 +314,8 @@ export interface BotConfig {
   antiflipSharpDropMin: number;
   antiflipBounceMin: number;
   antiflipBounceFloor: number | null;
+  /** Antiflip 5m: exit intra-market when bid >= entry * (1 + pct). 0 = hold to resolution. */
+  antiflipTakeProfitPct: number;
   antiflipFavAskMin: number;
   antiflipFavAskMax: number;
   /** Flip-confirm: buy the NEW favorite shortly after an early identity flip. */

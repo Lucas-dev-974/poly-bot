@@ -22,6 +22,7 @@ export function handleSimState(engine: PaperTradingEngine, res: ServerResponse):
   res.end(JSON.stringify({
     ok: true,
     state: engine.getState(),
+    effectiveConfig: engine.getEffectiveConfig(),
     open: engine.getOpenPositions(),
     resolved: engine.getResolvedPositions().slice(0, 200),
     resting: engine.getRestingForSlug(""),

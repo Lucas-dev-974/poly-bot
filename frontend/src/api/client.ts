@@ -4,6 +4,7 @@ import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, Backte
 export interface SimStateResponse {
   ok: boolean;
   state: SimEngineState;
+  effectiveConfig: BotConfig;
   open: SimulatedPosition[];
   resolved: SimulatedPosition[];
   resting: SimRestingOrder[];
@@ -53,6 +54,8 @@ export interface SimEngineState {
 export interface SimConfigPatch {
   strategyId?: string;
   presetId?: string | null;
+  /** Patch de clés runtime éditables — filtré/validé côté backend (sanitizePatch). */
+  settings?: Partial<BotConfig>;
   capital?: number;
 }
 

@@ -23,7 +23,27 @@ export interface Sim5mStrategyDef {
   stats: Array<{ label: string; value: string; ok?: boolean }>;
   /** Avertissement optionnel (budget, fréquence...). */
   warn?: string;
+  /**
+   * Champs du panneau de configuration spécifiquement ACTIFS pour cette
+   * stratégie (filtres d'entrée en plus de la bande commune). Les autres
+   * champs « filtres » du formulaire sont affichés en section avancée
+   * repliable — ils existent toujours dans le patch envoyé au moteur.
+   */
+  activeFields: Array<keyof typeof SIM_5M_FILTER_FIELDS>;
 }
+
+/**
+ * Champs « filtres » du panneau 5m pouvant être actifs ou inactifs selon la
+ * stratégie. Les champs communs (bande, budget, timing, lookback, spread,
+ * garde-fous) sont toujours affichés.
+ */
+export const SIM_5M_FILTER_FIELDS = {
+  antiflipTakeProfitPct: "Take-profit intra-market (0 = hold)",
+  antiflipSharpDropMin: "Sharp drop min (chute pré-flip)",
+  antiflipBounceMin: "Bounce min (rebond du plancher)",
+  antiflipBounceFloor: "Bounce floor (plancher non condamné)",
+  antiflipDeposedAskMin: "Floor déchu (min ask du déposé)",
+} as const;
 
 export const SIM_5M_STRATEGIES: Sim5mStrategyDef[] = [
   {
@@ -40,6 +60,7 @@ export const SIM_5M_STRATEGIES: Sim5mStrategyDef[] = [
       { label: "Ratio", value: "1.73" },
       { label: "Trades/70h", value: "75" },
     ],
+    activeFields: [],
   },
   {
     presetId: "antiflip-5m-sharp",
@@ -55,6 +76,7 @@ export const SIM_5M_STRATEGIES: Sim5mStrategyDef[] = [
       { label: "Ratio", value: "1.70" },
       { label: "Trades/70h", value: "71" },
     ],
+    activeFields: ["antiflipSharpDropMin"],
   },
   {
     presetId: "antiflip-5m-bounce",
@@ -71,6 +93,7 @@ export const SIM_5M_STRATEGIES: Sim5mStrategyDef[] = [
       { label: "Trades/70h", value: "237" },
     ],
     warn: "Budget ~3 $/trade (5 shares × ask ≤ 0.60) — au-delà de la contrainte stricte 2 $. La plus stable IS/OOS (55%/55 %) à budget élargi.",
+    activeFields: ["antiflipBounceMin", "antiflipBounceFloor"],
   },
   {
     presetId: "antiflip-5m-tp10",
@@ -86,6 +109,7 @@ export const SIM_5M_STRATEGIES: Sim5mStrategyDef[] = [
       { label: "Hold moyen", value: "66s" },
       { label: "Trades/70h", value: "75" },
     ],
+    activeFields: ["antiflipTakeProfitPct"],
   },
   {
     presetId: "antiflip-5m-tp20",
@@ -101,5 +125,6 @@ export const SIM_5M_STRATEGIES: Sim5mStrategyDef[] = [
       { label: "Hold moyen", value: "86s" },
       { label: "Trades/70h", value: "75" },
     ],
+    activeFields: ["antiflipTakeProfitPct"],
   },
 ];

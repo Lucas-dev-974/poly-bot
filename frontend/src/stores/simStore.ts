@@ -1,9 +1,11 @@
 import { createSignal } from "solid-js";
-import type { SimBalance, SimConfigState, SimulatedPosition, SimulatedStats } from "../types";
+import type { BotConfig, SimBalance, SimConfigState, SimulatedPosition, SimulatedStats } from "../types";
 
 /** État live du moteur paper trading (simulation). */
 export const [simBalance, setSimBalance] = createSignal<SimBalance | null>(null);
 export const [simConfigState, setSimConfigState] = createSignal<SimConfigState | null>(null);
+/** Config effective du moteur (preset + settings appliqués) — panneau config 5m. */
+export const [simEffectiveConfig, setSimEffectiveConfig] = createSignal<BotConfig | null>(null);
 export const [simOpenPositions, setSimOpenPositions] = createSignal<SimulatedPosition[]>([]);
 export const [simResolvedPositions, setSimResolvedPositions] = createSignal<SimulatedPosition[]>([]);
 export const [simStats, setSimEngineStats] = createSignal<SimulatedStats | null>(null);

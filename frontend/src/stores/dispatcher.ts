@@ -12,6 +12,7 @@ import {
   resolveSimPosition,
   setSimBalance,
   setSimConfigState,
+  setSimEffectiveConfig,
   upsertSimOpen,
   setSimEngineStats,
 } from "../stores/simStore";
@@ -124,6 +125,7 @@ export function dispatchEvent(event: BotEvent): void {
 
     case "simConfig":
       setSimConfigState(event.simConfig);
+      if (event.simConfig.effectiveConfig) setSimEffectiveConfig(event.simConfig.effectiveConfig);
       break;
 
     case "simulatedStats":

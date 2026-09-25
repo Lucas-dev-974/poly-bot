@@ -55,6 +55,8 @@ export type ConfigFormState = {
   edgeSellExpensiveAfterMin: string;
   edgeSellExpensiveLossPct: string;
   edgeSellExpensiveLossWindowMs: string;
+  edgeRequireCheapReady: boolean;
+  edgeAskSumMax: string;
   reverseCancelCheapOffBand: boolean;
   reverseDefendEnabled: boolean;
   reverseMaxGridLevels: string;
@@ -108,6 +110,7 @@ export type ConfigFormState = {
   antiflipSharpDropMin: string;
   antiflipBounceMin: string;
   antiflipBounceFloor: string;
+  antiflipTakeProfitPct: string;
   antiflipFavAskMin: string;
   antiflipFavAskMax: string;
   flipConfirmBandMin: string;
@@ -223,6 +226,8 @@ export function configToForm(config: BotConfig): ConfigFormState {
     edgeSellExpensiveAfterMin: String(config.edgeSellExpensiveAfterMin ?? 8),
     edgeSellExpensiveLossPct: String(config.edgeSellExpensiveLossPct ?? 10),
     edgeSellExpensiveLossWindowMs: String(config.edgeSellExpensiveLossWindowMs ?? 10000),
+    edgeRequireCheapReady: config.edgeRequireCheapReady === true,
+    edgeAskSumMax: config.edgeAskSumMax == null ? "" : String(config.edgeAskSumMax),
     reverseCancelCheapOffBand: config.reverseCancelCheapOffBand === true,
     reverseDefendEnabled: config.reverseDefendEnabled === true,
     reverseMaxGridLevels:
@@ -306,6 +311,7 @@ export function configToForm(config: BotConfig): ConfigFormState {
     antiflipBounceMin: String(config.antiflipBounceMin ?? 0),
     antiflipBounceFloor:
       config.antiflipBounceFloor == null ? "" : String(config.antiflipBounceFloor),
+    antiflipTakeProfitPct: String(config.antiflipTakeProfitPct ?? 0),
     antiflipFavAskMin: String(config.antiflipFavAskMin ?? 0.45),
     antiflipFavAskMax: String(config.antiflipFavAskMax ?? 0.65),
     flipConfirmBandMin: String(config.flipConfirmBandMin ?? 0.55),
@@ -447,6 +453,9 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     edgeSellExpensiveAfterMin: parseNum(form.edgeSellExpensiveAfterMin, "Vente edge après (min)"),
     edgeSellExpensiveLossPct: parseNum(form.edgeSellExpensiveLossPct, "Perte edge %"),
     edgeSellExpensiveLossWindowMs: parseNum(form.edgeSellExpensiveLossWindowMs, "Fenêtre perte edge (ms)"),
+    edgeRequireCheapReady: form.edgeRequireCheapReady === true,
+    edgeAskSumMax:
+      form.edgeAskSumMax.trim() === "" ? null : parseNum(form.edgeAskSumMax, "Edge ask sum max"),
     reverseCancelCheapOffBand: form.reverseCancelCheapOffBand,
     reverseDefendEnabled: form.reverseDefendEnabled,
     reverseMaxGridLevels:
@@ -542,6 +551,7 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
       form.antiflipBounceFloor.trim() === ""
         ? null
         : parseNum(form.antiflipBounceFloor, "Antiflip bounce floor"),
+    antiflipTakeProfitPct: parseNum(form.antiflipTakeProfitPct, "Antiflip take-profit %"),
     antiflipFavAskMin: parseNum(form.antiflipFavAskMin, "Antiflip fav ask min"),
     antiflipFavAskMax: parseNum(form.antiflipFavAskMax, "Antiflip fav ask max"),
     flipConfirmBandMin: parseNum(form.flipConfirmBandMin, "Flip-confirm band min"),
@@ -872,6 +882,13 @@ export function validateConfigForm(
       }
       if (!Number.isFinite(budget) || budget <= 0) {
         errors.push("Antiflip: budget doit être > 0");
+      }
+      // Miroir backend (config.ts) : bounceFloor null ou dans la bande.
+      if (form.antiflipBounceFloor.trim() !== "") {
+        const bFloor = Number(form.antiflipBounceFloor);
+        if (!Number.isFinite(bFloor) || bFloor < lo || bFloor > hi) {
+          errors.push("Antiflip: bounce floor doit être dans la bande (ou vide)");
+        }
       }
     }
     if (form.strategyId === "flip-confirm") {
@@ -1471,6 +1488,22 @@ export function fieldErrors(
       }
       if (!Number.isFinite(spread) || spread < 0) result.antiflipMaxSpread = ">= 0";
       if (!Number.isFinite(budget) || budget <= 0) result.antiflipOrderUsdc = "> 0";
+      const tp = Number(form.antiflipTakeProfitPct);
+      if (!Number.isFinite(tp) || tp < 0 || tp > 0.9) {
+        result.antiflipTakeProfitPct = "Entre 0 et 0.9 (0 = hold to resolution)";
+      }
+      // Miroir backend (config.ts validateConfigCoherence) : bounceFloor null
+      // ou dans [bandMin, bandMax] — sinon le backend rejette au Apply.
+      if (form.antiflipBounceFloor.trim() !== "") {
+        const bFloor = Number(form.antiflipBounceFloor);
+        if (
+          !Number.isFinite(bFloor) ||
+          (Number.isFinite(lo) && bFloor < lo) ||
+          (Number.isFinite(hi) && bFloor > hi)
+        ) {
+          result.antiflipBounceFloor = "Dans la bande (ou vide)";
+        }
+      }
     }
     if (form.strategyId === "flip-confirm") {
       const lo = Number(form.flipConfirmBandMin);

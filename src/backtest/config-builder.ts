@@ -32,6 +32,17 @@ export function buildEffectiveConfig(
   const copy: BotConfig = { ...liveConfig, readonlyLive: false };
   const settings = body.settings && Object.keys(body.settings).length > 0 ? body.settings : null;
   if (settings) {
+    // Preset d'abord (base), puis settings runtime par-dessus : une édition
+    // du panneau sur un preset actif modifie CHAMPS PAR CHAMPS les valeurs du
+    // preset (sinon le preset serait écrasé intégralement).
+    if (body.presetId) {
+      const preset = listStrategyPresets().find((p) => p.id === body.presetId);
+      if (!preset) throw new Error(`Preset inconnu: ${body.presetId}`);
+      if (preset.strategyId !== body.strategyId) {
+        throw new Error(`Le preset ${body.presetId} n'appartient pas au moteur ${body.strategyId}`);
+      }
+      applyPatch(copy, sanitizePatch({ ...preset.settings, strategyId: body.strategyId }));
+    }
     applyPatch(copy, sanitizePatch({ ...settings, strategyId: body.strategyId }));
   } else if (body.useCurrentConfig) {
     copy.strategyId = body.strategyId;

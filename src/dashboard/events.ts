@@ -62,6 +62,9 @@ export interface SimConfigEvent {
   strategyId: string;
   presetId: string | null;
   capitalInitial: number;
+  /** Config effective (preset + settings) — resynchronise le panneau 5m
+   * quand le preset change via la barre de contrôle ou un autre onglet. */
+  effectiveConfig: BotConfig;
 }
 
 export interface PolymarketPosition {

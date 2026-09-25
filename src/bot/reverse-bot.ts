@@ -240,15 +240,17 @@ export class ReverseBot {
     }
     setInterval(() => this.snapshots.emitStats(this.totalAttempts), 5_000);
 
-    // Emit whipsaw status for fav-band strategy (dashboard indicator)
-    if (this.config.strategyId === "fav-band") {
-      setInterval(() => {
-        const status = this.getStrategyStatus();
-        if (status) {
-          bus.emit({ type: "strategyStatus", status });
-        }
-      }, 5_000);
-    }
+    // Emit whipsaw status for fav-band strategy (dashboard indicator).
+    // The interval is created UNCONDITIONALLY: strategyId can be swapped at
+    // runtime (onRuntimeSettingsChanged), so gating must live INSIDE the
+    // callback. getStrategyStatus() returns null for non-fav-band engines
+    // (early return), so the cost is negligible.
+    setInterval(() => {
+      const status = this.getStrategyStatus();
+      if (status) {
+        bus.emit({ type: "strategyStatus", status });
+      }
+    }, 5_000);
 
     this.snapshots.pruneData();
     setInterval(() => this.snapshots.pruneData(), 3600_000); // 1h
@@ -349,6 +351,12 @@ export class ReverseBot {
         strategyId: this.strategy.id,
         label: this.strategy.label,
       });
+      // Push whipsaw status immediately when the new engine is fav-band,
+      // instead of waiting for the next 5s interval tick (dashboard indicator).
+      const status = this.getStrategyStatus();
+      if (status) {
+        bus.emit({ type: "strategyStatus", status });
+      }
     }
     bus.emit({ type: "config", config: toPublicConfig(this.config) });
     log("Runtime settings updated", { changed: [...changed] });

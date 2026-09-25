@@ -69,6 +69,7 @@ async function main(): Promise<void> {
     dashboard.setTracker(bot.tracker);
     dashboard.setMarketRuleStore(bot.rules);
     dashboard.setTrader(trader);
+    dashboard.setBalanceTracker(balanceTracker);
     if (paperEngine) {
       dashboard.setSimEngine(paperEngine);
     }

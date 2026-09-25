@@ -164,6 +164,11 @@ export const api = {
   state: () => request<StateResponse>("/api/state"),
   dbTables: () =>
     request<{ tables: Array<{ name: string; count: number }> }>("/api/db/tables"),
+  /** Fallback REST positions Polymarket (cache du dernier poll BalanceTracker). */
+  polyPositions: () =>
+    request<{ positions: import("../types").PolymarketPosition[] }>(
+      "/api/polymarket-positions",
+    ),
   config: () => request<ConfigResponse>("/api/config"),
   relayerQuota: () =>
     request<{ quota: RelayerQuotaState }>("/api/relayer-quota"),

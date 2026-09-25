@@ -15,11 +15,14 @@ import { SettingsModal } from "./components/modals/SettingsModal";
 import { WalletModal } from "./components/modals/WalletModal";
 import { MarketRecordingModal } from "./components/modals/MarketRecordingModal";
 import { useEventSource } from "./hooks/useEventSource";
-import { useInterval } from "./hooks/useInterval";
+import { useAdaptiveSync } from "./hooks/useAdaptiveSync";
+import { useClock, clockNow } from "./stores/clockStore";
+import { setLiveBalance, liveBalance } from "./stores/balanceStore";
 import { api } from "./api/client";
 import { dispatchEvent } from "./stores/dispatcher";
 import { setConfig, config, setBotEnabled } from "./stores/botStore";
 import { replaceOpen, replaceResolved } from "./stores/positionStore";
+import { fetchPolyPositionsFallback } from "./stores/polyStore";
 import { replaceOrders } from "./stores/orderStore";
 import { updateRelayerQuota } from "./stores/quotaStore";
 import {
@@ -32,11 +35,11 @@ import { addLog } from "./stores/logStore";
 import { notifyError } from "./utils/notifications";
 import { pushError } from "./stores/toastStore";
 import { fmtUsd } from "./utils/format";
-import type { BalanceSnapshot, BotEvent, SimulatedPosition } from "./types";
+import type { BotEvent, SimulatedPosition } from "./types";
 
 export function App(): JSX.Element {
-  const [now, setNow] = createSignal(Date.now());
-  const [liveBalance, setLiveBalance] = createSignal<BalanceSnapshot | null>(null);
+  // Horloge globale partagée (tick 1 s) — countdowns des panneaux.
+  useClock();
   const [redeemTarget, setRedeemTarget] = createSignal<string | null>(null);
   const [settingsOpen, setSettingsOpen] = createSignal(false);
   const [confirmDiscardSettings, setConfirmDiscardSettings] = createSignal(false);
@@ -45,7 +48,7 @@ export function App(): JSX.Element {
   const [walletOpen, setWalletOpen] = createSignal(false);
   const [recordingOpen, setRecordingOpen] = createSignal(false);
 
-  // SSE → stores + signaux locaux (balance)
+  // SSE → stores (balance interceptée ici, le reste va au dispatcher)
   useEventSource((event: BotEvent) => {
     if (event.type === "balance") {
       setLiveBalance(event.balance);
@@ -54,13 +57,18 @@ export function App(): JSX.Element {
     dispatchEvent(event);
   });
 
-  // Tick chaque seconde (countdowns)
-  useInterval(() => setNow(Date.now()), 1000);
+  // Tick chaque seconde (countdowns) — horloge globale partagée.
+  const now = clockNow;
 
-  // Sync REST périodique (fallback si SSE perdu)
-  useInterval(() => {
+  // Sync REST adaptative (2 vitesses) : 60 s si SSE vivant (filet de sécurité
+  // de réconciliation), 10 s si SSE perdu — le SSE se connecte avec replay=0,
+  // les events manqués pendant une coupure ne reviennent jamais, le REST est
+  // alors le seul réconciliateur. polyPositions n'a que le SSE (event replace
+  // idempotent) → fallback REST gated sur la même boucle.
+  useAdaptiveSync(() => {
     void syncPositions();
-  }, 10_000);
+    void fetchPolyPositionsFallback();
+  }, { fastMs: 10_000, slowMs: 60_000 });
 
   async function syncPositions(): Promise<void> {
     try {
@@ -105,6 +113,7 @@ export function App(): JSX.Element {
     } catch (e) {
       addLog("Impossible de charger l'état initial", undefined, true);
     }
+    void fetchPolyPositionsFallback();
     await syncPositions();
   }
 
@@ -187,7 +196,6 @@ export function App(): JSX.Element {
   return (
     <>
       <Header
-        liveBalance={liveBalance}
         onOpenWallet={() => setWalletOpen(true)}
         onOpenRecording={() => setRecordingOpen(true)}
       />
@@ -195,11 +203,11 @@ export function App(): JSX.Element {
       <div class="grid">
               <PolymarketPositions onRedeem={handleRedeem} />
               <OpenPositions
-                now={now()}
+                now={clockNow()}
                 onClosePosition={handleClosePosition}
                 closingId={closingId()}
               />
-              <ActiveMarkets now={now()} />
+              <ActiveMarkets now={clockNow()} />
               <RecentOrders now={now()} />
               <Performance />
               <ResolvedPositions />

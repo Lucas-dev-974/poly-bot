@@ -2,20 +2,18 @@ import { For, Show, createMemo, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { EmptyState } from "../ui/EmptyState";
 import { Panel } from "../ui/Panel";
-import { simStats } from "../../stores/statsStore";
-import { api } from "../../api/client";
+import { globalStats, engineRows, refreshEngineStats } from "../../stores/statsStore";
 import type { EngineStatsRow } from "../../types";
 import { fmtUsd, pct } from "../../utils/format";
 
 /**
  * Panneau Performance : vue globale (flux SSE `stats`, tous moteurs
  * confondus) ou vue filtrée sur un moteur (agrégation SQL par strategyId,
- * rafraîchie par polling REST).
+ * refresh REST au montage + au changement de sélection).
  */
 export function Performance(): JSX.Element {
   const GLOBAL = "__global__";
   const [selected, setSelected] = createSignal<string>(GLOBAL);
-  const [engineRows, setEngineRows] = createSignal<EngineStatsRow[]>([]);
 
   const engines = createMemo(() => engineRows().map((r) => r.engine));
   const isGlobal = createMemo(() => selected() === GLOBAL);
@@ -23,20 +21,7 @@ export function Performance(): JSX.Element {
     engineRows().find((r) => r.engine === selected()),
   );
 
-  async function refreshEngines(): Promise<void> {
-    try {
-      const { engines: rows } = await api.statsByEngine();
-      setEngineRows(rows);
-      // Le moteur sélectionné a disparu (reset DB) → retour au global.
-      if (!isGlobal() && !rows.some((r) => r.engine === selected())) {
-        setSelected(GLOBAL);
-      }
-    } catch {
-      // Endpoint indisponible (backend ancien) : on garde le global.
-      setEngineRows([]);
-    }
-  }
-  void refreshEngines();
+  void refreshEngineStats();
 
   return (
     <Panel title="Performance">
@@ -47,7 +32,7 @@ export function Performance(): JSX.Element {
           onChange={(e) => {
             const value = e.currentTarget.value;
             setSelected(value);
-            if (value !== GLOBAL) void refreshEngines();
+            if (value !== GLOBAL) void refreshEngineStats();
           }}
         >
           <option value={GLOBAL}>Global (tous moteurs)</option>
@@ -67,7 +52,7 @@ export function Performance(): JSX.Element {
           </Show>
         }
       >
-        <Show when={simStats()} fallback={<EmptyState text="En attente de données…" />}>
+        <Show when={globalStats()} fallback={<EmptyState text="En attente de données…" />}>
           {(s) => <GlobalTable s={s()} />}
         </Show>
       </Show>
@@ -109,7 +94,7 @@ function EngineTable(props: { row: EngineStatsRow }): JSX.Element {
 }
 
 /** Vue globale : table existante, inchangée. */
-function GlobalTable(props: { s: NonNullable<ReturnType<typeof simStats>> }): JSX.Element {
+function GlobalTable(props: { s: NonNullable<ReturnType<typeof globalStats>> }): JSX.Element {
   const s = () => props.s;
   return (
     <table>

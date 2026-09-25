@@ -20,7 +20,8 @@ import { replacePolyPositions } from "../stores/polyStore";
 import { updateRelayerQuota } from "../stores/quotaStore";
 import { addLog } from "../stores/logStore";
 import { setWsStatus } from "./wsStore";
-import { pushError } from "./toastStore";
+import { setStrategyStatus } from "./strategyStatusStore";
+import { pushError, pushInfo } from "./toastStore";
 
 /**
  * Route chaque événement SSE vers les stores correspondants.
@@ -33,12 +34,27 @@ export function dispatchEvent(event: BotEvent): void {
       break;
 
     case "balance":
-      // Géré par App via liveBalance signal
+      // Géré par App via balanceStore (interception avant dispatcher)
       break;
 
-    case "simulatedBalance":
-      // Capital / balance come from live wallet events
+    case "withdrawal": {
+      const w = event;
+      if (w.status === "failed") {
+        pushError(`Retrait échoué : ${w.message ?? "raison inconnue"}`, {
+          group: "withdrawal",
+        });
+        addLog(`Retrait ${w.to} échoué : ${w.message ?? "raison inconnue"}`, undefined, true);
+      } else {
+        addLog(
+          `Retrait ${w.status === "success" ? "confirmé" : "en cours"} : ${w.amount} pUSD → ${w.to}` +
+            (w.txHash ? ` (tx ${w.txHash})` : ""),
+        );
+        pushInfo(
+          w.status === "success" ? "Retrait confirmé" : "Retrait en cours…",
+        );
+      }
       break;
+    }
 
     case "scan":
       if (event.slugs) retainMarkets(event.slugs);
@@ -119,17 +135,13 @@ export function dispatchEvent(event: BotEvent): void {
       setSimBalance(event.balance);
       break;
 
-    case "simStats":
+    case "simEngineStats":
       setSimEngineStats(event.stats);
       break;
 
     case "simConfig":
       setSimConfigState(event.simConfig);
       if (event.simConfig.effectiveConfig) setSimEffectiveConfig(event.simConfig.effectiveConfig);
-      break;
-
-    case "simulatedStats":
-      setSimStats(event.stats);
       break;
 
     case "stats":
@@ -158,16 +170,15 @@ export function dispatchEvent(event: BotEvent): void {
       break;
 
     case "log":
-          addLog(event.message, event.data, false);
-          break;
+      addLog(event.message, event.data, false);
+      break;
 
-        case "strategyStatus":
-          // Strategy status events are handled via REST polling in WhipsawStatus component
-          // No store update needed — the component polls /api/strategy/status directly
-          break;
+    case "strategyStatus":
+      setStrategyStatus(event.status);
+      break;
 
-        case "wsStatus":
-          setWsStatus(event);
-          break;
-      }
-    }
+    case "wsStatus":
+      setWsStatus(event);
+      break;
+  }
+}

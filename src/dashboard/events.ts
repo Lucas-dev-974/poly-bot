@@ -14,9 +14,8 @@ import type { FavBandWhipsawStatus } from "../strategy/fav-band-strategy.js";
 export type BotEvent =
   | { type: "config"; config: BotConfig }
   | { type: "balance"; balance: BalanceSnapshot }
-  | { type: "simulatedBalance"; balance: number }
   | { type: "simBalance"; balance: SimBalance }
-  | { type: "simStats"; stats: SimulatedStats }
+  | { type: "simEngineStats"; stats: SimulatedStats }
   | { type: "simConfig"; simConfig: SimConfigEvent }
   | { type: "simOpenedPosition"; position: SimulatedPosition }
   | { type: "simResolvedPosition"; position: SimulatedPosition }
@@ -26,7 +25,6 @@ export type BotEvent =
   | { type: "order"; result: OrderResult; opportunity: TradeOpportunity }
   | { type: "openedPosition"; position: SimulatedPosition }
   | { type: "resolvedPosition"; position: SimulatedPosition }
-  | { type: "simulatedStats"; stats: SimulatedStats }
   | { type: "stats"; stats: SimulatedStats }
   | { type: "resolution"; message: string; data?: Record<string, unknown> }
   | { type: "polymarketPositions"; positions: PolymarketPosition[] }

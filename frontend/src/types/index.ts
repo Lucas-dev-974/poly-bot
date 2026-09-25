@@ -498,9 +498,8 @@ export interface ChartTarget {
 export type BotEvent =
   | { type: "config"; config: BotConfig }
   | { type: "balance"; balance: BalanceSnapshot }
-  | { type: "simulatedBalance"; balance: number }
   | { type: "simBalance"; balance: SimBalance }
-  | { type: "simStats"; stats: SimulatedStats }
+  | { type: "simEngineStats"; stats: SimulatedStats }
   | { type: "simConfig"; simConfig: SimConfigState }
   | { type: "simOpenedPosition"; position: SimulatedPosition }
   | { type: "simResolvedPosition"; position: SimulatedPosition }
@@ -510,11 +509,18 @@ export type BotEvent =
   | { type: "order"; result: OrderResult; opportunity: TradeOpportunity }
   | { type: "openedPosition"; position: SimulatedPosition }
   | { type: "resolvedPosition"; position: SimulatedPosition }
-  | { type: "simulatedStats"; stats: SimulatedStats }
   | { type: "stats"; stats: SimulatedStats }
   | { type: "resolution"; message: string; data?: Record<string, unknown> }
   | { type: "polymarketPositions"; positions: PolymarketPosition[] }
   | { type: "relayerQuota"; quota: RelayerQuotaState }
+  | {
+      type: "withdrawal";
+      status: "pending" | "success" | "failed";
+      to: string;
+      amount: number;
+      txHash?: string;
+      message?: string;
+    }
   | { type: "botControl"; enabled: boolean }
   | { type: "error"; message: string }
   | { type: "log"; message: string; data?: Record<string, unknown> }

@@ -1744,6 +1744,16 @@ select.cfg-input {
   text-align: center;
 }
 
+/* Bouton « Réinitialiser la pause » du panneau whipsaw. */
+.whipsaw-details .reset-row {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.whipsaw-details .reset-row .btn-danger-solid {
+  width: 100%;
+}
+
 .whipsaw-disabled {
   padding: 12px;
   background: var(--bg);

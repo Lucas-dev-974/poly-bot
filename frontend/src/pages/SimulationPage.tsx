@@ -1,6 +1,6 @@
 import { For, Show, createEffect, createMemo, createSignal, onMount } from "solid-js";
 import type { JSX } from "solid-js";
-import { api, type SimEngineState, type SimConfigPatch, type SimTrade, type SimRestingOrder } from "../api/client";
+import { api, type SimEngineState, type SimConfigPatch } from "../api/client";
 import type { SimulatedPosition } from "../types";
 import { ActiveMarkets } from "../components/panels/ActiveMarkets";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -25,18 +25,19 @@ import {
   formToSettings,
   type ConfigFormState,
 } from "../utils/configForm";
-import {
-  deleteUserPreset,
-  loadUserPresets,
-  saveUserPreset,
-  type UserPreset,
-} from "../utils/user-presets";
 import { useEventSource } from "../hooks/useEventSource";
-import { useInterval } from "../hooks/useInterval";
+import { useAdaptiveSync } from "../hooks/useAdaptiveSync";
+import { useClock, clockNow } from "../stores/clockStore";
+import {
+  userPresets,
+  commitUserPreset,
+  removeUserPreset,
+} from "../stores/userPresetsStore";
 import { dispatchEvent } from "../stores/dispatcher";
 import { markets } from "../stores/marketStore";
 import {
   replaceSimLists,
+  replaceSimRestingAndJournal,
   simBalance,
   simConfigState,
   simEffectiveConfig,
@@ -46,7 +47,11 @@ import {
   setSimOpenPositions,
   setSimEngineStats,
   simResolvedPositions,
-  simStats,
+  simEngineStats,
+  simResting,
+  setSimResting,
+  simJournal,
+  setSimJournal,
 } from "../stores/simStore";
 import { countdown, fmtPrice, fmtShares, fmtUsd, pct, timeStr } from "../utils/format";
 import { addLog } from "../stores/logStore";
@@ -98,43 +103,46 @@ function unrealizedPnl(p: SimulatedPosition): number | null {
 }
 
 export function SimulationPage(): JSX.Element {
-  const [now, setNow] = createSignal(Date.now());
+  // Horloge globale partagée (tick 1 s) — countdowns.
+  useClock();
+  const now = clockNow;
   const [sending, setSending] = createSignal(false);
   // Copie de travail de la config papier (formulaire moteur/preset/capital).
   const [engine, setEngine] = createSignal<StrategyId>("arb");
   const [presetId, setPresetId] = createSignal<string>("");
   const [capitalInput, setCapitalInput] = createSignal("");
   const [confirmReset, setConfirmReset] = createSignal(false);
+  // Presets utilisateur : store réactif partagé (localStorage hydraté au boot,
+  // mutations via commitUserPreset/removeUserPreset).
   // Onglet de la section historique : positions résolues | journal des ordres.
   const [historyTab, setHistoryTab] = createSignal<"resolved" | "journal">("resolved");
-  // Ordres en attente (resting GTC), hydratés via /api/sim/state puis /api/sim/resting.
-  const [resting, setResting] = createSignal<SimRestingOrder[]>([]);
-  // Journal des ordres (sim_trades), hydraté à l'ouverture puis rafraîchi au tick 10s.
-  const [journal, setJournal] = createSignal<SimTrade[]>([]);
+  // Ordres en attente (resting GTC) + journal : centralisés dans simStore
+  // (survivent à la navigation, partagés avec le dispatcher).
   // Ordre de tri des listes : plus récent d'abord par défaut.
   const [reverseOrder, setReverseOrder] = createSignal(true);
 
   // SSE → dispatcher (simStore + marketStore pour « Marché actif »)
   useEventSource(dispatchEvent);
 
-  // Tick 1s (countdowns).
-  useInterval(() => setNow(Date.now()), 1000);
-
-  // Sync REST 10s : fallback si SSE perdu + refresh journal/resting.
-  useInterval(() => {
-    void api
-      .simPositions("open")
-      .then((data) => setSimOpenPositions(data.positions))
-      .catch(() => {});
-    void api
-      .simTrades(300)
-      .then((data) => setJournal(data.trades))
-      .catch(() => {});
-    void api
-      .simResting("")
-      .then((data) => setResting(data.resting))
-      .catch(() => {});
-  }, 10_000);
+  // Sync REST adaptative (2 vitesses) : 60 s si SSE vivant, 10 s si perdu
+  // (le SSE est replay=0 → le REST est le seul réconciliateur après coupure).
+  useAdaptiveSync(
+    () => {
+      void api
+        .simPositions("open")
+        .then((data) => setSimOpenPositions(data.positions))
+        .catch(() => {});
+      void api
+        .simTrades(300)
+        .then((data) => setSimJournal(data.trades))
+        .catch(() => {});
+      void api
+        .simResting("")
+        .then((data) => setSimResting(data.resting))
+        .catch(() => {});
+    },
+    { fastMs: 10_000, slowMs: 60_000 },
+  );
 
   async function loadInitialState(): Promise<void> {
     try {
@@ -142,8 +150,7 @@ export function SimulationPage(): JSX.Element {
       applyState(data.state);
       setSimEffectiveConfig(data.effectiveConfig ?? null);
       replaceSimLists(data.open, data.resolved);
-      setResting(data.resting ?? []);
-      setJournal(data.trades ?? []);
+      replaceSimRestingAndJournal(data.resting ?? [], data.trades ?? []);
       if (data.state.stats) setSimEngineStats(data.state.stats);
     } catch {
       addLog("Simulation : chargement de l'état impossible", undefined, true);
@@ -312,10 +319,6 @@ export function SimulationPage(): JSX.Element {
   const [sim5mForm, setSim5mForm] = createSignal<ConfigFormState | null>(null);
   const [confirmPresetSave, setConfirmPresetSave] = createSignal(false);
   const [presetName, setPresetName] = createSignal("");
-  const [userPresets, setUserPresets] = createSignal<UserPreset[]>([]);
-
-  // Hydrate les presets utilisateur (localStorage) une fois au montage.
-  onMount(() => setUserPresets(loadUserPresets()));
 
   // Formulaire = config effective + settings courants du panneau.
   // GÉNÉRIQUE pour toutes les stratégies : le panneau s'affiche dès que la
@@ -464,13 +467,12 @@ export function SimulationPage(): JSX.Element {
       return;
     }
     try {
-      saveUserPreset({
+      commitUserPreset({
         name,
         description: `Preset sim utilisateur — ${strategyShortLabel(form.strategyId)}`,
         strategyId: form.strategyId,
         settings: formToSettings(form),
       });
-      setUserPresets(loadUserPresets());
       setPresetName("");
       setConfirmPresetSave(false);
       addLog(`Preset sauvegardé : ${name}`);
@@ -480,8 +482,7 @@ export function SimulationPage(): JSX.Element {
   }
 
   function deleteSim5mPreset(id: string): void {
-    deleteUserPreset(id);
-    setUserPresets(loadUserPresets());
+    removeUserPreset(id);
     addLog("Preset utilisateur supprimé");
   }
   // Avec l'application immédiate des selects (changeEngine/changePreset),
@@ -502,7 +503,7 @@ export function SimulationPage(): JSX.Element {
   });
 
   const sortedJournal = createMemo(() => {
-    const list = [...journal()];
+    const list = [...simJournal()];
     list.sort((a, b) => b.ts - a.ts);
     return reverseOrder() ? list : list.reverse();
   });
@@ -555,7 +556,7 @@ export function SimulationPage(): JSX.Element {
         </div>
         <div class="sim-kpi">
           <span class="sim-kpi-label">P&L réalisé</span>
-          <Show when={simStats()} fallback={<span class="sim-kpi-value sim-muted">—</span>}>
+          <Show when={simEngineStats()} fallback={<span class="sim-kpi-value sim-muted">—</span>}>
             {(s) => (
               <div class="sim-kpi-pnl-row">
                 <span class={`sim-kpi-value ${pnlClass(s().realizedPnl)}`}>
@@ -574,7 +575,7 @@ export function SimulationPage(): JSX.Element {
         </div>
         <div class="sim-kpi">
           <span class="sim-kpi-label">Winrate</span>
-          <Show when={simStats()} fallback={<span class="sim-kpi-value sim-muted">—</span>}>
+          <Show when={simEngineStats()} fallback={<span class="sim-kpi-value sim-muted">—</span>}>
             {(s) => (
               <>
                 <span class="sim-kpi-value">{Math.round(s().winRate * 100)}%</span>
@@ -587,7 +588,7 @@ export function SimulationPage(): JSX.Element {
         </div>
         <div class="sim-kpi">
           <span class="sim-kpi-label">Exposition ouverte</span>
-          <Show when={simStats()} fallback={<span class="sim-kpi-value sim-muted">—</span>}>
+          <Show when={simEngineStats()} fallback={<span class="sim-kpi-value sim-muted">—</span>}>
             {(s) => (
               <>
                 <span class="sim-kpi-value">{fmtUsd(s().openExposure)}</span>
@@ -978,9 +979,9 @@ export function SimulationPage(): JSX.Element {
         </Panel>
 
         {/* Ordres en attente (GTC papier non encore remplis) */}
-        <Panel title={`Ordres en attente (${resting().length})`}>
+        <Panel title={`Ordres en attente (${simResting().length})`}>
           <Show
-            when={resting().length > 0}
+            when={simResting().length > 0}
             fallback={<EmptyState text="Aucun ordre GTC en attente." />}
           >
             <table class="sim-table">
@@ -996,7 +997,7 @@ export function SimulationPage(): JSX.Element {
                 </tr>
               </thead>
               <tbody>
-                <For each={resting()}>
+                <For each={simResting()}>
                   {(o) => (
                     <tr class="sim-resting-row" title={o.key}>
                       <td>{marketTitleForToken(o.tokenId)}</td>
@@ -1038,7 +1039,7 @@ export function SimulationPage(): JSX.Element {
             class={`sim-tab ${historyTab() === "journal" ? "active" : ""}`}
             onClick={() => setHistoryTab("journal")}
           >
-            Journal des ordres ({journal().length})
+            Journal des ordres ({simJournal().length})
           </button>
           <label class="sim-tab-toggle" title="Inverser l'ordre d'affichage">
             <input

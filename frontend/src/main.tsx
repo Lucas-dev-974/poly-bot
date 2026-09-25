@@ -1,11 +1,7 @@
-import { Show, createSignal, onMount } from "solid-js";
+import { Show, createSignal, lazy, onMount, Suspense } from "solid-js";
+import type { JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { App } from "./App";
-import { StrategyGuidePage } from "./pages/StrategyGuidePage";
-import { BacktestPage } from "./pages/BacktestPage";
-import { StrategyEditorPage } from "./pages/StrategyEditorPage";
-import { DataPage } from "./pages/DataPage";
-import { SimulationPage } from "./pages/SimulationPage";
 import { ToastHost } from "./components/toasts/ToastHost";
 import { currentRoute, type AppRoute } from "./router";
 import "./styles/variables.css";
@@ -17,8 +13,40 @@ import "./styles/strategy-editor.css";
 import "./styles/data.css";
 import "./styles/sim.css";
 
+// Code-splitting : chaque page lourde est un chunk séparé, chargé à la
+// demande. Le dashboard (page par défaut, petit) reste eager pour un
+// premier rendu immédiat ; backtest/éditeur/guide/simulation (~90 % du
+// bundle) ne sont téléchargés que si visités. Le `.then(m => ({ default }))
+// adapte les exports nommés au contrat de lazy() (export default).
+const StrategyGuidePage = lazy(() =>
+  import("./pages/StrategyGuidePage").then((m) => ({ default: m.StrategyGuidePage })),
+);
+const BacktestPage = lazy(() =>
+  import("./pages/BacktestPage").then((m) => ({ default: m.BacktestPage })),
+);
+const StrategyEditorPage = lazy(() =>
+  import("./pages/StrategyEditorPage").then((m) => ({ default: m.StrategyEditorPage })),
+);
+const DataPage = lazy(() =>
+  import("./pages/DataPage").then((m) => ({ default: m.DataPage })),
+);
+const SimulationPage = lazy(() =>
+  import("./pages/SimulationPage").then((m) => ({ default: m.SimulationPage })),
+);
+
 const root = document.getElementById("root");
 if (!root) throw new Error("Root element #root not found");
+
+/** Montre la page cible avec fallback Suspense (chargement du chunk). */
+function Page(props: { route: () => AppRoute; target: AppRoute; children: JSX.Element }) {
+  return (
+    <Show when={props.route() === props.target}>
+      <Suspense fallback={<div class="page-loading">Chargement…</div>}>
+        {props.children}
+      </Suspense>
+    </Show>
+  );
+}
 
 function Root() {
   const [route, setRoute] = createSignal<AppRoute>(currentRoute());
@@ -32,21 +60,21 @@ function Root() {
   return (
     <>
       <ToastHost />
-      <Show when={route() === "guide"}>
+      <Page route={route} target="guide">
         <StrategyGuidePage />
-      </Show>
-      <Show when={route() === "backtest"}>
+      </Page>
+      <Page route={route} target="backtest">
         <BacktestPage />
-      </Show>
-      <Show when={route() === "strategy-editor"}>
+      </Page>
+      <Page route={route} target="strategy-editor">
         <StrategyEditorPage />
-      </Show>
-      <Show when={route() === "donnees"}>
+      </Page>
+      <Page route={route} target="donnees">
         <DataPage />
-      </Show>
-      <Show when={route() === "simulation"}>
+      </Page>
+      <Page route={route} target="simulation">
         <SimulationPage />
-      </Show>
+      </Page>
       <Show when={route() === "dashboard"}>
         <App />
       </Show>

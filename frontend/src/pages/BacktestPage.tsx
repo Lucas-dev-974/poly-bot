@@ -14,7 +14,6 @@ import {
   type StrategyId,
 } from "../config/strategyPresets";
 import { navigate, navigateWithQuery } from "../router";
-import { setConfig } from "../stores/botStore";
 import type {
   BacktestPositionRow,
   BacktestProgress,
@@ -36,16 +35,24 @@ import {
   validateConfigForm,
   type ConfigFormState,
 } from "../utils/configForm";
+import { config as liveBotConfig, setConfig } from "../stores/botStore";
 import {
-  deleteUserPreset,
-  loadUserPresets,
-  saveUserPreset,
-  type UserPreset,
-} from "../utils/user-presets";
+  windows,
+  series,
+  runs,
+  setWindows as setBacktestWindows,
+  loadSeriesFor,
+  loadRuns as loadRunsFromStore,
+} from "../stores/backtestStore";
+import {
+  userPresets as sharedUserPresets,
+  commitUserPreset,
+  removeUserPreset,
+} from "../stores/userPresetsStore";
 
 export function BacktestPage(): JSX.Element {
-  const [windows, setWindows] = createSignal<BacktestWindowMeta[]>([]);
-  const [series, setSeries] = createSignal<Record<string, BacktestSeriesPoint[]>>({});
+  // Windows/series/runs : store persistant (survivent à la navigation) —
+  // la page consomme les signaux du store, setters et loadedSlugs y vivent.
   const [completeOnly, setCompleteOnly] = createSignal(true);
   const [minTicksOn, setMinTicksOn] = createSignal(true);
   const [minTicks, setMinTicks] = createSignal("855");
@@ -61,13 +68,14 @@ export function BacktestPage(): JSX.Element {
   const [customEngines, setCustomEngines] = createSignal<StrategyEngineSummary[]>([]);
   const [historyEngineOnly, setHistoryEngineOnly] = createSignal(true);
   const [presetId, setPresetId] = createSignal<string>("conservative");
-  const [liveConfig, setLiveConfig] = createSignal<BotConfig | null>(null);
+  // Source unique de la config live : botStore (la copie locale historique
+  // liveConfig est supprimée — Phase 3). Alias de lecture, setter = setConfig.
+  const liveConfig = liveBotConfig;
   const [form, setForm] = createSignal<ConfigFormState | null>(null);
   const [persistence, setPersistence] = createSignal(true);
   const [progress, setProgress] = createSignal<BacktestProgress | null>(null);
   const [result, setResult] = createSignal<BacktestResult | null>(null);
   const [positions, setPositions] = createSignal<BacktestPositionRow[]>([]);
-  const [runs, setRuns] = createSignal<BacktestRunSummary[]>([]);
   const [resultStartedAt, setResultStartedAt] = createSignal<number | null>(null);
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [openingId, setOpeningId] = createSignal<string | null>(null);
@@ -96,7 +104,8 @@ export function BacktestPage(): JSX.Element {
   const [applying, setApplying] = createSignal(false);
   const [applyMsg, setApplyMsg] = createSignal<string | null>(null);
   const [applyErr, setApplyErr] = createSignal<string | null>(null);
-  const [userPresets, setUserPresets] = createSignal<UserPreset[]>([]);
+  // Presets utilisateur : store réactif partagé (localStorage + signal global).
+  const userPresets = sharedUserPresets;
   const [presetFormSnapshot, setPresetFormSnapshot] = createSignal<ConfigFormState | null>(null);
   const [showSavePresetDialog, setShowSavePresetDialog] = createSignal(false);
   const [presetNameInput, setPresetNameInput] = createSignal("");
@@ -116,7 +125,6 @@ export function BacktestPage(): JSX.Element {
   let chartGen = 0;
   let walletGen = 0;
   let lowerLowsGen = 0;
-  const loadedSlugs = new Set<string>();
 
   const dates = createMemo(() => {
     const keys = new Set<string>();
@@ -259,14 +267,13 @@ export function BacktestPage(): JSX.Element {
     const id = existing?.isUser ? existing.id : undefined;
     try {
       const settings = formToSettings(f);
-      const saved = saveUserPreset({
+      const saved = commitUserPreset({
         id,
         name,
         description: presetDescInput().trim(),
         strategyId: f.strategyId,
         settings,
       });
-      setUserPresets(loadUserPresets());
       setPresetId(saved.id);
       setPresetFormSnapshot(f);
       setShowSavePresetDialog(false);
@@ -281,8 +288,7 @@ export function BacktestPage(): JSX.Element {
     const preset = currentPreset();
     if (!preset?.isUser) return;
     if (!confirm(`Supprimer le preset « ${preset.name} » ?`)) return;
-    deleteUserPreset(preset.id);
-    setUserPresets(loadUserPresets());
+    removeUserPreset(preset.id);
     setPresetId("");
     setSaveMsg("Preset supprimé");
     setSaveErr(null);
@@ -312,7 +318,6 @@ export function BacktestPage(): JSX.Element {
     try {
       const res = await api.updateConfig(formToSettings(f));
       if (res.config) {
-        setLiveConfig(res.config);
         setConfig(res.config);
       }
       setSaveMsg("Enregistré pour le live");
@@ -347,7 +352,6 @@ export function BacktestPage(): JSX.Element {
     try {
       const res = await api.updateConfig(patch);
       if (res.config) {
-        setLiveConfig(res.config);
         setConfig(res.config);
         const f = applySettingsToForm(res.config, patch);
         setForm(f);
@@ -390,18 +394,8 @@ export function BacktestPage(): JSX.Element {
       completeOnly: completeOnly(),
       completeness: completenessPayload(),
     });
-    setWindows(res.windows);
-    loadedSlugs.clear();
-    setSeries({});
-    void loadVisible(res.windows.slice(0, 20).map((w) => w.eventSlug));
-  }
-
-  async function loadVisible(slugs: string[]): Promise<void> {
-    const missing = slugs.filter((s) => !loadedSlugs.has(s));
-    if (missing.length === 0) return;
-    const res = await api.backtestSeries(missing);
-    for (const slug of missing) loadedSlugs.add(slug);
-    setSeries((prev) => ({ ...prev, ...res.series }));
+    setBacktestWindows(res.windows);
+    void loadSeriesFor(res.windows.slice(0, 20).map((w) => w.eventSlug));
   }
 
   async function loadWalletTrades(list: BacktestWindowMeta[]): Promise<void> {
@@ -454,13 +448,7 @@ export function BacktestPage(): JSX.Element {
   }
 
   async function loadRuns(): Promise<BacktestRunSummary[]> {
-    try {
-      const res = await api.backtestRuns(20);
-      setRuns(res.runs);
-      return res.runs;
-    } catch {
-      return runs();
-    }
+    return loadRunsFromStore();
   }
 
   async function loadRunChartRules(
@@ -644,11 +632,10 @@ export function BacktestPage(): JSX.Element {
   }
 
   onMount(() => {
-    setUserPresets(loadUserPresets());
     void (async () => {
       try {
         const cfg = await api.config();
-        setLiveConfig(cfg.config);
+        setConfig(cfg.config);
         setPersistence(cfg.config.persistenceEnabled !== false);
         setWalletConfigured(Boolean((cfg.config as { funderAddress?: string }).funderAddress));
         const sid = cfg.config.strategyId ?? "arb";
@@ -979,7 +966,7 @@ export function BacktestPage(): JSX.Element {
             walletOn={walletOn()}
             walletLoading={walletLoading()}
             lowerLowsResults={lowerLowsResults()}
-            onVisible={(slugs) => void loadVisible(slugs)}
+            onVisible={(slugs) => void loadSeriesFor(slugs)}
           />
           <BacktestPresetPanel
             form={form()}
@@ -1007,7 +994,6 @@ export function BacktestPage(): JSX.Element {
               }
             }}
             onStrategyActivated={(config) => {
-              setLiveConfig(config);
               setConfig(config);
               const f = applySettingsToForm(config, { strategyId: config.strategyId ?? engine() });
               setForm(f);

@@ -65,3 +65,15 @@ th {
 .countdown {
   font-variant-numeric: tabular-nums;
 }
+
+/* Fallback Suspense pendant le chargement d'un chunk de page (lazy routes). */
+.page-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}

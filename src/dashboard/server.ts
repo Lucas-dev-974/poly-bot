@@ -186,6 +186,18 @@ export class DashboardServer {
     this.simEngine = engine;
   }
 
+  /**
+   * Fallback REST pour /api/polymarket-positions — réutilise les positions du
+   * dernier poll de BalanceTracker (30 s), sans refetch réseau. Null si le bot
+   * tourne sans funderAddress (tracker non instancié) → l'endpoint renverra [].
+   */
+  private balanceTracker: import("./balance.js").BalanceTracker | null = null;
+  setBalanceTracker(
+    tracker: import("./balance.js").BalanceTracker | null,
+  ): void {
+    this.balanceTracker = tracker;
+  }
+
   start(): void {
     const server = createServer((req, res) => {
       const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
@@ -222,6 +234,11 @@ export class DashboardServer {
 
       if (url.pathname === "/api/relayer-quota") {
         this.handleRelayerQuota(res);
+        return;
+      }
+
+      if (url.pathname === "/api/polymarket-positions" && req.method === "GET") {
+        this.handlePolymarketPositions(res);
         return;
       }
 
@@ -626,6 +643,19 @@ export class DashboardServer {
   private handleRelayerQuota(res: import("node:http").ServerResponse): void {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ quota: getRelayerQuota() }));
+  }
+
+  /**
+   * Fallback REST des positions Polymarket (réconciliation après coupure SSE).
+   * Sert le cache du dernier poll BalanceTracker (30 s) — pas de refetch réseau.
+   */
+  private handlePolymarketPositions(
+    res: import("node:http").ServerResponse,
+  ): void {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({ positions: this.balanceTracker?.lastPositions() ?? [] }),
+    );
   }
 
   private handleGetConfig(res: import("node:http").ServerResponse): void {

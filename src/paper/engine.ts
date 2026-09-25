@@ -490,7 +490,7 @@ export class PaperTradingEngine {
       type: "simBalance",
       balance: { cash: state.cash, positionsValue: state.positionsValue, total: state.total },
     });
-    bus.emit({ type: "simStats", stats: state.stats });
+    bus.emit({ type: "simEngineStats", stats: state.stats });
   }
 
   private pruneTrades(): void {

@@ -15,6 +15,16 @@ const CLOSED_MAX_PAGES = 200;
  */
 export class BalanceTracker {
   private timer: ReturnType<typeof setInterval> | null = null;
+  /** Positions du dernier poll réussi — cache pour le fallback REST dashboard. */
+  private cachedPositions: PolymarketPosition[] = [];
+
+  /**
+   * Dernier set de positions connu (poll 30 s). Retourne [] tant que le
+   * premier poll n'a pas abouti. Utilisé par GET /api/polymarket-positions.
+   */
+  lastPositions(): PolymarketPosition[] {
+    return this.cachedPositions;
+  }
 
   constructor(
     private readonly config: BotConfig,
@@ -37,6 +47,7 @@ export class BalanceTracker {
     try {
       const available = await fetchAvailable();
       const positions = await this.fetchPositions();
+      this.cachedPositions = positions;
       const positionsValue = positions.reduce(
         (sum, position) => (position.closed ? sum : sum + position.currentValue),
         0,

@@ -1,4 +1,4 @@
-import { Show, createMemo, createSignal, onMount } from "solid-js";
+import { Show, createMemo, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { Badge } from "../ui/Badge";
 import { config, mode, botEnabled, setBotEnabled } from "../../stores/botStore";
@@ -6,10 +6,11 @@ import { relayerQuota } from "../../stores/quotaStore";
 import { wsMarket, wsUser } from "../../stores/wsStore";
 import { api } from "../../api/client";
 import { addLog } from "../../stores/logStore";
+import { useClock, clockNow } from "../../stores/clockStore";
+import { liveBalance } from "../../stores/balanceStore";
 import { fmtUsd } from "../../utils/format";
 
 export function Header(props: {
-  liveBalance: () => { availableCollateral: number; positionsValue: number } | null;
   onOpenWallet?: () => void;
   onOpenRecording?: () => void;
 }): JSX.Element {
@@ -22,7 +23,7 @@ export function Header(props: {
   });
 
   const capital = createMemo(() => {
-    const live = props.liveBalance();
+    const live = liveBalance();
     if (live) {
       return (
         <div class="capital-badge">
@@ -138,13 +139,8 @@ function BotToggle(): JSX.Element {
  * affiche un compte à rebours en direct jusqu'au reset.
  */
 function QuotaBadge(): JSX.Element {
-  const [now, setNow] = createSignal(Date.now());
-
-  // Tick chaque seconde pour le compte à rebours.
-  onMount(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  });
+  // Horloge globale partagée (tick 1 s) — countdown du reset de quota.
+  useClock();
 
   const quota = createMemo(() => relayerQuota());
 
@@ -154,7 +150,7 @@ function QuotaBadge(): JSX.Element {
     if (!q.exhausted) {
       return { label: "Relayer quota OK", sub: null as string | null, cls: "ok" };
     }
-    const remaining = Math.max(0, Math.ceil((q.resetAt - now()) / 1000));
+    const remaining = Math.max(0, Math.ceil((q.resetAt - clockNow()) / 1000));
     if (remaining <= 0) {
       return { label: "Relayer quota", sub: "reset imminent…", cls: "exhausted" };
     }

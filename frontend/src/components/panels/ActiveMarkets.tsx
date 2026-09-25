@@ -1,10 +1,13 @@
-import { For, Index, Show, createMemo, createSignal, onCleanup } from "solid-js";
+import { For, Index, Show, createMemo, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { Badge } from "../ui/Badge";
 import { EmptyState } from "../ui/EmptyState";
 import { Panel } from "../ui/Panel";
 import { marketList } from "../../stores/marketStore";
-import { ruleFor, refreshMarketRules } from "../../stores/marketRulesStore";
+import {
+  ruleFor,
+  useMarketRulesAutoRefresh,
+} from "../../stores/marketRulesStore";
 import { countdown, fmtPrice, fmtShares, pct, fmtSpread } from "../../utils/format";
 import { MarketHistoryModal, marketToChartTarget } from "../modals/MarketHistoryModal";
 import { api } from "../../api/client";
@@ -240,12 +243,11 @@ export function ActiveMarkets(props: { now: number }): JSX.Element {
   const [chartMarket, setChartMarket] = createSignal<MarketView | null>(null);
 
   // Flags trading/recording partagés (miroir de MarketRuleStore côté bot).
-  // Famille absente de la table = tradable par défaut. Chargement initial +
-  // rafraîchi toutes les 30s ; la modale « Enregistrements » pousse aussi les
-  // toggles dans le store partagé → effet immédiat ici.
-  void refreshMarketRules();
-  const rulesTimer = setInterval(() => void refreshMarketRules(), 30_000);
-  onCleanup(() => clearInterval(rulesTimer));
+  // Famille absente de la table = tradable par défaut. Auto-refresh porté par
+  // le store (refcount + interval 30 s + dédup des fetchs concurrents) ; la
+  // modale « Enregistrements » pousse aussi les toggles dans le store partagé →
+  // effet immédiat ici.
+  useMarketRulesAutoRefresh();
 
   const isTradable = (slug: string): boolean => {
     const row = ruleFor(prefixOfSlug(slug));

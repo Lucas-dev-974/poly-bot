@@ -4,36 +4,51 @@ import { Panel } from "../ui/Panel";
 import { api } from "../../api/client";
 import { config } from "../../stores/botStore";
 import { addLog } from "../../stores/logStore";
+import {
+  strategyStatus,
+  remainingMsAt,
+  setStrategyStatus,
+} from "../../stores/strategyStatusStore";
+import { useClock, clockNow } from "../../stores/clockStore";
 
 export function WhipsawStatus(): JSX.Element {
-  const [status, setStatus] = createSignal<{
-    enabled: boolean;
-    active: boolean;
-    remainingMs: number;
-    lossStreak: number;
-    pauseAfterLosses: number | null;
-    pauseWindows: number;
-  } | null>(null);
-
   const [resetting, setResetting] = createSignal(false);
 
-  // Poll every second for live countdown
+  // Horloge globale partagée (tick 1 s) pour le countdown client.
+  useClock();
+
+  // Hydratation initiale : un seul GET au montage (le ring buffer SSE peut
+  // être vide juste après le boot du bot, le premier event n'arrive qu'au
+  // prochain tick de 5 s).
   onMount(() => {
-    const fetchStatus = async () => {
+    void (async () => {
       try {
         const res = await api.strategyStatus();
-        setStatus(res.status);
+        if (res.status) setStrategyStatus(res.status);
       } catch {
-        setStatus(null);
+        /* silencieux — l'event SSE prendra le relais */
       }
-    };
-    fetchStatus();
-    const id = setInterval(fetchStatus, 1000);
-    return () => clearInterval(id);
+    })();
   });
 
   const cfg = createMemo(() => config());
   const isFavBand = createMemo(() => cfg()?.strategyId === "fav-band");
+
+  // Snapshot live du store SSE. Si le moteur n'est plus fav-band (switch à
+  // chaud), le backend n'émet plus : on masque l'entry plutôt que d'afficher
+  // un statut figé — aligné sur la condition isFavBand ci-dessus.
+  const snap = createMemo(() => strategyStatus());
+
+  const status = createMemo(() => snap()?.status ?? null);
+
+  // Countdown ancré : remainingMs mesuré à receivedAt, décrémenté par
+  // l'horloge locale (remainingMsAt lit aussi le snapshot → réactif).
+  const remainingMs = createMemo(() => {
+    const s = snap();
+    if (!s) return null;
+    void clockNow(); // réactivité 1 s
+    return remainingMsAt(clockNow());
+  });
 
   const badgeClass = createMemo(() => {
     const s = status();
@@ -44,9 +59,9 @@ export function WhipsawStatus(): JSX.Element {
   });
 
   const remainingText = createMemo(() => {
-    const s = status();
-    if (!s || !s.active) return null;
-    const remaining = Math.max(0, Math.ceil(s.remainingMs / 1000));
+    const ms = remainingMs();
+    if (ms == null || !status()?.active) return null;
+    const remaining = Math.max(0, Math.ceil(ms / 1000));
     const m = Math.floor(remaining / 60);
     const sec = remaining % 60;
     return `${m}:${sec.toString().padStart(2, "0")}`;
@@ -71,7 +86,7 @@ export function WhipsawStatus(): JSX.Element {
         addLog("Filtre whipsaw réinitialisé manuellement");
         // Refresh status immediately
         const fresh = await api.strategyStatus();
-        setStatus(fresh.status);
+        if (fresh.status) setStrategyStatus(fresh.status);
       } else {
         addLog("Échec réinitialisation whipsaw: " + (res.error ?? "inconnu"), undefined, true);
       }

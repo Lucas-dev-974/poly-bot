@@ -154,7 +154,6 @@ export function groupedSettings(
       if (key === "pairLockMax" && sid !== "arb") continue;
       if (key === "barbellHedgeRatio" && sid !== "barbell") continue;
       if (key === "enableExpensiveHedge" && sid === "arb") continue;
-      if (key === "simRequireCoveredPair") continue;
       if (!(key in settings)) continue;
       const raw = settings[key];
       if (raw === undefined) continue;

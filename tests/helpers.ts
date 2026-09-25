@@ -44,7 +44,6 @@ export function testConfig(overrides: Partial<BotConfig> = {}): BotConfig {
     simResolveMaxRetries: 5,
     simResolveFallback: "none",
     simMaxRetryAttempts: 20,
-    simRequireCoveredPair: true,
     marketSnapshotRetentionMs: 7 * 24 * 3600_000,
     bookSnapshotRetentionMs: 3 * 24 * 3600_000,
     opportunitySnapshotRetentionMs: 7 * 24 * 3600_000,

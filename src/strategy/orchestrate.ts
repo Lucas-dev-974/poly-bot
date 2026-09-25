@@ -164,8 +164,8 @@ export function orchestrate(
   // requires fill+lock, and FOK still requires the favorite in band).
   //
   // Note: when enableExpensiveHedge is false, favoriteInRange is true
-  // (short-circuit), so this early-return never fired for hedge-off even
-  // with simRequireCoveredPair — that flag was dead. Gate is hedge-on only.
+  // (short-circuit), so this early-return never fires for hedge-off.
+  // Gate is hedge-on only.
   const favoriteInRange =
     !config.enableExpensiveHedge || favoriteAskInBuyRange(expensiveToken, config);
 

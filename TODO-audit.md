@@ -11,7 +11,8 @@
 - [x] **[VÉRIFIÉ ✅]** `toPublicConfig` : destructuring valide, tous les champs secrets omis (`privateKey`, `clob*`, `builder*`, `relayer*`). Aucune fuite par `bus.emit(config)`.
 - [x] **[VÉRIFIÉ ✅]** Couche runtime-settings : `relayerApiKey` / `relayerApiKeyAddress` absents de `FORBIDDEN_KEYS` mais rejetés par `isEditableKey` (pas dans `EDITABLE_CONFIG_KEYS`) → « Unknown field ». Double protection OK.
 - [ ] Vérifier la cohérence `signatureType` (défaut 3 = POLY_1271 deposit wallet) entre trader, relayer et le wallet réel utilisé.
-- [ ] Vérifier que `RELAYER_API_KEY_ADDRESS` est bien configuré comme le signer EOA (le code fallback sur `account.address`, jamais sur funderAddress — bon), et qu'un mauvais alias env ne casse pas silencieusement le quota dédié.
+- [x] **[RÉSOLU ✅ (code)]** Alias relayer : `relayer.ts` loggue désormais au boot la source de `RELAYER_API_KEY_ADDRESS` (env vs fallback signer EOA) + avertissement explicite si l'alias est absent (« set it to the SIGNER EOA, never FUNDER_ADDRESS »). Vérification de la valeur réelle du `.env` : action utilisateur (secret, non lu par l'audit).
+- [ ] `signatureType` : défaut 3 (POLY_1271 deposit wallet) confirmé cohérent entre trader (`trader.ts:638`) et relayer (commentaires module). La valeur du `.env` live reste à confirmer par l'utilisateur (une seule ligne à vérifier).
 
 ---
 
@@ -19,7 +20,7 @@
 
 - [x] **[VÉRIFIÉ ✅]** `validateConfigCoherence` couvre les 6 moteurs natifs : bandes cheap/expensive croisées, pairLockMax [0.90, 1.00[ (arb), barbellHedgeRatio (0,1], reverseMaxGridLevels, fav-band (bandes + elapsed + sticky flags forcé off), dip-revert (bandes + drop + elapsed + spread), edge-lead (bandes, samples, budgets, sizing modes).
 - [x] **[VÉRIFIÉ ✅]** `keysForStrategy` : chaque moteur n'expose que ses clés (SHARED + strategy keys), les clés d'un autre moteur sont ignorées au PATCH live. `simRequireCoveredPair` confirmé mort (commentaire orchestrate + omis de ARB_KEYS/BARBELL_KEYS) — gardé dans EDITABLE pour compat JSON/presets.
-- [ ] Décider du sort de `simRequireCoveredPair` : suppression propre (code + presets + types) ou maintien tel quel. Le flag est mort partout.
+- [x] **[RÉSOLU ✅]** `simRequireCoveredPair` : suppression propre faite (config.ts, runtime-settings.ts [EDITABLE/ENV_ALIASES/parseField], orchestrate commentaires, frontend types/configForm/backtest-preset, tests helpers/backtest-engine/runtime-settings, README). **Leçon live (crash du 25/09)** : une config paper persistée (sim_state.simConfigJson) contenait encore la clé → sanitizePatch jetait "Unknown field" au boot → init() du paper engine jetait avant d'assigner tracker → poll dashboard crashait le process. Fix : `REMOVED_KEYS` — les clés supprimées du schéma sont DROPPÉES (pas rejetées) pour tolérer les configs persistées d'anciennes versions ; rejet strict conservé pour les clés jamais connues. + `index.ts` : un moteur paper partiellement initialisé n'est plus exposé au dashboard (paperEngine = undefined dans le catch).
 - [ ] Vérifier que `applyRuntimeSettings` restaure bien le snapshot sur TOUTES les erreurs (validate + write) — lu, semble correct (try/catch + restoreSnapshot), mais ajouter un test qui couvre le cas `writeRuntimeSettings` échoue (disque plein) après validation passée.
 - [ ] Custom graphs : la validation ne connaît que `validateStrategyGraph` (structure graph). Vérifier qu'aucun paramètre config utilisé par un graph custom (via `param.kind === "config"`) peut être absent/invalide sans erreur de démarrage — `validateTradingConfig(config, { leadsWithEdge })` est appelé au boot avec leadsWithEdge du graph, mais les clés ARB génériques restent les seules éditables.
 
@@ -29,7 +30,7 @@
 
 - [ ] Confirmer qu'un « defend » issu de `hedgeAtPostTime` (executor) ne double pas l'action du defend par tick (`resting-manager.defendUncoveredPairs`) dans le même tick : les deux chemins appellent `defendPair(pairId)` — la protection passe par `defendShares`/`shouldDefend` réévalués avec fresh book, pas par un lock. Vérifier qu'un FOK SELL en vol + un second déclenchement même tick ne vendent pas deux fois (fenêtre de course entre les deux appels `placeSell`).
 - [x] **[VÉRIFIÉ ✅]** Keys stables (`policy-a-defend:`, `defend:`, `edge-sell:`, `manual-close:`, `cheap-missing:`) : préfixes distincts de `makeKey(slug:outcome:kind-price)`, aucune collision possible par construction.
-- [ ] Vérifier la gestion du « defend » quand `placeSell` échoue réseau (throw) : `defendPair` catch et log, mais `cheap-missing` / Policy-A tradeKey restent marqués — confirmer qu'un retry est possible au tick suivant (le key `policy-a-defend:` reste marké volontairement — c'est voulu pour éviter le spam, mais un défend raté par réseau ne se re-tentra jamais pour cette paire ; acceptable si le band-defend par tick prend le relais, à confirmer).
+- [x] **[RÉSOLU ✅]** Défense non confirmée : `defendPair` défait désormais la clé `policy-a-defend:` sur `sell-unconfirmed` (retry au tick suivant possible). Le cas `throw` réseau garde le mark volontairement (anti-spam par tick) — le band-defend par tick prend le relais tant que ask > max, conformément au commentaire orchestrate.
 - [x] **[VÉRIFIÉ ✅]** Retry/mark FOK : killed → incrementRetry, mark permanent à `simMaxRetryAttempts`, émission dashboard max 1 fois (retries === 1). Idempotent.
 - [ ] Vérifier `order-type.ts` (`orderTypeFor`) : **LU en passe 3** — logique confirmée : override `opportunity.orderType` prioritaire (fav-band FOK, ask-lock dual-FOK), sinon FOK pour expensive si `expensiveOrderType === "FOK"` et pas leadsWithEdge, sinon GTC. Conforme à l'exécution (executor `useFOK = orderTypeFor(...) === "FOK"`). Véridié, aucun fix requis.
 - [ ] Vérifier `tick-snapshots.ts` : non lu (insertion/prune snapshots + emitStats).
@@ -50,7 +51,7 @@
 ## 5. Résolution de positions
 
 - [ ] Vérifier que `outcomeIndex` est rempli dans TOUTES les créations de position (FOK executor : `opportunity.token.outcomeIndex` ; GTC lifecycle : `order.outcomeIndex` du posted context ; défense/manual : token du book `outcomeIndex ?? 0`). Le fallback extractWinner par nom d'outcome est prioritaire — l'index n'entre que si le nom ne matche pas. Cas à couvrir : `outcomes` Gamma renommés ("Up"/"Down" vs "Yes"/"No").
-- [ ] Confirmer le seuil 0.99/0.01 contre les marchés à prix de settlement intermédiaire (0.9995/0.0005 : couvert ; un settlement à 0.5/0.5 (void/50-50) n'est pas géré → position reste open pour toujours ; vérifier si ce cas existe sur les 15m).
+- [x] **[RÉSOLU ✅]** Settlement 0.5/0.5 (void) : chemin dédié implémenté — `extractSettlement()` (verdict win/lose/**void**), statut `void` (hors winrate, crédit `size × 0.5`), `finalizePair` crédite les jambes void au prix de settlement, backtest runner + paper engine câblés (`winnerOutcomeIndex: 2` = void dans market_resolutions — protège le dataset ML d'un faux label "Up gagnant"). Frontend : type + crédit + badge. Tests : `tests/void-settlement.test.ts`, `tests/void-tracker.test.ts`.
 - [x] **[VÉRIFIÉ ✅]** Double-compte PnL : guard `status !== "open"` dans resolvePosition + `pruneResolvedPosition` sans recompte ; `finalizePair` écrit realizedPnl une fois (guard `pair.status !== "resolved"`).
 - [ ] Vérifier `resolveDue` : interval 5s fire-and-forget, catch par position. Le sleep `simResolveRetryIntervalMs` (5s × 5 retries) DANS determineWinner bloque la boucle resolveDue jusqu'à 30s+ par position due — si plusieurs positions dues, elles se traitent séquentiellement. Acceptable ? À mesurer en live.
 
@@ -92,10 +93,10 @@
 ## 9. Tests & complétude
 
 - [ ] Couverture edge manquante à ajouter :
-  - [ ] FOK SELL `sell-unconfirmed` → comportement holding (defendPair, edge-lead, manual close).
-  - [ ] Crash entre `addOpenPosition` et `removePostedOrder` (double-count test existe ?).
+- [x] **[RÉSOLU ✅]** FOK SELL `sell-unconfirmed` → tests du comportement holding (`tests/crash-window.test.ts` : defendPair garde la position ouverte, unmark retry ; + tests trader existants).
+- [x] **[RÉSOLU ✅]** Crash entre `addOpenPosition` et `removePostedOrder` : test de dédoublonnage `postedOverlapsOpen` par CLOB orderId ajouté (`tests/crash-window.test.ts`) — exposure/resting non double-comptés après reload.
 - [x] Graph custom : **fait en passe 3** — fallback runtime testé (div-by-zero, tests/strategy-graphs.test.ts). Le cycle data-edge reste bloqué à la validation (tri topologique), le runtime guard (cycle `evaluating`) existe déjà.
-- [ ] `applyRuntimeSettings` : restore snapshot après échec d'écriture disque.
+- [x] **[RÉSOLU ✅]** `applyRuntimeSettings` : restore snapshot après échec d'écriture disque — test ajouté (`tests/runtime-settings-restore.test.ts`, chemin parent-fichier fait échouer atomicWriteJson après validation passée).
 - [x] dip-revert avec lookback > 60s : **fait en passe 3** (2 tests de régression dans tests/dip-revert.test.ts).
   - [ ] Redémarrage avec graphs custom persistés pré-migration edgeOrderAction.
 - [ ] Vérifier que les tests backtest et live partagent bien les mêmes décisions (moteurs identiques — orchestrate est partagé ; backtest-fill/backtest-engine à relire pour la parité fill sim vs live).
@@ -109,7 +110,7 @@
 - [ ] Vérifier l'alignement types frontend (`frontend/src/types/index.ts`) avec `BotConfig` backend — un champ ajouté côté backend sans MAJ frontend casse l'affichage config silencieusement (ou pas : vérifier le typage).
 - [ ] Vérifier que l'éditeur graph frontend valide côté BACKEND : **VÉRIFIÉ en passe 3 — NON-PROBLÈME.** Le frontend n'a AUCUNE logique de validation dupliquée : `api.strategyValidate` POST sur `/api/strategy/validate`, qui appelle `validateStrategyGraph` backend (dashboard/server.ts:299). Un graph invalide est rejeté avant save. Aucune divergence possible.
 - [ ] Vérifier `chart-rule-replay.ts` : non lu (replay des règles dans l'éditeur — parité avec l'interprétation live).
-- [ ] Guide `/guide` : cohérence avec les moteurs actuels — à faire après la première passe de corrections (règle projet : guide suit le code).
+- [x] **[RÉSOLU ✅]** Guide `/guide` : cohérence avec les moteurs actuels — 11 moteurs couverts (pills fav-band/antiflip/flip-confirm/early-conviction/prob-repricing ajoutées, 2 stories, cycles de vie, comparatif 12 colonnes). Règle cursor mise à jour (STRATEGY.md retiré, checklist nouveau moteur + piège pill-sans-story).
 
 ---
 
@@ -124,7 +125,7 @@
 
 ## 12. Nettoyage & refactor (si décidé plus tard)
 
-- [ ] Supprimer `simRequireCoveredPair` (code, EDITABLE_CONFIG_KEYS, presets, types) — flag mort confirmé.
+- [x] **[RÉSOLU ✅]** Supprimer `simRequireCoveredPair` (code, EDITABLE_CONFIG_KEYS, presets, types) — fait, cf. §2.
 - [x] Supprimer `METHOD_OPS` dans graph/validate.ts : **fait en passe 3** (suppression, cf. §7).
 - [ ] Consolider `opportunity-executor.ts` : ~10 gates séquentiels, extraire une pipeline déclarative si le nombre de moteurs continue de croître.
 - [ ] Extraire la duplication `closePairCheapAsSold` / `closePairExpensiveAsSold` (même logique à kind près) dans trade-tracker.

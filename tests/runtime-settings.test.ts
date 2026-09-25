@@ -43,6 +43,18 @@ describe("sanitizePatch", () => {
     assert.throws(() => sanitizePatch({ foo: 1 }), /Unknown field: foo/);
   });
 
+  it("drops removed (dead) keys instead of rejecting persisted configs", () => {
+    // Une config paper persistée par une version antérieure peut contenir
+    // simRequireCoveredPair : elle est droppée, le reste du patch passe.
+    const patch = sanitizePatch({ simRequireCoveredPair: true, cheapBuyMax: 0.12 });
+    assert.deepEqual(patch, { cheapBuyMax: 0.12 });
+    // Un patch ne contenant QUE des clés supprimées reste un rejet explicite.
+    assert.throws(
+      () => sanitizePatch({ simRequireCoveredPair: true }),
+      /At least one editable field/,
+    );
+  });
+
   it("rejects forbidden fields", () => {
     assert.throws(() => sanitizePatch({ dryRun: false }), /Field not editable: dryRun/);
     assert.throws(() => sanitizePatch({ privateKey: "0xabc" }), /Field not editable: privateKey/);
@@ -228,11 +240,8 @@ describe("keysForStrategy", () => {
     const barbell = keysForStrategy("barbell");
     assert.ok(arb.includes("pairLockMax"));
     assert.ok(!arb.includes("barbellHedgeRatio"));
-    assert.ok(!arb.includes("simRequireCoveredPair"));
     assert.ok(!arb.includes("enableExpensiveHedge"));
     assert.ok(barbell.includes("barbellHedgeRatio"));
     assert.ok(!barbell.includes("pairLockMax"));
-    assert.ok(!barbell.includes("simRequireCoveredPair"));
-    assert.ok(!keysForStrategy("reverse").includes("simRequireCoveredPair"));
   });
 });

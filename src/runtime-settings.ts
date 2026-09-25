@@ -40,7 +40,6 @@ export const EDITABLE_CONFIG_KEYS = [
   "simResolveFallback",
   "simMaxRetryAttempts",
   "simRandomSeed",
-  "simRequireCoveredPair",
   "edgeBandMin",
   "edgeBandMax",
   "edgeConfirmSamples",
@@ -202,7 +201,6 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   simResolveFallback: "SIM_RESOLVE_FALLBACK",
   simMaxRetryAttempts: "SIM_MAX_RETRY_ATTEMPTS",
   simRandomSeed: "SIM_RANDOM_SEED",
-  simRequireCoveredPair: "SIM_REQUIRE_COVERED_PAIR",
   edgeBandMin: "EDGE_BAND_MIN",
   edgeBandMax: "EDGE_BAND_MAX",
   edgeConfirmSamples: "EDGE_CONFIRM_SAMPLES",
@@ -549,7 +547,6 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "enableExpensiveHedge":
     case "arbAskLockOnly":
     case "requireCheapFillBeforeExpensive":
-    case "simRequireCoveredPair":
     case "edgeRequireCheapReady":
     case "edgeSellExpensiveEnabled":
     case "reverseCancelCheapOffBand":
@@ -585,6 +582,15 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
   }
 }
 
+/**
+ * Clés supprimées du schéma (flags morts). Elles sont DROPPÉES au lieu de
+ * lever "Unknown field" : une config persistée par une version antérieure
+ * (sim_state.simConfigJson, bot-settings.json, presets utilisateur) ne doit
+ * pas brickier le boot après un upgrade. Le rejet strict reste voulu pour
+ * les clés jamais connues (faute de frappe → erreur visible côté API).
+ */
+const REMOVED_KEYS = new Set<string>(["simRequireCoveredPair"]);
+
 export function sanitizePatch(body: unknown): RuntimeSettingsPatch {
   if (body === null || typeof body !== "object" || Array.isArray(body)) {
     throw new Error("Request body must be a JSON object");
@@ -597,6 +603,7 @@ export function sanitizePatch(body: unknown): RuntimeSettingsPatch {
     if (FORBIDDEN_KEYS.has(key)) {
       throw new Error(`Field not editable: ${key}`);
     }
+    if (REMOVED_KEYS.has(key)) continue;
     if (!isEditableKey(key)) {
       throw new Error(`Unknown field: ${key}`);
     }
@@ -633,7 +640,6 @@ const SHARED_KEYS: readonly EditableConfigKey[] = [
 /**
  * Clés propres à arb (1:1 + lock). Pas de barbellHedgeRatio.
  * enableExpensiveHedge omis : toujours true (validé dans config).
- * simRequireCoveredPair omis : flag mort (voir orchestrate).
  */
 const ARB_KEYS: readonly EditableConfigKey[] = [
   "cheapBuyMin",
@@ -652,7 +658,6 @@ const ARB_KEYS: readonly EditableConfigKey[] = [
 
 /**
  * Clés propres à barbell (ratio, pas de lock). Pas de pairLockMax.
- * simRequireCoveredPair retiré : même redondance qu'arb quand le hedge est on.
  */
 const BARBELL_KEYS: readonly EditableConfigKey[] = [
   "cheapBuyMin",

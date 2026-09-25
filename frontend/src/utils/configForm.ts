@@ -38,7 +38,6 @@ export type ConfigFormState = {
   simResolveFallback: "none" | "probabilistic";
   simMaxRetryAttempts: string;
   simRandomSeed: string;
-  simRequireCoveredPair: boolean;
   edgeBandMin: string;
   edgeBandMax: string;
   edgeConfirmSamples: string;
@@ -209,7 +208,6 @@ export function configToForm(config: BotConfig): ConfigFormState {
     simResolveFallback: config.simResolveFallback,
     simMaxRetryAttempts: String(config.simMaxRetryAttempts),
     simRandomSeed: config.simRandomSeed ?? "",
-    simRequireCoveredPair: config.simRequireCoveredPair,
     edgeBandMin: String(config.edgeBandMin),
     edgeBandMax: String(config.edgeBandMax),
     edgeConfirmSamples: String(config.edgeConfirmSamples),
@@ -436,7 +434,6 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     simResolveFallback: form.simResolveFallback,
     simMaxRetryAttempts: parseNum(form.simMaxRetryAttempts, "Max retry attempts"),
     simRandomSeed: form.simRandomSeed.trim() === "" ? undefined : form.simRandomSeed.trim(),
-    simRequireCoveredPair: form.simRequireCoveredPair,
     edgeBandMin: parseNum(form.edgeBandMin, "Edge band min"),
     edgeBandMax: parseNum(form.edgeBandMax, "Edge band max"),
     edgeConfirmSamples: parseNum(form.edgeConfirmSamples, "Edge confirm samples"),

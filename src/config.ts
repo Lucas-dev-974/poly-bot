@@ -142,8 +142,6 @@ export interface BotConfig {
   simResolveFallback: "probabilistic" | "none";
   simMaxRetryAttempts: number;
   simRandomSeed?: string;
-  /** @deprecated No effect in orchestrate (favoriteInRange already true when hedge is off). Kept for JSON backward compat. */
-  simRequireCoveredPair: boolean;
   dbPath: string;
   persistenceEnabled: boolean;
   builderApiKey?: string;
@@ -531,7 +529,6 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     simResolveFallback: "none",
     simMaxRetryAttempts: 20,
     simRandomSeed: undefined,
-    simRequireCoveredPair: true,
     edgeBandMin: 0.85,
     edgeBandMax: 0.9,
     edgeConfirmSamples: 5,

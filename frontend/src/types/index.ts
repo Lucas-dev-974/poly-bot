@@ -79,7 +79,7 @@ export interface OrderResult {
 }
 
 /** "sold" = cheap leg sold via pair defense (defendPair) before resolution. */
-export type PositionStatus = "open" | "won" | "lost" | "sold";
+export type PositionStatus = "open" | "won" | "lost" | "sold" | "void";
 export type FillReason = "marketable" | "probabilistic" | "resting" | "manual";
 
 export interface SimulatedPosition {
@@ -380,7 +380,6 @@ export interface BotConfig {
   simResolveFallback: "none" | "probabilistic";
   simMaxRetryAttempts: number;
   simRandomSeed?: string;
-  simRequireCoveredPair: boolean;
   relayerHost: string;
   autoRedeemWinners: boolean;
   dbPath: string;

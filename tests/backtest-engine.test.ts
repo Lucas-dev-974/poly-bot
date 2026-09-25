@@ -458,7 +458,6 @@ describe("backtest engine", () => {
         maxOpenPositionsPerSide: 6,
         maxExposureUsdc: 340,
         simulatedCapital: 1000,
-        simRequireCoveredPair: false,
       }),
       windows: [
         {

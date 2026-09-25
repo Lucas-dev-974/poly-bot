@@ -1,12 +1,16 @@
 # Polymarket Reverse Arbitrage Bot
 
-A TypeScript/Node.js bot for Polymarket's 15-minute Up/Down markets (BTC, ETH, SOL, etc.). Interchangeable **engines** (`strategyId` in `data/bot-settings.json`):
+A TypeScript/Node.js bot for Polymarket's 15-minute Up/Down markets (BTC, ETH, SOL, etc.). Interchangeable **engines** (`strategyId` in `data/bot-settings.json`) — 11 native engines:
 
 - **`arb` (B1, default)** — maker bid on the cheap (underdog), then a **1:1 hedge** after that fill only if `cheapFill + hedgeAsk ≤ PAIR_LOCK_MAX < 1.00`. If the lock is unreachable after fill (**Policy A**), FOK **SELL** the uncovered cheap — do **not** hold it as a directional leftover.
   - Mode optionnel **ask-lock / dual-FOK** (preset `ask-lock`) : voir section [Ask-lock (dual-FOK)](#ask-lock-dual-fok--mode-arb).
 - **`barbell`** — same cheap-then-hedge flow, but the hedge size is `filledCheap × barbellHedgeRatio` (default 0.5). **No profit lock.** Leftover cheap is an intentional directional bet. Higher variance than B1.
 - **`fav-band`** — stratégie **directionnelle** : FOK buy du **favori** si ask ∈ `[favBandAskMin, favBandAskMax]` après `favBandMinElapsedSec`, hold jusqu'à résolution, **sans hedge**. Voir [Fav-band](#fav-band--favori-mid-band).
-- Autres moteurs natifs : `edge-lead`, `reverse` (presets dédiés).
+- **`dip-revert`** — FOK buy du favori après une **chute intra-fenêtre + rebond**, hold jusqu'à résolution. Voir [Dip-revert](#dip-revert--favori-chuté--rebond-mean-reversion).
+- Moteurs directionnels calibrés (393 fenêtres, runner officiel) : **`antiflip-revert`** (favori déchu post-flip, +$623), **`flip-confirm`** (nouveau favori post-flip précoce, +$389), **`early-conviction`** (favori ≥ 0.60 dans les 45 premières s, +$330) — rapports dans `audits/backtest/<id>/`.
+- **`open-entry`** — favori émergent à l'ouverture (lean ≥ 0.15 ≤ 300 s), SL dual-scale optionnel. Implémentation dans `audits/backtest/open-entry/`.
+- **`probability-repricing`** — path trade intramarket (dislocation z-score du ask, exits bid stricts) ; voir `docs/probability-repricing-implemented.md`.
+- Autres moteurs natifs : `edge-lead`, `reverse` (presets dédiés). Graphs custom via `custom:<id>` (éditeur `/strategy-editor`).
 
 
 ## Strategy Overview
@@ -112,7 +116,7 @@ Idée empirique (BTC 15m) : après ~200 s dans la fenêtre, le favori (ask le pl
 
 1. Dashboard → **Configuration** → onglet **Profils** → moteur **fav-band** → profil **Fav-band (mid favorite hold)**  
    (ou page **Backtest** → preset **Fav-band**)
-2. Vérifier les champs (notamment `cheapOrderUsdc`), puis **Enregistrer** (`data/bot-settings.json` + config live)
+2. Vérifier les champs (notamment `favBandOrderUsdc`), puis **Enregistrer** (`data/bot-settings.json` + config live)
 
 Éditer seulement `config/presets/fav-band.json` **ne change pas** la config live : appliquer le profil puis enregistrer. Redémarrer le bot si besoin.
 
@@ -124,7 +128,7 @@ Idée empirique (BTC 15m) : après ~200 s dans la fenêtre, le favori (ask le pl
 | `favBandAskMin` / `favBandAskMax` | `0.70` / `0.85` | Bande d'ask du favori pour entrer |
 | `favBandMinElapsedSec` | `200` | Secondes min depuis `windowStart` |
 | `favBandMaxElapsedSec` | `null` | Cap optionnel ; `null` = jusqu'à la fin de fenêtre |
-| `cheapOrderUsdc` | `15` | Budget USDC de l'entrée FOK |
+| `cheapOrderUsdc` | `15` | Budget USDC de l'entrée FOK (clé arb ; **fav-band utilise `favBandOrderUsdc`**) |
 | `maxSharesPerOrder` | `40` | Cap shares |
 | `maxOpenPositionsPerSide` | `1` | Une entrée directionnelle à la fois |
 | `enableExpensiveHedge` / `arbAskLockOnly` | `false` | Forcés / nettoyés pour éviter des sticky flags ask-lock |
@@ -256,20 +260,34 @@ src/
 ├── index.ts                 # Entry point, wiring + main loop
 ├── config.ts                # All settings via env vars (validated)
 ├── bot.ts                   # Re-export ReverseBot (compat for index / tests)
-├── bot/                     # ReverseBot façade + live modules (lifecycle, resting, executor, balance-guard, tick-snapshots)
+├── bot/                     # ReverseBot façade + modules live : reverse-bot (tick),
+│                            # opportunity-executor (gates), resting-manager (GTC/défense/close),
+│                            # live-order-lifecycle, balance-guard, order-type, tick-snapshots
 ├── strategy.ts              # Barrel: arb findOpportunities + predicate re-exports
-├── strategy/                # TradingStrategy plugins (arb, barbell), sizing, registry
+├── strategy/                # TradingStrategy plugins (11 moteurs natifs), sizing, registry,
+│                            # graph/ (DSL + interpréteur pour les graphs custom)
 ├── trader.ts                # Live trading via @polymarket/clob-client-v2 (Polygon, CLOB)
 ├── trade-tracker.ts         # Position/pair state, window claims, posted orders, retry logic
 ├── position-resolver.ts     # Settlement detection via Gamma API (outcomePrices >= 0.99)
-├── market-scanner.ts        # Finds active 15m Up/Down events from Gamma API
+├── market-scanner.ts        # Finds active Up/Down events from Gamma API
+├── market-data.ts           # Recording market + book snapshots (dataset backtest / ML)
+├── market-rules.ts          # Flags trading/recording par marché
 ├── relayer.ts               # Deposit-wallet (V2) redemption via Polymarket relayer
-├── simulated-broker.ts      # Simulation fill model (marketable + probabilistic)
-├── simulated-ledger.ts      # Simulated cash balance with SQLite persistence
+├── relayer-quota.ts         # Quota dédié relayer (countdown, record, backoff)
+├── auto-redeemer.ts         # Boucle de redemption des gagnants (pré-flight quota, dedup)
+├── withdraw.ts              # Retraits USDC
+├── backtest/                # Runner officiel : broker, windows, completeness, tick-executor (page /backtest)
+├── paper/                   # Moteur paper-trading live (page Simulation)
+├── ws/                      # Feeds CLOB websocket (book, market, user)
+├── runtime-settings.ts      # Clés hot-éditables + sanitizePatch (PATCH dashboard)
+├── strategy-presets.ts      # Import/sanitize des presets JSON
 ├── dashboard/
 │   ├── server.ts            # HTTP + SSE dashboard (port 3105)
 │   ├── events.ts            # Event bus (ring buffer + SQLite persistence)
-│   └── balance.ts           # Portfolio tracking (collateral + positions)
+│   ├── balance.ts           # Portfolio tracking (collateral + positions)
+│   ├── market-history.ts / market-trades.ts    # Page Données
+│   ├── sim-handlers.ts      # API simulation
+│   └── strategy-chart-api.ts # Validation/sauvegarde des graphs custom
 ├── db/
 │   ├── database.ts          # SQLite schema + migrations (WAL mode)
 │   ├── repositories.ts      # Type-safe repositories for all tables
@@ -279,6 +297,8 @@ src/
 └── utils/
     ├── market.ts            # Slug parsing, tick sizes, book helpers
     ├── prices.ts            # Price level generation, size computation
+    ├── book-imbalance.ts    # Features de déséquilibre du carnet
+    ├── order-status.ts      # Normalisation des statuts CLOB
     └── random.ts            # Seeded xorshift32 RNG (deterministic sim)
 ```
 
@@ -360,7 +380,6 @@ Strategy keys (dashboard → `data/bot-settings.json`). See `bot-settings.exampl
   "maxSharesPerOrder": 20,
   "maxOpenPositionsPerSide": 1,
   "maxExposureUsdc": 45,
-  "simRequireCoveredPair": true,
   "simResolveFallback": "none"
 }
 ```
@@ -415,35 +434,32 @@ A GTC order posted without a CLOB `orderID` cannot be cancelled on the exchange 
 ## Database Schema (SQLite)
 
 ```
-positions          → SimulatedPosition rows (open/won/lost/sold)
-arb_pairs          → Pair state (open/partial/covered/resolved)
-ledger             → Single-row simulated cash balance
-balance_snapshots  → Periodic portfolio snapshots
-events             → Persisted bot events (opened/resolved/orders/stats)
-trade_keys         → Deduplication keys for idempotency
-retry_counts       → Order retry tracking
-posted_orders      → Live GTC orders awaiting fill
-window_claims      → Claimed cheap/expensive outcomes per 15m window
-stats_snapshots    → Periodic stats (1/min, prune 30 j)
-orders             → Order history (GTC/FOK/SIM)
-redeems            → Relayer redeem attempts
-bot_state          → Key-value runtime state
+Live / trading     positions, arb_pairs, orders, posted_orders, trade_keys,
+                   retry_counts, window_claims, redeems, withdrawals, bot_state
+Enregistrement     market_snapshots, book_snapshots, opportunity_snapshots,
+(dataset ML)       market_rules, market_resolutions, stats_snapshots, balance_snapshots
+Simulation         ledger + sim_pairs, sim_positions, sim_posted_orders, sim_trades,
+(paper / dry-run)  sim_window_claims, sim_trade_keys, sim_retry_counts, sim_state
+Backtest           backtest_runs, backtest_trades, backtest_positions
+Graphs custom      strategy_graphs
+Events             events (persisted bot events, SSE replay)
 ```
+
+> Schéma complet et migrations : `src/db/database.ts`. Un `bot-live.db` avec enregistrement
+> des marchés activé contient aujourd'hui 31 tables.
 
 ## Safety & Risk Controls
 
 1. **Exposure cap** (`MAX_EXPOSURE_USDC`) — total open + resting cost never exceeds limit
 2. **Per-side limit** (`MAX_OPEN_POSITIONS_PER_SIDE`) — max 1 order per outcome (configurable)
 3. **Favorite already in band** — no new cheap unless the favorite ask is in `[EXPENSIVE_BUY_MIN, EXPENSIVE_BUY_MAX]` (a hedge limit far below a 0.97 ask is not a cover)
-4. **Covered-pair** (`SIM_REQUIRE_COVERED_PAIR`) — skip new cheap if no hedgeable favorite
-5. **Favorite pick depth** — identifying the favorite only needs CLOB-min size (5 shares) at the touch; GTC hedges are not blocked by a thin top of book
-6. **Pair lock (`arb` only)** — *maker path* when `arbAskLockOnly=false`: new cheap GTC: `limit + min(favoriteAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. Hedge after fill: `fillPrice + min(freshAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. If the lock is unreachable after fill (**Policy A**: `fillPrice + favoriteAsk > PAIR_LOCK_MAX`), FOK **SELL** the uncovered cheap at the bid — do **not** hold it directional. A budget-capped hedge must not leave uncovered dust in `(0, 5)` shares: leave exactly 5 sellable, or skip the partial hedge so the full uncovered stays defendable. If dust is already below 5, hold to resolution (CLOB cannot sell it). **Ask-lock** (`arbAskLockOnly=true`): see [Ask-lock (dual-FOK)](#ask-lock-dual-fok--mode-arb). **Barbell ignores the lock.**
-7. **Pair defense** — FOK SELL at the bid only if the favorite ask is **above** `EXPENSIVE_BUY_MAX` **and** the pair is not covered (`arb`: 1:1; `barbell`: filled hedge ≥ cheap × ratio). Shares sold = `defendShares` (arb: cheap − hedge; barbell: missing hedge slice only). Ask below `EXPENSIVE_BUY_MIN` does not dump the cheap. After a sale, resting GTC hedges of that pair are cancelled.
-8. **CLOB fill confirmation** — a CLOB `matched` is not enough: cheap positions open only when the funder holds the tokens (re-checked up to 8 ticks, since the CLOB balance can lag a maker fill); FOK sells are confirmed by token-balance drop (ghost MATCHED / empty `makingAmount` are ignored). A partially filled cheap that must be repriced/cancelled is cancelled **first**, then the filled part is booked — no remainder is left orphaned on the book.
-9. **CLOB minimums** — order size floored at 5 shares / $1 notional; tick size never below 0.01
-10. **Balance guard** — live orders skipped when cached CLOB collateral < estimated cost; 60s pause after 3 consecutive balance rejections
-11. **Stale order cleanup** — cancel GTC orders after windowEnd + 5 min; unacked rows (no `orderId`) pruned at +15 min, tracked orders at +24 h
-12. **Window claim** — outcomes stay locked for the window, but an uncommitted claim is dropped if the underdog flips; no claim on a one-sided book
+4. **CLOB fill confirmation** — a CLOB `matched` is not enough: cheap positions open only when the funder holds the tokens (re-checked up to 8 ticks, since the CLOB balance can lag a maker fill); FOK sells are confirmed by token-balance drop (ghost MATCHED / empty `makingAmount` are ignored). A partially filled cheap that must be repriced/cancelled is cancelled **first**, then the filled part is booked — no remainder is left orphaned on the book.
+5. **CLOB minimums** — order size floored at 5 shares / $1 notional; tick size never below 0.01
+6. **Balance guard** — live orders skipped when cached CLOB collateral < estimated cost; 60s pause after 3 consecutive balance rejections
+7. **Stale order cleanup** — cancel GTC orders after windowEnd + 5 min; unacked rows (no `orderId`) pruned at +15 min, tracked orders at +24 h
+8. **Window claim** — outcomes stay locked for the window, but an uncommitted claim is dropped if the underdog flips; no claim on a one-sided book
+9. **Pair lock (`arb` only)** — *maker path* when `arbAskLockOnly=false`: new cheap GTC: `limit + min(favoriteAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. Hedge after fill: `fillPrice + min(freshAsk, expensiveBuyMax) ≤ PAIR_LOCK_MAX`. If the lock is unreachable after fill (**Policy A**: `fillPrice + favoriteAsk > PAIR_LOCK_MAX`), FOK **SELL** the uncovered cheap at the bid — do **not** hold it directional. A budget-capped hedge must not leave uncovered dust in `(0, 5)` shares: leave exactly 5 sellable, or skip the partial hedge so the full uncovered stays defendable. If dust is already below 5, hold to resolution (CLOB cannot sell it). **Ask-lock** (`arbAskLockOnly=true`): see [Ask-lock (dual-FOK)](#ask-lock-dual-fok--mode-arb). **Barbell ignores the lock.**
+10. **Pair defense** — FOK SELL at the bid only if the favorite ask is **above** `EXPENSIVE_BUY_MAX` **and** the pair is not covered (`arb`: 1:1; `barbell`: filled hedge ≥ cheap × ratio). Shares sold = `defendShares` (arb: cheap − hedge; barbell: missing hedge slice only). Ask below `EXPENSIVE_BUY_MIN` does not dump the cheap. After a sale, resting GTC hedges of that pair are cancelled.
 
 ## Redemption (V2 Deposit Wallet)
 

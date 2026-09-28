@@ -1,17 +1,23 @@
 import { For, Show, createEffect, createMemo, createSignal, onMount } from "solid-js";
 import type { JSX } from "solid-js";
 import { api, type SimEngineState, type SimConfigPatch } from "../api/client";
-import type { SimulatedPosition } from "../types";
+import type { ChartTarget, SimulatedPosition } from "../types";
 import { ActiveMarkets } from "../components/panels/ActiveMarkets";
 import { EmptyState } from "../components/ui/EmptyState";
 import { Panel } from "../components/ui/Panel";
 import { ConfirmModal } from "../components/modals/ConfirmModal";
+import { CollapsibleSection, CollapseChevron, isCollapsed, writeCollapsed } from "../components/ui/Collapsible";
+import {
+  MarketHistoryModal,
+  simTradeToChartTarget,
+  simulatedPositionToChartTarget,
+} from "../components/modals/MarketHistoryModal";
 import {
   allPresetsForStrategy,
   STRATEGY_ENGINE_OPTIONS,
   type StrategyId,
 } from "../config/strategyPresets";
-import { SIM_5M_STRATEGIES, SIM_5M_FILTER_FIELDS, type Sim5mStrategyDef } from "../config/sim5mStrategies";
+import { SIM_5M_STRATEGIES, SIM_5M_FILTER_FIELDS } from "../config/sim5mStrategies";
 import {
   COMMON_PARAM_SECTIONS,
   paramSectionsFor,
@@ -121,6 +127,10 @@ export function SimulationPage(): JSX.Element {
   // Ordre de tri des listes : plus récent d'abord par défaut.
   const [reverseOrder, setReverseOrder] = createSignal(true);
 
+  // Dialog graphique d'historique de marché (MarketHistoryModal) : cible issue
+  // d'une position résolue ou d'une ligne du journal des ordres.
+  const [chartTarget, setChartTarget] = createSignal<ChartTarget | null>(null);
+
   // SSE → dispatcher (simStore + marketStore pour « Marché actif »)
   useEventSource(dispatchEvent);
 
@@ -203,7 +213,7 @@ export function SimulationPage(): JSX.Element {
 
   /**
    * Applique un patch config au moteur + recharge l'état (config effective,
-   * select 5m, panneau Paramètres) — mutualise control-bar / panneau 5m.
+   * panneau Paramètres) — mutualise control-bar / panneau Paramètres.
    */
   async function pushConfigPatch(payload: SimConfigPatch): Promise<void> {
     setSending(true);
@@ -252,11 +262,9 @@ export function SimulationPage(): JSX.Element {
   const presets = createMemo(() => allPresetsForStrategy(engine(), []));
   const currentPreset = createMemo(() => presets().find((p) => p.id === presetId()));
 
-  // ── Sélection rapide des 3 stratégies 5m (presets du backtest audits/5min-strategies).
-  // Chaque carte = (moteur antiflip-revert, preset 5m). "Active" = config de travail
-  // du moteur sim correspond à ce preset. Une seule position à la fois : les 3
-  // variantes sont mutuellement exclusives au niveau du moteur sim (un preset à la
-  // fois), mais restent combinables en multi-moteurs via le live.
+  // ── Détails 5m : identification du preset 5m actif (moteur antiflip-revert)
+  // pour le panneau Paramètres — sélectionné via le select Preset de la barre
+  // Configuration moteur (les presets 5m sont dans STRATEGY_PRESETS).
   const sim5mActiveId = createMemo(() => {
     const c = simConfigState();
     if (!c || c.strategyId !== "antiflip-revert" || !c.presetId) return null;
@@ -281,37 +289,13 @@ export function SimulationPage(): JSX.Element {
     return field === "antiflipTakeProfitPct" ? "0.05" : "0.01";
   }
 
-  async function activateSim5mStrategy(def: Sim5mStrategyDef): Promise<void> {
-    if (sending()) return;
-    setSending(true);
-    try {
-      // 1. Appliquer le preset au moteur sim (swap à chaud, sans toucher au cash).
-      const res = await api.simUpdateConfig({
-        strategyId: def.strategyId,
-        presetId: def.presetId,
-      });
-      if (!res.ok) throw new Error(res.error ?? "Échec de l'activation");
-      // 2. Démarrer la sim si elle est à l'arrêt (activation = prête à trader).
-      if (!simConfigState()?.enabled) {
-        const start = await api.simControl(true);
-        if (!start.ok) throw new Error(start.error ?? "Échec du démarrage");
-      }
-      await loadInitialState();
-      addLog(`Simulation 5m : stratégie ${def.name} activée (marchés 5m uniquement)`);
-    } catch (e) {
-      pushError("Simulation : " + toMessage(e), { group: "sim-error", replaceGroup: true });
-    } finally {
-      setSending(false);
-    }
-  }
-
   // État "modifié" : compare la copie de travail à la config active du moteur.
   const capitalDirty = createMemo(() => {
     const n = Number(capitalInput());
     return Number.isFinite(n) && n > 0 && n !== simConfigState()?.capitalInitial;
   });
 
-  // ── Panneau de configuration 5m : édition des paramètres de la stratégie active.
+  // ── Panneau Paramètres : édition des paramètres de la stratégie active.
   // Form déclaratif (configForm.ts) prérempli depuis la config effective du
   // moteur ; « Appliquer » envoie le patch COMPLET (le moteur remplace les
   // settings, engine.applyConfig l.149) ; « Sauver preset » persiste en
@@ -319,6 +303,16 @@ export function SimulationPage(): JSX.Element {
   const [sim5mForm, setSim5mForm] = createSignal<ConfigFormState | null>(null);
   const [confirmPresetSave, setConfirmPresetSave] = createSignal(false);
   const [presetName, setPresetName] = createSignal("");
+
+  // Pliage du panneau Paramètres : header toujours visible (titre + boutons
+  // Réinitialiser/Appliquer), corps du formulaire pliable. État persisté via
+  // le même store localStorage que les autres sections (clé "sim-settings").
+  const [settingsCollapsed, setSettingsCollapsed] = createSignal(isCollapsed("sim-settings"));
+  function toggleSettings(): void {
+    const next = !settingsCollapsed();
+    setSettingsCollapsed(next);
+    writeCollapsed("sim-settings", next);
+  }
 
   // Formulaire = config effective + settings courants du panneau.
   // GÉNÉRIQUE pour toutes les stratégies : le panneau s'affiche dès que la
@@ -340,13 +334,11 @@ export function SimulationPage(): JSX.Element {
   let lastDerived5mForm: string | null = null;
   createEffect(() => {
     const base = sim5mBase();
-    const presetId = sim5mActiveId();
     if (!base) {
       lastDerived5mForm = null;
       setSim5mForm(null);
       return;
     }
-    void presetId;
     const next = configToForm(base);
     const fingerprint = JSON.stringify(next);
     if (fingerprint === lastDerived5mForm) return;
@@ -539,7 +531,8 @@ export function SimulationPage(): JSX.Element {
         </div>
       </header>
 
-      {/* Cartes KPI */}
+      {/* Cartes KPI (section pliable, état persisté) */}
+      <CollapsibleSection id="sim-kpis" title="Capital & P&L (KPI)">
       <div class="sim-kpis">
         <div class="sim-kpi sim-kpi-capital">
           <span class="sim-kpi-label">Capital total</span>
@@ -598,58 +591,7 @@ export function SimulationPage(): JSX.Element {
           </Show>
         </div>
       </div>
-
-      {/* Sélecteur dédié : les 5 stratégies 5m (hold A/H/K + TP10/TP20), backtest audits/5min-strategies.
-          Le gate "5m uniquement" vit dans le moteur (antiflip5mOnly) : impossible d'ouvrir
-          une position papier sur un marché non-5m. Le select reflète l'état réel du moteur
-          (valeur = preset actif), un changement déclenche l'activation immédiate. */}
-      <div class="sim-5m-select-block">
-        <label class="sim-5m-select-label" for="sim-5m-strategy-select">Stratégie 5m</label>
-        <select
-          id="sim-5m-strategy-select"
-          class={sim5mActiveId() ? "sim-5m-select sim-5m-select--active" : "sim-5m-select"}
-          disabled={sending()}
-          value={sim5mActiveId() ?? ""}
-          onChange={(e) => {
-            const id = e.currentTarget.value;
-            const def = SIM_5M_STRATEGIES.find((s) => s.presetId === id);
-            if (def) void activateSim5mStrategy(def);
-          }}
-        >
-          <option value="">— Sélectionner une stratégie 5m —</option>
-          <For each={SIM_5M_STRATEGIES}>
-            {(def) => (
-              <option value={def.presetId}>
-                #{def.rank} · {def.name} ({def.tag})
-              </option>
-            )}
-          </For>
-        </select>
-        <div class="sim-5m-detail">
-          <p class="sim-5m-detail-desc">
-            {selectedSim5m()?.description ?? "Sélectionnez une stratégie 5m pour voir sa description et ses stats."}
-          </p>
-          <Show when={selectedSim5m()}>
-            {(def) => (
-              <>
-                <div class="sim-5m-detail-stats">
-                  <For each={def().stats}>
-                    {(s) => <span class={s.ok ? "ok" : ""}>{s.label} {s.value}</span>}
-                  </For>
-                </div>
-                <Show when={def().warn}>
-                  <p class="sim-5m-detail-warn">⚠ {def().warn}</p>
-                </Show>
-              </>
-            )}
-          </Show>
-        </div>
-      </div>
-      <p class="sim-5m-note">
-        Ces stratégies proviennent du backtest <code>audits/5min-strategies</code> (836 fenêtres BTC
-        Up/Down 5m, 402k ticks). Le moteur <code>antiflip-revert</code> avec preset 5m
-        refuse toute entrée sur un marché non-5m — la protection est active en paper trading comme en live.
-      </p>
+      </CollapsibleSection>
 
       {/* Panneau de configuration : édition runtime des paramètres de la stratégie
           ACTIVE (tous moteurs). Formulaire prérempli depuis la config effective du
@@ -660,9 +602,12 @@ export function SimulationPage(): JSX.Element {
           pour antiflip-revert uniquement. */}
       <Show when={sim5mForm() !== null}>
         <div class="sim-5m-config-panel">
-          <div class="sim-5m-cp-header">
-            <span class="sim-5m-cp-title">Paramètres — {strategyShortLabel(sim5mForm()!.strategyId)}{currentPreset() ? ` · ${currentPreset()?.name}` : ""}</span>
-            <div class="sim-5m-cp-actions">
+          <div class="sim-5m-cp-header" role="button" tabindex={0} aria-expanded={!settingsCollapsed()} onClick={() => toggleSettings()} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleSettings(); } }}>
+            <span class="sim-5m-cp-title">
+              <CollapseChevron open={!settingsCollapsed()} />
+              Paramètres — {strategyShortLabel(sim5mForm()!.strategyId)}{currentPreset() ? ` · ${currentPreset()?.name}` : ""}
+            </span>
+            <div class="sim-5m-cp-actions" onClick={(e) => e.stopPropagation()}>
               <button
                 class="btn btn-ghost"
                 disabled={sending()}
@@ -680,6 +625,7 @@ export function SimulationPage(): JSX.Element {
             </div>
           </div>
 
+          <Show when={!settingsCollapsed()}>
           {/* ── Paramètres communs à tous les moteurs (marchés, garde-fous, fenêtre, sim) ── */}
           <For each={COMMON_PARAM_SECTIONS}>
             {(section) => (
@@ -835,10 +781,12 @@ export function SimulationPage(): JSX.Element {
               </div>
             </Show>
           </div>
+          </Show>
         </div>
       </Show>
 
       {/* Barre de configuration : groupes Stratégie | Capital + actions */}
+      <CollapsibleSection id="sim-config-bar" title="Configuration moteur (stratégie & capital)">
       <div class="sim-control-bar">
         <div class="sim-cb-group">
           <span class="sim-cb-title">Stratégie</span>
@@ -926,10 +874,15 @@ export function SimulationPage(): JSX.Element {
           </button>
         </div>
       </div>
+      </CollapsibleSection>
 
       <div class="grid">
         {/* Positions ouvertes */}
-        <Panel title={`Positions ouvertes (${simOpenPositions().length})`}>
+        <Panel
+          title={`Positions ouvertes (${simOpenPositions().length})`}
+          collapsible
+          collapsibleId="sim-open-positions"
+        >
           <Show
             when={simOpenPositions().length > 0}
             fallback={<EmptyState text="Aucune position papier ouverte." />}
@@ -979,7 +932,11 @@ export function SimulationPage(): JSX.Element {
         </Panel>
 
         {/* Ordres en attente (GTC papier non encore remplis) */}
-        <Panel title={`Ordres en attente (${simResting().length})`}>
+        <Panel
+          title={`Ordres en attente (${simResting().length})`}
+          collapsible
+          collapsibleId="sim-resting-orders"
+        >
           <Show
             when={simResting().length > 0}
             fallback={<EmptyState text="Aucun ordre GTC en attente." />}
@@ -1020,14 +977,14 @@ export function SimulationPage(): JSX.Element {
 
       {/* Marché actif (temps réel, réutilise marketStore alimenté par SSE) */}
       <div class="sim-active-markets">
-        <Panel title="Marché actif (temps réel)">
+        <Panel title="Marché actif (temps réel)" collapsible collapsibleId="sim-active-markets">
           <ActiveMarkets now={now()} />
         </Panel>
       </div>
 
       {/* Historique à onglets : positions résolues | journal des ordres */}
       <div class="sim-history">
-        <div class="panel">
+        <CollapsibleSection id="sim-history" boxed title="Historique — positions résolues | journal des ordres">
           <div class="sim-tabs">
           <button
             class={`sim-tab ${historyTab() === "resolved" ? "active" : ""}`}
@@ -1070,6 +1027,7 @@ export function SimulationPage(): JSX.Element {
                   <th>Taille</th>
                   <th>Type</th>
                   <th>P&L</th>
+                  <th>Graph</th>
                 </tr>
               </thead>
               <tbody>
@@ -1090,6 +1048,16 @@ export function SimulationPage(): JSX.Element {
                       <td>{t.orderType ?? "—"}</td>
                       <td class={pnlClass(t.pnl ?? 0)}>
                         {t.pnl != null ? fmtUsd(t.pnl) : "—"}
+                      </td>
+                      <td>
+                        <button
+                          class="chart-btn"
+                          type="button"
+                          title="Voir le graphique du marché avec les points d'entrée/sortie"
+                          onClick={() => setChartTarget(simTradeToChartTarget(t))}
+                        >
+                          📊
+                        </button>
                       </td>
                     </tr>
                   )}
@@ -1115,6 +1083,7 @@ export function SimulationPage(): JSX.Element {
                   <th>P&L</th>
                   <th>Résolu</th>
                   <th>Status</th>
+                  <th>Graph</th>
                 </tr>
               </thead>
               <tbody>
@@ -1130,6 +1099,16 @@ export function SimulationPage(): JSX.Element {
                       <td class={pnlClass(p.pnl ?? 0)}>{fmtUsd(p.pnl ?? 0)}</td>
                       <td>{timeStr(p.resolvedAt ?? p.windowEnd * 1000)}</td>
                       <td>{p.status}</td>
+                      <td>
+                        <button
+                          class="chart-btn"
+                          type="button"
+                          title="Voir le graphique du marché avec les points d'entrée/sortie"
+                          onClick={() => setChartTarget(simulatedPositionToChartTarget(p))}
+                        >
+                          📊
+                        </button>
+                      </td>
                     </tr>
                   )}
                 </For>
@@ -1137,7 +1116,7 @@ export function SimulationPage(): JSX.Element {
             </table>
           </Show>
         </Show>
-      </div>
+        </CollapsibleSection>
       </div>
 
       <ConfirmModal
@@ -1148,6 +1127,13 @@ export function SimulationPage(): JSX.Element {
         onConfirm={() => void doReset()}
         onCancel={() => setConfirmReset(false)}
       />
+
+      {/* Dialog graphique : historique de prix du marché + markers entrée/sortie */}
+      <Show when={chartTarget()}>
+        {(t) => (
+          <MarketHistoryModal target={t()} onClose={() => setChartTarget(null)} />
+        )}
+      </Show>
     </div>
   );
 }

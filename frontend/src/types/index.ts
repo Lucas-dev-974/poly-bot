@@ -492,6 +492,10 @@ export interface ChartTarget {
   timestamp?: number;
   /** Prix de rÃ¨glement du token Up (0 ou 1), indÃ©pendant de la jambe cliquÃ©e. */
   settlePrice?: number;
+  /** Prix de sortie d'une position sim sold intra-marché (TP / defend) — marqueur SELL sur la courbe cliquée. */
+  sellPrice?: number;
+  /** Instant de la sortie en secondes Unix (sell intra-marché d'une position sim). */
+  sellTs?: number;
 }
 
 export type BotEvent =

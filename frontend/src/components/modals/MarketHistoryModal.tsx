@@ -1,6 +1,6 @@
 import { For, Show, createEffect, createMemo, createResource, createSignal, onCleanup, onMount } from "solid-js";
 import type { JSX } from "solid-js";
-import { api } from "../../api/client";
+import { api, type SimTrade } from "../../api/client";
 import type {
   BookSnapshotPoint,
   ChartTarget,
@@ -18,6 +18,7 @@ import { l1Spread, parseSlugWindow } from "../../utils/market";
 import { dateTimeStr, fmtPrice, fmtSizePair, fmtSpread, fmtUsd, fmtUsdCompact } from "../../utils/format";
 import { markets } from "../../stores/marketStore";
 import { polyPositions } from "../../stores/polyStore";
+import { simJournal } from "../../stores/simStore";
 import { openPositionList, resolvedPositions } from "../../stores/positionStore";
 
 interface ModalProps {
@@ -105,10 +106,53 @@ export function simulatedPositionToChartTarget(p: SimulatedPosition): ChartTarge
   const upTokenId = upBook?.tokenId ?? (clickedIsUp ? p.tokenId : undefined);
   const downTokenId = downBook?.tokenId ?? (clickedIsUp ? undefined : p.tokenId);
   const clickedBook = market?.books.find((b) => b.tokenId === p.tokenId);
-  const curPrice = clickedBook?.bestBid ?? clickedBook?.bestAsk ?? null;
   const cost = p.cost > 0 ? p.cost : p.fillPrice * p.size;
-  const cashPnl = curPrice != null ? (curPrice - p.fillPrice) * p.size : undefined;
   const parsed = parseSlugWindow(p.eventSlug);
+  const isSettled = p.status !== "open";
+
+  // Prix de règlement de la jambe cliquée : 1 si won, 0.5 si void, 0 si lost.
+  const settleClicked =
+    p.status === "won" ? 1 : p.status === "void" ? VOID_SETTLEMENT : p.status === "lost" ? 0 : null;
+
+  // Prix « actuel » de la jambe cliquée : prix de vente (sold) ou règlement
+  // (won/lost/void) pour une position résolue — le book live d'un marché
+  // terminé n'existe plus ; bid live sinon.
+  const curPrice = isSettled
+    ? p.status === "sold"
+      ? p.sellPrice ?? null
+      : settleClicked
+    : clickedBook?.bestBid ?? clickedBook?.bestAsk ?? null;
+  // P&L : réalisé (p.pnl) pour une position résolue, latent au bid live sinon.
+  const cashPnl = p.pnl ?? (curPrice != null ? (curPrice - p.fillPrice) * p.size : undefined);
+
+  // Marqueur de sortie : les exits intra-marché (TP / defend, statut "sold")
+  // ne journalisent pas toujours un SELL dans sim_trades → on retrouve la
+  // ligne de vente du même slug+outcome au même prix, à défaut l'heure de
+  // résolution. Les résolutions 0/1 (won/lost/void) marquent le règlement.
+  let sellPrice: number | undefined;
+  let sellTs: number | undefined;
+  if (p.status === "sold" && p.sellPrice != null) {
+    sellPrice = p.sellPrice;
+    const exitRow = simJournal().find(
+      (t) =>
+        t.eventSlug === p.eventSlug &&
+        t.outcome === p.outcome &&
+        t.side === "SELL" &&
+        t.filled === 1 &&
+        Math.abs((t.fillPrice ?? -1) - p.sellPrice!) < 1e-6,
+    );
+    sellTs = exitRow
+      ? positionTsSec(exitRow.ts)
+      : Math.min((p.resolvedAt ?? p.windowEnd * 1000) / 1000, p.windowEnd);
+  }
+  // won/lost/void : pas de marker SELL synthétisé — les losanges de résolution
+  // (settlePrice) marquent déjà l'exit à windowEnd.
+
+  // Prix de règlement du token Up (marqueurs losange de résolution du
+  // graphique) : jambe cliquée puis inversion si la jambe cliquée est Down.
+  const settlePrice =
+    settleClicked != null ? (clickedIsUp ? settleClicked : 1 - settleClicked) : undefined;
+
   return {
     title: p.eventTitle,
     slug: p.eventSlug,
@@ -127,6 +171,45 @@ export function simulatedPositionToChartTarget(p: SimulatedPosition): ChartTarge
     cashPnl,
     percentPnl: cashPnl != null && cost > 0 ? (cashPnl / cost) * 100 : undefined,
     currentValue: curPrice != null ? curPrice * p.size : undefined,
+    closed: isSettled,
+    settlePrice,
+    sellPrice,
+    sellTs,
+  };
+}
+
+/** Constante miroir du backend (position-resolver.ts : VOID_SETTLEMENT_PRICE = 0.5). */
+const VOID_SETTLEMENT = 0.5;
+
+/**
+ * Ligne du journal des ordres simulés (sim_trades) → ChartTarget. Le journal
+ * ne porte ni tokenId ni fenêtre explicite : tokens/labels/outcomeIndex sont
+ * résolus depuis le book live du store markets (même eventSlug), la fenêtre
+ * depuis le slug.
+ */
+export function simTradeToChartTarget(t: SimTrade): ChartTarget {
+  const market = markets[t.eventSlug];
+  const upBook = market?.books.find((b) => b.outcomeIndex === 0);
+  const downBook = market?.books.find((b) => b.outcomeIndex === 1);
+  const parsed = parseSlugWindow(t.eventSlug);
+  const label = t.outcome.toLowerCase();
+  const upOutcome = upBook?.outcome ?? "Up";
+  const downOutcome = downBook?.outcome ?? "Down";
+  const outcomeIndex =
+    label === upOutcome.toLowerCase() ? 0 : label === downOutcome.toLowerCase() ? 1 : t.outcome === "Up" ? 0 : 1;
+  return {
+    title: market?.title ?? t.eventSlug,
+    slug: t.eventSlug,
+    conditionId: "",
+    upTokenId: upBook?.tokenId ?? "",
+    downTokenId: downBook?.tokenId,
+    upOutcome,
+    downOutcome,
+    outcomeIndex,
+    windowStart: parsed?.start,
+    windowEnd: parsed?.end ?? Math.floor(t.ts / 1000) + 1800,
+    avgPrice: t.fillPrice ?? t.limitPrice,
+    size: t.size,
     closed: false,
   };
 }
@@ -456,6 +539,33 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
     return buildTrades(bot, apiTrades, pairTradesFromStore(target.conditionId), simTrades);
   });
 
+  // Sortie de position sim non journalisée (TP/defend sans ligne SELL) :
+  // synthétise le marker SELL à partir de target.sellPrice/sellTs pour que
+  // le point d'exit apparaisse toujours sur la courbe de la jambe cliquée.
+  const tradesWithExit = createMemo<DisplayTrade[]>(() => {
+    const trades = displayTrades();
+    if (target.sellPrice == null || target.sellTs == null) return trades;
+    const alreadyCharted = trades.some(
+      (t) =>
+        t.outcomeIndex === target.outcomeIndex &&
+        t.side === "SELL" &&
+        Math.abs(t.timestamp - target.sellTs!) < 60,
+    );
+    if (alreadyCharted) return trades;
+    return [
+      ...trades,
+      {
+        timestamp: target.sellTs,
+        price: target.sellPrice,
+        size: target.size ?? 0,
+        side: "SELL" as const,
+        outcome: target.outcomeIndex === 0 ? target.upOutcome : target.downOutcome,
+        outcomeIndex: target.outcomeIndex ?? 0,
+        origin: "sim" as const,
+      },
+    ].sort((a, b) => a.timestamp - b.timestamp);
+  });
+
   // --- Live (SSE → marketStore) --------------------------------------------
 
   const liveMarket = createMemo(() => {
@@ -503,7 +613,7 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
     const base = {
       windowStart: w.start,
       windowEnd: w.end,
-      trades: displayTrades(),
+      trades: tradesWithExit(),
       highlightOutcomeIndex: target.outcomeIndex,
       finalUpPrice,
       outcomeLabels: outcomeLabels(),

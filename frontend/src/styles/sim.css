@@ -109,90 +109,6 @@
   color: var(--muted, #8b93a3);
 }
 
-/* Barre de configuration : groupes Stratégie | Capital + actions */
-/* Sélecteur dédié : stratégie 5m (remplace les cartes). */
-.sim-5m-select-block {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
-.sim-5m-select-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: var(--muted, #8b93a3);
-}
-
-.sim-5m-select {
-  max-width: 480px;
-  padding: 8px 12px;
-  font: inherit;
-  font-size: 13px;
-  color: inherit;
-  background: var(--panel, #171a21);
-  border: 1px solid var(--border, #262b36);
-  border-radius: 10px;
-  cursor: pointer;
-  transition: border-color 0.15s ease;
-}
-
-.sim-5m-select:hover:not(:disabled) {
-  border-color: var(--accent, #4f8cff);
-}
-
-.sim-5m-select:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.sim-5m-select--active {
-  border-color: var(--green, #2ecc71);
-  background: rgba(46, 204, 113, 0.08);
-}
-
-.sim-5m-detail {
-  margin-top: 8px;
-  padding: 10px 14px;
-  background: var(--panel, #171a21);
-  border: 1px solid var(--border, #262b36);
-  border-radius: 10px;
-  max-width: 480px;
-}
-
-.sim-5m-detail-desc {
-  margin: 0 0 8px;
-  font-size: 11.5px;
-  line-height: 1.45;
-  color: var(--muted, #8b93a3);
-}
-
-.sim-5m-detail-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  color: var(--muted, #8b93a3);
-}
-
-.sim-5m-detail-stats .ok {
-  color: var(--green, #2ecc71);
-}
-
-.sim-5m-detail-warn {
-  margin: 8px 0 0;
-  color: var(--amber, #f1c40f);
-}
-
-.sim-5m-note {
-  margin: -8px 0 16px;
-  font-size: 11px;
-  color: var(--muted, #8b93a3);
-}
-
 /* ── Panneau de configuration 5m ─────────────────────────────────────── */
 
 .sim-5m-config-panel {
@@ -674,3 +590,127 @@
     min-width: 0;
   }
 }
+
+/* ===== Sections pliables (page Simulation) ===== */
+
+.collapsible-section {
+  margin-bottom: 16px;
+}
+
+/* Conteneurs internes : les blocs sim-* gardent leur propre carte (fond,
+   bordure). La section pliable est un simple wrapper transparent. */
+.collapsible-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--panel, #171a21);
+  border: 1px solid var(--border, #262b36);
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.15s ease;
+}
+
+.collapsible-header:hover {
+  border-color: var(--accent, #4f8cff);
+}
+
+.collapsible-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--muted, #8b93a3);
+  flex: 1;
+}
+
+.collapsible-header:hover .collapsible-title {
+  color: var(--text, #e6e8ee);
+}
+
+/* Actions à droite du header (non cliquables pour le pliage). */
+.collapsible-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Chevron de pliage : pivot 90° quand ouvert. */
+.collapse-chevron {
+  display: inline-block;
+  color: var(--accent, #4f8cff);
+  font-size: 11px;
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.collapse-chevron.open {
+  transform: rotate(90deg);
+}
+
+/* Corps : marge au-dessus pour respirer sous le header plié. */
+.collapsible-body {
+  margin-top: 8px;
+}
+
+/* Variante boxed : la section EST la carte (ex. historique à onglets qui
+   conserve le look .panel de son ancien wrapper). Header collé en haut. */
+.collapsible-section.boxed {
+  border: 1px solid var(--border, #262b36);
+  border-radius: 10px;
+  background: var(--panel, #171a21);
+  padding: 16px;
+}
+
+.collapsible-section.boxed .collapsible-header {
+  padding: 0 0 10px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border, #262b36);
+  border-radius: 0;
+  margin-bottom: 12px;
+}
+
+.collapsible-section.boxed .collapsible-header:hover {
+  border-color: var(--border, #262b36);
+}
+
+.collapsible-section.boxed .collapsible-header:hover .collapsible-title {
+  color: var(--text, #e6e8ee);
+}
+
+.collapsible-section.boxed .collapsible-body {
+  margin-top: 0;
+}
+
+/* Panneaux pliables du composant Panel (positions ouvertes, ordres en
+   attente, marché actif) : le h2 devient la zone cliquable. */
+.panel-collapsible > h2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.panel-collapsible > h2:hover {
+  color: var(--text, #e6e8ee);
+}
+
+/* Header du panneau Paramètres (plié) : le titre redevient cliquable —
+   la carte garde sa structure existante. */
+.sim-5m-config-panel .sim-5m-cp-header {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sim-5m-config-panel .sim-5m-cp-header:hover .sim-5m-cp-title {
+  color: var(--text, #e6e8ee);
+}
+
+/* Sections internes du panneau Paramètres pliables aussi ? Non : le corps
+   entier bascule d'un coup — le pliage par sous-section est couvert par les
+   "Filtres inactifs" déjà repliables et par la section elle-même. */

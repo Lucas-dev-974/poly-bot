@@ -607,7 +607,7 @@ export function SimulationPage(): JSX.Element {
               <CollapseChevron open={!settingsCollapsed()} />
               Paramètres — {strategyShortLabel(sim5mForm()!.strategyId)}{currentPreset() ? ` · ${currentPreset()?.name}` : ""}
             </span>
-            <div class="sim-5m-cp-actions" onClick={(e) => e.stopPropagation()}>
+            <div class="sim-5m-cp-actions" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
               <button
                 class="btn btn-ghost"
                 disabled={sending()}

@@ -89,7 +89,11 @@ export function CollapsibleSection(props: {
         <CollapseChevron open={open()} />
         <span class="collapsible-title">{props.title}</span>
         <Show when={props.actions}>
-          <span class="collapsible-actions" onClick={(e) => e.stopPropagation()}>
+          <span
+            class="collapsible-actions"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
             {props.actions}
           </span>
         </Show>

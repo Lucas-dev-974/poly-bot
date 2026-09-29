@@ -537,6 +537,36 @@ const EARLY_CONVICTION_SECTIONS: ParamSectionDef[] = [
   },
 ];
 
+/* ── EARLY-LOW : token décoté < 12c, 2,5 premières min 15m, hold (exit optionnel) ── */
+
+const EARLY_LOW_SECTIONS: ParamSectionDef[] = [
+  {
+    title: "Entrée",
+    fields: [
+      { key: "earlyLowBuyAskMin", label: "Ask min (0 = off)", step: "0.01", min: "0", max: "0.5" },
+      { key: "earlyLowBuyAskMax", label: "Ask max (cap décote)", step: "0.01", min: "0", max: "0.49" },
+      {
+        key: "earlyLowMaxElapsedSec",
+        label: "Max elapsed (s)",
+        step: "10",
+        min: "1",
+        max: "900",
+      },
+      { key: "earlyLowMaxSpread", label: "Max spread", step: "0.01", min: "0" },
+      { key: "earlyLowOrderUsdc", label: "Budget / position (USDC)", step: "0.5", min: "1" },
+      { key: "earlyLow15mOnly", label: "15m uniquement (gate marchés 15 min)", type: "checkbox" },
+    ],
+  },
+  {
+    title: "Exit wait-and-see (50c)",
+    fields: [
+      { key: "earlyLowExitEnabled", label: "Exit actif (sinon hold résolution)", type: "checkbox" },
+      { key: "earlyLowExitAsk", label: "Seuil d'armement (ask tenu)", step: "0.01", min: "0", max: "1" },
+      { key: "earlyLowExitMomentumMin", label: "Progression min / tick (hold)", step: "0.001", min: "0", max: "0.1" },
+    ],
+  },
+];
+
 /* ── OPEN-ENTRY : favori émergent < 300s, SL dual-scale ── */
 
 const OPEN_ENTRY_SECTIONS: ParamSectionDef[] = [
@@ -684,6 +714,7 @@ const SECTIONS_BY_ENGINE: Record<NativeStrategyId, ParamSectionDef[]> = {
   "antiflip-revert": ANTIFLIP_SECTIONS,
   "flip-confirm": FLIP_CONFIRM_SECTIONS,
   "early-conviction": EARLY_CONVICTION_SECTIONS,
+  "early-low": EARLY_LOW_SECTIONS,
   "open-entry": OPEN_ENTRY_SECTIONS,
   "probability-repricing": PROBABILITY_REPRICING_SECTIONS,
 };
@@ -706,6 +737,7 @@ export const STRATEGY_SHORT_LABELS: Record<NativeStrategyId, string> = {
   "antiflip-revert": "Antiflip-revert",
   "flip-confirm": "Flip-confirm",
   "early-conviction": "Early-conviction",
+  "early-low": "Early-low",
   "open-entry": "Open-entry",
   "probability-repricing": "Probability-repricing",
 };

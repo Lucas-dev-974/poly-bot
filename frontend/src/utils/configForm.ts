@@ -124,6 +124,15 @@ export type ConfigFormState = {
   earlyConvictionMaxElapsedSec: string;
   earlyConvictionMaxSpread: string;
   earlyConvictionOrderUsdc: string;
+  earlyLowBuyAskMin: string;
+  earlyLowBuyAskMax: string;
+  earlyLowMaxElapsedSec: string;
+  earlyLowMaxSpread: string;
+  earlyLowOrderUsdc: string;
+  earlyLowExitEnabled: boolean;
+  earlyLowExitAsk: string;
+  earlyLowExitMomentumMin: string;
+  earlyLow15mOnly: boolean;
   openEntryLeanTrigger: string;
   openEntryMaxElapsedSec: string;
   openEntryFairAskSumMax: string;
@@ -327,6 +336,15 @@ export function configToForm(config: BotConfig): ConfigFormState {
     earlyConvictionMaxElapsedSec: String(config.earlyConvictionMaxElapsedSec ?? 45),
     earlyConvictionMaxSpread: String(config.earlyConvictionMaxSpread ?? 0.05),
     earlyConvictionOrderUsdc: String(config.earlyConvictionOrderUsdc ?? 15),
+    earlyLowBuyAskMin: String(config.earlyLowBuyAskMin ?? 0),
+    earlyLowBuyAskMax: String(config.earlyLowBuyAskMax ?? 0.12),
+    earlyLowMaxElapsedSec: String(config.earlyLowMaxElapsedSec ?? 150),
+    earlyLowMaxSpread: String(config.earlyLowMaxSpread ?? 0.06),
+    earlyLowOrderUsdc: String(config.earlyLowOrderUsdc ?? 1),
+    earlyLowExitEnabled: config.earlyLowExitEnabled === true,
+    earlyLowExitAsk: String(config.earlyLowExitAsk ?? 0.4),
+    earlyLowExitMomentumMin: String(config.earlyLowExitMomentumMin ?? 0),
+    earlyLow15mOnly: config.earlyLow15mOnly !== false,
     openEntryLeanTrigger: String(config.openEntryLeanTrigger ?? 0.15),
     openEntryMaxElapsedSec: String(config.openEntryMaxElapsedSec ?? 300),
     openEntryFairAskSumMax: String(config.openEntryFairAskSumMax ?? 1.02),
@@ -566,6 +584,15 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     earlyConvictionMaxElapsedSec: parseNum(form.earlyConvictionMaxElapsedSec, "Early-conviction max elapsed"),
     earlyConvictionMaxSpread: parseNum(form.earlyConvictionMaxSpread, "Early-conviction max spread"),
     earlyConvictionOrderUsdc: parseNum(form.earlyConvictionOrderUsdc, "Early-conviction order USDC"),
+    earlyLowBuyAskMin: parseNum(form.earlyLowBuyAskMin, "Early-low ask min"),
+    earlyLowBuyAskMax: parseNum(form.earlyLowBuyAskMax, "Early-low ask max"),
+    earlyLowMaxElapsedSec: parseNum(form.earlyLowMaxElapsedSec, "Early-low max elapsed"),
+    earlyLowMaxSpread: parseNum(form.earlyLowMaxSpread, "Early-low max spread"),
+    earlyLowOrderUsdc: parseNum(form.earlyLowOrderUsdc, "Early-low order USDC"),
+    earlyLowExitEnabled: form.earlyLowExitEnabled === true,
+    earlyLowExitAsk: parseNum(form.earlyLowExitAsk, "Early-low exit ask"),
+    earlyLowExitMomentumMin: parseNum(form.earlyLowExitMomentumMin, "Early-low exit momentum min"),
+    earlyLow15mOnly: form.earlyLow15mOnly !== false,
     openEntryLeanTrigger: parseNum(form.openEntryLeanTrigger, "Open-entry lean trigger"),
     openEntryMaxElapsedSec: parseNum(form.openEntryMaxElapsedSec, "Open-entry max elapsed"),
     openEntryFairAskSumMax: parseNum(form.openEntryFairAskSumMax, "Open-entry fair ask sum max"),
@@ -606,6 +633,7 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     next.strategyId === "antiflip-revert" ||
     next.strategyId === "flip-confirm" ||
     next.strategyId === "early-conviction" ||
+    next.strategyId === "early-low" ||
     next.strategyId === "open-entry" ||
     next.strategyId === "probability-repricing"
   ) {
@@ -937,6 +965,41 @@ export function validateConfigForm(
       }
       if (!Number.isFinite(budget) || budget <= 0) {
         errors.push("Early-conviction: budget doit être > 0");
+      }
+    }
+    if (form.strategyId === "early-low") {
+      const lo = Number(form.earlyLowBuyAskMin);
+      const hi = Number(form.earlyLowBuyAskMax);
+      const maxElapsed = Number(form.earlyLowMaxElapsedSec);
+      const spread = Number(form.earlyLowMaxSpread);
+      const budget = Number(form.earlyLowOrderUsdc);
+      const exitAsk = Number(form.earlyLowExitAsk);
+      const momentum = Number(form.earlyLowExitMomentumMin);
+      if (!Number.isFinite(lo) || lo < 0) {
+        errors.push("Early-low: ask min doit être >= 0 (0 = off)");
+      }
+      if (!Number.isFinite(hi) || hi <= lo || hi >= 0.5) {
+        errors.push("Early-low: bande max < 0.5 et > ask min (token décoté)");
+      }
+      if (!Number.isFinite(maxElapsed) || maxElapsed <= 0 || maxElapsed > 900) {
+        errors.push("Early-low: max elapsed entre 1 et 900 s");
+      }
+      if (!Number.isFinite(spread) || spread < 0) {
+        errors.push("Early-low: max spread >= 0");
+      }
+      if (!Number.isFinite(budget) || budget <= 0) {
+        errors.push("Early-low: budget doit être > 0");
+      }
+      if (form.earlyLowExitEnabled) {
+        if (!Number.isFinite(exitAsk) || exitAsk <= 0 || exitAsk >= 1) {
+          errors.push("Early-low: exit ask en (0, 1)");
+        }
+        if (Number.isFinite(exitAsk) && Number.isFinite(hi) && exitAsk <= hi) {
+          errors.push("Early-low: exit ask doit être > bande max d'achat");
+        }
+        if (!Number.isFinite(momentum) || momentum < 0) {
+          errors.push("Early-low: momentum min >= 0");
+        }
       }
     }
     if (form.strategyId === "open-entry") {
@@ -1544,6 +1607,28 @@ export function fieldErrors(
       }
       if (!Number.isFinite(spread) || spread < 0) result.earlyConvictionMaxSpread = ">= 0";
       if (!Number.isFinite(budget) || budget <= 0) result.earlyConvictionOrderUsdc = "> 0";
+    }
+    if (form.strategyId === "early-low") {
+      const lo = Number(form.earlyLowBuyAskMin);
+      const hi = Number(form.earlyLowBuyAskMax);
+      const maxElapsed = Number(form.earlyLowMaxElapsedSec);
+      const spread = Number(form.earlyLowMaxSpread);
+      const budget = Number(form.earlyLowOrderUsdc);
+      const exitAsk = Number(form.earlyLowExitAsk);
+      const momentum = Number(form.earlyLowExitMomentumMin);
+      if (!Number.isFinite(lo) || lo < 0) result.earlyLowBuyAskMin = ">= 0 (0 = off)";
+      if (!Number.isFinite(hi) || hi <= lo) result.earlyLowBuyAskMax = "Doit être > ask min";
+      else if (hi >= 0.5) result.earlyLowBuyAskMax = "< 0.5";
+      if (!Number.isFinite(maxElapsed) || maxElapsed <= 0 || maxElapsed > 900) {
+        result.earlyLowMaxElapsedSec = "Entre 1 et 900";
+      }
+      if (!Number.isFinite(spread) || spread < 0) result.earlyLowMaxSpread = ">= 0";
+      if (!Number.isFinite(budget) || budget <= 0) result.earlyLowOrderUsdc = "> 0";
+      if (form.earlyLowExitEnabled) {
+        if (!Number.isFinite(exitAsk) || exitAsk <= 0 || exitAsk >= 1) { result.earlyLowExitAsk = "En (0, 1)"; }
+        else if (Number.isFinite(hi) && exitAsk <= hi) { result.earlyLowExitAsk = "> bande max d'achat"; }
+        if (!Number.isFinite(momentum) || momentum < 0) result.earlyLowExitMomentumMin = ">= 0";
+      }
     }
     if (form.strategyId === "open-entry") {
       const lean = Number(form.openEntryLeanTrigger);

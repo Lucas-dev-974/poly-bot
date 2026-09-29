@@ -46,6 +46,8 @@ import {
   FLIPCONF_LIFE_EDGES,
   EARLYCONV_LIFE_NODES,
   EARLYCONV_LIFE_EDGES,
+  EARLYLOW_LIFE_NODES,
+  EARLYLOW_LIFE_EDGES,
   OPENENTRY_LIFE_NODES,
   OPENENTRY_LIFE_EDGES,
   FAVBAND_LIFE_NODES,
@@ -87,6 +89,9 @@ function EngineSelector(props: {
       <GuidePill active={props.engine() === "early-conviction"} onClick={() => props.setEngine("early-conviction")}>
         Early-conviction — conviction immédiate
       </GuidePill>
+      <GuidePill active={props.engine() === "early-low"} onClick={() => props.setEngine("early-low")}>
+        Early-low — ticket décoté
+      </GuidePill>
       <GuidePill active={props.engine() === "open-entry"} onClick={() => props.setEngine("open-entry")}>
         Open-entry — favori émergent
       </GuidePill>
@@ -117,9 +122,11 @@ function LifecycleCard(props: { engine: EngineId }): JSX.Element {
                     ? "Open-entry"
                     : props.engine === "fav-band"
                       ? "Fav-band"
-                      : props.engine === "probability-repricing"
-                        ? "Probability-repricing"
-                        : "Early-conviction";
+                      : props.engine === "early-low"
+                        ? "Early-low"
+                        : props.engine === "probability-repricing"
+                          ? "Probability-repricing"
+                          : "Early-conviction";
 
   return (
     <GuideCard title={`Cycle de vie — ${title()}`}>
@@ -242,6 +249,19 @@ function LifecycleCard(props: { engine: EngineId }): JSX.Element {
             Le plus simple : aucun état de flip à tracker. Si le favori cote déjà
             ≥ 0.60 dans les 45 premières secondes, on l&apos;achète immédiatement.
             Ne pas baisser le seuil à 0.55 : le même achat à 0.55 est en perte.
+          </p>
+        </Show>
+        <Show when={props.engine === "early-low"}>
+          <LifecycleDiagram
+            nodes={EARLYLOW_LIFE_NODES}
+            edges={EARLYLOW_LIFE_EDGES}
+            markerId="life-arrow-earlylow"
+            ariaLabel="Cycle de vie d'une position early-low"
+          />
+          <p class="guide-muted guide-small">
+            Achat 1$ d&apos;un token &lt; 12 ¢ dans les 2,5 premières minutes, puis hold intégral
+            jusqu&apos;à la résolution. Exit wait-and-see 0.40 disponible mais off par défaut.
+            Stop bid optionnel.
           </p>
         </Show>
         <Show when={props.engine === "open-entry"}>
@@ -809,6 +829,55 @@ function EarlyConvictionStory(): JSX.Element {
   );
 }
 
+function EarlyLowStory(): JSX.Element {
+  return (
+    <GuideStack>
+      <GuideCallout tone={ENGINE_META["early-low"].tone} title={ENGINE_META["early-low"].label}>
+        <p>{ENGINE_META["early-low"].subtitle}</p>
+        <p class="guide-muted guide-small" style={{ "margin-top": "8px" }}>
+          <strong>Ordre :</strong> {ENGINE_META["early-low"].order} ·{" "}
+          <strong>Risque :</strong> {ENGINE_META["early-low"].risk}
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">Le ticket de loterie discipliné</h3>
+      <p>
+        Un token UP/DOWN qui tombe sous 12 ¢ dans les 2,5 premières minutes d&apos;un 15m est un
+        marché qui a <strong>déjà tranché</strong> — ou une surréaction extrême. À 1 $ le ticket
+        (~7-9 shares), le retournement complet paie 1 $ / share : le rapport risque/rendement est
+        extrême. Le moteur n&apos;essaie PAS d&apos;anticiper la revente : il achète le ticket et le
+        <strong> tient jusqu&apos;à la résolution</strong> (config optimisée multi-split 2026-09-29 —
+        positif sur 8/8 segments, alors que la revente anticipée détruit de la valeur).
+      </p>
+
+      <GuideCallout tone="warning" title="Pourquoi tenir jusqu'au bout ?">
+        <p>
+          L&apos;exit wait-and-see 0.40 (ex-défaut) coupait des tickets qui allaient payer
+          <strong> 1 $ à la résolution</strong> : à 40-50 ¢ la revente plafonne le gain à ~3× le prix
+          d&apos;entrée, tandis que la résolution paie ~+0.88/share. En backtest multi-split, l&apos;exit
+          est négatif sur 8/8 segments — il est conservé comme option (earlyLowExitEnabled) mais
+          <strong> off par défaut</strong>. La plupart des tickets expirent à 0 : le sizing à 1$ est la protection.
+        </p>
+      </GuideCallout>
+
+      <h3 class="guide-h3">À la fin des 15 minutes</h3>
+      <GuideTable
+        headers={["Scénario", "Résultat"]}
+        rows={RESOLUTION_ROWS["early-low"]}
+        rowTone={RESOLUTION_ROWS["early-low"].map((_, i) => (i === 0 ? "success" : i === 1 ? "success" : "danger"))}
+      />
+
+      <GuideDetails title="Les étapes — Early-low" defaultOpen>
+        <GuideStack gap={8}>
+          <For each={BOT_STEPS["early-low"]}>
+            {(step, i) => <p>{i() + 1}. {step}</p>}
+          </For>
+        </GuideStack>
+      </GuideDetails>
+    </GuideStack>
+  );
+}
+
 function OpenEntryStory(): JSX.Element {
   return (
     <GuideStack>
@@ -1066,6 +1135,9 @@ export function StoryTab(): JSX.Element {
       <Show when={engine() === "early-conviction"}>
         <EarlyConvictionStory />
       </Show>
+      <Show when={engine() === "early-low"}>
+        <EarlyLowStory />
+      </Show>
       <Show when={engine() === "open-entry"}>
         <OpenEntryStory />
       </Show>
@@ -1235,7 +1307,7 @@ export function UiTab(): JSX.Element {
         headers={["Étape", "Effet"]}
         rows={[
           [
-            "Select Moteur (11 moteurs natifs arb … probability-repricing, ou custom:…)",
+            "Select Moteur (12 moteurs natifs arb … probability-repricing, ou custom:…)",
             "Filtre les profils ; un custom n'a pas de presets — règles chart dans /strategy-editor",
           ],
           ["Ratio hedge", "Onglet hedge ; hint « ignoré par B1 » si arb ; N/A edge-lead"],

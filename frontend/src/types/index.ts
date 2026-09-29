@@ -2,7 +2,7 @@
 // Garder synchronisÃ© avec le backend lors des changements.
 
 export type TradeSide = "BUY" | "SELL";
-export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band" | "dip-revert" | "antiflip-revert" | "flip-confirm" | "early-conviction" | "open-entry" | "probability-repricing";
+export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band" | "dip-revert" | "antiflip-revert" | "flip-confirm" | "early-conviction" | "early-low" | "open-entry" | "probability-repricing";
 export type StrategyId = NativeStrategyId | `custom:${string}`;
 
 export interface GammaMarket {
@@ -332,6 +332,16 @@ export interface BotConfig {
   earlyConvictionMaxElapsedSec: number;
   earlyConvictionMaxSpread: number;
   earlyConvictionOrderUsdc: number;
+  /** Early-low: buy a token below 12c in the first 2.5 min of a 15m market; hold to resolution (optional wait-and-see exit). */
+  earlyLowBuyAskMin: number;
+  earlyLowBuyAskMax: number;
+  earlyLowMaxElapsedSec: number;
+  earlyLowMaxSpread: number;
+  earlyLowOrderUsdc: number;
+  earlyLowExitEnabled: boolean;
+  earlyLowExitAsk: number;
+  earlyLowExitMomentumMin: number;
+  earlyLow15mOnly: boolean;
   /** Open-entry: buy the EMERGING favorite within the entry window; dual-scale SL, hold otherwise. */
   openEntryLeanTrigger: number;
   openEntryMaxElapsedSec: number;

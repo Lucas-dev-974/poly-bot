@@ -1,9 +1,9 @@
 export type TabId = "story" | "arch" | "hedge" | "ui" | "ship";
-export type EngineId = "arb" | "barbell" | "edge-lead" | "reverse" | "dip-revert" | "fav-band" | "antiflip-revert" | "flip-confirm" | "early-conviction" | "open-entry" | "probability-repricing";
+export type EngineId = "arb" | "barbell" | "edge-lead" | "reverse" | "dip-revert" | "fav-band" | "antiflip-revert" | "flip-confirm" | "early-conviction" | "early-low" | "open-entry" | "probability-repricing";
 export type PhaseId = "mid" | "done";
 
 export const TABS: { id: TabId; label: string }[] = [
-  { id: "story", label: "Les 11 moteurs" },
+  { id: "story", label: "Les 12 moteurs" },
   { id: "arch", label: "Architecture" },
   { id: "hedge", label: "Hedge au POST" },
   { id: "ui", label: "Moteur & presets" },
@@ -77,6 +77,13 @@ export const ENGINE_META: Record<
     risk: "Élevée — le plus simple mécaniquement ; t-stat 1.93, sous le seuil 2.0",
     tone: "warning",
   },
+  "early-low": {
+    label: "Early-low — le ticket décoté",
+    subtitle: "Dans les 2,5 premières minutes d'un 15m, un token < 12 ¢ est un ticket de loterie à 1 $ : achat FOK puis HOLD jusqu'à la résolution.",
+    order: "Token ≤ 0.12 dans les 150 premières s → FOK 1$ → HOLD intégral (wait-and-see 0.40 optionnel, off)",
+    risk: "Élevée — la plupart des tokens décotés expirent à 0 ; hold intégral optimisé multi-split 2026-09-29 : positif sur 8/8 segments, l'exit 0.40 détruit de la valeur",
+    tone: "warning",
+  },
   "open-entry": {
     label: "Open-entry — le favori qui émerge",
     subtitle: "À l'ouverture le marché est FAIR (somme des asks ≈ 1.01) et sans inclinaison : l'edge vit dans le favori qui émerge (écart 0.10 à p50 6 s).",
@@ -129,13 +136,13 @@ export const COMPARE_ROWS: [string, string, string][] = [
   ["Après défense", "cancel GTC hedge", "cancel GTC hedge (toujours)"],
 ];
 
-export const STRATEGY_COMPARE_ROWS: [string, string, string, string, string, string, string, string, string, string, string, string][] = [
-  ["Ordre d'achat", "Outsider → favori", "Outsider → favori (ratio)", "Favori → cheap (après fill edge)", "Grilles simultanées underdog + favori", "Favori seul (après chute + rebond)", "Favori seul (mid-band, elapsed ≥ 200 s)", "Favori déchu seul (après flip récent)", "Nouveau favori seul (après flip précoce)", "Favori seul (conviction immédiate)", "Favori seul (émergent, ouverture fair)", "Token désynchronisé seul (FOK au ask, exit au bid)"],
-  ["Signal d'entrée", "Bandes cheap/favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant", "Min (sous-coté) et l'autre token, niveaux grille", "Ask favori chuté ≥ minDrop puis rebond", "Ask favori ∈ [0.70, 0.85], elapsed ≥ 200 s", "Flip d'identité ≥ 240s, frais ≤ 90s, déchu 0.35-0.45", "Flip précoce, entrée en [120,180]s, favori 0.55-0.65", "Favori ≥ 0.60 dès les 45 premières s", "Favori mène de 0.15 ≤ 300s, ouverture fair (askSum ≤ 1.02)", "Z-score ask ≤ −1.0 vs historique 15 s, p ≤ 0.22, edge_est ≥ 0.025, tau ≥ 90 s"],
-  ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeSizingMode : shares / pUSD / dynamic", "Budget USDC par niveau de grille", "Budget USDC unique (dipRevertOrderUsdc)", "Budget USDC unique (favBandOrderUsdc)", "Budget USDC unique (antiflipOrderUsdc)", "Budget USDC unique (flipConfirmOrderUsdc)", "Budget USDC unique (earlyConvictionOrderUsdc)", "Budget USDC unique (openEntryOrderUsdc)", "Budget USDC unique (repricingOrderUsdc)"],
-  ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés", "Pas de lock — asymétrie + amortissement", "Pas de lock — mean-reversion", "Pas de lock — favori mid-band", "Pas de lock — sur-réaction", "Pas de lock — momentum", "Pas de lock — trend précoce", "Pas de lock — momentum d'ouverture", "Pas de lock — path trade"],
-  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Vend l'edge nu si en perte soutenue (FOK SELL)", "Aucune — grilles tenues jusqu'à la clôture", "Aucune — hold jusqu'à résolution (ou take-profit optionnel)", "Aucune — hold jusqu'à résolution (whipsaw pause après pertes)", "Aucune — hold jusqu'à résolution", "Aucune — hold jusqu'à résolution", "Aucune — hold jusqu'à résolution", "SL dual-scale (flip confirmé + dégât / tardif) sinon hold", "Exits systématiques au bid : TP abs/rel, stop, time-stop, tau_force, spread"],
-  ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu (vendu si perte)", "La plupart des underdogs expirent à 0 ¢", "Le favori chuté perd vraiment (variance)", "Favori surcoté en fin de fenêtre (bande ≤ 0.85)", "Le flip était un vrai changement (variance haute)", "Le flip précoce était du bruit (fenêtre étroite)", "t-stat 1.93 < 2.0 — le moins établi des trois", "SL coûtent −$35 vs hold à sizing L1 — volatilité vs espérance", "Seuils placeholders à calibrer — edge_est théorique (papier §13)"],
+export const STRATEGY_COMPARE_ROWS: [string, string, string, string, string, string, string, string, string, string, string, string, string][] = [
+  ["Ordre d'achat", "Outsider → favori", "Outsider → favori (ratio)", "Favori → cheap (après fill edge)", "Grilles simultanées underdog + favori", "Favori seul (après chute + rebond)", "Favori seul (mid-band, elapsed ≥ 200 s)", "Favori déchu seul (après flip récent)", "Nouveau favori seul (après flip précoce)", "Favori seul (conviction immédiate)", "Token décoté seul (dip extrême à l'ouverture)", "Favori seul (émergent, ouverture fair)", "Token désynchronisé seul (FOK au ask, exit au bid)"],
+  ["Signal d'entrée", "Bandes cheap/favori + lock", "Bandes cheap + favori", "Confirmation N ticks edge croissant", "Min (sous-coté) et l'autre token, niveaux grille", "Ask favori chuté ≥ minDrop puis rebond", "Ask favori ∈ [0.70, 0.85], elapsed ≥ 200 s", "Flip d'identité ≥ 240s, frais ≤ 90s, déchu 0.35-0.45", "Flip précoce, entrée en [120,180]s, favori 0.55-0.65", "Favori ≥ 0.60 dès les 45 premières s", "Token ≤ 0.12 dans les 300 premières s (15m)", "Favori mène de 0.15 ≤ 300s, ouverture fair (askSum ≤ 1.02)", "Z-score ask ≤ −1.0 vs historique 15 s, p ≤ 0.22, edge_est ≥ 0.025, tau ≥ 90 s"],
+  ["Sizing", "1:1 en shares", "cheap × hedgeRatio (défaut 0,5)", "edgeSizingMode : shares / pUSD / dynamic", "Budget USDC par niveau de grille", "Budget USDC unique (dipRevertOrderUsdc)", "Budget USDC unique (favBandOrderUsdc)", "Budget USDC unique (antiflipOrderUsdc)", "Budget USDC unique (flipConfirmOrderUsdc)", "Budget USDC unique (earlyConvictionOrderUsdc)", "Budget 1$ unique (earlyLowOrderUsdc)", "Budget USDC unique (openEntryOrderUsdc)", "Budget USDC unique (repricingOrderUsdc)"],
+  ["Lock profit", "pairLockMax obligatoire", "Ignoré — pari assumé", "Pas de lock — budgets séparés", "Pas de lock — asymétrie + amortissement", "Pas de lock — mean-reversion", "Pas de lock — favori mid-band", "Pas de lock — sur-réaction", "Pas de lock — momentum", "Pas de lock — trend précoce", "Pas de lock — ticket extrême décoté", "Pas de lock — momentum d'ouverture", "Pas de lock — path trade"],
+  ["Défense", "Vend tout le trou cheap", "Vend seulement la tranche filet", "Vend l'edge nu si en perte soutenue (FOK SELL)", "Aucune — grilles tenues jusqu'à la clôture", "Aucune — hold jusqu'à résolution (ou take-profit optionnel)", "Aucune — hold jusqu'à résolution (whipsaw pause après pertes)", "Aucune — hold jusqu'à résolution", "Aucune — hold jusqu'à résolution", "Aucune — hold jusqu'à résolution", "Aucune par défaut — hold intégral (wait-and-see 40c optionnel, off)", "SL dual-scale (flip confirmé + dégât / tardif) sinon hold", "Exits systématiques au bid : TP abs/rel, stop, time-stop, tau_force, spread"],
+  ["Risque principal", "Lock cassé / ask hors bande", "Favori gagne → petit moins", "Cheap jamais fillé → favori nu (vendu si perte)", "La plupart des underdogs expirent à 0 ¢", "Le favori chuté perd vraiment (variance)", "Favori surcoté en fin de fenêtre (bande ≤ 0.85)", "Le flip était un vrai changement (variance haute)", "Le flip précoce était du bruit (fenêtre étroite)", "t-stat 1.93 < 2.0 — le moins établi des trois", "Token décoté expire à 0 — perdant la plupart du temps (perte = 1$)", "SL coûtent −$35 vs hold à sizing L1 — volatilité vs espérance", "Seuils placeholders à calibrer — edge_est théorique (papier §13)"],
 ];
 
 export const EDGE_LEAD_PARAM_ROWS: [string, string][] = [
@@ -194,6 +201,11 @@ export const RESOLUTION_ROWS: Record<EngineId, [string, string][]> = {
   "early-conviction": [
     ["Le favori précoce gagne", "Favori × 1 $ − coût (~0.615) ≈ +0.385/share. Le scénario cible (~67.6%) — la conviction instantanée était fondée."],
     ["L'outsider gagne", "Le favori expire à 0 — perte = coût. Le trend instantané s'est retourné (rare)."],
+  ],
+  "early-low": [
+    ["Hold jusqu'à résolution — gagnant", "Token décoté × 1 $ − coût (~0.12) ≈ +0.88/share — le ticket a tenu jusqu'au bout (scénario cible du hold intégral)."],
+    ["Hold jusqu'à résolution — perdant", "Le token expire à 0 — perte = 1 $. C'est le cas majoritaire ; le sizing 1$ est la protection."],
+    ["Exit wait-and-see déclenché (optionnel)", "Si earlyLowExitEnabled : vendu au bid au premier tick de stagnation/baisse après 40 ¢ — coupe une extension mourante."],
   ],
   "open-entry": [
     ["Le favori émergent gagne", "Favori × 1 $ − coût (~0.605) ≈ +0.395/share. Le scénario cible (~63 % hold) — l'inclinaison d'ouverture était informationnelle."],
@@ -265,6 +277,13 @@ export const BOT_STEPS: Record<EngineId, string[]> = {
     "Si son ask ∈ [earlyConvictionAskMin, earlyConvictionAskMax] (0.60-0.80) : FOK buy immédiat (budget earlyConvictionOrderUsdc).",
     "Une seule entrée par fenêtre ; aucun état de flip à tracker ; hold jusqu'à la résolution.",
     "Pas de hedge. Ne pas baisser le seuil à 0.55 : le même achat à 0.55 est en perte en backtest.",
+  ],
+  "early-low": [
+    "Dans les earlyLowMaxElapsedSec (150 = 2,5 min) premières secondes d'un marché 15m : repérer le token décoté (min des deux asks).",
+    "Si son ask < earlyLowBuyAskMax (0.12) : FOK buy 1$ (earlyLowOrderUsdc), profondeur ≥ size, spread ≤ earlyLowMaxSpread, retry au tick suivant si le FOK est tué.",
+    "Une seule entrée par fenêtre ; ensuite HOLD intégral jusqu'à la résolution (config optimisée 2026-09-29, multi-split).",
+    "Optionnel (off par défaut) : wait-and-see à earlyLowExitAsk (0.40) — hold tant que l'ask progresse, FOK SELL au premier tick plat/baisse.",
+    "earlyLow15mOnly : refuse les marchés non-15m. Stop-loss bid optionnel (earlyLowStopLossEnabled).",
   ],
   "open-entry": [
     "Au 1er tick deux-côtés : mémoriser fair = (askUp + askDown ≤ openEntryFairAskSumMax, 1.02). Si unfair : pas de trade cette fenêtre.",
@@ -520,6 +539,25 @@ export const EARLYCONV_LIFE_EDGES: LifeEdge[] = [
   { from: "early", to: "filled", label: "FOK profondeur OK" },
   { from: "filled", to: "won", label: "résolution" },
   { from: "filled", to: "lost", label: "résolution" },
+];
+
+export const EARLYLOW_LIFE_NODES: LifeNode[] = [
+  { id: "scan", label: "Fenêtre 15m scannée", sub: "Gamma + 2 order books", tone: "neutral" },
+  { id: "low", label: "Token décoté", sub: "ask < 0.12 dans les 2,5 premières min", tone: "accent" },
+  { id: "filled", label: "FOK 1$ fillé", sub: "ticket tenu jusqu'à la résolution", tone: "warning" },
+  { id: "won", label: "Le token gagne", sub: "redeem 1 $/share", tone: "success" },
+  { id: "lost", label: "Le token perd", sub: "expire à 0 — perte = 1$", tone: "danger" },
+  { id: "armed", label: "Seuil 40¢ atteint (optionnel)", sub: "exit wait-and-see armé (off par défaut)", tone: "accent" },
+  { id: "sold", label: "FOK SELL au bid", sub: "stagnation / baisse du momentum", tone: "danger" },
+];
+
+export const EARLYLOW_LIFE_EDGES: LifeEdge[] = [
+  { from: "scan", to: "low", label: "dip extrême à l'ouverture" },
+  { from: "low", to: "filled", label: "FOK profondeur OK (retry sinon)" },
+  { from: "filled", to: "won", label: "hold → résolution" },
+  { from: "filled", to: "lost", label: "hold → résolution" },
+  { from: "armed", to: "sold", label: "progression < momentum min" },
+  { from: "armed", to: "won", label: "hold → résolution" },
 ];
 
 export const OPENENTRY_LIFE_NODES: LifeNode[] = [

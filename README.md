@@ -1,6 +1,6 @@
 # Polymarket Reverse Arbitrage Bot
 
-A TypeScript/Node.js bot for Polymarket's 15-minute Up/Down markets (BTC, ETH, SOL, etc.). Interchangeable **engines** (`strategyId` in `data/bot-settings.json`) — 11 native engines:
+A TypeScript/Node.js bot for Polymarket's 15-minute Up/Down markets (BTC, ETH, SOL, etc.). Interchangeable **engines** (`strategyId` in `data/bot-settings.json`) — 12 native engines:
 
 - **`arb` (B1, default)** — maker bid on the cheap (underdog), then a **1:1 hedge** after that fill only if `cheapFill + hedgeAsk ≤ PAIR_LOCK_MAX < 1.00`. If the lock is unreachable after fill (**Policy A**), FOK **SELL** the uncovered cheap — do **not** hold it as a directional leftover.
   - Mode optionnel **ask-lock / dual-FOK** (preset `ask-lock`) : voir section [Ask-lock (dual-FOK)](#ask-lock-dual-fok--mode-arb).
@@ -9,6 +9,7 @@ A TypeScript/Node.js bot for Polymarket's 15-minute Up/Down markets (BTC, ETH, S
 - **`dip-revert`** — FOK buy du favori après une **chute intra-fenêtre + rebond**, hold jusqu'à résolution. Voir [Dip-revert](#dip-revert--favori-chuté--rebond-mean-reversion).
 - Moteurs directionnels calibrés (393 fenêtres, runner officiel) : **`antiflip-revert`** (favori déchu post-flip, +$623), **`flip-confirm`** (nouveau favori post-flip précoce, +$389), **`early-conviction`** (favori ≥ 0.60 dans les 45 premières s, +$330) — rapports dans `audits/backtest/<id>/`.
 - **`open-entry`** — favori émergent à l'ouverture (lean ≥ 0.15 ≤ 300 s), SL dual-scale optionnel. Implémentation dans `audits/backtest/open-entry/`.
+- **`early-low`** — ticket décoté : dans les 2,5 premières minutes d'un 15m, FOK buy **1 $** du token le moins cher si ask < `earlyLowBuyAskMax` (0.12), puis **hold intégral jusqu'à la résolution**. Optimisation multi-split 2026-09-29 (4 splits IS/OOS, 21 jours) : hold = positif sur 8/8 segments (+$33.55 / 21 j) alors que l'exit wait-and-see 0.40 est négatif partout (ex-défaut, resté disponible via `earlyLowExitEnabled`). Preset `early-low` ; tests `tests/early-low.test.ts` ; rapport `audits/backtest/early-low/`.
 - **`probability-repricing`** — path trade intramarket (dislocation z-score du ask, exits bid stricts) ; voir `docs/probability-repricing-implemented.md`.
 - Autres moteurs natifs : `edge-lead`, `reverse` (presets dédiés). Graphs custom via `custom:<id>` (éditeur `/strategy-editor`).
 

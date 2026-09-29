@@ -8,6 +8,7 @@ import { EdgeLeadStrategy } from "./edge-lead-strategy.js";
 import { ReverseStrategy } from "./reverse-strategy.js";
 import { FavBandStrategy } from "./fav-band-strategy.js";
 import { DipRevertStrategy } from "./dip-revert-strategy.js";
+import { EarlyLowStrategy } from "./early-low-strategy.js";
 import { AntiflipRevertStrategy } from "./antiflip-revert-strategy.js";
 import { FlipConfirmStrategy } from "./flip-confirm-strategy.js";
 import { EarlyConvictionStrategy } from "./early-conviction-strategy.js";
@@ -26,6 +27,7 @@ const STRATEGIES: Record<NativeStrategyId, () => TradingStrategy> = {
   "antiflip-revert": () => new AntiflipRevertStrategy(),
   "flip-confirm": () => new FlipConfirmStrategy(),
   "early-conviction": () => new EarlyConvictionStrategy(),
+  "early-low": () => new EarlyLowStrategy(),
   "open-entry": () => new OpenEntryStrategy(),
   "probability-repricing": () => new ProbabilityRepricingStrategy(),
 };
@@ -46,6 +48,7 @@ export function leadsWithEdgeFor(
     id === "antiflip-revert" ||
     id === "flip-confirm" ||
     id === "early-conviction" ||
+    id === "early-low" ||
     id === "open-entry" ||
     id === "probability-repricing"
   )

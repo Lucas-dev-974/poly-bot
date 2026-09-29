@@ -137,6 +137,24 @@ export const EDITABLE_CONFIG_KEYS = [
   "openEntrySlLateAfterSec",
   "openEntrySlLateDist",
   "openEntrySlEnabled",
+  "earlyLowBuyAskMin",
+  "earlyLowBuyAskMax",
+  "earlyLowMaxElapsedSec",
+  "earlyLowMaxSpread",
+  "earlyLowOrderUsdc",
+  "earlyLowExitEnabled",
+  "earlyLowExitAsk",
+  "earlyLowExitMomentumMin",
+  "earlyLow15mOnly",
+  "earlyLowDropEntryEnabled",
+  "earlyLowDropEntryPriceMin",
+  "earlyLowDropMin",
+  "earlyLowDropMinElapsedSec",
+  "earlyLowTrailingEnabled",
+  "earlyLowTrailingOffset",
+  "earlyLowStopLossEnabled",
+  "earlyLowStopLossBidMax",
+  "earlyLowExitMaxElapsedSec",
   "favBandOrderUsdc",
   "barbellCheapOrderUsdc",
   "reverseCheapOrderUsdc",
@@ -302,6 +320,24 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   openEntrySlLateAfterSec: "OPEN_ENTRY_SL_LATE_AFTER_SEC",
   openEntrySlLateDist: "OPEN_ENTRY_SL_LATE_DIST",
   openEntrySlEnabled: "OPEN_ENTRY_SL_ENABLED",
+  earlyLowBuyAskMin: "EARLY_LOW_BUY_ASK_MIN",
+  earlyLowBuyAskMax: "EARLY_LOW_BUY_ASK_MAX",
+  earlyLowMaxElapsedSec: "EARLY_LOW_MAX_ELAPSED_SEC",
+  earlyLowMaxSpread: "EARLY_LOW_MAX_SPREAD",
+  earlyLowOrderUsdc: "EARLY_LOW_ORDER_USDC",
+  earlyLowExitEnabled: "EARLY_LOW_EXIT_ENABLED",
+  earlyLowExitAsk: "EARLY_LOW_EXIT_ASK",
+  earlyLowExitMomentumMin: "EARLY_LOW_EXIT_MOMENTUM_MIN",
+  earlyLow15mOnly: "EARLY_LOW_15M_ONLY",
+  earlyLowDropEntryEnabled: "EARLY_LOW_DROP_ENTRY_ENABLED",
+  earlyLowDropEntryPriceMin: "EARLY_LOW_DROP_ENTRY_PRICE_MIN",
+  earlyLowDropMin: "EARLY_LOW_DROP_MIN",
+  earlyLowDropMinElapsedSec: "EARLY_LOW_DROP_MIN_ELAPSED_SEC",
+  earlyLowTrailingEnabled: "EARLY_LOW_TRAILING_ENABLED",
+  earlyLowTrailingOffset: "EARLY_LOW_TRAILING_OFFSET",
+  earlyLowStopLossEnabled: "EARLY_LOW_STOP_LOSS_ENABLED",
+  earlyLowStopLossBidMax: "EARLY_LOW_STOP_LOSS_BID_MAX",
+  earlyLowExitMaxElapsedSec: "EARLY_LOW_EXIT_MAX_ELAPSED_SEC",
   repricingFeedMaxAgeMs: "REPRICING_FEED_MAX_AGE_MS",
   repricingTauMinSec: "REPRICING_TAU_MIN_SEC",
   repricingSpreadMax: "REPRICING_SPREAD_MAX",
@@ -466,6 +502,19 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "earlyConvictionMaxElapsedSec":
     case "earlyConvictionMaxSpread":
     case "earlyConvictionOrderUsdc":
+    case "earlyLowBuyAskMin":
+    case "earlyLowBuyAskMax":
+    case "earlyLowMaxElapsedSec":
+    case "earlyLowMaxSpread":
+    case "earlyLowOrderUsdc":
+    case "earlyLowExitAsk":
+    case "earlyLowExitMomentumMin":
+    case "earlyLowDropEntryPriceMin":
+    case "earlyLowDropMin":
+    case "earlyLowDropMinElapsedSec":
+    case "earlyLowTrailingOffset":
+    case "earlyLowStopLossBidMax":
+    case "earlyLowExitMaxElapsedSec":
     case "openEntryLeanTrigger":
     case "openEntryMaxElapsedSec":
     case "openEntryFairAskSumMax":
@@ -560,6 +609,11 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
     case "favBandExitLossOnly":
     case "favBandExitSwitchEnabled":
     case "openEntrySlEnabled":
+    case "earlyLowExitEnabled":
+    case "earlyLow15mOnly":
+    case "earlyLowDropEntryEnabled":
+    case "earlyLowTrailingEnabled":
+    case "earlyLowStopLossEnabled":
     case "repricingModeAEnabled":
     case "antiflip5mOnly":
       return parseBoolean(value, key);
@@ -821,6 +875,29 @@ const OPEN_ENTRY_KEYS: readonly EditableConfigKey[] = [
   "enableExpensiveHedge",
 ];
 
+/** Early-low : bande du token décoté, fenêtre d'entrée, budget, exit TP. */
+const EARLY_LOW_KEYS: readonly EditableConfigKey[] = [
+  "earlyLowBuyAskMin",
+  "earlyLowBuyAskMax",
+  "earlyLowMaxElapsedSec",
+  "earlyLowMaxSpread",
+  "earlyLowOrderUsdc",
+  "earlyLowExitEnabled",
+  "earlyLowExitAsk",
+  "earlyLowExitMomentumMin",
+  "earlyLow15mOnly",
+  "earlyLowDropEntryEnabled",
+  "earlyLowDropEntryPriceMin",
+  "earlyLowDropMin",
+  "earlyLowDropMinElapsedSec",
+  "earlyLowTrailingEnabled",
+  "earlyLowTrailingOffset",
+  "earlyLowStopLossEnabled",
+  "earlyLowStopLossBidMax",
+  "earlyLowExitMaxElapsedSec",
+  "enableExpensiveHedge",
+];
+
 const EDGE_LEAD_KEYS: readonly EditableConfigKey[] = [
   "edgeBandMin",
   "edgeBandMax",
@@ -872,13 +949,15 @@ export function keysForStrategy(
                   ? FLIP_CONFIRM_KEYS
                   : strategyId === "early-conviction"
                     ? EARLY_CONVICTION_KEYS
-                    : strategyId === "open-entry"
-                      ? OPEN_ENTRY_KEYS
-                      : strategyId === "probability-repricing"
-                        ? PROBABILITY_REPRICING_KEYS
-                      : String(strategyId).startsWith("custom:")
-                        ? CUSTOM_KEYS
-                        : ARB_KEYS; // arb seul
+                    : strategyId === "early-low"
+                      ? EARLY_LOW_KEYS
+                      : strategyId === "open-entry"
+                        ? OPEN_ENTRY_KEYS
+                        : strategyId === "probability-repricing"
+                          ? PROBABILITY_REPRICING_KEYS
+                          : String(strategyId).startsWith("custom:")
+                            ? CUSTOM_KEYS
+                            : ARB_KEYS; // arb seul
   return [...SHARED_KEYS, ...strategyKeys];
 }
 

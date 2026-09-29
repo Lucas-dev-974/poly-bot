@@ -26,6 +26,7 @@ describe("strategy presets", () => {
       "coverage-max",
       "dip-revert",
       "early-conviction",
+      "early-low",
       "edge-lead",
       "fav-band",
       "fav-band-opt",
@@ -137,6 +138,10 @@ describe("strategy presets", () => {
     assert.deepEqual(
       presetsForStrategy("early-conviction").map((preset) => preset.id),
       ["early-conviction"],
+    );
+    assert.deepEqual(
+      presetsForStrategy("early-low").map((preset) => preset.id),
+      ["early-low"],
     );
     assert.deepEqual(
       presetsForStrategy("open-entry").map((preset) => preset.id),

@@ -1,0 +1,404 @@
+{
+  "criteria": {
+    "minTicks": 500,
+    "maxGapMs": 180000,
+    "maxEdgeGapMs": null
+  },
+  "splitIso": "2026-09-23T00:00:00Z",
+  "windows": 2092,
+  "skipped": 5226,
+  "inSample": 1420,
+  "oos": 672,
+  "rows": [
+    {
+      "id": "ref-base",
+      "desc": " référence preset (exit 0.40 actif, pas de stop)",
+      "is": {
+        "pnl": -1.75,
+        "fills": 208,
+        "rejects": 0,
+        "traded": 166,
+        "wins": 42,
+        "losses": 124,
+        "winRate": 25.3,
+        "avgWin": 2.91,
+        "avgLoss": -1,
+        "expectancy": -0.011,
+        "maxDD": 17.31
+      },
+      "oos": {
+        "pnl": -24.64,
+        "fills": 130,
+        "rejects": 0,
+        "traded": 109,
+        "wins": 21,
+        "losses": 88,
+        "winRate": 19.3,
+        "avgWin": 3.02,
+        "avgLoss": -1,
+        "expectancy": -0.226,
+        "maxDD": 28.29
+      }
+    },
+    {
+      "id": "ref-hold",
+      "desc": "référence hold-pure (exit off, pas de stop)",
+      "is": {
+        "pnl": 17.62,
+        "fills": 166,
+        "rejects": 0,
+        "traded": 166,
+        "wins": 20,
+        "losses": 146,
+        "winRate": 12,
+        "avgWin": 8.18,
+        "avgLoss": -1,
+        "expectancy": 0.106,
+        "maxDD": 21.73
+      },
+      "oos": {
+        "pnl": -6.08,
+        "fills": 109,
+        "rejects": 0,
+        "traded": 109,
+        "wins": 11,
+        "losses": 98,
+        "winRate": 10.1,
+        "avgWin": 8.36,
+        "avgLoss": -1,
+        "expectancy": -0.056,
+        "maxDD": 38.91
+      }
+    },
+    {
+      "id": "hold-sl2",
+      "desc": "hold + stop 0.02",
+      "is": {
+        "pnl": 15.85,
+        "fills": 313,
+        "rejects": 0,
+        "traded": 166,
+        "wins": 17,
+        "losses": 149,
+        "winRate": 10.2,
+        "avgWin": 8.14,
+        "avgLoss": -0.82,
+        "expectancy": 0.095,
+        "maxDD": 22.44
+      },
+      "oos": {
+        "pnl": -24.08,
+        "fills": 211,
+        "rejects": 0,
+        "traded": 109,
+        "wins": 7,
+        "losses": 102,
+        "winRate": 6.4,
+        "avgWin": 8.51,
+        "avgLoss": -0.82,
+        "expectancy": -0.221,
+        "maxDD": 39.17
+      }
+    },
+    {
+      "id": "hold-sl3",
+      "desc": "hold + stop 0.03",
+      "is": {
+        "pnl": 2,
+        "fills": 317,
+        "rejects": 0,
+        "traded": 166,
+        "wins": 14,
+        "losses": 152,
+        "winRate": 8.4,
+        "avgWin": 8.16,
+        "avgLoss": -0.74,
+        "expectancy": 0.012,
+        "maxDD": 27.58
+      },
+      "oos": {
+        "pnl": -23.74,
+        "fills": 212,
+        "rejects": 0,
+        "traded": 109,
+        "wins": 6,
+        "losses": 103,
+        "winRate": 5.5,
+        "avgWin": 8.58,
+        "avgLoss": -0.73,
+        "expectancy": -0.218,
+        "maxDD": 41.5
+      }
+    },
+    {
+      "id": "hold-sl4",
+      "desc": "hold + stop 0.04",
+      "is": {
+        "pnl": 6.86,
+        "fills": 318,
+        "rejects": 0,
+        "traded": 166,
+        "wins": 13,
+        "losses": 153,
+        "winRate": 7.8,
+        "avgWin": 8.16,
+        "avgLoss": -0.65,
+        "expectancy": 0.041,
+        "maxDD": 23.52
+      },
+      "oos": {
+        "pnl": -24.59,
+        "fills": 213,
+        "rejects": 0,
+        "traded": 109,
+        "wins": 5,
+        "losses": 104,
+        "winRate": 4.6,
+        "avgWin": 8.49,
+        "avgLoss": -0.64,
+        "expectancy": -0.226,
+        "maxDD": 35.83
+      }
+    },
+    {
+      "id": "hold-sl6",
+      "desc": "hold + stop 0.06",
+      "is": {
+        "pnl": -8.38,
+        "fills": 324,
+        "rejects": 0,
+        "traded": 166,
+        "wins": 8,
+        "losses": 158,
+        "winRate": 4.8,
+        "avgWin": 8.09,
+        "avgLoss": -0.46,
+        "expectancy": -0.05,
+        "maxDD": 23.03
+      },
+      "oos": {
+        "pnl": -24.15,
+        "fills": 215,
+        "rejects": 0,
+        "traded": 109,
+        "wins": 3,
+        "losses": 106,
+        "winRate": 2.8,
+        "avgWin": 8.09,
+        "avgLoss": -0.46,
+        "expectancy": -0.222,
+        "maxDD": 39.17
+      }
+    },
+    {
+      "id": "hold-sl8",
+      "desc": "hold + stop 0.08",
+      "is": {
+        "pnl": -20.01,
+        "fills": 329,
+        "rejects": 0,
+        "traded": 166,
+        "wins": 3,
+        "losses": 163,
+        "winRate": 1.8,
+        "avgWin": 8.09,
+        "avgLoss": -0.27,
+        "expectancy": -0.121,
+        "maxDD": 22.54
+      },
+      "oos": {
+        "pnl": -13.25,
+        "fills": 216,
+        "rejects": 0,
+        "traded": 109,
+        "wins": 2,
+        "losses": 107,
+        "winRate": 1.8,
+        "avgWin": 8.09,
+        "avgLoss": -0.28,
+        "expectancy": -0.122,
+        "maxDD": 23.83
+      }
+    },
+    {
+      "id": "tpsl-sl4",
+      "desc": "exit 0.40 actif + stop 0.04",
+      "is": {
+        "pnl": 9.61,
+        "fills": 331,
+        "rejects": 0,
+        "traded": 166,
+        "wins": 34,
+        "losses": 132,
+        "winRate": 20.5,
+        "avgWin": 2.78,
+        "avgLoss": -0.64,
+        "expectancy": 0.058,
+        "maxDD": 12.37
+      },
+      "oos": {
+        "pnl": -21.44,
+        "fills": 218,
+        "rejects": 0,
+        "traded": 109,
+        "wins": 13,
+        "losses": 96,
+        "winRate": 11.9,
+        "avgWin": 3.08,
+        "avgLoss": -0.64,
+        "expectancy": -0.197,
+        "maxDD": 22.23
+      }
+    },
+    {
+      "id": "max150-hold",
+      "desc": "fenêtre 150 s + hold",
+      "is": {
+        "pnl": 15.27,
+        "fills": 22,
+        "rejects": 0,
+        "traded": 22,
+        "wins": 4,
+        "losses": 18,
+        "winRate": 18.2,
+        "avgWin": 8.32,
+        "avgLoss": -1,
+        "expectancy": 0.694,
+        "maxDD": 10
+      },
+      "oos": {
+        "pnl": 18.36,
+        "fills": 18,
+        "rejects": 0,
+        "traded": 18,
+        "wins": 4,
+        "losses": 14,
+        "winRate": 22.2,
+        "avgWin": 8.09,
+        "avgLoss": -1,
+        "expectancy": 1.02,
+        "maxDD": 8
+      }
+    },
+    {
+      "id": "max150-hold-sl4",
+      "desc": "fenêtre 150 s + hold + stop 0.04",
+      "is": {
+        "pnl": 13.01,
+        "fills": 41,
+        "rejects": 0,
+        "traded": 22,
+        "wins": 3,
+        "losses": 19,
+        "winRate": 13.6,
+        "avgWin": 8.39,
+        "avgLoss": -0.64,
+        "expectancy": 0.591,
+        "maxDD": 6.45
+      },
+      "oos": {
+        "pnl": 14.58,
+        "fills": 33,
+        "rejects": 0,
+        "traded": 18,
+        "wins": 3,
+        "losses": 15,
+        "winRate": 16.7,
+        "avgWin": 8.09,
+        "avgLoss": -0.65,
+        "expectancy": 0.81,
+        "maxDD": 9.69
+      }
+    },
+    {
+      "id": "max150-hold-sl6",
+      "desc": "fenêtre 150 s + hold + stop 0.06",
+      "is": {
+        "pnl": -1.6,
+        "fills": 43,
+        "rejects": 0,
+        "traded": 22,
+        "wins": 1,
+        "losses": 21,
+        "winRate": 4.5,
+        "avgWin": 8.09,
+        "avgLoss": -0.46,
+        "expectancy": -0.073,
+        "maxDD": 5.14
+      },
+      "oos": {
+        "pnl": 8.68,
+        "fills": 34,
+        "rejects": 0,
+        "traded": 18,
+        "wins": 2,
+        "losses": 16,
+        "winRate": 11.1,
+        "avgWin": 8.09,
+        "avgLoss": -0.47,
+        "expectancy": 0.482,
+        "maxDD": 7.5
+      }
+    },
+    {
+      "id": "max200-hold-sl4",
+      "desc": "fenêtre 200 s + hold + stop 0.04",
+      "is": {
+        "pnl": -5.3,
+        "fills": 124,
+        "rejects": 0,
+        "traded": 64,
+        "wins": 4,
+        "losses": 60,
+        "winRate": 6.3,
+        "avgWin": 8.32,
+        "avgLoss": -0.64,
+        "expectancy": -0.083,
+        "maxDD": 15.64
+      },
+      "oos": {
+        "pnl": 2.81,
+        "fills": 94,
+        "rejects": 0,
+        "traded": 49,
+        "wins": 4,
+        "losses": 45,
+        "winRate": 8.2,
+        "avgWin": 8.09,
+        "avgLoss": -0.66,
+        "expectancy": 0.057,
+        "maxDD": 21.68
+      }
+    },
+    {
+      "id": "max225-hold-sl4",
+      "desc": "fenêtre 225 s + hold + stop 0.04",
+      "is": {
+        "pnl": -6.18,
+        "fills": 153,
+        "rejects": 0,
+        "traded": 79,
+        "wins": 5,
+        "losses": 74,
+        "winRate": 6.3,
+        "avgWin": 8.27,
+        "avgLoss": -0.64,
+        "expectancy": -0.078,
+        "maxDD": 19.72
+      },
+      "oos": {
+        "pnl": -3.55,
+        "fills": 114,
+        "rejects": 0,
+        "traded": 59,
+        "wins": 4,
+        "losses": 55,
+        "winRate": 6.8,
+        "avgWin": 8.09,
+        "avgLoss": -0.65,
+        "expectancy": -0.06,
+        "maxDD": 25.48
+      }
+    }
+  ]
+}

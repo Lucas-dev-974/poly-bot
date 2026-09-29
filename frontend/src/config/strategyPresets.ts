@@ -10,6 +10,7 @@ import dipRevert from "../../../config/presets/dip-revert.json";
 import antiflipRevert from "../../../config/presets/antiflip-revert.json";
 import flipConfirm from "../../../config/presets/flip-confirm.json";
 import earlyConviction from "../../../config/presets/early-conviction.json";
+import earlyLow from "../../../config/presets/early-low.json";
 import openEntry from "../../../config/presets/open-entry.json";
 import probabilityRepricing from "../../../config/presets/probability-repricing.json";
 import antiflip5mReentry from "../../../config/presets/antiflip-5m-reentry.json";
@@ -39,6 +40,7 @@ export const STRATEGY_ENGINE_OPTIONS: Array<{ id: NativeStrategyId; label: strin
   { id: "antiflip-revert", label: "Antiflip-revert (FOK favori déchu post-flip, hold resolve)" },
   { id: "flip-confirm", label: "Flip-confirm (FOK nouveau favori post-flip précoce)" },
   { id: "early-conviction", label: "Early-conviction (FOK favori déjà établi <45s)" },
+  { id: "early-low", label: "Early-low (FOK token < 12c dans les 2,5 premières min 15m, hold resolution)" },
   { id: "open-entry", label: "Open-entry (favori émergent <300s, SL dual-scale)" },
   { id: "probability-repricing", label: "Probability-repricing (dislocation CLOB, exits bid)" },
   { id: "reverse", label: "Reverse bet (underdog 7-10¢ + hedge favori)" },
@@ -56,6 +58,7 @@ export const STRATEGY_PRESETS: StrategyPreset[] = [
   antiflipRevert as StrategyPreset,
   flipConfirm as StrategyPreset,
   earlyConviction as StrategyPreset,
+  earlyLow as StrategyPreset,
   openEntry as StrategyPreset,
   probabilityRepricing as StrategyPreset,
   antiflip5mReentry as StrategyPreset,

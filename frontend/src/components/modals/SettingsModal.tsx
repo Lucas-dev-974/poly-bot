@@ -82,7 +82,7 @@ function NumberInput(props: {
 
 /* ---------- définition des sections ---------- */
 
-type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "fav" | "dip" | "antiflip" | "flipconf" | "earlyconv" | "openentry" | "repricing" | "risk" | "window";
+type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "fav" | "dip" | "antiflip" | "flipconf" | "earlyconv" | "earlylow" | "openentry" | "repricing" | "risk" | "window";
 
 interface SectionDef {
   id: SectionId;
@@ -102,6 +102,7 @@ const SECTIONS: SectionDef[] = [
   { id: "antiflip", label: "Entrée antiflip-revert", icon: "⇄", desc: "FOK favori déchu post-flip, hold résolution" },
   { id: "flipconf", label: "Entrée flip-confirm", icon: "⇛", desc: "FOK nouveau favori post-flip précoce" },
   { id: "earlyconv", label: "Entrée early-conviction", icon: "⚡", desc: "FOK favori déjà établi <45s" },
+  { id: "earlylow", label: "Entrée early-low", icon: "⤓", desc: "FOK token < 12c dans les 2,5 premières min 15m, hold resolution" },
   { id: "openentry", label: "Entrée open-entry", icon: "⚑", desc: "FOK favori émergent <300s, SL dual-scale" },
   { id: "repricing", label: "Probability-repricing", icon: "Δ", desc: "Dislocation CLOB, exits bid (TP/stop/time)" },
   { id: "risk", label: "Risque", icon: "◆", desc: "Limites de taille, positions et exposition" },
@@ -148,12 +149,13 @@ export function SettingsModal(props: {
   const isFavBand = createMemo(() => form().strategyId === "fav-band");
   const isDip = createMemo(() => form().strategyId === "dip-revert");
   const isAntiflip = createMemo(() => form().strategyId === "antiflip-revert");
-  const isFlipConfirm = createMemo(() => form().strategyId === "flip-confirm");
+   const isFlipConfirm = createMemo(() => form().strategyId === "flip-confirm");
   const isEarlyConviction = createMemo(() => form().strategyId === "early-conviction");
+  const isEarlyLow = createMemo(() => form().strategyId === "early-low");
   const isOpenEntry = createMemo(() => form().strategyId === "open-entry");
   const isRepricing = createMemo(() => form().strategyId === "probability-repricing");
   const isDirectionalHold = createMemo(
-    () => isFavBand() || isDip() || isAntiflip() || isFlipConfirm() || isEarlyConviction() || isOpenEntry() || isRepricing(),
+    () => isFavBand() || isDip() || isAntiflip() || isFlipConfirm() || isEarlyConviction() || isEarlyLow() || isOpenEntry() || isRepricing(),
   );
   const errors = createMemo(() =>
     validateConfigForm(form(), false, {
@@ -208,12 +210,12 @@ export function SettingsModal(props: {
         arbAskLockMinElapsedSec: null,
         arbAskLockMaxImbalance: null,
         enableExpensiveHedge:
-          preset.strategyId === "fav-band" || preset.strategyId === "dip-revert" || preset.strategyId === "antiflip-revert" || preset.strategyId === "flip-confirm" || preset.strategyId === "early-conviction" || preset.strategyId === "open-entry" || preset.strategyId === "probability-repricing"
+          preset.strategyId === "fav-band" || preset.strategyId === "dip-revert" || preset.strategyId === "antiflip-revert" || preset.strategyId === "flip-confirm" || preset.strategyId === "early-conviction" || preset.strategyId === "early-low" || preset.strategyId === "open-entry" || preset.strategyId === "probability-repricing"
             ? false
             : props.config.enableExpensiveHedge,
         ...preset.settings,
         strategyId: preset.strategyId,
-        ...(preset.strategyId === "fav-band" || preset.strategyId === "dip-revert" || preset.strategyId === "antiflip-revert" || preset.strategyId === "flip-confirm" || preset.strategyId === "early-conviction" || preset.strategyId === "open-entry" || preset.strategyId === "probability-repricing"
+        ...(preset.strategyId === "fav-band" || preset.strategyId === "dip-revert" || preset.strategyId === "antiflip-revert" || preset.strategyId === "flip-confirm" || preset.strategyId === "early-conviction" || preset.strategyId === "early-low" || preset.strategyId === "open-entry" || preset.strategyId === "probability-repricing"
           ? { enableExpensiveHedge: false }
           : {}),
       }),
@@ -223,6 +225,7 @@ export function SettingsModal(props: {
     else if (preset.strategyId === "antiflip-revert") setActiveSection("antiflip");
     else if (preset.strategyId === "flip-confirm") setActiveSection("flipconf");
     else if (preset.strategyId === "early-conviction") setActiveSection("earlyconv");
+    else if (preset.strategyId === "early-low") setActiveSection("earlylow");
     else if (preset.strategyId === "open-entry") setActiveSection("openentry");
     else if (preset.strategyId === "probability-repricing") setActiveSection("repricing");
     else if (preset.strategyId === "edge-lead") setActiveSection("edge");
@@ -318,6 +321,9 @@ export function SettingsModal(props: {
                 } else if (id === "early-conviction") {
                   update("enableExpensiveHedge", false);
                   setActiveSection("earlyconv");
+                } else if (id === "early-low") {
+                  update("enableExpensiveHedge", false);
+                  setActiveSection("earlylow");
                 } else if (id === "open-entry") {
                   update("enableExpensiveHedge", false);
                   setActiveSection("openentry");
@@ -1791,6 +1797,141 @@ export function SettingsModal(props: {
                         step={0.1}
                         onInput={(v) => update("earlyConvictionOrderUsdc", v)}
                       />
+                    </Field>
+                  </div>
+                  <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>
+                    Risque / exposition : onglet Risque (max shares, max exposure).
+                    Fenêtre de trading : onglet Fenêtre.
+                  </p>
+                </div>
+              </Show>
+
+              {/* ---- Entrée early-low ---- */}
+              <Show when={activeSection() === "earlylow"}>
+                <div class="cfg-section">
+                  <h4>Entrée early-low</h4>
+                  <p class="cfg-section__desc">
+                    Dans les <strong>2,5 premières minutes</strong> d&apos;un marché 15m,{" "}
+                    si un token UP/DOWN descend sous <strong>0.12</strong>, achat{" "}
+                    <strong>1$</strong> (FOK) puis <strong>hold intégral</strong> jusqu&apos;à
+                    la résolution (config optimisée 2026-09-29, multi-split : l&apos;exit
+                    wait-and-see 0.40 détruit de la valeur — off par défaut). 15m uniquement.
+                  </p>
+                  <div class="cfg-grid">
+                    <Field
+                      label="Ask min (bande d'achat)"
+                      hint="Plancher optionnel (0 = off). L'achat exige ask < cap."
+                    >
+                      <NumberInput
+                        value={form().earlyLowBuyAskMin}
+                        min={0}
+                        max={0.5}
+                        step={0.01}
+                        onInput={(v) => update("earlyLowBuyAskMin", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Ask max (cap décote)"
+                      hint="Le token décoté doit coter SOUS ce cap (défaut 0.12 = 12¢)."
+                    >
+                      <NumberInput
+                        value={form().earlyLowBuyAskMax}
+                        min={0}
+                        max={0.49}
+                        step={0.01}
+                        onInput={(v) => update("earlyLowBuyAskMax", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Max elapsed (sec)"
+                      hint="Fenêtre d'entrée : [0, N] secondes (défaut 150 = 2,5 min)."
+                    >
+                      <NumberInput
+                        value={form().earlyLowMaxElapsedSec}
+                        min={1}
+                        max={900}
+                        step={1}
+                        onInput={(v) => update("earlyLowMaxElapsedSec", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Max spread"
+                      hint="Spread max du token ciblé à l'entrée (défaut 0.06). Liquidité."
+                    >
+                      <NumberInput
+                        value={form().earlyLowMaxSpread}
+                        min={0}
+                        max={0.3}
+                        step={0.01}
+                        onInput={(v) => update("earlyLowMaxSpread", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Budget (USDC)"
+                      hint="Budget FOK du token décoté (défaut 1)."
+                    >
+                      <NumberInput
+                        value={form().earlyLowOrderUsdc}
+                        min={0.5}
+                        step={0.5}
+                        onInput={(v) => update("earlyLowOrderUsdc", v)}
+                      />
+                    </Field>
+                  </div>
+                  <div class="cfg-grid" style={{ "margin-top": "0.75rem" }}>
+                    <Field
+                      label="Exit wait-and-see actif"
+                      hint="Off par défaut = hold intégral (optimisé 2026-09-29). Actif = observe à 0.40 puis vend au premier fléchissement."
+                    >
+                      <select
+                        class="cfg-input"
+                        value={form().earlyLowExitEnabled ? "on" : "off"}
+                        onChange={(e) =>
+                          update("earlyLowExitEnabled", e.currentTarget.value === "on")
+                        }
+                      >
+                        <option value="on">Actif</option>
+                        <option value="off">Désactivé (hold résolution)</option>
+                      </select>
+                    </Field>
+                    <Field
+                      label="Seuil d'armement exit"
+                      hint="L'ask du token TENU qui déclenche l'observation (défaut 0.40)."
+                    >
+                      <NumberInput
+                        value={form().earlyLowExitAsk}
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        onInput={(v) => update("earlyLowExitAsk", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="Progression min / tick"
+                      hint="Hold tant que l'ask monte d'au moins N entre deux ticks (défaut 0 = seul le tick plat/baisse coupe). Stagnation/baisse = SELL."
+                    >
+                      <NumberInput
+                        value={form().earlyLowExitMomentumMin}
+                        min={0}
+                        max={0.1}
+                        step={0.001}
+                        onInput={(v) => update("earlyLowExitMomentumMin", v)}
+                      />
+                    </Field>
+                    <Field
+                      label="15m uniquement"
+                      hint="Refuse les marchés non-15m (défaut actif)."
+                    >
+                      <select
+                        class="cfg-input"
+                        value={form().earlyLow15mOnly ? "on" : "off"}
+                        onChange={(e) =>
+                          update("earlyLow15mOnly", e.currentTarget.value === "on")
+                        }
+                      >
+                        <option value="on">15m uniquement</option>
+                        <option value="off">Toutes durées</option>
+                      </select>
                     </Field>
                   </div>
                   <p class="cfg-section__desc" style={{ "margin-top": "0.75rem" }}>

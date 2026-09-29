@@ -457,6 +457,45 @@ export interface BotConfig {
   /** Stop-loss dual-scale actif (défaut true = config backtestée). False = hold intégral. */
   openEntrySlEnabled: boolean;
   /**
+   * Early-low (15m, défaut buyAskMax 0.12) : dans les
+   * earlyLowMaxElapsedSec premières secondes de la fenêtre, un token
+   * UP/DOWN cote SOUS earlyLowBuyAskMax → achat FOK earlyLowOrderUsdc
+   * ($1), puis HOLD jusqu'à la résolution (config optimisée 2026-09-29 :
+   * hold intégral + entrée 150 s = +$33.6 sur 21 jours, positif sur les
+   * 8 segments de 4 splits IS/OOS — vs −$30.4 pour l'ancien preset
+   * exit 0.40). Options : wait-and-see à earlyLowExitAsk (off par
+   * défaut), stop-loss bid, deadline.
+   */
+  earlyLowBuyAskMin: number;
+  earlyLowBuyAskMax: number;
+  earlyLowMaxElapsedSec: number;
+  earlyLowMaxSpread: number;
+  earlyLowOrderUsdc: number;
+  earlyLowExitEnabled: boolean;
+  earlyLowExitAsk: number;
+  earlyLowExitMomentumMin: number;
+  earlyLow15mOnly: boolean;
+  /**
+   * OPT early-low — règles additionnelles, toutes OFF par défaut
+   * (comportement historique = inchangé quand désactivées).
+   * Entrée drop confirmé : une chute in-window ≥ dropMin depuis une
+   * référence ≥ dropEntryPriceMin (vues il y a ≥ dropMinElapsedSec) doit
+   * exister avant l'achat — filtre les dips mort-nés.
+   * Trailing : offset soustrait au momentum d'observation (tolérance de
+   * repli depuis chaque plus-haut). Stop-loss : bid ≤ stopLossBidMax →
+   * vente immédiate. Deadline : armed non déclenché vendu après
+   * exitMaxElapsedSec de fenêtre (0 = off).
+   */
+  earlyLowDropEntryEnabled: boolean;
+  earlyLowDropEntryPriceMin: number;
+  earlyLowDropMin: number;
+  earlyLowDropMinElapsedSec: number;
+  earlyLowTrailingEnabled: boolean;
+  earlyLowTrailingOffset: number;
+  earlyLowStopLossEnabled: boolean;
+  earlyLowStopLossBidMax: number;
+  earlyLowExitMaxElapsedSec: number;
+  /**
    * Probability-repricing (path trade): dislocation vs short CLOB history (mode C)
    * + optional mode A reversion. Exits on executable bid. Placeholders — calibrate.
    */
@@ -626,6 +665,24 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     openEntrySlLateAfterSec: 300,
     openEntrySlLateDist: 0.06,
     openEntrySlEnabled: true,
+    earlyLowBuyAskMin: 0,
+    earlyLowBuyAskMax: 0.12,
+    earlyLowMaxElapsedSec: 150,
+    earlyLowMaxSpread: 0.06,
+    earlyLowOrderUsdc: 1,
+    earlyLowExitEnabled: false,
+    earlyLowExitAsk: 0.40,
+    earlyLowExitMomentumMin: 0,
+    earlyLow15mOnly: true,
+    earlyLowDropEntryEnabled: false,
+    earlyLowDropEntryPriceMin: 0.15,
+    earlyLowDropMin: 0.05,
+    earlyLowDropMinElapsedSec: 0,
+    earlyLowTrailingEnabled: false,
+    earlyLowTrailingOffset: 0.02,
+    earlyLowStopLossEnabled: false,
+    earlyLowStopLossBidMax: 0.02,
+    earlyLowExitMaxElapsedSec: 0,
     repricingFeedMaxAgeMs: 250,
     repricingTauMinSec: 90,
     repricingSpreadMax: 0.03,
@@ -1285,6 +1342,85 @@ export function validateConfigCoherence(
       "open-entry",
       config.maxSharesPerOrder,
     );
+  }
+  if (config.strategyId === "early-low") {
+    // Single-leg directional (no hedge, no dual-FOK).
+    config.arbAskLockOnly = false;
+    config.enableExpensiveHedge = false;
+    if (config.earlyLowBuyAskMin < 0) {
+      throw new Error("earlyLowBuyAskMin must be >= 0 (0 = off)");
+    }
+    if (
+      config.earlyLowBuyAskMin >= config.earlyLowBuyAskMax ||
+      config.earlyLowBuyAskMax >= 0.5
+    ) {
+      throw new Error(
+        "earlyLowBuyAskMin must be < earlyLowBuyAskMax and the band max below 0.5 (buying the DISCOUNTED token)",
+      );
+    }
+    if (
+      !(config.earlyLowMaxElapsedSec > 0 && config.earlyLowMaxElapsedSec <= 900)
+    ) {
+      throw new Error("earlyLowMaxElapsedSec must be in (0, 900]");
+    }
+    if (config.earlyLowMaxSpread < 0) {
+      throw new Error("earlyLowMaxSpread must be >= 0");
+    }
+    if (!(config.earlyLowOrderUsdc > 0)) {
+      throw new Error("earlyLowOrderUsdc must be > 0 for early-low");
+    }
+    validateEngineBudget(
+      config.earlyLowOrderUsdc,
+      config.earlyLowBuyAskMax,
+      "early-low",
+      config.maxSharesPerOrder,
+    );
+    if (config.earlyLowExitEnabled) {
+      if (
+        !(config.earlyLowExitAsk > 0 && config.earlyLowExitAsk < 1)
+      ) {
+        throw new Error("earlyLowExitAsk must be in (0, 1)");
+      }
+      if (config.earlyLowExitAsk <= config.earlyLowBuyAskMax) {
+        throw new Error(
+          "earlyLowExitAsk must be > earlyLowBuyAskMax (exit above the buy band)",
+        );
+      }
+      if (config.earlyLowExitMomentumMin < 0) {
+        throw new Error("earlyLowExitMomentumMin must be >= 0");
+      }
+    }
+    // OPT: garde-fous des règles additionnelles (toutes off par défaut).
+    if (config.earlyLowDropEntryEnabled) {
+      if (config.earlyLowDropEntryPriceMin < 0 || config.earlyLowDropEntryPriceMin > 0.5) {
+        throw new Error("earlyLowDropEntryPriceMin must be in [0, 0.5]");
+      }
+      if (config.earlyLowDropMin < 0) {
+        throw new Error("earlyLowDropMin must be >= 0");
+      }
+      if (config.earlyLowDropMinElapsedSec < 0) {
+        throw new Error("earlyLowDropMinElapsedSec must be >= 0");
+      }
+    }
+    if (config.earlyLowTrailingEnabled && config.earlyLowTrailingOffset < 0) {
+      throw new Error("earlyLowTrailingOffset must be >= 0");
+    }
+    if (config.earlyLowStopLossEnabled) {
+      if (config.earlyLowStopLossBidMax < 0 || config.earlyLowStopLossBidMax > 0.3) {
+        throw new Error("earlyLowStopLossBidMax must be in [0, 0.3]");
+      }
+      if (config.earlyLowStopLossBidMax >= config.earlyLowBuyAskMax) {
+        throw new Error(
+          "earlyLowStopLossBidMax must be < earlyLowBuyAskMax (stop under the entry band)",
+        );
+      }
+    }
+    if (
+      config.earlyLowExitMaxElapsedSec !== 0 &&
+      !(config.earlyLowExitMaxElapsedSec > 0 && config.earlyLowExitMaxElapsedSec <= 900)
+    ) {
+      throw new Error("earlyLowExitMaxElapsedSec must be 0 (off) or in (0, 900]");
+    }
   }
   if (config.strategyId === "probability-repricing") {
     config.arbAskLockOnly = false;

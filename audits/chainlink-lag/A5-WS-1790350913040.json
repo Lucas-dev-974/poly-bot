@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-09-25T15:41:53.041Z",
+  "probes": [
+    {
+      "name": "spot btcusdt@trade",
+      "url": "wss://stream.binance.com:9443/ws/btcusdt@trade",
+      "ok": true,
+      "detail": "stream OK",
+      "messages": 1,
+      "latencyMs": 623
+    },
+    {
+      "name": "spot ethusdt@trade",
+      "url": "wss://stream.binance.com:9443/ws/ethusdt@trade",
+      "ok": true,
+      "detail": "stream OK",
+      "messages": 1,
+      "latencyMs": 532
+    },
+    {
+      "name": "miniTicker btcusdt",
+      "url": "wss://stream.binance.com:9443/ws/btcusdt@miniTicker",
+      "ok": true,
+      "detail": "stream OK",
+      "messages": 1,
+      "latencyMs": 534
+    },
+    {
+      "name": "combiné btc+eth trade",
+      "url": "wss://stream.binance.com:9443/stream?streams=btcusdt@trade/ethusdt@trade",
+      "ok": true,
+      "detail": "stream OK",
+      "messages": 1,
+      "latencyMs": 499
+    }
+  ]
+}

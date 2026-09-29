@@ -1,0 +1,1338 @@
+{
+  "generatedAt": "2026-09-25T15:48:19.863Z",
+  "sample": [
+    {
+      "slug": "btc-updown-15m-1788848100",
+      "wsSec": 1788848100,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788857100",
+      "wsSec": 1788857100,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788867000",
+      "wsSec": 1788867000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788876000",
+      "wsSec": 1788876000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788885000",
+      "wsSec": 1788885000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788894000",
+      "wsSec": 1788894000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788903000",
+      "wsSec": 1788903000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788912000",
+      "wsSec": 1788912000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788921900",
+      "wsSec": 1788921900,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788931800",
+      "wsSec": 1788931800,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788941700",
+      "wsSec": 1788941700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788950700",
+      "wsSec": 1788950700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788959700",
+      "wsSec": 1788959700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788968700",
+      "wsSec": 1788968700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788977700",
+      "wsSec": 1788977700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788986700",
+      "wsSec": 1788986700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1788995700",
+      "wsSec": 1788995700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789004700",
+      "wsSec": 1789004700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789013700",
+      "wsSec": 1789013700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789026300",
+      "wsSec": 1789026300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789038000",
+      "wsSec": 1789038000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789047000",
+      "wsSec": 1789047000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789056000",
+      "wsSec": 1789056000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789065000",
+      "wsSec": 1789065000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789074000",
+      "wsSec": 1789074000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789083000",
+      "wsSec": 1789083000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789092000",
+      "wsSec": 1789092000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789101000",
+      "wsSec": 1789101000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789110000",
+      "wsSec": 1789110000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789183800",
+      "wsSec": 1789183800,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789192800",
+      "wsSec": 1789192800,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789203600",
+      "wsSec": 1789203600,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789213500",
+      "wsSec": 1789213500,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789233300",
+      "wsSec": 1789233300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789274700",
+      "wsSec": 1789274700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789283700",
+      "wsSec": 1789283700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789292700",
+      "wsSec": 1789292700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789301700",
+      "wsSec": 1789301700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789310700",
+      "wsSec": 1789310700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789319700",
+      "wsSec": 1789319700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789328700",
+      "wsSec": 1789328700,
+      "asset": "btc"
+    },
+    {
+      "slug": "eth-updown-15m-1789333200",
+      "wsSec": 1789333200,
+      "asset": "eth"
+    },
+    {
+      "slug": "btc-updown-15m-1789341300",
+      "wsSec": 1789341300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789350300",
+      "wsSec": 1789350300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789359300",
+      "wsSec": 1789359300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789368300",
+      "wsSec": 1789368300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789377300",
+      "wsSec": 1789377300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789386300",
+      "wsSec": 1789386300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789395300",
+      "wsSec": 1789395300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789404300",
+      "wsSec": 1789404300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789413300",
+      "wsSec": 1789413300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789422300",
+      "wsSec": 1789422300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789431300",
+      "wsSec": 1789431300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789440300",
+      "wsSec": 1789440300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789449300",
+      "wsSec": 1789449300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789458300",
+      "wsSec": 1789458300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789467300",
+      "wsSec": 1789467300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789476300",
+      "wsSec": 1789476300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789485300",
+      "wsSec": 1789485300,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789497000",
+      "wsSec": 1789497000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789506000",
+      "wsSec": 1789506000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789515000",
+      "wsSec": 1789515000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789524000",
+      "wsSec": 1789524000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789533000",
+      "wsSec": 1789533000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789542000",
+      "wsSec": 1789542000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789551000",
+      "wsSec": 1789551000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789560000",
+      "wsSec": 1789560000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789569000",
+      "wsSec": 1789569000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789578000",
+      "wsSec": 1789578000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789587000",
+      "wsSec": 1789587000,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789599600",
+      "wsSec": 1789599600,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789608600",
+      "wsSec": 1789608600,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789614900",
+      "wsSec": 1789614900,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789619400",
+      "wsSec": 1789619400,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789623900",
+      "wsSec": 1789623900,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789628400",
+      "wsSec": 1789628400,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789632900",
+      "wsSec": 1789632900,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789637400",
+      "wsSec": 1789637400,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789641900",
+      "wsSec": 1789641900,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789646400",
+      "wsSec": 1789646400,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789650900",
+      "wsSec": 1789650900,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789655400",
+      "wsSec": 1789655400,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789659900",
+      "wsSec": 1789659900,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789664400",
+      "wsSec": 1789664400,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789668900",
+      "wsSec": 1789668900,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789673400",
+      "wsSec": 1789673400,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789677900",
+      "wsSec": 1789677900,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789682400",
+      "wsSec": 1789682400,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789686900",
+      "wsSec": 1789686900,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789691400",
+      "wsSec": 1789691400,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789695900",
+      "wsSec": 1789695900,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789700400",
+      "wsSec": 1789700400,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789706700",
+      "wsSec": 1789706700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789715700",
+      "wsSec": 1789715700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789724700",
+      "wsSec": 1789724700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789733700",
+      "wsSec": 1789733700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789742700",
+      "wsSec": 1789742700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789751700",
+      "wsSec": 1789751700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789760700",
+      "wsSec": 1789760700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789769700",
+      "wsSec": 1789769700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789778700",
+      "wsSec": 1789778700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789787700",
+      "wsSec": 1789787700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789796700",
+      "wsSec": 1789796700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789805700",
+      "wsSec": 1789805700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789814700",
+      "wsSec": 1789814700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789823700",
+      "wsSec": 1789823700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789832700",
+      "wsSec": 1789832700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789841700",
+      "wsSec": 1789841700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789850700",
+      "wsSec": 1789850700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789859700",
+      "wsSec": 1789859700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789868700",
+      "wsSec": 1789868700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789877700",
+      "wsSec": 1789877700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789886700",
+      "wsSec": 1789886700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789895700",
+      "wsSec": 1789895700,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789905600",
+      "wsSec": 1789905600,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789914600",
+      "wsSec": 1789914600,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789923600",
+      "wsSec": 1789923600,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789932600",
+      "wsSec": 1789932600,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789941600",
+      "wsSec": 1789941600,
+      "asset": "btc"
+    },
+    {
+      "slug": "btc-updown-15m-1789950600",
+      "wsSec": 1789950600,
+      "asset": "btc"
+    }
+  ],
+  "detail": [
+    {
+      "slug": "btc-updown-15m-1788848100",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-08T06:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788857100",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-08T08:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788867000",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-08T11:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788876000",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-08T14:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788885000",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-08T16:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788894000",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-08T19:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788903000",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-08T21:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788912000",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-09T00:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788921900",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-09T02:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788931800",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-09T05:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788941700",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-09T08:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788950700",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-09T10:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788959700",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-09T13:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788968700",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-09T15:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788977700",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-09T18:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788986700",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-09T20:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1788995700",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-09T23:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789004700",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-10T01:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789013700",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-10T04:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789026300",
+      "asset": "btc",
+      "cov": "full",
+      "ws": "2026-09-10T07:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789038000",
+      "asset": "btc",
+      "cov": "none",
+      "ws": "2026-09-10T11:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789047000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-10T13:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789056000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-10T16:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789065000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-10T18:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789074000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-10T21:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789083000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-10T23:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789092000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-11T02:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789101000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-11T04:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789110000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-11T07:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789183800",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-12T03:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789192800",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-12T06:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789203600",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-12T09:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789213500",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-12T11:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789233300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-12T17:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789274700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-13T04:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789283700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-13T07:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789292700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-13T09:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789301700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-13T12:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789310700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-13T14:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789319700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-13T17:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789328700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-13T19:45:00.000Z"
+    },
+    {
+      "slug": "eth-updown-15m-1789333200",
+      "asset": "eth",
+      "cov": "skipped-budget",
+      "ws": "2026-09-13T21:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789341300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-13T23:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789350300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-14T01:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789359300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-14T04:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789368300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-14T06:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789377300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-14T09:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789386300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-14T11:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789395300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-14T14:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789404300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-14T16:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789413300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-14T19:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789422300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-14T21:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789431300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-15T00:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789440300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-15T02:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789449300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-15T05:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789458300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-15T07:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789467300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-15T10:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789476300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-15T12:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789485300",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-15T15:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789497000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-15T18:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789506000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-15T21:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789515000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-15T23:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789524000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-16T02:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789533000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-16T04:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789542000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-16T07:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789551000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-16T09:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789560000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-16T12:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789569000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-16T14:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789578000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-16T17:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789587000",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-16T19:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789599600",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-16T23:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789608600",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T01:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789614900",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T03:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789619400",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T04:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789623900",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T05:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789628400",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T07:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789632900",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T08:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789637400",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T09:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789641900",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T10:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789646400",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T12:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789650900",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T13:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789655400",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T14:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789659900",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T15:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789664400",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T17:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789668900",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T18:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789673400",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T19:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789677900",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T20:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789682400",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T22:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789686900",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-17T23:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789691400",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-18T00:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789695900",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-18T01:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789700400",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-18T03:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789706700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-18T04:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789715700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-18T07:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789724700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-18T09:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789733700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-18T12:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789742700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-18T14:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789751700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-18T17:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789760700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-18T19:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789769700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-18T22:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789778700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-19T00:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789787700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-19T03:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789796700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-19T05:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789805700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-19T08:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789814700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-19T10:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789823700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-19T13:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789832700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-19T15:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789841700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-19T18:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789850700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-19T20:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789859700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-19T23:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789868700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-20T01:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789877700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-20T04:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789886700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-20T06:45:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789895700",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-20T09:15:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789905600",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-20T12:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789914600",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-20T14:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789923600",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-20T17:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789932600",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-20T19:30:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789941600",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-20T22:00:00.000Z"
+    },
+    {
+      "slug": "btc-updown-15m-1789950600",
+      "asset": "btc",
+      "cov": "skipped-budget",
+      "ws": "2026-09-21T00:30:00.000Z"
+    }
+  ],
+  "byAsset": [
+    [
+      "btc",
+      {
+        "ok": 20,
+        "partial": 0,
+        "none": 1,
+        "total": 21
+      }
+    ]
+  ]
+}

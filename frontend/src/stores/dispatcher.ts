@@ -21,6 +21,7 @@ import { updateRelayerQuota } from "../stores/quotaStore";
 import { addLog } from "../stores/logStore";
 import { setWsStatus } from "./wsStore";
 import { setStrategyStatus } from "./strategyStatusStore";
+import { setSimWhipsaw } from "./simWhipsawStore";
 import { pushError, pushInfo } from "./toastStore";
 
 /**
@@ -175,6 +176,10 @@ export function dispatchEvent(event: BotEvent): void {
 
     case "strategyStatus":
       setStrategyStatus(event.status);
+      break;
+
+    case "simStrategyStatus":
+      setSimWhipsaw(event.status);
       break;
 
     case "wsStatus":

@@ -3,6 +3,7 @@ import type { JSX } from "solid-js";
 import { api, type SimEngineState, type SimConfigPatch } from "../api/client";
 import type { ChartTarget, SimulatedPosition } from "../types";
 import { ActiveMarkets } from "../components/panels/ActiveMarkets";
+import { SimWhipsawStatus } from "../components/panels/SimWhipsawStatus";
 import { EmptyState } from "../components/ui/EmptyState";
 import { Panel } from "../components/ui/Panel";
 import { ConfirmModal } from "../components/modals/ConfirmModal";
@@ -875,6 +876,12 @@ export function SimulationPage(): JSX.Element {
         </div>
       </div>
       </CollapsibleSection>
+
+      {/* Filtre whipsaw (paper) : statut + pause + reset — moteur sim fav-band.
+          Masqué si le moteur sim actif n'est pas fav-band (status null). */}
+      <div class="sim-whipsaw">
+        <SimWhipsawStatus />
+      </div>
 
       <div class="grid">
         {/* Positions ouvertes */}

@@ -447,6 +447,11 @@
   margin-top: 20px;
 }
 
+/* Panneau filtre whipsaw (paper) : aligné entre la config et la grille. */
+.sim-whipsaw {
+  margin-top: 20px;
+}
+
 /* Espace au-dessus de la section historique (positions résolues | journal). */
 .sim-history {
   margin-top: 20px;

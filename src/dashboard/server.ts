@@ -327,6 +327,21 @@ export class DashboardServer {
         return;
       }
 
+      if (url.pathname === "/api/sim/strategy-status" && req.method === "GET") {
+        if (!this.simEngine) return simEngineMissing(res);
+        this.handleSimStrategyStatus(res);
+        return;
+      }
+
+      if (url.pathname === "/api/sim/strategy-status/reset" && req.method === "POST") {
+        if (!this.isAllowedOrigin(req)) return originForbidden(res);
+        if (!this.simEngine) return simEngineMissing(res);
+        this.simEngine.resetWhipsawPause();
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: true }));
+        return;
+      }
+
       if (url.pathname === "/api/market-history") {
         void this.handleMarketHistory(url, res);
         return;
@@ -1412,6 +1427,12 @@ export class DashboardServer {
     const status = this.bot.getStrategyStatus();
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ status }));
+  }
+
+  /** GET /api/sim/strategy-status — statut whipsaw du moteur paper (fav-band). */
+  private handleSimStrategyStatus(res: import("node:http").ServerResponse): void {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ status: this.simEngine?.getStrategyStatus() ?? null }));
   }
 
   private handleStrategyStatusReset(

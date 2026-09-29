@@ -464,4 +464,10 @@ export const api = {
     request<{ resting: SimRestingOrder[] }>(
       `/api/sim/resting?slug=${encodeURIComponent(slug)}`,
     ),
+  simStrategyStatus: () =>
+    request<{ status: FavBandWhipsawStatus | null }>("/api/sim/strategy-status"),
+  simStrategyStatusReset: () =>
+    request<{ ok: boolean; error?: string }>("/api/sim/strategy-status/reset", {
+      method: "POST",
+    }),
 };

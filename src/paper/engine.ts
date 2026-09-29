@@ -11,6 +11,8 @@ import { processTick, type TickExecutorSink } from "../backtest/tick-executor.js
 import { createStrategy } from "../strategy/registry.js";
 import type { TradingStrategy } from "../strategy/trading-strategy.js";
 import type { StrategyId } from "../strategy/ids.js";
+import type { FavBandStrategy, FavBandWhipsawStatus } from "../strategy/fav-band-strategy.js";
+import { favBandLossStreak } from "../strategy/whipsaw.js";
 import type { RuntimeSettingsPatch } from "../runtime-settings.js";
 import { TradeTracker } from "../trade-tracker.js";
 import type { SimulatedPosition, SimulatedStats, TokenBook, UpDownEvent } from "../types.js";
@@ -352,6 +354,27 @@ export class PaperTradingEngine {
     return this.tracker.getResolvedPositions();
   }
 
+  /**
+   * Statut du filtre whipsaw fav-band pour le panneau Simulation (miroir de
+   * ReverseBot.getStrategyStatus). Le moteur sim partage FavBandStrategy avec
+   * le bot live : la pause est armée par les pertes des positions SIMULÉES
+   * (tracker sim), jamais par le live. Null si moteur ≠ fav-band.
+   */
+  getStrategyStatus(): FavBandWhipsawStatus | null {
+    if (this.effectiveConfig.strategyId !== "fav-band") return null;
+    const strategy = this.strategy as FavBandStrategy;
+    const lossStreak = favBandLossStreak(this.tracker.getResolvedPositions());
+    return strategy.getWhipsawStatus(this.effectiveConfig, Date.now(), lossStreak);
+  }
+
+  /** Réinitialise manuellement la pause whipsaw du moteur sim (fav-band). */
+  resetWhipsawPause(): void {
+    if (this.effectiveConfig.strategyId !== "fav-band") return;
+    const strategy = this.strategy as FavBandStrategy;
+    const lossStreak = favBandLossStreak(this.tracker.getResolvedPositions());
+    strategy.resetWhipsawPause(lossStreak);
+  }
+
   getRestingForSlug(slug: string): Array<{
     key: string;
     tokenId: string;
@@ -501,6 +524,10 @@ export class PaperTradingEngine {
       balance: { cash: state.cash, positionsValue: state.positionsValue, total: state.total },
     });
     bus.emit({ type: "simEngineStats", stats: state.stats });
+    // Statut whipsaw fav-band du moteur sim : émis inconditionnellement (le
+    // strategyId peut être swappé à chaud), null pour les moteurs non-fav-band
+    // → le panneau Simulation masque l'entry au lieu d'afficher un statut figé.
+    bus.emit({ type: "simStrategyStatus", status: this.getStrategyStatus() });
   }
 
   private pruneTrades(): void {

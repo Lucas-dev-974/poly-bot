@@ -19,6 +19,7 @@ export type BotEvent =
   | { type: "simConfig"; simConfig: SimConfigEvent }
   | { type: "simOpenedPosition"; position: SimulatedPosition }
   | { type: "simResolvedPosition"; position: SimulatedPosition }
+  | { type: "simStrategyStatus"; status: FavBandWhipsawStatus | null }
   | { type: "scan"; count: number; slugs?: string[] }
   | { type: "watching"; event: UpDownEvent; books: TokenBook[] }
   | { type: "opportunity"; opportunity: TradeOpportunity }

@@ -528,6 +528,7 @@ export type BotEvent =
   | { type: "error"; message: string }
   | { type: "log"; message: string; data?: Record<string, unknown> }
   | { type: "strategyStatus"; status: FavBandWhipsawStatus }
+  | { type: "simStrategyStatus"; status: FavBandWhipsawStatus | null }
   | { type: "wsStatus"; channel: "market" | "user"; connected: boolean; reconnects: number };
 
 // Types UI enrichis

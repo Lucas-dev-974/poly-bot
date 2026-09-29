@@ -1,0 +1,50 @@
+{
+  "engineStats": {
+    "dip-revert": {
+      "n": 0,
+      "wr": 0,
+      "avgPrice": 0,
+      "ev": 0,
+      "t": 0
+    },
+    "flip-confirm": {
+      "n": 0,
+      "wr": 0,
+      "avgPrice": 0,
+      "ev": 0,
+      "t": 0
+    },
+    "early-conviction": {
+      "n": 1136,
+      "wr": 0.6267605633802817,
+      "avgPrice": 0.6125176056338103,
+      "ev": 0.01424295774647144,
+      "t": 0.9927071643990829
+    },
+    "antiflip": {
+      "n": 0,
+      "wr": 0,
+      "avgPrice": 0,
+      "ev": 0,
+      "t": 0
+    }
+  },
+  "matrix": [
+    "dip-revert",
+    "flip-confirm",
+    "early-conviction",
+    "antiflip"
+  ],
+  "clusters": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "silhouette": 0.021236514709684243,
+  "resultsCount": 1136
+}

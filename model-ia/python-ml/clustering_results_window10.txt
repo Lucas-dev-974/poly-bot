@@ -1,0 +1,15 @@
+Clustering Results for Window Size = 10 candles
+==================================================
+Number of samples: 8525
+Features per sample: 90 (10 candles × 9 features)
+Optimal number of clusters (Elbow): 7
+Overall accuracy (majority per cluster): 51.61%
+
+Per-cluster statistics:
+  Cluster 0: size=2755, up=1365/2755 (49.55%), majority=down, accuracy=50.45%
+  Cluster 1: size=1227, up=628/1227 (51.18%), majority=up, accuracy=51.18%
+  Cluster 2: size=235, up=132/235 (56.17%), majority=up, accuracy=56.17%
+  Cluster 3: size=121, up=63/121 (52.07%), majority=up, accuracy=52.07%
+  Cluster 4: size=2002, up=960/2002 (47.95%), majority=down, accuracy=52.05%
+  Cluster 5: size=964, up=506/964 (52.49%), majority=up, accuracy=52.49%
+  Cluster 6: size=1221, up=582/1221 (47.67%), majority=down, accuracy=52.33%

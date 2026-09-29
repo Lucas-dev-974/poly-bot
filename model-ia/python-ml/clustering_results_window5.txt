@@ -1,0 +1,12 @@
+Clustering Results for Window Size = 5 candles
+==================================================
+Number of samples: 8530
+Features per sample: 45 (5 candles × 9 features)
+Optimal number of clusters (Elbow): 4
+Overall accuracy (majority per cluster): 51.83%
+
+Per-cluster statistics:
+  Cluster 0: size=2398, up=1240/2398 (51.71%), majority=up, accuracy=51.71%
+  Cluster 1: size=3137, up=1533/3137 (48.87%), majority=down, accuracy=51.13%
+  Cluster 2: size=2551, up=1220/2551 (47.82%), majority=down, accuracy=52.18%
+  Cluster 3: size=444, up=246/444 (55.41%), majority=up, accuracy=55.41%

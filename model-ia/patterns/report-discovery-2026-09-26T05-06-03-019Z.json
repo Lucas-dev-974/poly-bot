@@ -1,0 +1,86 @@
+{
+  "clusters": [],
+  "medoids": [],
+  "candidates": [],
+  "silhouette": 0,
+  "splitHalf": {
+    "ari": 0,
+    "stable": false,
+    "details": [
+      {
+        "day": "2026-09-09",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-10",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-11",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-12",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-13",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-14",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-15",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-16",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-17",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-18",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-19",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-20",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-21",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-24",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-25",
+        "nClusters": 0
+      },
+      {
+        "day": "2026-09-26",
+        "nClusters": 0
+      }
+    ]
+  },
+  "causalControl": {
+    "baselinePUp": 0.5035149384885764,
+    "clustersWithEdge": 0
+  },
+  "gateA1": {
+    "pass": false,
+    "knownPatternsFound": 0,
+    "details": []
+  },
+  "timestamp": "2026-09-26T05:06:03.019Z"
+}

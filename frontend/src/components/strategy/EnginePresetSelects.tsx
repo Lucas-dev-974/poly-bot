@@ -56,7 +56,7 @@ export function PresetSelect(props: {
       disabled={props.disabled}
       onChange={(e) => props.onChange(e.currentTarget.value)}
     >
-      <option value="">{props.emptyLabel ?? "Personnalise"}</option>
+      <option value="">{props.emptyLabel ?? "Personnalisé"}</option>
       <For each={props.presets}>
         {(p) => (
           <option value={p.id}>

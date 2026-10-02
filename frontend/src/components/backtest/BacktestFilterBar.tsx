@@ -230,7 +230,7 @@ export function BacktestFilterBar(props: Props): JSX.Element {
           value={props.presetId()}
           onChange={(id) => props.onPresetChange(id)}
           presets={props.presets()}
-          emptyLabel="Personnalise"
+          emptyLabel="Personnalisé"
         />
       </label>
       <button

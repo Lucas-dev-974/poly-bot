@@ -1,7 +1,7 @@
 import { toPublicConfig, type BotConfig } from "../config.js";
 import { bus } from "../dashboard/events.js";
 import type { Repositories } from "../db/index.js";
-import type { SimTradeRow } from "../db/repositories.js";
+import type { SimTradeRow } from "../db/sim-repositories.js";
 import { buildEffectiveConfig } from "../backtest/config-builder.js";
 import { BacktestLedger, round2 } from "../backtest/ledger.js";
 import { BacktestRestingBook } from "../backtest/resting.js";

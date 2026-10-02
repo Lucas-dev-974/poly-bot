@@ -22,6 +22,8 @@ import {
   BacktestPositionRepository,
   BacktestRunRepository,
   BacktestTradeRepository,
+} from "./repositories.js";
+import {
   SimKeyRepository,
   SimPairRepository,
   SimPositionRepository,
@@ -30,7 +32,7 @@ import {
   SimStateRepository,
   SimTradeRepository,
   SimWindowClaimRepository,
-} from "./repositories.js";
+} from "./sim-repositories.js";
 import { StrategyGraphRepository } from "./strategy-graph-repo.js";
 
 export interface Repositories {

@@ -1,5 +1,4 @@
 import { createServer } from "node:http";
-import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -46,14 +45,21 @@ import {
 import { invalidateWindowsCache, listBacktestWindows, seriesForSlugs } from "../backtest/windows.js";
 import { parseStrategyId } from "../strategy/ids.js";
 import { leadsWithEdgeFor } from "../strategy/registry.js";
-import type { StrategyGraph } from "../strategy/graph/types.js";
-import { validateStrategyGraph } from "../strategy/graph/validate.js";
-import { edgeLeadPocGraph } from "../strategy/graph/edge-lead-graph.js";
-import { ensureEdgeOrderAction } from "../strategy/graph/ensure-edge-order.js";
 import {
   getStrategyChartSeries,
   listStrategyChartWindows,
 } from "./strategy-chart-api.js";
+import {
+  handleActivateStrategy as handleActivateStrategyGraph,
+  handleCreateStrategy as handleCreateStrategyGraph,
+  handleDeleteStrategy as handleDeleteStrategyGraph,
+  handleEdgeLeadTemplate as handleEdgeLeadTemplateGraph,
+  handleGetStrategy as handleGetStrategyGraph,
+  handleListStrategies as handleListStrategiesGraph,
+  handleUpdateStrategy as handleUpdateStrategyGraph,
+  handleValidateStrategy as handleValidateStrategyGraph,
+  type StrategyGraphHandlerCtx,
+} from "./strategy-graph-handlers.js";
 import {
   prefixesWithLiveExposure,
   strategyHotSwapBlockReason,
@@ -767,126 +773,44 @@ export class DashboardServer {
     }
   }
 
+  private strategyGraphCtx(): StrategyGraphHandlerCtx {
+    return {
+      config: this.config,
+      repos: this.repos,
+      isAllowedOrigin: (req) => this.isAllowedOrigin(req),
+      readBody: (req) => this.readBody(req),
+      assertCanHotSwapStrategy: (id) => this.assertCanHotSwapStrategy(id),
+      configHandler: this.configHandler,
+    };
+  }
+
   private handleEdgeLeadTemplate(res: import("node:http").ServerResponse): void {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ graph: edgeLeadPocGraph() }));
+    handleEdgeLeadTemplateGraph(res);
   }
 
   private handleListStrategies(res: import("node:http").ServerResponse): void {
-    const natives = [
-      { id: "arb", name: "Arb", leadsWithEdge: false, native: true },
-      { id: "barbell", name: "Barbell", leadsWithEdge: false, native: true },
-      { id: "edge-lead", name: "Edge-lead", leadsWithEdge: true, native: true },
-      { id: "reverse", name: "Reverse", leadsWithEdge: false, native: true },
-    ];
-    const custom = (this.repos?.strategyGraphs.list() ?? []).map((row) => ({
-      ...row,
-      native: false,
-    }));
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        engines: [...natives, ...custom],
-        activeId: this.config.strategyId,
-        active: this.repos?.strategyGraphs.getActive(this.config.strategyId) ?? null,
-      }),
-    );
+    handleListStrategiesGraph(this.strategyGraphCtx(), res);
   }
 
   private handleGetStrategy(
     res: import("node:http").ServerResponse,
     rawId: string,
   ): void {
-    let id: string;
-    try {
-      id = parseStrategyId(rawId);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      res.writeHead(400, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error: message }));
-      return;
-    }
-    if (!id.startsWith("custom:")) {
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error: "Not a custom strategy graph" }));
-      return;
-    }
-    const graph = this.repos?.strategyGraphs.get(id);
-    if (!graph) {
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error: "Strategy graph not found" }));
-      return;
-    }
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ graph }));
+    handleGetStrategyGraph(this.strategyGraphCtx(), res, rawId);
   }
 
   private async handleValidateStrategy(
     req: import("node:http").IncomingMessage,
     res: import("node:http").ServerResponse,
   ): Promise<void> {
-    if (!this.isAllowedOrigin(req)) {
-      res.writeHead(403, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
-      return;
-    }
-    try {
-      const graph = this.parseGraphBody(JSON.parse(await this.readBody(req)));
-      const errors = validateStrategyGraph(graph, {
-        pollIntervalMs: this.config.pollIntervalMs,
-      });
-      res.writeHead(errors.length > 0 ? 400 : 200, {
-        "Content-Type": "application/json",
-      });
-      res.end(JSON.stringify({ ok: errors.length === 0, errors }));
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      res.writeHead(400, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: message, errors: [message] }));
-    }
+    await handleValidateStrategyGraph(this.strategyGraphCtx(), req, res);
   }
 
   private async handleCreateStrategy(
     req: import("node:http").IncomingMessage,
     res: import("node:http").ServerResponse,
   ): Promise<void> {
-    if (!this.isAllowedOrigin(req)) {
-      res.writeHead(403, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
-      return;
-    }
-    if (!this.repos) {
-      res.writeHead(503, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: "Persistence is disabled" }));
-      return;
-    }
-    try {
-      const graph = this.parseGraphBody(JSON.parse(await this.readBody(req)));
-      if (!graph.id) {
-        graph.id = `custom:${randomUUID()}`;
-      }
-      graph.id = parseStrategyId(graph.id);
-      if (this.repos.strategyGraphs.get(graph.id)) {
-        res.writeHead(409, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ ok: false, error: "Strategy graph already exists" }));
-        return;
-      }
-      const errors = validateStrategyGraph(graph, {
-        pollIntervalMs: this.config.pollIntervalMs,
-      });
-      if (errors.length > 0) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ ok: false, errors }));
-        return;
-      }
-      const stored = this.repos.strategyGraphs.upsert(graph);
-      res.writeHead(201, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: true, graph: stored }));
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      res.writeHead(400, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: message }));
-    }
+    await handleCreateStrategyGraph(this.strategyGraphCtx(), req, res);
   }
 
   private async handleUpdateStrategy(
@@ -894,46 +818,7 @@ export class DashboardServer {
     res: import("node:http").ServerResponse,
     rawId: string,
   ): Promise<void> {
-    if (!this.isAllowedOrigin(req)) {
-      res.writeHead(403, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
-      return;
-    }
-    if (!this.repos) {
-      res.writeHead(503, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: "Persistence is disabled" }));
-      return;
-    }
-    try {
-      const id = parseStrategyId(rawId);
-      const graph = this.parseGraphBody(JSON.parse(await this.readBody(req)));
-      graph.id = parseStrategyId(graph.id ?? id);
-      if (graph.id !== id) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ ok: false, error: "Graph id must match URL" }));
-        return;
-      }
-      if (!this.repos.strategyGraphs.get(id)) {
-        res.writeHead(404, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ ok: false, error: "Strategy graph not found" }));
-        return;
-      }
-      const errors = validateStrategyGraph(graph, {
-        pollIntervalMs: this.config.pollIntervalMs,
-      });
-      if (errors.length > 0) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ ok: false, errors }));
-        return;
-      }
-      const stored = this.repos.strategyGraphs.upsert(graph);
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: true, graph: stored }));
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      res.writeHead(400, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: message }));
-    }
+    await handleUpdateStrategyGraph(this.strategyGraphCtx(), req, res, rawId);
   }
 
   private handleDeleteStrategy(
@@ -941,43 +826,7 @@ export class DashboardServer {
     res: import("node:http").ServerResponse,
     rawId: string,
   ): void {
-    if (!this.isAllowedOrigin(req)) {
-      res.writeHead(403, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
-      return;
-    }
-    if (!this.repos) {
-      res.writeHead(503, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: "Persistence is disabled" }));
-      return;
-    }
-    let id: string;
-    try {
-      id = parseStrategyId(rawId);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      res.writeHead(400, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: message }));
-      return;
-    }
-    if (this.config.strategyId === id) {
-      res.writeHead(409, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({
-          ok: false,
-          error: "Cannot delete the active strategy graph",
-        }),
-      );
-      return;
-    }
-    const removed = this.repos.strategyGraphs.remove(id);
-    if (!removed) {
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: "Strategy graph not found" }));
-      return;
-    }
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ ok: true }));
+    handleDeleteStrategyGraph(this.strategyGraphCtx(), req, res, rawId);
   }
 
   private async handleActivateStrategy(
@@ -985,47 +834,7 @@ export class DashboardServer {
     res: import("node:http").ServerResponse,
     rawId: string,
   ): Promise<void> {
-    if (!this.isAllowedOrigin(req)) {
-      res.writeHead(403, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: "Forbidden origin" }));
-      return;
-    }
-    try {
-      const id = parseStrategyId(rawId);
-      this.assertCanHotSwapStrategy(id);
-      const graph = this.repos?.strategyGraphs.get(id);
-      if (!graph) {
-        res.writeHead(404, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ ok: false, error: "Strategy graph not found" }));
-        return;
-      }
-      const changed = await applyRuntimeSettings(
-        this.config,
-        { strategyId: id },
-        undefined,
-        graph.leadsWithEdge,
-      );
-      this.configHandler?.(changed);
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({
-          ok: true,
-          config: toPublicConfig(this.config),
-        }),
-      );
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      const status = message.startsWith("Cannot change strategyId") ? 409 : 400;
-      res.writeHead(status, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: message }));
-    }
-  }
-
-  private parseGraphBody(value: unknown): StrategyGraph {
-    if (!value || typeof value !== "object") {
-      throw new Error("Invalid strategy graph");
-    }
-    return ensureEdgeOrderAction(value as StrategyGraph);
+    await handleActivateStrategyGraph(this.strategyGraphCtx(), req, res, rawId);
   }
 
   private handleStrategyChartWindows(

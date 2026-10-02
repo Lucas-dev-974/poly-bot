@@ -64,24 +64,6 @@ import { countdown, fmtPrice, fmtShares, fmtUsd, pct, timeStr } from "../utils/f
 import { addLog } from "../stores/logStore";
 import { pushError } from "../stores/toastStore";
 
-function toMessage(e: unknown): string {
-  return e instanceof Error ? e.message : String(e);
-}
-
-function pnlClass(pnl: number): string {
-  if (pnl > 0) return "pnl-pos";
-  if (pnl < 0) return "pnl-neg";
-  return "";
-}
-
-/** Classe du countdown selon l'urgence (miroir des seuils ActiveMarkets). */
-function countdownClass(windowEnd: number, now: number): string {
-  const left = windowEnd * 1000 - now;
-  if (left <= 5 * 60 * 1000) return "am-countdown--hot";
-  if (left <= 15 * 60 * 1000) return "am-countdown--warm";
-  return "";
-}
-
 /** Titre du marché pour un tokenId (lookup dans le store markets SSE). */
 function marketTitleForToken(tokenId: string): string {
   for (const m of Object.values(markets)) {

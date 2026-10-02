@@ -309,11 +309,10 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
     async (conditionId) => api.marketTrades(conditionId),
   );
 
-  // Trades de simulation : fetch global (tous marchés), filtré sur le slug de
-  // la cible. Filled uniquement — les ordres non remplis restent dans l'onglet
-  // "resting" de la page simulation.
+  // Trades de simulation : filtre slug + filled côté API (évite download 1000
+  // puis filter client). Les non-filled restent dans l'onglet "resting".
   const [simTradesResource] = createResource(target.slug, async (slug) =>
-    (await api.simTrades(1000)).trades.filter((t) => t.eventSlug === slug && t.filled === 1),
+    (await api.simTrades(1000, { slug, filledOnly: true })).trades,
   );
 
   const displayTrades = createMemo<DisplayTrade[]>(() => {

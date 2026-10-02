@@ -1,30 +1,20 @@
-import { For, Show, createEffect, createMemo, createSignal, onMount } from "solid-js";
+import { Show, createEffect, createMemo, createSignal, onMount } from "solid-js";
 import type { JSX } from "solid-js";
 import { api } from "../api/client";
 import type { StrategyEngineSummary } from "../api/client";
+import { BacktestFilterBar } from "../components/backtest/BacktestFilterBar";
 import { BacktestPresetPanel } from "../components/backtest/BacktestPresetPanel";
 import { BacktestResultModal } from "../components/backtest/BacktestResultModal";
 import { BacktestRunList } from "../components/backtest/BacktestRunList";
 import { StackedMarketChart } from "../components/backtest/StackedMarketChart";
 import {
   allPresetsForStrategy,
-  STRATEGY_ENGINE_OPTIONS,
   findPresetById,
   type AnyPreset,
   type StrategyId,
 } from "../config/strategyPresets";
 import { navigate, navigateWithQuery } from "../router";
-import type {
-  BacktestPositionRow,
-  BacktestProgress,
-  BacktestResult,
-  BacktestRunRequestSummary,
-  BacktestRunSummary,
-  BacktestSeriesPoint,
-  BacktestWindowMeta,
-  BotConfig,
-  CompletenessRequest,
-} from "../types";
+import type { BotConfig } from "../types";
 import { settingsForRun } from "../utils/backtest-preset";
 import { matchWalletTradesToWindows, type WalletOverlayMark } from "../utils/stacked-chart";
 import {
@@ -37,147 +27,125 @@ import {
 } from "../utils/configForm";
 import { config as liveBotConfig, setConfig } from "../stores/botStore";
 import {
-  windows,
   series,
   runs,
-  setWindows as setBacktestWindows,
   loadSeriesFor,
-  loadRuns as loadRunsFromStore,
 } from "../stores/backtestStore";
 import {
   userPresets as sharedUserPresets,
   commitUserPreset,
   removeUserPreset,
 } from "../stores/userPresetsStore";
+import { useBacktestFilters } from "../hooks/useBacktestFilters";
+import { useBacktestRun } from "../hooks/useBacktestRun";
 import "../styles/backtest.css";
 
 export function BacktestPage(): JSX.Element {
-  // Windows/series/runs : store persistant (survivent à la navigation) —
-  // la page consomme les signaux du store, setters et loadedSlugs y vivent.
-  const [completeOnly, setCompleteOnly] = createSignal(true);
-  const [minTicksOn, setMinTicksOn] = createSignal(true);
-  const [minTicks, setMinTicks] = createSignal("855");
-  const [maxGapOn, setMaxGapOn] = createSignal(true);
-  const [maxGapSec, setMaxGapSec] = createSignal("2");
-  const [edgeOn, setEdgeOn] = createSignal(true);
-  const [edgeSec, setEdgeSec] = createSignal("2");
-  const [cutGaps, setCutGaps] = createSignal(true);
-  const [dateKey, setDateKey] = createSignal("all");
-  const [prefix, setPrefix] = createSignal("");
-  const [timeframe, setTimeframe] = createSignal("");
+  const filters = useBacktestFilters();
+  const {
+    completeOnly,
+    setCompleteOnly,
+    minTicksOn,
+    setMinTicksOn,
+    minTicks,
+    setMinTicks,
+    maxGapOn,
+    setMaxGapOn,
+    maxGapSec,
+    setMaxGapSec,
+    edgeOn,
+    setEdgeOn,
+    edgeSec,
+    setEdgeSec,
+    cutGaps,
+    setCutGaps,
+    dateKey,
+    setDateKey,
+    prefix,
+    setPrefix,
+    timeframe,
+    setTimeframe,
+    dates,
+    timeframes,
+    prefixesForTimeframe,
+    filtered,
+    completenessPayload,
+    reloadWindowsSoon,
+    loadWindows,
+    disposeFilters,
+  } = filters;
+
   const [engine, setEngine] = createSignal<StrategyId>("arb");
   const [customEngines, setCustomEngines] = createSignal<StrategyEngineSummary[]>([]);
   const [historyEngineOnly, setHistoryEngineOnly] = createSignal(true);
   const [presetId, setPresetId] = createSignal<string>("conservative");
-  // Source unique de la config live : botStore (la copie locale historique
-  // liveConfig est supprimée — Phase 3). Alias de lecture, setter = setConfig.
   const liveConfig = liveBotConfig;
   const [form, setForm] = createSignal<ConfigFormState | null>(null);
   const [persistence, setPersistence] = createSignal(true);
-  const [progress, setProgress] = createSignal<BacktestProgress | null>(null);
-  const [result, setResult] = createSignal<BacktestResult | null>(null);
-  const [positions, setPositions] = createSignal<BacktestPositionRow[]>([]);
-  const [resultStartedAt, setResultStartedAt] = createSignal<number | null>(null);
-  const [dialogOpen, setDialogOpen] = createSignal(false);
-  const [openingId, setOpeningId] = createSignal<string | null>(null);
-  const [selectedRun, setSelectedRun] = createSignal<BacktestRunSummary | null>(null);
-  const [runChartRules, setRunChartRules] = createSignal<
-    Array<{
-      action: "buy" | "sell";
-      token: "cheap" | "favorite";
-      startSec: number;
-      endSec: number;
-      bandMin: number | null;
-      bandMax: number | null;
-    }>
-  >([]);
-  const [chartRunId, setChartRunId] = createSignal<string | null>(null);
-  const [chartPositions, setChartPositions] = createSignal<BacktestPositionRow[]>([]);
-  const [chartLoadingId, setChartLoadingId] = createSignal<string | null>(null);
   const [walletOn, setWalletOn] = createSignal(false);
   const [walletMarks, setWalletMarks] = createSignal<WalletOverlayMark[]>([]);
   const [walletLoading, setWalletLoading] = createSignal(false);
   const [walletConfigured, setWalletConfigured] = createSignal<boolean | undefined>(undefined);
-  const [error, setError] = createSignal<string | null>(null);
   const [saving, setSaving] = createSignal(false);
   const [saveMsg, setSaveMsg] = createSignal<string | null>(null);
   const [saveErr, setSaveErr] = createSignal<string | null>(null);
-  const [applying, setApplying] = createSignal(false);
-  const [applyMsg, setApplyMsg] = createSignal<string | null>(null);
-  const [applyErr, setApplyErr] = createSignal<string | null>(null);
-  // Presets utilisateur : store réactif partagé (localStorage + signal global).
   const userPresets = sharedUserPresets;
   const [presetFormSnapshot, setPresetFormSnapshot] = createSignal<ConfigFormState | null>(null);
   const [showSavePresetDialog, setShowSavePresetDialog] = createSignal(false);
   const [presetNameInput, setPresetNameInput] = createSignal("");
   const [presetDescInput, setPresetDescInput] = createSignal("");
-  // Lower-lows analysis
-  const [lowerLowsResults, setLowerLowsResults] = createSignal<Record<string, import("../types").LowerLowAnalysisResult>>({});
+  const [lowerLowsResults, setLowerLowsResults] = createSignal<
+    Record<string, import("../types").LowerLowAnalysisResult>
+  >({});
   const [lowerLowsLoading, setLowerLowsLoading] = createSignal(false);
-  const [lowerLowsParams, setLowerLowsParams] = createSignal<import("../types").LowerLowParams>({
+  const [lowerLowsParams] = createSignal<import("../types").LowerLowParams>({
     minSwingCents: 5,
     retraceRatio: 0.25,
     consecutiveRequired: 3,
     lookbackMs: 120000,
   });
-  let pollTimer: number | undefined;
-  let windowsTimer: number | undefined;
-  let pollGen = 0;
-  let chartGen = 0;
   let walletGen = 0;
   let lowerLowsGen = 0;
 
-  const dates = createMemo(() => {
-    const keys = new Set<string>();
-    for (const w of windows()) {
-      keys.add(dayKey(w.windowStart));
-    }
-    return [...keys].sort().reverse();
+  const run = useBacktestRun({
+    form,
+    dateKey,
+    filtered,
+    timeframe,
+    prefix,
+    prefixesForTimeframe,
+    completeOnly,
+    completenessPayload,
+    presetId,
   });
-
-  /**
-   * Familles réellement présentes dans les fenêtres listées (multi-timeframe) :
-   * dérivée des données au lieu d'options btc/eth-15m hardcodées.
-   */
-  const prefixes = createMemo(() => {
-    const seen = new Set<string>();
-    for (const w of windows()) {
-      seen.add(w.eventSlug.replace(/-\d{10}$/, ""));
-    }
-    return [...seen].sort();
-  });
-
-  /**
-   * Timeframes (durées) réellement présents, ex. ["15m","5m"]. Dériver du
-   * préfixe de famille = un seul endroit de vérité (le slug).
-   */
-  const timeframes = createMemo(() => {
-    const seen = new Set<string>();
-    for (const p of prefixes()) {
-      const m = p.match(/-updown-(\d+)([mh])$/);
-      if (m) seen.add(`${m[1]}${m[2]}`);
-    }
-    return [...seen].sort(byDurationAsc);
-  });
-
-  /** Familles du timeframe sélectionné ("" = tous). */
-  const prefixesForTimeframe = createMemo(() => {
-    const tf = timeframe();
-    if (!tf) return prefixes();
-    return prefixes().filter((p) => p.endsWith(`-updown-${tf}`));
-  });
-
-  const filtered = createMemo(() => {
-    const key = dateKey();
-    const p = prefix();
-    const tf = timeframe();
-    return windows().filter((w) => {
-      if (key !== "all" && dayKey(w.windowStart) !== key) return false;
-      if (tf && !w.eventSlug.includes(`-updown-${tf}-`)) return false;
-      if (p && !w.eventSlug.startsWith(p)) return false;
-      return true;
-    });
-  });
+  const {
+    progress,
+    result,
+    positions,
+    resultStartedAt,
+    dialogOpen,
+    setDialogOpen,
+    openingId,
+    selectedRun,
+    setSelectedRun,
+    runChartRules,
+    chartRunId,
+    chartPositions,
+    chartLoadingId,
+    error,
+    setError,
+    applying,
+    setApplying,
+    applyMsg,
+    setApplyMsg,
+    applyErr,
+    setApplyErr,
+    loadRuns,
+    openRun,
+    launch,
+    toggleChartRun,
+    disposeRun,
+  } = run;
 
   const presets = createMemo(() => allPresetsForStrategy(engine(), userPresets()));
   const canApplySelected = createMemo(() => settingsForRun(selectedRun()) != null);
@@ -211,8 +179,6 @@ export function BacktestPage(): JSX.Element {
     const preset = findPresetById(id, userPresets());
     const resolvedId = (preset?.strategyId ?? strategyId) as StrategyId;
     if (!base) {
-      // Pas encore de live config : met à jour strategyId sur le form existant
-      // pour que Preset Run suive le select Moteur immédiatement.
       const cur = form();
       if (cur) {
         const f = { ...cur, strategyId: resolvedId };
@@ -368,38 +334,7 @@ export function BacktestPage(): JSX.Element {
     }
   }
 
-  function completenessPayload(): CompletenessRequest {
-    const ticks = Number(minTicks());
-    const gapSec = Number(maxGapSec());
-    const edge = Number(edgeSec());
-    return {
-      requireMinTicks: minTicksOn(),
-      minTicks: Number.isFinite(ticks) && ticks >= 1 ? Math.round(ticks) : 855,
-      requireMaxGap: maxGapOn(),
-      maxGapMs: Number.isFinite(gapSec) && gapSec > 0 ? Math.round(gapSec * 1000) : 2000,
-      requireEdge: edgeOn(),
-      maxEdgeGapMs: Number.isFinite(edge) && edge > 0 ? Math.round(edge * 1000) : 2000,
-    };
-  }
-
-  function reloadWindowsSoon(): void {
-    window.clearTimeout(windowsTimer);
-    windowsTimer = window.setTimeout(() => {
-      void loadWindows();
-    }, 400);
-  }
-
-  async function loadWindows(): Promise<void> {
-    window.clearTimeout(windowsTimer);
-    const res = await api.backtestWindows({
-      completeOnly: completeOnly(),
-      completeness: completenessPayload(),
-    });
-    setBacktestWindows(res.windows);
-    void loadSeriesFor(res.windows.slice(0, 20).map((w) => w.eventSlug));
-  }
-
-  async function loadWalletTrades(list: BacktestWindowMeta[]): Promise<void> {
+  async function loadWalletTrades(list: import("../types").BacktestWindowMeta[]): Promise<void> {
     const gen = ++walletGen;
     if (list.length === 0) {
       setWalletMarks([]);
@@ -448,190 +383,6 @@ export function BacktestPage(): JSX.Element {
     }
   }
 
-  async function loadRuns(): Promise<BacktestRunSummary[]> {
-    return loadRunsFromStore();
-  }
-
-  async function loadRunChartRules(
-    run: BacktestRunSummary,
-    request: BacktestRunRequestSummary | null,
-  ): Promise<void> {
-    setRunChartRules([]);
-    const sid =
-      request?.settings?.strategyId ??
-      request?.strategyId ??
-      run.result?.strategyId ??
-      run.request?.strategyId;
-    if (typeof sid !== "string" || !sid.startsWith("custom:")) {
-      return;
-    }
-    try {
-      const res = await api.strategyGet(sid);
-      const rules = (res.graph.chartRules ?? []).map((r) => ({
-        action: r.action as "buy" | "sell",
-        token: r.token as "cheap" | "favorite",
-        startSec: r.startSec,
-        endSec: r.endSec,
-        bandMin: r.bandMin ?? null,
-        bandMax: r.bandMax ?? null,
-      }));
-      setRunChartRules(rules);
-    } catch {
-      setRunChartRules([]);
-    }
-  }
-
-  async function openRun(run: BacktestRunSummary): Promise<void> {
-    setError(null);
-    setOpeningId(run.id);
-    try {
-      const st = await api.backtestStatus(run.id);
-      if (!st.result) {
-        setError(st.progress.error ?? "Résultat indisponible");
-        return;
-      }
-      setResult(st.result);
-      setPositions(st.positions);
-      if (chartRunId() === run.id) setChartPositions(st.positions);
-      setResultStartedAt(run.startedAt);
-      setSelectedRun({
-        ...run,
-        request: st.request ?? run.request,
-      });
-      await loadRunChartRules(run, st.request);
-      setApplyMsg(null);
-      setApplyErr(null);
-      setDialogOpen(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setOpeningId(null);
-    }
-  }
-
-  async function launch(): Promise<void> {
-    setError(null);
-    const current = form();
-    if (!current) {
-      setError("Preset non chargé");
-      return;
-    }
-    const errors = validateConfigForm(current, true, {
-      leadsWithEdge: current.strategyId === "edge-lead" || current.strategyId.startsWith("custom:"),
-    });
-    if (errors.length > 0) {
-      setError(errors[0] ?? "Preset invalide");
-      return;
-    }
-    const range = dateRange(dateKey(), filtered());
-    try {
-      const settings = formToSettings(current);
-      // Timeframe seul → toutes les familles de cette durée ; préfixe précis
-      // → une famille unique. Le run côté job filtre déjà sur ces listes.
-      const tf = timeframe();
-      const prefixes = prefix()
-        ? [prefix()]
-        : tf
-          ? prefixesForTimeframe()
-          : undefined;
-      const body = {
-        strategyId: current.strategyId,
-        completeOnly: completeOnly(),
-        completeness: completenessPayload(),
-        from: range?.from,
-        to: range?.to,
-        prefixes,
-        presetId: presetId() || undefined,
-        settings,
-      };
-      const started = await api.backtestStart(body);
-      setProgress({
-        runId: started.runId,
-        status: "running",
-        current: 0,
-        total: 0,
-        eventSlug: null,
-        pct: 0,
-      });
-      await loadRuns();
-      poll(started.runId);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    }
-  }
-
-  function poll(id: string): void {
-    window.clearInterval(pollTimer);
-    const gen = ++pollGen;
-    const tick = async (): Promise<void> => {
-      if (gen !== pollGen) return;
-      try {
-        const st = await api.backtestStatus(id);
-        if (gen !== pollGen) return;
-        setProgress(st.progress);
-        if (st.progress.status === "running") return;
-        window.clearInterval(pollTimer);
-        const list = await loadRuns();
-        if (gen !== pollGen) return;
-        if (chartRunId() === id) setChartPositions(st.positions);
-        const viewingOther = dialogOpen() && selectedRun()?.id !== id;
-        if (viewingOther) return;
-        setResult(st.result);
-        setPositions(st.positions);
-        if (st.progress.status === "done") {
-          const row = list.find((r) => r.id === id) ?? null;
-          setSelectedRun(
-            row ? { ...row, request: st.request ?? row.request } : row,
-          );
-          setResultStartedAt(row?.startedAt ?? Date.now());
-          setApplyMsg(null);
-          setApplyErr(null);
-          setDialogOpen(true);
-        }
-        if (st.progress.status === "error") setError(st.progress.error ?? "Erreur backtest");
-      } catch (err) {
-        if (gen !== pollGen) return;
-        window.clearInterval(pollTimer);
-        setError(err instanceof Error ? err.message : String(err));
-      }
-    };
-    void tick();
-    pollTimer = window.setInterval(() => {
-      void tick();
-    }, 250);
-  }
-
-  async function toggleChartRun(run: BacktestRunSummary): Promise<void> {
-    if (chartRunId() === run.id) {
-      chartGen += 1;
-      setChartRunId(null);
-      setChartPositions([]);
-      setChartLoadingId(null);
-      return;
-    }
-    const gen = ++chartGen;
-    setChartRunId(run.id);
-    if (selectedRun()?.id === run.id) {
-      setChartPositions(positions());
-    } else {
-      setChartPositions([]);
-    }
-    setChartLoadingId(run.id);
-    setError(null);
-    try {
-      const st = await api.backtestStatus(run.id);
-      if (gen !== chartGen) return;
-      setChartPositions(st.positions);
-    } catch (err) {
-      if (gen !== chartGen) return;
-      setChartRunId(null);
-      setChartPositions([]);
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      if (gen === chartGen) setChartLoadingId(null);
-    }
-  }
-
   onMount(() => {
     void (async () => {
       try {
@@ -654,7 +405,7 @@ export function BacktestPage(): JSX.Element {
       }
       try {
         const listRes = await api.strategyList();
-        setCustomEngines(listRes.engines.filter((engine) => !engine.native));
+        setCustomEngines(listRes.engines.filter((e) => !e.native));
       } catch {
         setCustomEngines([]);
       }
@@ -662,21 +413,17 @@ export function BacktestPage(): JSX.Element {
       await loadRuns();
     })();
 
-    // Raccourcis clavier
     const onKey = (e: KeyboardEvent): void => {
-      // Ctrl+Enter = lancer le backtest
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
         e.preventDefault();
         if (progress()?.status !== "running" && form()) void launch();
         return;
       }
-      // Ctrl+Shift+S = sauvegarder comme preset utilisateur (avant Ctrl+S)
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "S" || e.key === "s")) {
         e.preventDefault();
         if (form()) openSavePresetDialog();
         return;
       }
-      // Ctrl+S = enregistrer vers live
       if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === "s") {
         e.preventDefault();
         if (!saving() && form()) void savePresetLive();
@@ -686,11 +433,9 @@ export function BacktestPage(): JSX.Element {
     window.addEventListener("keydown", onKey);
 
     return () => {
-      pollGen += 1;
-      chartGen += 1;
+      disposeRun();
+      disposeFilters();
       walletGen += 1;
-      window.clearInterval(pollTimer);
-      window.clearTimeout(windowsTimer);
       window.removeEventListener("keydown", onKey);
     };
   });
@@ -724,222 +469,61 @@ export function BacktestPage(): JSX.Element {
         </div>
       </header>
 
-      <div class="bt-toolbar">
-        <label>
-          Date
-          <select value={dateKey()} onChange={(e) => setDateKey(e.currentTarget.value)}>
-            <option value="all">Toutes</option>
-            <For each={dates()}>{(d) => <option value={d}>{d}</option>}</For>
-          </select>
-        </label>
-        <label title="Durée de fenêtre (dérivée des données enregistrées)">
-          Timeframe
-          <select
-            value={timeframe()}
-            onChange={(e) => {
-              setTimeframe(e.currentTarget.value);
-              // Un préfixe d'un autre timeframe ne matcherait rien : reset.
-              setPrefix("");
-            }}
-          >
-            <option value="">Tous</option>
-            <For each={timeframes()}>
-              {(tf) => <option value={tf}>{tf}</option>}
-            </For>
-          </select>
-        </label>
-        <label>
-          Marché
-          <select value={prefix()} onChange={(e) => setPrefix(e.currentTarget.value)}>
-            <option value="">Tous</option>
-            <For each={prefixesForTimeframe()}>
-              {(p) => <option value={p}>{p}</option>}
-            </For>
-          </select>
-        </label>
-        <label class="bt-check" title="Ne garder que les fenêtres qui passent les règles ci-contre">
-          <input
-            type="checkbox"
-            checked={completeOnly()}
-            onChange={(e) => {
-              setCompleteOnly(e.currentTarget.checked);
-              void loadWindows();
-            }}
-          />
-          Complets
-        </label>
-        <div class="bt-rules">
-          <label
-            class={`bt-rule${minTicksOn() ? "" : " is-off"}`}
-            title="Minimum de ticks (les deux outcomes) dans la fenêtre"
-          >
-            <input
-              type="checkbox"
-              checked={minTicksOn()}
-              onChange={(e) => {
-                setMinTicksOn(e.currentTarget.checked);
-                void loadWindows();
-              }}
-            />
-            Ticks
-            <input
-              type="number"
-              min="1"
-              max="900"
-              step="1"
-              value={minTicks()}
-              disabled={!minTicksOn()}
-              onInput={(e) => {
-                setMinTicks(e.currentTarget.value);
-                reloadWindowsSoon();
-              }}
-            />
-          </label>
-          <label
-            class={`bt-rule${maxGapOn() ? "" : " is-off"}`}
-            title="Écart max entre deux ticks successifs"
-          >
-            <input
-              type="checkbox"
-              checked={maxGapOn()}
-              onChange={(e) => {
-                setMaxGapOn(e.currentTarget.checked);
-                void loadWindows();
-              }}
-            />
-            Trou
-            <input
-              type="number"
-              min="0.5"
-              max="900"
-              step="0.5"
-              value={maxGapSec()}
-              disabled={!maxGapOn()}
-              onInput={(e) => {
-                setMaxGapSec(e.currentTarget.value);
-                reloadWindowsSoon();
-              }}
-            />
-            s
-          </label>
-          <label
-            class={`bt-rule${edgeOn() ? "" : " is-off"}`}
-            title="Premier / dernier tick à moins de N secondes des bords de fenêtre"
-          >
-            <input
-              type="checkbox"
-              checked={edgeOn()}
-              onChange={(e) => {
-                setEdgeOn(e.currentTarget.checked);
-                void loadWindows();
-              }}
-            />
-            Bords
-            <input
-              type="number"
-              min="0.5"
-              max="900"
-              step="0.5"
-              value={edgeSec()}
-              disabled={!edgeOn()}
-              onInput={(e) => {
-                setEdgeSec(e.currentTarget.value);
-                reloadWindowsSoon();
-              }}
-            />
-            s
-          </label>
-        </div>
-        <label class="bt-check" title="Couper les courbes sur les trous">
-          <input
-            type="checkbox"
-            checked={cutGaps()}
-            onChange={(e) => setCutGaps(e.currentTarget.checked)}
-          />
-          Trous
-        </label>
-        <label
-          class="bt-check"
-          title={
-            walletConfigured() === false
-              ? "FUNDER_ADDRESS manquant — pas de wallet à interroger"
-              : "Afficher les fills Data API du wallet sur le graphique"
-          }
-        >
-          <input
-            type="checkbox"
-            checked={walletOn()}
-            disabled={walletConfigured() === false}
-            onChange={(e) => setWalletOn(e.currentTarget.checked)}
-          />
-          Wallet
-          <Show when={walletOn()}>
-            <span class="bt-wallet-count">{walletLoading() ? "…" : walletMarks().length}</span>
-          </Show>
-        </label>
-        <button
-          class="btn"
-          type="button"
-          disabled={lowerLowsLoading() || filtered().length === 0}
-          onClick={() => void loadLowerLows(filtered().map((w) => w.eventSlug))}
-          title="Analyser les lower-lows sur les marchés affichés"
-        >
-          {lowerLowsLoading() ? "Lower-lows…" : "Analyser Lower-lows"}
-        </button>
-        <label>
-          Moteur
-          <select
-            value={engine()}
-            onChange={(e) => {
-              const id = e.currentTarget.value as StrategyId;
-              setEngine(id);
-              const first = allPresetsForStrategy(id, userPresets())[0];
-              setPresetId(first?.id ?? "");
-              loadPresetIntoForm(first?.id ?? "", id);
-            }}
-          >
-            <For each={STRATEGY_ENGINE_OPTIONS}>
-              {(option) => <option value={option.id}>{option.label}</option>}
-            </For>
-            <For each={customEngines()}>
-              {(engine) => (
-                <option value={engine.id}>
-                  {engine.name} ({engine.id})
-                </option>
-              )}
-            </For>
-          </select>
-        </label>
-        <label>
-          Preset
-          <select
-            value={presetId()}
-            onChange={(e) => {
-              const id = e.currentTarget.value;
-              setPresetId(id);
-              loadPresetIntoForm(id, engine());
-            }}
-          >
-            <option value="">Personnalisé</option>
-            <For each={presets()}>
-              {(p) => (
-                <option value={p.id}>
-                  {p.isUser ? "★ " : ""}{p.name}
-                </option>
-              )}
-            </For>
-          </select>
-        </label>
-        <button
-          class="btn"
-          type="button"
-          disabled={progress()?.status === "running" || (completeOnly() && filtered().length === 0) || !form() || hasInlineErrors()}
-          onClick={() => void launch()}
-          title={hasInlineErrors() ? "Corrigez les erreurs de validation avant de lancer" : "Ctrl+Enter"}
-        >
-          Lancer
-        </button>
-      </div>
+      <BacktestFilterBar
+        dateKey={dateKey}
+        setDateKey={setDateKey}
+        dates={dates}
+        timeframe={timeframe}
+        setTimeframe={setTimeframe}
+        timeframes={timeframes}
+        prefix={prefix}
+        setPrefix={setPrefix}
+        prefixesForTimeframe={prefixesForTimeframe}
+        completeOnly={completeOnly}
+        setCompleteOnly={setCompleteOnly}
+        minTicksOn={minTicksOn}
+        setMinTicksOn={setMinTicksOn}
+        minTicks={minTicks}
+        setMinTicks={setMinTicks}
+        maxGapOn={maxGapOn}
+        setMaxGapOn={setMaxGapOn}
+        maxGapSec={maxGapSec}
+        setMaxGapSec={setMaxGapSec}
+        edgeOn={edgeOn}
+        setEdgeOn={setEdgeOn}
+        edgeSec={edgeSec}
+        setEdgeSec={setEdgeSec}
+        cutGaps={cutGaps}
+        setCutGaps={setCutGaps}
+        walletOn={walletOn}
+        setWalletOn={setWalletOn}
+        walletConfigured={walletConfigured}
+        walletLoading={walletLoading}
+        walletMarksCount={() => walletMarks().length}
+        lowerLowsLoading={lowerLowsLoading}
+        filteredCount={() => filtered().length}
+        onAnalyzeLowerLows={() => void loadLowerLows(filtered().map((w) => w.eventSlug))}
+        onReloadWindows={() => void loadWindows()}
+        onReloadWindowsSoon={() => reloadWindowsSoon()}
+        engine={engine}
+        customEngines={customEngines}
+        presetId={presetId}
+        presets={presets}
+        onEngineChange={(id) => {
+          setEngine(id);
+          const first = allPresetsForStrategy(id, userPresets())[0];
+          setPresetId(first?.id ?? "");
+          loadPresetIntoForm(first?.id ?? "", id);
+        }}
+        onPresetChange={(id) => {
+          setPresetId(id);
+          loadPresetIntoForm(id, engine());
+        }}
+        progress={progress}
+        form={form}
+        hasInlineErrors={hasInlineErrors}
+        onLaunch={() => void launch()}
+      />
 
       <Show when={!persistence()}>
         <p class="bt-empty">Persistence désactivée — aucun snapshot local.</p>
@@ -994,7 +578,7 @@ export function BacktestPage(): JSX.Element {
                 navigate("/strategy-editor");
               }
             }}
-            onStrategyActivated={(config) => {
+            onStrategyActivated={(config: BotConfig) => {
               setConfig(config);
               const f = applySettingsToForm(config, { strategyId: config.strategyId ?? engine() });
               setForm(f);
@@ -1015,8 +599,8 @@ export function BacktestPage(): JSX.Element {
           openingId={openingId()}
           chartRunId={chartRunId()}
           chartLoadingId={chartLoadingId()}
-          onOpen={(run) => void openRun(run)}
-          onToggleChart={(run) => void toggleChartRun(run)}
+          onOpen={(r) => void openRun(r)}
+          onToggleChart={(r) => void toggleChartRun(r)}
         />
       </div>
 
@@ -1083,35 +667,4 @@ export function BacktestPage(): JSX.Element {
       </Show>
     </div>
   );
-}
-
-function dayKey(windowStart: number): string {
-  const d = new Date(windowStart * 1000);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
-/** Tri des timeframes par durée croissante ("5m" avant "15m" avant "1h"). */
-function byDurationAsc(a: string, b: string): number {
-  const toSec = (tf: string): number => {
-    const m = tf.match(/^(\d+)([mh])$/);
-    if (!m) return Number.MAX_SAFE_INTEGER;
-    return Number(m[1]) * (m[2] === "h" ? 3600 : 60);
-  };
-  return toSec(a) - toSec(b);
-}
-
-function dateRange(
-  key: string,
-  list: BacktestWindowMeta[],
-): { from: number; to: number } | undefined {
-  if (key === "all" || list.length === 0) return undefined;
-  const day = list.filter((w) => dayKey(w.windowStart) === key);
-  if (day.length === 0) return undefined;
-  return {
-    from: Math.min(...day.map((w) => w.windowStart)),
-    to: Math.max(...day.map((w) => w.windowStart)),
-  };
 }

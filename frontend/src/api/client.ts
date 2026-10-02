@@ -461,8 +461,15 @@ export const api = {
     request<{ positions: SimulatedPosition[] }>(
       `/api/sim/positions?status=${status}`,
     ),
-  simTrades: (limit = 200) =>
-    request<{ trades: SimTrade[] }>(`/api/sim/trades?limit=${limit}`),
+  simTrades: (
+    limit = 200,
+    opts?: { slug?: string; filledOnly?: boolean },
+  ) => {
+    const params = new URLSearchParams({ limit: String(limit) });
+    if (opts?.slug) params.set("slug", opts.slug);
+    if (opts?.filledOnly) params.set("filled", "1");
+    return request<{ trades: SimTrade[] }>(`/api/sim/trades?${params.toString()}`);
+  },
   simResting: (slug: string) =>
     request<{ resting: SimRestingOrder[] }>(
       `/api/sim/resting?slug=${encodeURIComponent(slug)}`,

@@ -43,7 +43,7 @@ import {
   removeUserPreset,
 } from "../stores/userPresetsStore";
 import { dispatchEvent } from "../stores/dispatcher";
-import { markets } from "../stores/marketStore";
+import { liveBidForToken, marketTitleForToken } from "../stores/marketStore";
 import {
   replaceSimLists,
   replaceSimRestingAndJournal,
@@ -67,25 +67,6 @@ import { addLog } from "../stores/logStore";
 import { pushError } from "../stores/toastStore";
 import "../styles/sim.css";
 
-/** Titre du marché pour un tokenId (lookup dans le store markets SSE). */
-function marketTitleForToken(tokenId: string): string {
-  for (const m of Object.values(markets)) {
-    if (m.books.some((b) => b.tokenId === tokenId)) return m.title;
-  }
-  return tokenId.length > 14 ? `${tokenId.slice(0, 14)}…` : tokenId;
-}
-
-/**
- * Bid live d'un tokenId (store markets SSE). Appelée dans le JSX d'une ligne :
- * les lectures du store sont trackées → la cellule se met à jour à chaque tick.
- */
-function liveBidForToken(tokenId: string): number | null {
-  for (const m of Object.values(markets)) {
-    const book = m.books.find((b) => b.tokenId === tokenId);
-    if (book?.bestBid != null) return book.bestBid;
-  }
-  return null;
-}
 
 /** P&L non réalisé d'une position ouverte, au prix de sortie (bid live). */
 function unrealizedPnl(p: SimulatedPosition): number | null {

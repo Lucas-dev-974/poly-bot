@@ -6,6 +6,26 @@ import type { MarketView, TokenBook, UpDownEvent } from "../types";
 export const [markets, setMarkets] = createStore<Record<string, MarketView>>({});
 
 /**
+ * Index tokenId → { slug, book } maintenu à chaque upsert/retain/clear.
+ * Évite les scans O(markets × rows) pour live bid / titre sur SimulationPage.
+ * Record + createStore pour tracking Solid (pas de Map).
+ */
+export type TokenMarketRef = { slug: string; book: TokenBook };
+export const [tokenIndex, setTokenIndex] = createStore<Record<string, TokenMarketRef>>({});
+
+
+/** Rebuild complet : peu de marchés actifs → O(markets×books) négligeable vs rows UI. */
+function syncTokenIndex(): void {
+  const idx: Record<string, TokenMarketRef> = {};
+  for (const [slug, market] of Object.entries(markets)) {
+    for (const book of market.books) {
+      idx[book.tokenId] = { slug, book };
+    }
+  }
+  setTokenIndex(reconcile(idx));
+}
+
+/**
  * Comparaison champ-à-champ d'un TokenBook : identité par VALEUR, pas par
  * référence. Les books arrivent du SSE comme objets neufs à chaque tick ;
  * comparer par valeur permet de réutiliser les objets existants et donc
@@ -58,6 +78,7 @@ export function upsertMarket(event: UpDownEvent, books: TokenBook[]): void {
       books: nextBooks,
       reverseTokenId: prev.reverseTokenId,
     });
+    syncTokenIndex();
     return;
   }
   setMarkets(event.slug, {
@@ -65,6 +86,7 @@ export function upsertMarket(event: UpDownEvent, books: TokenBook[]): void {
     books,
     reverseTokenId: markets[event.slug]?.reverseTokenId,
   });
+  syncTokenIndex();
 }
 
 export function setReverseToken(slug: string, tokenId: string): void {
@@ -73,6 +95,7 @@ export function setReverseToken(slug: string, tokenId: string): void {
 
 export function clearMarkets(): void {
   setMarkets(reconcile({}));
+  setTokenIndex(reconcile({}));
 }
 
 export function retainMarkets(slugs: string[]): void {
@@ -82,6 +105,7 @@ export function retainMarkets(slugs: string[]): void {
     if (keep.has(slug)) next[slug] = market;
   }
   setMarkets(reconcile(next));
+  syncTokenIndex();
 }
 
 export function marketList(now = Date.now()): MarketView[] {
@@ -89,4 +113,31 @@ export function marketList(now = Date.now()): MarketView[] {
   return Object.values(markets)
     .filter((market) => market.windowEnd >= nowSec)
     .sort((a, b) => b.windowEnd - a.windowEnd);
+}
+
+/** Lookup O(1) : book live pour un tokenId (index maintenu). */
+export function bookForToken(tokenId: string): TokenBook | undefined {
+  return tokenIndex[tokenId]?.book;
+}
+
+/** Lookup O(1) : marché (MarketView) pour un tokenId. */
+export function marketForToken(tokenId: string): MarketView | undefined {
+  const ref = tokenIndex[tokenId];
+  return ref ? markets[ref.slug] : undefined;
+}
+
+/** Bid live O(1) — utilisé par SimulationPage (unrealized PnL / resting). */
+export function liveBidForToken(tokenId: string): number | null {
+  const bid = tokenIndex[tokenId]?.book.bestBid;
+  return bid != null ? bid : null;
+}
+
+/** Titre marché O(1) pour un tokenId ; fallback tronqué si inconnu. */
+export function marketTitleForToken(tokenId: string): string {
+  const ref = tokenIndex[tokenId];
+  if (ref) {
+    const m = markets[ref.slug];
+    if (m?.title) return m.title;
+  }
+  return tokenId.length > 14 ? `${tokenId.slice(0, 14)}…` : tokenId;
 }

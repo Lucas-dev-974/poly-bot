@@ -108,8 +108,15 @@ export function handleSimTrades(
 ): void {
   const limitRaw = Number(url.searchParams.get("limit") ?? 200);
   const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(1, limitRaw), 1000) : 200;
+  const slug = (url.searchParams.get("slug") ?? "").trim();
+  const filledParam = (url.searchParams.get("filled") ?? "").trim();
+  const filledOnly = filledParam === "1" || filledParam.toLowerCase() === "true";
+  const opts =
+    slug || filledOnly
+      ? { ...(slug ? { slug } : {}), ...(filledOnly ? { filledOnly: true } : {}) }
+      : undefined;
   res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify({ trades: engine.getRecentTrades(limit) }));
+  res.end(JSON.stringify({ trades: engine.getRecentTrades(limit, opts) }));
 }
 
 export function handleSimResting(

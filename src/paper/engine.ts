@@ -377,8 +377,11 @@ export class PaperTradingEngine {
     }));
   }
 
-  getRecentTrades(limit: number): SimTradeRow[] {
-    return this.repos?.simTrades.recent(limit) ?? [];
+  getRecentTrades(
+    limit: number,
+    opts?: { slug?: string; filledOnly?: boolean },
+  ): SimTradeRow[] {
+    return this.repos?.simTrades.recent(limit, opts) ?? [];
   }
 
   private simConfigState() {

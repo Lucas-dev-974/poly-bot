@@ -313,7 +313,30 @@ export class SimTradeRepository {
     );
   }
 
-  recent(limit: number): SimTradeRow[] {
+  recent(
+    limit: number,
+    opts?: { slug?: string; filledOnly?: boolean },
+  ): SimTradeRow[] {
+    const slug = opts?.slug?.trim() || "";
+    const filledOnly = opts?.filledOnly === true;
+    if (slug && filledOnly) {
+      return this.db.all<SimTradeRow>(
+        "SELECT * FROM sim_trades WHERE eventSlug = ? AND filled = 1 ORDER BY ts DESC, id DESC LIMIT ?",
+        [slug, limit],
+      );
+    }
+    if (slug) {
+      return this.db.all<SimTradeRow>(
+        "SELECT * FROM sim_trades WHERE eventSlug = ? ORDER BY ts DESC, id DESC LIMIT ?",
+        [slug, limit],
+      );
+    }
+    if (filledOnly) {
+      return this.db.all<SimTradeRow>(
+        "SELECT * FROM sim_trades WHERE filled = 1 ORDER BY ts DESC, id DESC LIMIT ?",
+        [limit],
+      );
+    }
     return this.db.all<SimTradeRow>(
       "SELECT * FROM sim_trades ORDER BY ts DESC, id DESC LIMIT ?",
       [limit],

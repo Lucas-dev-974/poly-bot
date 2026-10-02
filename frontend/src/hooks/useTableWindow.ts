@@ -40,6 +40,7 @@ export function useTableWindow(
   const [viewportH, setViewportH] = createSignal(maxHeightPx);
 
   let ro: ResizeObserver | undefined;
+  let scrollerEl: HTMLElement | undefined;
 
   const active = createMemo(() => rowCount() >= threshold);
   const range = createMemo(() => {
@@ -57,16 +58,19 @@ export function useTableWindow(
       : undefined,
   );
 
-  // Si la liste raccourcit sous le scroll courant, ramener scrollTop pour
-  // éviter un viewport vide (padTop énorme + slice vide).
+  // Si la liste raccourcit sous le scroll courant, ramener scrollTop (signal +
+  // DOM) pour éviter un viewport vide (padTop énorme + slice vide / scroll
+  // passé la fin du contenu avant le clamp navigateur).
   createEffect(() => {
     const n = rowCount();
     if (!active()) {
       if (scrollTop() !== 0) setScrollTop(0);
+      if (scrollerEl && scrollerEl.scrollTop !== 0) scrollerEl.scrollTop = 0;
       return;
     }
     const maxScroll = Math.max(0, n * rowHeight - viewportH());
     if (scrollTop() > maxScroll) setScrollTop(maxScroll);
+    if (scrollerEl && scrollerEl.scrollTop > maxScroll) scrollerEl.scrollTop = maxScroll;
   });
 
   function onScroll(e: Event): void {
@@ -76,6 +80,7 @@ export function useTableWindow(
   function setRef(el: HTMLElement | undefined): void {
     ro?.disconnect();
     ro = undefined;
+    scrollerEl = el;
     if (!el) return;
     setViewportH(el.clientHeight || maxHeightPx);
     setScrollTop(el.scrollTop);
@@ -89,6 +94,7 @@ export function useTableWindow(
   onCleanup(() => {
     ro?.disconnect();
     ro = undefined;
+    scrollerEl = undefined;
   });
 
   function slice<T>(items: readonly T[]): T[] {

@@ -2,10 +2,10 @@ import { For, Show, type Accessor, type Setter } from "solid-js";
 import type { JSX } from "solid-js";
 import type { StrategyEngineSummary } from "../../api/client";
 import {
-  STRATEGY_ENGINE_OPTIONS,
   type AnyPreset,
   type StrategyId,
 } from "../../config/strategyPresets";
+import { EngineSelect, PresetSelect } from "../strategy/EnginePresetSelects";
 import type { BacktestProgress } from "../../types";
 import type { ConfigFormState } from "../../utils/configForm";
 
@@ -218,38 +218,20 @@ export function BacktestFilterBar(props: Props): JSX.Element {
       </button>
       <label>
         Moteur
-        <select
+        <EngineSelect
           value={props.engine()}
-          onChange={(e) => props.onEngineChange(e.currentTarget.value as StrategyId)}
-        >
-          <For each={STRATEGY_ENGINE_OPTIONS}>
-            {(option) => <option value={option.id}>{option.label}</option>}
-          </For>
-          <For each={props.customEngines()}>
-            {(engine) => (
-              <option value={engine.id}>
-                {engine.name} ({engine.id})
-              </option>
-            )}
-          </For>
-        </select>
+          onChange={(id) => props.onEngineChange(id)}
+          customEngines={props.customEngines()}
+        />
       </label>
       <label>
         Preset
-        <select
+        <PresetSelect
           value={props.presetId()}
-          onChange={(e) => props.onPresetChange(e.currentTarget.value)}
-        >
-          <option value="">Personnalisé</option>
-          <For each={props.presets()}>
-            {(p) => (
-              <option value={p.id}>
-                {p.isUser ? "★ " : ""}
-                {p.name}
-              </option>
-            )}
-          </For>
-        </select>
+          onChange={(id) => props.onPresetChange(id)}
+          presets={props.presets()}
+          emptyLabel="Personnalise"
+        />
       </label>
       <button
         class="btn"

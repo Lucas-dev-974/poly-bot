@@ -1,9 +1,9 @@
 /**
- * Parse la fenêtre temporelle d'un marché up/down depuis son slug.
- * Format: {asset}-updown-{durée}-{unix_start_ts}
- * Ex: btc-updown-15m-1788287400 → start=1788287400, end=1788288300 (15 min)
- *     btc-updown-5m-1781178900  → start=1781178900, end=1781179200 (5 min)
- *     btc-updown-4h-...         → 4 heures
+ * Parse la fen├¬tre temporelle d'un march├® up/down depuis son slug.
+ * Format: {asset}-updown-{dur├®e}-{unix_start_ts}
+ * Ex: btc-updown-15m-1788287400 ÔåÆ start=1788287400, end=1788288300 (15 min)
+ *     btc-updown-5m-1781178900  ÔåÆ start=1781178900, end=1781179200 (5 min)
+ *     btc-updown-4h-...         ÔåÆ 4 heures
  */
 export interface MarketWindow {
   start: number; // secondes Unix
@@ -42,9 +42,9 @@ export function parseSlugWindow(slug: string): MarketWindow | null {
 }
 
 /**
- * Date/heure de début du créneau telle qu'affichée dans le titre.
+ * Date/heure de d├®but du cr├®neau telle qu'affich├®e dans le titre.
  * Ex: "Bitcoin Up or Down - September 7, 10:30PM-10:45PM ET"
- * Ne pas utiliser `timestamp` API : c'est l'heure de redeem, pas le marché.
+ * Ne pas utiliser `timestamp` API : c'est l'heure de redeem, pas le march├®.
  */
 export function parseTitleWindowMs(title: string, endDate?: string): number {
   const match = title.match(
@@ -63,7 +63,7 @@ export function parseTitleWindowMs(title: string, endDate?: string): number {
   return Number.isFinite(ms) ? ms : 0;
 }
 
-/** Instant de référence du créneau marché (pas l'heure de redeem). */
+/** Instant de r├®f├®rence du cr├®neau march├® (pas l'heure de redeem). */
 export function marketRecencyMs(position: {
   slug: string;
   title?: string;
@@ -87,4 +87,29 @@ export function l1Spread(
   if (bid == null || ask == null) return null;
   const spread = ask - bid;
   return Number.isFinite(spread) ? spread : null;
+}
+
+/**
+ * Slug family (prefix): slug always ends with -<epoch-sec 10 digits>.
+ * Mirror of src/utils/market.ts (backend).
+ */
+export function prefixOfSlug(slug: string): string {
+  return slug.replace(/-\d{10}$/, "");
+}
+
+/** Countdown urgency thresholds (ms). */
+const HOT_MS = 5 * 60 * 1000;
+const WARM_MS = 15 * 60 * 1000;
+
+/**
+ * Countdown urgency CSS class.
+ * - With base (e.g. "am-countdown"): returns "am-countdown am-countdown--hot" etc.
+ * - Without base: returns only the modifier ("am-countdown--hot") or "".
+ */
+export function countdownClass(windowEnd: number, now: number, base = ""): string {
+  const left = windowEnd * 1000 - now;
+  const mod =
+    left <= HOT_MS ? "am-countdown--hot" : left <= WARM_MS ? "am-countdown--warm" : "";
+  if (!base) return mod;
+  return mod ? `${base} ${mod}` : base;
 }

@@ -1,47 +1,14 @@
-import { onCleanup, onMount } from "solid-js";
-import type { BotEvent } from "../types";
-import { addLog } from "../stores/logStore";
-import {
-  markSseEvent,
-  markSseError,
-  markSseOpen,
-} from "../stores/sseHealthStore";
+import { onMount } from "solid-js";
+import { startSse } from "../transport/sse";
 
 /**
- * SSE connection to /events with native EventSource auto-reconnect.
- * Logs a single "connection lost" message per outage (not per retry).
- * Met aussi à jour sseHealthStore (lastEventAt / connected) pour le polling
- * adaptatif des pages.
+ * Ensures the app-wide singleton SSE is running.
+ * Prefer calling startSse() once from Root; this hook remains for any
+ * legacy mount that still wants a declarative start without a second
+ * EventSource (startSse is idempotent).
  */
-export function useEventSource(onEvent: (event: BotEvent) => void): void {
-  let wasConnected = false;
-  let loggedDisconnect = false;
-
+export function useEventSource(): void {
   onMount(() => {
-    const es = new EventSource("/events?replay=0");
-
-    es.onopen = () => {
-      wasConnected = true;
-      loggedDisconnect = false; // reset pour la prochaine déconnexion
-      markSseOpen();
-    };
-    es.onmessage = (msg) => {
-      markSseEvent();
-      try {
-        onEvent(JSON.parse(msg.data) as BotEvent);
-      } catch {
-        /* ignore malformed */
-      }
-    };
-
-    es.onerror = () => {
-      markSseError();
-      if (wasConnected && !loggedDisconnect) {
-        addLog("Connexion SSE perdue, reconnexion…", undefined, true);
-        loggedDisconnect = true;
-      }
-    };
-
-    onCleanup(() => es.close());
+    startSse();
   });
 }

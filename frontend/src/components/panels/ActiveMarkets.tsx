@@ -11,6 +11,7 @@ import {
   useMarketRulesAutoRefresh,
 } from "../../stores/marketRulesStore";
 import { countdown, fmtPrice, fmtShares, pct, fmtSpread } from "../../utils/format";
+import { countdownClass, prefixOfSlug } from "../../utils/market";
 import { api } from "../../api/client";
 import { pushInfo } from "../../stores/toastStore";
 import type { MarketView, TokenBook } from "../../types";
@@ -18,24 +19,8 @@ import type { MarketView, TokenBook } from "../../types";
 /** Minimum CLOB : un ordre sous 5 shares est refusé par le venue. */
 const MIN_SHARES = 5;
 
-/** Seuils d'urgence du compte à rebours (ms). */
-const HOT_MS = 5 * 60 * 1000;
-const WARM_MS = 15 * 60 * 1000;
 
-/**
- * Famille (préfixe) d'un slug : miroir de `prefixOfSlug` (src/utils/market.ts).
- * Le slug se termine toujours par -<epoch-sec à 10 chiffres>.
- */
-function prefixOfSlug(slug: string): string {
-  return slug.replace(/-\d{10}$/, "");
-}
 
-function countdownClass(windowEnd: number, now: number): string {
-  const left = windowEnd * 1000 - now;
-  if (left <= HOT_MS) return "am-countdown am-countdown--hot";
-  if (left <= WARM_MS) return "am-countdown am-countdown--warm";
-  return "am-countdown";
-}
 
 /** underdog = celui dont l'ask est le moins cher (jambe achetée par le bot). */
 function roleFor(book: TokenBook, books: TokenBook[]): "underdog" | "favorite" {
@@ -348,7 +333,7 @@ export function ActiveMarkets(props: { now: number }): JSX.Element {
                     </a>
                     <div class="am-card__meta">
                       <span
-                        class={countdownClass(m.windowEnd, props.now)}
+                        class={countdownClass(m.windowEnd, props.now, "am-countdown")}
                         title="Temps restant avant la fin de la fenêtre"
                       >
                         ⏱ {countdown(m.windowEnd, props.now)}

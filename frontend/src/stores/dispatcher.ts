@@ -23,6 +23,7 @@ import { setWsStatus } from "./wsStore";
 import { setStrategyStatus } from "./strategyStatusStore";
 import { setSimWhipsaw } from "./simWhipsawStore";
 import { pushError, pushInfo } from "./toastStore";
+import { setLiveBalance } from "./balanceStore";
 
 /**
  * Route chaque événement SSE vers les stores correspondants.
@@ -35,7 +36,7 @@ export function dispatchEvent(event: BotEvent): void {
       break;
 
     case "balance":
-      // Géré par App via balanceStore (interception avant dispatcher)
+      setLiveBalance(event.balance);
       break;
 
     case "withdrawal": {

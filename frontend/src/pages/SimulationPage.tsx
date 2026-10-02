@@ -17,9 +17,9 @@ import {
 } from "../utils/chart-target-adapters";
 import {
   allPresetsForStrategy,
-  STRATEGY_ENGINE_OPTIONS,
   type StrategyId,
 } from "../config/strategyPresets";
+import { EngineSelect, PresetSelect } from "../components/strategy/EnginePresetSelects";
 import { SIM_5M_STRATEGIES, SIM_5M_FILTER_FIELDS } from "../config/sim5mStrategies";
 import {
   COMMON_PARAM_SECTIONS,
@@ -34,7 +34,6 @@ import {
   formToSettings,
   type ConfigFormState,
 } from "../utils/configForm";
-import { useEventSource } from "../hooks/useEventSource";
 import { useAdaptiveSync } from "../hooks/useAdaptiveSync";
 import { useClock, clockNow } from "../stores/clockStore";
 import {
@@ -42,7 +41,6 @@ import {
   commitUserPreset,
   removeUserPreset,
 } from "../stores/userPresetsStore";
-import { dispatchEvent } from "../stores/dispatcher";
 import { liveBidForToken, marketTitleForToken } from "../stores/marketStore";
 import {
   replaceSimLists,
@@ -97,9 +95,6 @@ export function SimulationPage(): JSX.Element {
   // Dialog graphique d'historique de marché (MarketHistoryModal) : cible issue
   // d'une position résolue ou d'une ligne du journal des ordres.
   const [chartTarget, setChartTarget] = createSignal<ChartTarget | null>(null);
-
-  // SSE → dispatcher (simStore + marketStore pour « Marché actif »)
-  useEventSource(dispatchEvent);
 
   // Sync REST adaptative (2 vitesses) : 60 s si SSE vivant, 10 s si perdu
   // (le SSE est replay=0 → le REST est le seul réconciliateur après coupure).
@@ -767,37 +762,25 @@ export function SimulationPage(): JSX.Element {
           <div class="sim-cb-fields">
             <label class="sim-field">
               Moteur
-              <select
+              <EngineSelect
                 value={engine()}
                 disabled={sending()}
-                onChange={(e) => {
-                  const id = e.currentTarget.value as StrategyId;
+                onChange={(id) => {
                   void changeEngine(id);
                 }}
-              >
-                <For each={STRATEGY_ENGINE_OPTIONS}>
-                  {(opt) => <option value={opt.id}>{opt.label}</option>}
-                </For>
-              </select>
+              />
             </label>
             <label class="sim-field">
               Preset
-              <select
+              <PresetSelect
                 value={presetId()}
                 disabled={sending()}
-                onChange={(e) => {
-                  void changePreset(e.currentTarget.value);
+                onChange={(id) => {
+                  void changePreset(id);
                 }}
-              >
-                <option value="">Aucun preset</option>
-                <For each={presets()}>
-                  {(p) => (
-                    <option value={p.id}>
-                      {p.isUser ? "★ " : ""}{p.name}
-                    </option>
-                  )}
-                </For>
-              </select>
+                presets={presets()}
+                emptyLabel="Aucun preset"
+              />
             </label>
           </div>
           <Show when={currentPreset()}>

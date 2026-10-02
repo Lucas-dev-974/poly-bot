@@ -1,10 +1,25 @@
-import { For, createSignal } from "solid-js";
+import { For, Show, createSignal, lazy, Suspense } from "solid-js";
 import type { JSX } from "solid-js";
-import { TABS, type TabId } from "../guide/data";
-import { ArchTab, HedgeTab, ShipTab, StoryTab, UiTab } from "../guide/GuideTabs";
+import { TABS, type TabId } from "../guide/tabsMeta";
 import { GuidePill, GuideRow, GuideStack, GuideStat } from "../guide/GuideUi";
 import { navigate } from "../router";
 import "../styles/guide.css";
+
+const StoryTab = lazy(() =>
+  import("../guide/tabs/StoryTab").then((m) => ({ default: m.StoryTab })),
+);
+const ArchTab = lazy(() =>
+  import("../guide/tabs/ArchTab").then((m) => ({ default: m.ArchTab })),
+);
+const HedgeTab = lazy(() =>
+  import("../guide/tabs/HedgeTab").then((m) => ({ default: m.HedgeTab })),
+);
+const UiTab = lazy(() =>
+  import("../guide/tabs/UiTab").then((m) => ({ default: m.UiTab })),
+);
+const ShipTab = lazy(() =>
+  import("../guide/tabs/ShipTab").then((m) => ({ default: m.ShipTab })),
+);
 
 export function StrategyGuidePage(): JSX.Element {
   const [tab, setTab] = createSignal<TabId>("story");
@@ -56,11 +71,23 @@ export function StrategyGuidePage(): JSX.Element {
             </For>
           </GuideRow>
 
-          {tab() === "story" && <StoryTab />}
-          {tab() === "arch" && <ArchTab />}
-          {tab() === "hedge" && <HedgeTab />}
-          {tab() === "ui" && <UiTab />}
-          {tab() === "ship" && <ShipTab />}
+          <Suspense fallback={<div class="page-loading">Chargement…</div>}>
+            <Show when={tab() === "story"}>
+              <StoryTab />
+            </Show>
+            <Show when={tab() === "arch"}>
+              <ArchTab />
+            </Show>
+            <Show when={tab() === "hedge"}>
+              <HedgeTab />
+            </Show>
+            <Show when={tab() === "ui"}>
+              <UiTab />
+            </Show>
+            <Show when={tab() === "ship"}>
+              <ShipTab />
+            </Show>
+          </Suspense>
         </GuideStack>
       </main>
     </div>

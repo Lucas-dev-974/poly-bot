@@ -1,7 +1,8 @@
 import { For, Show, createEffect, createMemo, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { api } from "../../api/client";
-import { STRATEGY_ENGINE_OPTIONS, STRATEGY_PRESETS, engineUsesEdge, presetsForStrategy, type StrategyPreset } from "../../config/strategyPresets";
+import { STRATEGY_PRESETS, engineUsesEdge, presetsForStrategy, type StrategyPreset } from "../../config/strategyPresets";
+import { EngineSelect } from "../strategy/EnginePresetSelects";
 import { setConfig } from "../../stores/botStore";
 import { clearToasts, pushError, pushInfo, setGroupToasts } from "../../stores/toastStore";
 import type { BotConfig } from "../../types";
@@ -221,11 +222,11 @@ export function SettingsModal(props: {
 
           <div class="cfg-presets">
             <span class="cfg-presets__label">Moteur</span>
-            <select
+            <EngineSelect
               class="cfg-input"
               value={form().strategyId}
-              onChange={(e) => {
-                const id = e.currentTarget.value as ConfigFormState["strategyId"];
+              customEngines={customEngines()}
+              onChange={(id) => {
                 update("strategyId", id);
                 if (id === "fav-band") {
                   update("enableExpensiveHedge", false);
@@ -266,16 +267,7 @@ export function SettingsModal(props: {
                   setActiveSection("presets");
                 }
               }}
-            >
-              <For each={STRATEGY_ENGINE_OPTIONS}>
-                {(option) => <option value={option.id}>{option.label}</option>}
-              </For>
-              <For each={customEngines()}>
-                {(engine) => (
-                  <option value={engine.id}>{engine.name} ({engine.id})</option>
-                )}
-              </For>
-            </select>
+            />
             <span class="cfg-presets__label">Profil stratégie</span>
             <div class="cfg-presets__list">
               <For each={enginePresets()}>

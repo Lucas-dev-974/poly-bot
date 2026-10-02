@@ -4,6 +4,7 @@ import { render } from "solid-js/web";
 import { App } from "./App";
 import { ToastHost } from "./components/toasts/ToastHost";
 import { currentRoute, type AppRoute } from "./router";
+import { startSse } from "./transport/sse";
 import "./styles/variables.css";
 import "./styles/globals.css";
 import "./styles/components.css";
@@ -45,6 +46,11 @@ function Page(props: { route: () => AppRoute; target: AppRoute; children: JSX.El
 
 function Root() {
   const [route, setRoute] = createSignal<AppRoute>(currentRoute());
+
+  // One SSE for the whole app (dashboard + simulation share stores).
+  onMount(() => {
+    startSse();
+  });
 
   onMount(() => {
     const onPop = () => setRoute(currentRoute());

@@ -13,18 +13,18 @@ const [connected, setConnected] = createSignal(false);
 
 export { lastEventAt, connected };
 
-/** Appelé par useEventSource à chaque message SSE reçu. */
+/** Appelé par transport/sse à chaque message SSE reçu. */
 export function markSseEvent(): void {
   setLastEventAt(Date.now());
   setConnected(true);
 }
 
-/** Appelé par useEventSource en cas d'erreur de connexion. */
+/** Appelé par transport/sse en cas d'erreur de connexion. */
 export function markSseError(): void {
   setConnected(false);
 }
 
-/** Appelé par useEventSource à l'ouverture de la connexion. */
+/** Appelé par transport/sse à l'ouverture de la connexion. */
 export function markSseOpen(): void {
   setConnected(true);
 }

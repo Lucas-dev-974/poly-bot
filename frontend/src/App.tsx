@@ -14,10 +14,8 @@ import { ConfirmModal } from "./components/modals/ConfirmModal";
 import { SettingsModal } from "./components/modals/SettingsModal";
 import { WalletModal } from "./components/modals/WalletModal";
 import { MarketRecordingModal } from "./components/modals/MarketRecordingModal";
-import { useEventSource } from "./hooks/useEventSource";
 import { useAdaptiveSync } from "./hooks/useAdaptiveSync";
 import { useClock, clockNow } from "./stores/clockStore";
-import { setLiveBalance, liveBalance } from "./stores/balanceStore";
 import { api } from "./api/client";
 import { dispatchEvent } from "./stores/dispatcher";
 import { setConfig, config, setBotEnabled } from "./stores/botStore";
@@ -35,7 +33,7 @@ import { addLog } from "./stores/logStore";
 import { notifyError } from "./utils/notifications";
 import { pushError } from "./stores/toastStore";
 import { fmtUsd } from "./utils/format";
-import type { BotEvent, SimulatedPosition } from "./types";
+import type { SimulatedPosition } from "./types";
 
 export function App(): JSX.Element {
   // Horloge globale partagée (tick 1 s) — countdowns des panneaux.
@@ -48,16 +46,7 @@ export function App(): JSX.Element {
   const [walletOpen, setWalletOpen] = createSignal(false);
   const [recordingOpen, setRecordingOpen] = createSignal(false);
 
-  // SSE → stores (balance interceptée ici, le reste va au dispatcher)
-  useEventSource((event: BotEvent) => {
-    if (event.type === "balance") {
-      setLiveBalance(event.balance);
-      return;
-    }
-    dispatchEvent(event);
-  });
-
-  // Tick chaque seconde (countdowns) — horloge globale partagée.
+    // Tick chaque seconde (countdowns) — horloge globale partagée.
   const now = clockNow;
 
   // Sync REST adaptative (2 vitesses) : 60 s si SSE vivant (filet de sécurité
@@ -104,11 +93,7 @@ export function App(): JSX.Element {
       if (hydrated) replaceOrders(recentOrders.orders);
       for (const event of state.events) {
         if (event.type === "order" && hydrated) continue;
-        if (event.type === "balance") {
-          setLiveBalance(event.balance);
-        } else {
-          dispatchEvent(event);
-        }
+        dispatchEvent(event);
       }
     } catch (e) {
       addLog("Impossible de charger l'état initial", undefined, true);

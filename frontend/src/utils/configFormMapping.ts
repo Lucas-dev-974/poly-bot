@@ -299,9 +299,9 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     edgeSharesEdge: parseNum(form.edgeSharesEdge, "Shares edge"),
     edgeSharesCheap: parseNum(form.edgeSharesCheap, "Shares cheap"),
     edgeSellExpensiveEnabled: form.edgeSellExpensiveEnabled,
-    edgeSellExpensiveAfterMin: parseNum(form.edgeSellExpensiveAfterMin, "Vente edge aprÃ¨s (min)"),
+    edgeSellExpensiveAfterMin: parseNum(form.edgeSellExpensiveAfterMin, "Vente edge après (min)"),
     edgeSellExpensiveLossPct: parseNum(form.edgeSellExpensiveLossPct, "Perte edge %"),
-    edgeSellExpensiveLossWindowMs: parseNum(form.edgeSellExpensiveLossWindowMs, "FenÃªtre perte edge (ms)"),
+    edgeSellExpensiveLossWindowMs: parseNum(form.edgeSellExpensiveLossWindowMs, "Fenêtre perte edge (ms)"),
     edgeRequireCheapReady: form.edgeRequireCheapReady === true,
     edgeAskSumMax:
       form.edgeAskSumMax.trim() === "" ? null : parseNum(form.edgeAskSumMax, "Edge ask sum max"),
@@ -475,7 +475,7 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     next.arbAskLockOnly = false;
   }
   if ((next.marketSlugPrefixes?.length ?? 0) === 0) {
-    throw new Error("Au moins un prÃ©fixe de marchÃ© est requis");
+    throw new Error("Au moins un préfixe de marché est requis");
   }
   return next;
 }

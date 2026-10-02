@@ -1,4 +1,4 @@
-import { createMemo, createSignal, onCleanup } from "solid-js";
+import { createEffect, createMemo, createSignal, onCleanup } from "solid-js";
 import type { Accessor } from "solid-js";
 import {
   VIRTUALIZE_THRESHOLD,
@@ -56,6 +56,18 @@ export function useTableWindow(
       ? { "max-height": `${maxHeightPx}px`, overflow: "auto" }
       : undefined,
   );
+
+  // Si la liste raccourcit sous le scroll courant, ramener scrollTop pour
+  // éviter un viewport vide (padTop énorme + slice vide).
+  createEffect(() => {
+    const n = rowCount();
+    if (!active()) {
+      if (scrollTop() !== 0) setScrollTop(0);
+      return;
+    }
+    const maxScroll = Math.max(0, n * rowHeight - viewportH());
+    if (scrollTop() > maxScroll) setScrollTop(maxScroll);
+  });
 
   function onScroll(e: Event): void {
     setScrollTop((e.currentTarget as HTMLElement).scrollTop);

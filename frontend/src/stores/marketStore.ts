@@ -6,11 +6,11 @@ import type { MarketView, TokenBook, UpDownEvent } from "../types";
 export const [markets, setMarkets] = createStore<Record<string, MarketView>>({});
 
 /**
- * Index tokenId → { slug, book } maintenu à chaque upsert/retain/clear.
- * Évite les scans O(markets × rows) pour live bid / titre sur SimulationPage.
+ * Index tokenId → slug maintenu à chaque upsert/retain/clear.
+ * Les books/bids sont lus live depuis markets (évite copies stale via reconcile).
  * Record + createStore pour tracking Solid (pas de Map).
  */
-export type TokenMarketRef = { slug: string; book: TokenBook };
+export type TokenMarketRef = { slug: string };
 export const [tokenIndex, setTokenIndex] = createStore<Record<string, TokenMarketRef>>({});
 
 
@@ -19,7 +19,9 @@ function syncTokenIndex(): void {
   const idx: Record<string, TokenMarketRef> = {};
   for (const [slug, market] of Object.entries(markets)) {
     for (const book of market.books) {
-      idx[book.tokenId] = { slug, book };
+      // Index slug only — book fields are read live from markets so bids/titles
+      // cannot go stale between upserts (reconcile copies would diverge).
+      idx[book.tokenId] = { slug };
     }
   }
   setTokenIndex(reconcile(idx));
@@ -115,9 +117,11 @@ export function marketList(now = Date.now()): MarketView[] {
     .sort((a, b) => b.windowEnd - a.windowEnd);
 }
 
-/** Lookup O(1) : book live pour un tokenId (index maintenu). */
+/** Lookup O(1) index + lecture live du book dans markets (anti-stale). */
 export function bookForToken(tokenId: string): TokenBook | undefined {
-  return tokenIndex[tokenId]?.book;
+  const slug = tokenIndex[tokenId]?.slug;
+  if (!slug) return undefined;
+  return markets[slug]?.books.find((b) => b.tokenId === tokenId);
 }
 
 /** Lookup O(1) : marché (MarketView) pour un tokenId. */
@@ -128,7 +132,7 @@ export function marketForToken(tokenId: string): MarketView | undefined {
 
 /** Bid live O(1) — utilisé par SimulationPage (unrealized PnL / resting). */
 export function liveBidForToken(tokenId: string): number | null {
-  const bid = tokenIndex[tokenId]?.book.bestBid;
+  const bid = bookForToken(tokenId)?.bestBid;
   return bid != null ? bid : null;
 }
 

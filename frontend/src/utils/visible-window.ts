@@ -14,6 +14,13 @@ export function visibleRowRange(
   if (rowCount <= 0) return { start: 0, end: 0 };
   const start = Math.max(0, Math.floor(scrollTop / rowH) - overscan);
   const end = Math.min(rowCount, Math.ceil((scrollTop + Math.max(viewportH, rowH)) / rowH) + overscan);
+  // Liste raccourcie alors que scrollTop est encore loin → start>=end → table vide.
+  // Ramener la fenêtre sur la dernière page visible.
+  if (start >= end) {
+    const windowRows = Math.ceil(Math.max(viewportH, rowH) / rowH) + overscan * 2;
+    const s = Math.max(0, rowCount - windowRows);
+    return { start: s, end: rowCount };
+  }
   return { start, end };
 }
 

@@ -140,3 +140,12 @@ function readBody(req: IncomingMessage): Promise<string> {
     req.on("error", reject);
   });
 }
+
+/** GET /api/sim/strategy-status — statut whipsaw du moteur paper (fav-band). */
+export function handleSimStrategyStatus(
+  engine: PaperTradingEngine | null,
+  res: ServerResponse,
+): void {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ status: engine?.getStrategyStatus() ?? null }));
+}

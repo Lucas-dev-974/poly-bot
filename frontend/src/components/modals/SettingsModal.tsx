@@ -13,101 +13,8 @@ import {
   validateConfigForm,
   type ConfigFormState,
 } from "../../utils/configForm";
-
-/* ---------- petits composants de champ ---------- */
-
-function Field(props: {
-  label: string;
-  hint?: string;
-  children: JSX.Element;
-}): JSX.Element {
-  return (
-    <label class="cfg-field">
-      <span class="cfg-field__label">{props.label}</span>
-      {props.children}
-      <Show when={props.hint}>
-        <span class="cfg-field__hint">{props.hint}</span>
-      </Show>
-    </label>
-  );
-}
-
-/** Interrupteur (toggle) pour les booléens. */
-function Toggle(props: {
-  label: string;
-  hint?: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}): JSX.Element {
-  return (
-    <label class="cfg-toggle">
-      <span class="cfg-toggle__text">
-        <span class="cfg-toggle__label">{props.label}</span>
-        <Show when={props.hint}>
-          <span class="cfg-toggle__hint">{props.hint}</span>
-        </Show>
-      </span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={props.checked}
-        class={`cfg-switch${props.checked ? " cfg-switch--on" : ""}`}
-        onClick={() => props.onChange(!props.checked)}
-      >
-        <span class="cfg-switch__knob" />
-      </button>
-    </label>
-  );
-}
-
-function NumberInput(props: {
-  value: string;
-  min?: number;
-  max?: number;
-  step?: number;
-  onInput: (v: string) => void;
-}): JSX.Element {
-  return (
-    <input
-      class="cfg-input"
-      type="number"
-      min={props.min}
-      max={props.max}
-      step={props.step}
-      value={props.value}
-      onInput={(e) => props.onInput(e.currentTarget.value)}
-    />
-  );
-}
-
-/* ---------- définition des sections ---------- */
-
-type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "fav" | "dip" | "antiflip" | "flipconf" | "earlyconv" | "earlylow" | "openentry" | "repricing" | "risk" | "window";
-
-interface SectionDef {
-  id: SectionId;
-  label: string;
-  icon: string;
-  desc: string;
-}
-
-const SECTIONS: SectionDef[] = [
-  { id: "presets", label: "Profils", icon: "▣", desc: "Moteur et packs de paramètres" },
-  { id: "markets", label: "Marchés", icon: "◉", desc: "Marchés surveillés et cadence de scan" },
-  { id: "cheap", label: "Jambe cheap", icon: "▾", desc: "Bid maker underdog et verrou de paire" },
-  { id: "hedge", label: "Jambe hedge", icon: "▴", desc: "Hedge après fill cheap" },
-  { id: "edge", label: "Jambe edge", icon: "▴", desc: "Bande de confirmation edge-lead" },
-  { id: "fav", label: "Entrée fav-band", icon: "★", desc: "FOK favori mid-band, hold résolution" },
-  { id: "dip", label: "Entrée dip-revert", icon: "↶", desc: "FOK favori dip + rebond, hold résolution" },
-  { id: "antiflip", label: "Entrée antiflip-revert", icon: "⇄", desc: "FOK favori déchu post-flip, hold résolution" },
-  { id: "flipconf", label: "Entrée flip-confirm", icon: "⇛", desc: "FOK nouveau favori post-flip précoce" },
-  { id: "earlyconv", label: "Entrée early-conviction", icon: "⚡", desc: "FOK favori déjà établi <45s" },
-  { id: "earlylow", label: "Entrée early-low", icon: "⤓", desc: "FOK token < 12c dans les 2,5 premières min 15m, hold resolution" },
-  { id: "openentry", label: "Entrée open-entry", icon: "⚑", desc: "FOK favori émergent <300s, SL dual-scale" },
-  { id: "repricing", label: "Probability-repricing", icon: "Δ", desc: "Dislocation CLOB, exits bid (TP/stop/time)" },
-  { id: "risk", label: "Risque", icon: "◆", desc: "Limites de taille, positions et exposition" },
-  { id: "window", label: "Fenêtre", icon: "◷", desc: "Plage de trading avant clôture" },
-];
+import { Field, NumberInput, Toggle } from "./settings/SettingsFields";
+import { SECTIONS, type SectionId } from "./settings/settingsSections";
 
 /* ---------- composant principal ---------- */
 
@@ -2321,3 +2228,4 @@ export function SettingsModal(props: {
     </Show>
   );
 }
+

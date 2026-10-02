@@ -1,22 +1,5 @@
 import type { Database } from "./database.js";
 import {
-  BalanceSnapshotRepository,
-  BotStateRepository,
-  EventRepository,
-  KeyRepository,
-  LedgerRepository,
-  MarketRuleRepository,
-  OrderRepository,
-  PairRepository,
-  PositionRepository,
-  PostedOrderRepository,
-  RedeemRepository,
-  RetryRepository,
-  WithdrawalRepository,
-  StatsSnapshotRepository,
-  WindowClaimRepository,
-} from "./repositories.js";
-import {
   BacktestPositionRepository,
   BacktestRunRepository,
   BacktestTradeRepository,
@@ -38,6 +21,25 @@ import {
   SimWindowClaimRepository,
 } from "./sim-repositories.js";
 import { StrategyGraphRepository } from "./strategy-graph-repo.js";
+import {
+  OrderRepository,
+  PairRepository,
+  PositionRepository,
+  PostedOrderRepository,
+  WindowClaimRepository,
+} from "./trading-repositories.js";
+import {
+  BalanceSnapshotRepository,
+  BotStateRepository,
+  EventRepository,
+  KeyRepository,
+  LedgerRepository,
+  RedeemRepository,
+  RetryRepository,
+  StatsSnapshotRepository,
+  WithdrawalRepository,
+} from "./ops-repositories.js";
+import { MarketRuleRepository } from "./market-rule-repositories.js";
 
 export interface Repositories {
   db: Database;

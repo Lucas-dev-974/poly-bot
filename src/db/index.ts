@@ -1,15 +1,11 @@
 import type { Database } from "./database.js";
 import {
   BalanceSnapshotRepository,
-  BookSnapshotRepository,
   BotStateRepository,
   EventRepository,
   KeyRepository,
   LedgerRepository,
-  MarketResolutionRepository,
   MarketRuleRepository,
-  MarketSnapshotRepository,
-  OpportunitySnapshotRepository,
   OrderRepository,
   PairRepository,
   PositionRepository,
@@ -19,10 +15,18 @@ import {
   WithdrawalRepository,
   StatsSnapshotRepository,
   WindowClaimRepository,
+} from "./repositories.js";
+import {
   BacktestPositionRepository,
   BacktestRunRepository,
   BacktestTradeRepository,
-} from "./repositories.js";
+} from "./backtest-repositories.js";
+import {
+  BookSnapshotRepository,
+  MarketResolutionRepository,
+  MarketSnapshotRepository,
+  OpportunitySnapshotRepository,
+} from "./snapshot-repositories.js";
 import {
   SimKeyRepository,
   SimPairRepository,

@@ -95,18 +95,50 @@ describe("PaperTradingEngine", () => {
     repos.db.close();
   });
 
-  it("reset remet le cash au capital initial et vide les tables", () => {
+  it("reset archive les resolues, garde les ouvertes et le cash", () => {
     const repos = simRepos();
     const engine = new PaperTradingEngine(baseConfig(), repos);
     engine.init();
     engine.setEnabled(true);
     engine.onBooks(event(Date.now() / 1000 + 240), books(0.1, 0.88), Date.now());
-    assert.ok(engine.getOpenPositions().length > 0);
-    engine.reset();
-    assert.equal(engine.getOpenPositions().length, 0);
-    assert.equal(engine.getState().cash, 1000);
-    assert.equal(repos.simPositions.all().length, 0);
-    assert.equal(repos.simState.get("capitalCash"), "1000");
+    const openBefore = engine.getOpenPositions().length;
+    assert.ok(openBefore > 0);
+
+    // Seed une position resolue (won) avec strategyId pour verifier l archive.
+    const openPos = engine.getOpenPositions()[0]!;
+    repos.simPositions.insert({
+      ...openPos,
+      id: "resolved-seed-1",
+      status: "won",
+      pnl: 1.25,
+      resolvedAt: Date.now(),
+      strategyId: "arb",
+    });
+    // Recharge tracker via nouvel engine? Non: reset lit DB via archiveResolved.
+    // Le tracker memoire n a pas cette resolue; on teste surtout DB + open conservees.
+    const cashBefore = engine.getState().cash;
+    const result = engine.reset();
+    assert.equal(result.archived, 1);
+    assert.ok(result.batchId.startsWith("sim-archive-"));
+    assert.equal(engine.getOpenPositions().length, openBefore, "ouvertes conservees");
+    assert.equal(engine.getResolvedPositions().length, 0, "resolues memoire videes");
+    assert.equal(
+      repos.simPositions.all().filter((p) => p.status !== "open").length,
+      0,
+      "plus de resolues dans sim_positions",
+    );
+    assert.equal(
+      repos.simPositions.all().filter((p) => p.status === "open").length,
+      openBefore,
+    );
+    const archived = repos.db.all<{ id: string; strategyId: string | null; archiveBatchId: string }>(
+      "SELECT id, strategyId, archiveBatchId FROM sim_positions_archive",
+    );
+    assert.equal(archived.length, 1);
+    assert.equal(archived[0]!.id, "resolved-seed-1");
+    assert.equal(archived[0]!.strategyId, "arb");
+    assert.equal(archived[0]!.archiveBatchId, result.batchId);
+    assert.equal(engine.getState().cash, cashBefore, "cash inchange");
     repos.db.close();
   });
 
@@ -217,6 +249,64 @@ describe("PaperTradingEngine", () => {
     assert.ok(
       Math.abs(persisted - (cashAfterOpen + 5)) < 0.01,
       `capitalCash en DB doit inclure le crédit (${persisted} != ${cashAfterOpen + 5})`,
+    );
+    repos.db.close();
+  });
+
+  it("trading:false laisse sortir via defend (TP antiflip), bloque les entrées", () => {
+    const repos = simRepos();
+    const windowEnd = Math.floor(Date.now() / 1000) + 240;
+    const slug = "btc-updown-5m-1700000000";
+    const fillPrice = 0.4;
+    const tpPct = 0.1;
+    // target = round2(0.4 * 1.1) = 0.44
+    repos.simPositions.insert({
+      id: "af-open-1",
+      eventSlug: slug,
+      eventTitle: "BTC Up/Down",
+      tokenId: "t-down",
+      outcome: "Down",
+      outcomeIndex: 1,
+      kind: "cheap",
+      limitPrice: fillPrice,
+      fillPrice,
+      size: 10,
+      cost: fillPrice * 10,
+      windowEnd,
+      status: "open",
+      fillReason: "marketable",
+      pairId: `${slug}:${windowEnd}`,
+      strategyId: "antiflip-revert",
+    });
+    const engine = new PaperTradingEngine(baseConfig(), repos);
+    engine.init();
+    engine.setEnabled(true);
+    engine.applyConfig({
+      strategyId: "antiflip-revert",
+      settings: { antiflipTakeProfitPct: tpPct },
+    });
+    assert.equal(engine.getOpenPositions().length, 1);
+
+    const ev = event(windowEnd);
+    // Bid sous TP + trading off : hold, pas de nouvelle entrée.
+    engine.onBooks(ev, books(0.42, 0.55), Date.now(), { trading: false });
+    assert.equal(engine.getOpenPositions().length, 1, "bid sous TP: hold");
+
+    const booksAtTp: TokenBook[] = [
+      {
+        tokenId: "t-up", outcome: "Up", outcomeIndex: 0,
+        bestBid: 0.54, bestAsk: 0.55, bestAskSize: 100, bestBidSize: 100,
+      },
+      {
+        tokenId: "t-down", outcome: "Down", outcomeIndex: 1,
+        bestBid: 0.44, bestAsk: 0.45, bestAskSize: 100, bestBidSize: 100,
+      },
+    ];
+    engine.onBooks(ev, booksAtTp, Date.now() + 1, { trading: false });
+    assert.equal(engine.getOpenPositions().length, 0, "TP via defend malgré trading:false");
+    assert.equal(
+      engine.getResolvedPositions().filter((p) => p.status === "sold").length,
+      1,
     );
     repos.db.close();
   });

@@ -86,10 +86,15 @@ async function main(): Promise<void> {
     console.error("FUNDER_ADDRESS manquant dans .env");
     process.exit(1);
   }
-  if (config.dryRun) {
-    console.error("DRY_RUN=true dans .env — passez en mode live pour racheter");
+  if (config.readonlyLive) {
+    console.error("READONLY_LIVE=true - desactivez-le pour racheter on-chain");
     process.exit(1);
   }
+  if (!config.privateKey) {
+    console.error("PRIVATE_KEY manquant dans .env - requis pour racheter");
+    process.exit(1);
+  }
+
 
   console.log("=== Récupération des positions redeemable ===");
   console.log(`Funder: ${funder}`);

@@ -1547,6 +1547,39 @@ export class SimPositionRepository {
     return this.db.all<PositionRow>("SELECT * FROM sim_positions").map(toPosition);
   }
 
+  /**
+   * Archive toutes les positions sim résolues (status != open) dans
+   * sim_positions_archive, puis les supprime de sim_positions.
+   * Retourne le batch id et le nombre de lignes archivées.
+   */
+  archiveResolved(): { batchId: string; archived: number } {
+    const batchId = `sim-archive-${Date.now()}`;
+    const archivedAt = Date.now();
+    this.db.run(
+      `INSERT INTO sim_positions_archive (
+        archiveBatchId, archivedAt,
+        id, eventSlug, eventTitle, tokenId, outcome, outcomeIndex, kind,
+        limitPrice, fillPrice, size, cost, windowEnd, status, resolvedAt,
+        pnl, fillReason, pairId, bestAskAtFill, orderType, strategyId, sellPrice, createdAt
+      )
+      SELECT
+        ?, ?,
+        id, eventSlug, eventTitle, tokenId, outcome, outcomeIndex, kind,
+        limitPrice, fillPrice, size, cost, windowEnd, status, resolvedAt,
+        pnl, fillReason, pairId, bestAskAtFill, orderType, strategyId, sellPrice, createdAt
+      FROM sim_positions
+      WHERE status != 'open'`,
+      [batchId, archivedAt],
+    );
+    const countRow = this.db.get<{ c: number }>(
+      "SELECT COUNT(*) AS c FROM sim_positions_archive WHERE archiveBatchId = ?",
+      [batchId],
+    );
+    const archived = Number(countRow?.c ?? 0);
+    this.db.run("DELETE FROM sim_positions WHERE status != 'open'");
+    return { batchId, archived };
+  }
+
   deleteAll(): void {
     this.db.run("DELETE FROM sim_positions");
   }
@@ -1613,6 +1646,11 @@ export class SimPairRepository {
       WHERE status = 'resolved'
     `);
     return row ?? { arbPnl: 0, directionalPnl: 0, coveredCount: 0, uncoveredCount: 0 };
+  }
+
+  /** Supprime uniquement les paires sim déjà résolues (laisse les ouvertes). */
+  deleteResolved(): void {
+    this.db.run("DELETE FROM sim_pairs WHERE status = 'resolved'");
   }
 
   deleteAll(): void {

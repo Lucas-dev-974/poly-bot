@@ -1,4 +1,4 @@
-import type { BotConfig } from "../config.js";
+import { toPublicConfig, type BotConfig } from "../config.js";
 import { bus } from "../dashboard/events.js";
 import type { Repositories } from "../db/index.js";
 import type { SimTradeRow } from "../db/repositories.js";
@@ -180,20 +180,21 @@ export class PaperTradingEngine {
     bus.emit({ type: "simConfig", simConfig: this.simConfigState() });
   }
 
-  /** Reset complet : wipe tables sim, cash = capital initial, dédup effacée. */
-  reset(): void {
-    this.tracker.reset();
-    this.resting = new BacktestRestingBook();
-    this.restingSyncedSlugs.clear();
-    this.lastBids.clear();
-    this.repos?.simPositions.deleteAll();
-    this.repos?.simPairs.deleteAll();
-    this.repos?.simTrades.deleteAll();
-    this.repos?.simPostedOrders.deleteAll();
-    this.repos?.simState.set("capitalCash", String(this.capitalInitial));
-    this.ledger = new BacktestLedger(this.capitalInitial);
+  /**
+   * Archive les positions sim résolues (DB), les retire des tables live sim,
+   * et vide l'historique résolu en mémoire. Les positions ouvertes, GTC resting,
+   * capital et dédup restent intacts.
+   */
+  reset(): { batchId: string; archived: number } {
+    const result = this.repos?.simPositions.archiveResolved() ?? {
+      batchId: `sim-archive-${Date.now()}`,
+      archived: 0,
+    };
+    this.repos?.simPairs.deleteResolved();
+    this.tracker.clearResolvedHistory();
     this.emitBalance();
     bus.emit({ type: "simConfig", simConfig: this.simConfigState() });
+    return result;
   }
 
   /** Point d'entrée par tick : books temps réel du bot live. */
@@ -210,35 +211,6 @@ export class PaperTradingEngine {
       if (book.bestBid !== null) this.lastBids.set(book.tokenId, book.bestBid);
     }
 
-    // Respecte la règle de famille (market_rules) : pas de nouvelle entrée sim
-    // sur une famille désactivée au trading — miroir du gate live
-    // (`if (!flags.trading) return`). Ne bloque que les NOUVELLES entrées :
-    // la gestion des positions existantes (resolveDue) tourne par ailleurs.
-    if (opts?.trading === false) return;
-
-    // Intra-market take-profit (antiflipTakeProfitPct > 0) : vente au bid
-    // courant dès que bid >= fillPrice * (1 + TP%). Indépendant du flag
-    // trading : gérer les positions ouvertes n'ouvre rien de nouveau.
-    // Audit 13 (audits/5min-strategies/13-intrabar-tp.mjs) : TP10%/TP20% =
-    // WR 80-86% sur trades soldés à ~1/4 du hold ; SL destructive (jamais
-    // implémentée ici). Aucune re-entrée TP → hold → résolution.
-    const tpPct = this.effectiveConfig.antiflipTakeProfitPct ?? 0;
-    if (tpPct > 0) {
-      for (const position of this.tracker.getOpenPositions()) {
-        if (position.eventSlug !== event.slug) continue;
-        const bid = books.find((b) => b.tokenId === position.tokenId)?.bestBid ?? null;
-        if (bid == null) continue;
-        const target = round2(position.fillPrice * (1 + tpPct));
-        if (bid >= target) {
-          this.ledger.credit(round2(bid * position.size));
-          this.tracker.closePositionAsSold(position.id, bid, undefined, nowMs);
-          bus.emit({ type: "simResolvedPosition", position: { ...position, status: "sold", sellPrice: bid, pnl: round2(bid * position.size - position.cost) } });
-        }
-        // Un seul exit par tick : le prochain tick re-vérifiera le reste.
-        break;
-      }
-    }
-
     // Reconstruit le resting book depuis la DB pour ce slug au premier tick
     // après un restart (BacktestRestingBook est mémoire seule, le tracker
     // recharge ses postedOrders depuis sim_posted_orders).
@@ -247,6 +219,12 @@ export class PaperTradingEngine {
       this.restingSyncedSlugs.add(event.slug);
     }
 
+    // trading:false bloque les NOUVELLES entrées (allowNewEntries) mais laisse
+    // tourner matchResting + manageRestingPolicy (defend / TP via shouldDefend,
+    // edge-sell, cancel GTC) — miroir live manageLiveResting avant le gate
+    // `if (!flags.trading) return`.
+    // Antiflip TP : plus de boucle dédiée ici ; antiflip-revert.shouldDefend +
+    // usesDefendAsExit passent par defendCheapLegs (parité live/paper).
     processTick({
       runId: "sim",
       config: this.effectiveConfig,
@@ -257,6 +235,7 @@ export class PaperTradingEngine {
       event,
       books,
       nowMs,
+      allowNewEntries: opts?.trading !== false,
       sink: {
         pushTrade: () => {},
         persistTrade: (row) => this.persistSimTrade(row),
@@ -408,7 +387,7 @@ export class PaperTradingEngine {
       strategyId: this.effectiveConfig.strategyId,
       presetId: this.presetId,
       capitalInitial: this.capitalInitial,
-      effectiveConfig: this.effectiveConfig,
+      effectiveConfig: toPublicConfig(this.effectiveConfig),
     };
   }
 

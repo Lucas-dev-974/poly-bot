@@ -1,4 +1,4 @@
-import type { BotConfig } from "../config.js";
+import type { PublicBotConfig } from "../config.js";
 import type { EventRepository, OrderRepository } from "../db/repositories.js";
 import type {
   OrderResult,
@@ -12,7 +12,7 @@ import type { RelayerQuotaState } from "../relayer-quota.js";
 import type { FavBandWhipsawStatus } from "../strategy/fav-band-strategy.js";
 
 export type BotEvent =
-  | { type: "config"; config: BotConfig }
+  | { type: "config"; config: PublicBotConfig }
   | { type: "balance"; balance: BalanceSnapshot }
   | { type: "simBalance"; balance: SimBalance }
   | { type: "simEngineStats"; stats: SimulatedStats }
@@ -63,7 +63,7 @@ export interface SimConfigEvent {
   capitalInitial: number;
   /** Config effective (preset + settings) — resynchronise le panneau 5m
    * quand le preset change via la barre de contrôle ou un autre onglet. */
-  effectiveConfig: BotConfig;
+  effectiveConfig: PublicBotConfig;
 }
 
 export interface PolymarketPosition {

@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { toPublicConfig } from "../config.js";
 import type { PaperTradingEngine } from "../paper/engine.js";
 import type { RuntimeSettingsPatch } from "../runtime-settings.js";
 import { parseStrategyId } from "../strategy/ids.js";
@@ -22,7 +23,7 @@ export function handleSimState(engine: PaperTradingEngine, res: ServerResponse):
   res.end(JSON.stringify({
     ok: true,
     state: engine.getState(),
-    effectiveConfig: engine.getEffectiveConfig(),
+    effectiveConfig: toPublicConfig(engine.getEffectiveConfig()),
     open: engine.getOpenPositions(),
     resolved: engine.getResolvedPositions().slice(0, 200),
     resting: engine.getRestingForSlug(""),
@@ -78,9 +79,14 @@ export async function handleSimConfigPatch(
 }
 
 export function handleSimReset(engine: PaperTradingEngine, res: ServerResponse): void {
-  engine.reset();
+  const archive = engine.reset();
   res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify({ ok: true, state: engine.getState() }));
+  res.end(JSON.stringify({
+    ok: true,
+    state: engine.getState(),
+    archived: archive.archived,
+    archiveBatchId: archive.batchId,
+  }));
 }
 
 export function handleSimPositions(

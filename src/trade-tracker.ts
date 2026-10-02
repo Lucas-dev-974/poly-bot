@@ -234,6 +234,27 @@ export class TradeTracker {
     };
   }
 
+  /**
+   * Vide uniquement l'historique resolu en memoire (positions + paires resolues
+   * + compteurs cumules). Laisse ouvertes / dedup / resting / claims intacts.
+   * A appeler apres archive DB des resolues (simulation Reset).
+   */
+  clearResolvedHistory(): void {
+    this.resolvedPositions.length = 0;
+    this.cumulativeRealizedPnl = 0;
+    this.cumulativeWins = 0;
+    this.cumulativeLosses = 0;
+    this.pairStats = {
+      arbPnl: 0,
+      directionalPnl: 0,
+      coveredCount: 0,
+      uncoveredCount: 0,
+    };
+    for (const [id, pair] of [...this.pairs.entries()]) {
+      if (pair.status === "resolved") this.pairs.delete(id);
+    }
+  }
+
   makeKey(
     eventSlug: string,
     outcome: string,

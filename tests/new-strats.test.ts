@@ -531,4 +531,142 @@ describe("new directional strategies (antiflip-revert / flip-confirm / early-con
       assert.throws(() => validateConfigCoherence(negative), /antiflipTakeProfitPct must be between 0 and 0.9/);
     });
   });
+  describe("antiflip take-profit shouldDefend parity (live/paper)", () => {
+    const makeStrategy = () => new AntiflipRevertStrategy();
+
+    function seedFilledCheap(tracker: TradeTracker, event: ReturnType<typeof testEvent>, fillPrice: number) {
+      const pairId = `${event.slug}:${event.windowEnd}`;
+      tracker.addOpenPosition({
+        id: "af-filled",
+        eventSlug: event.slug,
+        eventTitle: event.title,
+        tokenId: "t-up",
+        outcome: "Up",
+        outcomeIndex: 0,
+        kind: "cheap",
+        limitPrice: fillPrice,
+        fillPrice,
+        size: 10,
+        cost: fillPrice * 10,
+        windowEnd: event.windowEnd,
+        status: "open",
+        fillReason: "marketable",
+        pairId,
+      });
+      return pairId;
+    }
+
+    it("exposes usesDefendAsExit so live resting runs defend without hedge", () => {
+      assert.equal(makeStrategy().usesDefendAsExit, true);
+    });
+
+    it("does not defend when antiflipTakeProfitPct is 0", () => {
+      const strategy = makeStrategy();
+      const tracker = new TradeTracker();
+      const event = testEvent(1_781_178_900);
+      const pairId = seedFilledCheap(tracker, event, 0.4);
+      const cfg = testConfig({ strategyId: "antiflip-revert", antiflipTakeProfitPct: 0 });
+      assert.equal(
+        strategy.shouldDefend({
+          config: cfg,
+          favoriteAsk: 0.55,
+          filledCheap: 10,
+          filledExpensive: 0,
+          pairId,
+          cheapAsk: 0.5,
+          cheapBid: 0.48,
+          tracker,
+        }),
+        false,
+      );
+      assert.equal(
+        strategy.defendShares({
+          config: cfg,
+          favoriteAsk: 0.55,
+          filledCheap: 10,
+          filledExpensive: 0,
+          pairId,
+          cheapAsk: 0.5,
+          cheapBid: 0.48,
+          tracker,
+        }),
+        0,
+      );
+    });
+
+    it("defends when bid reaches fill * (1 + TP%) — paper onBooks parity", () => {
+      const strategy = makeStrategy();
+      const tracker = new TradeTracker();
+      const event = testEvent(1_781_178_900);
+      const fillPrice = 0.4;
+      const tpPct = 0.1;
+      const pairId = seedFilledCheap(tracker, event, fillPrice);
+      const cfg = testConfig({ strategyId: "antiflip-revert", antiflipTakeProfitPct: tpPct });
+      // target = round2(0.4 * 1.1) = 0.44
+      assert.equal(
+        strategy.shouldDefend({
+          config: cfg,
+          favoriteAsk: 0.55,
+          filledCheap: 10,
+          filledExpensive: 0,
+          pairId,
+          cheapAsk: 0.45,
+          cheapBid: 0.43,
+          tracker,
+        }),
+        false,
+        "bid 0.43 < target 0.44",
+      );
+      assert.equal(
+        strategy.shouldDefend({
+          config: cfg,
+          favoriteAsk: 0.55,
+          filledCheap: 10,
+          filledExpensive: 0,
+          pairId,
+          cheapAsk: 0.46,
+          cheapBid: 0.44,
+          tracker,
+        }),
+        true,
+        "bid 0.44 >= target 0.44",
+      );
+      assert.equal(
+        strategy.defendShares({
+          config: cfg,
+          favoriteAsk: 0.55,
+          filledCheap: 10,
+          filledExpensive: 0,
+          pairId,
+          cheapAsk: 0.46,
+          cheapBid: 0.44,
+          tracker,
+        }),
+        10,
+      );
+    });
+
+    it("does not defend without a cheap bid (executable exit required)", () => {
+      const strategy = makeStrategy();
+      const tracker = new TradeTracker();
+      const event = testEvent(1_781_178_900);
+      const pairId = seedFilledCheap(tracker, event, 0.4);
+      const cfg = testConfig({ strategyId: "antiflip-revert", antiflipTakeProfitPct: 0.1 });
+      assert.equal(
+        strategy.shouldDefend({
+          config: cfg,
+          favoriteAsk: 0.55,
+          filledCheap: 10,
+          filledExpensive: 0,
+          pairId,
+          cheapAsk: 0.5,
+          cheapBid: null,
+          tracker,
+        }),
+        false,
+      );
+    });
+  });
+
+
 });

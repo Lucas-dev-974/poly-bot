@@ -11,6 +11,7 @@ import {
   prefixesWithLiveExposure,
   splitEventsByRules,
   toggleTradingBlockReason,
+  strategyHotSwapBlockReason,
 } from "../src/market-rules.js";
 import { prefixOfSlug, windowSecondsFromSlug } from "../src/utils/market.js";
 import { MarketScanner } from "../src/market-scanner.js";
@@ -218,5 +219,13 @@ describe("MarketRuleStore", () => {
       assert.deepEqual(store.get("sol-updown-15m"), { recording: true, trading: true });
       assert.equal(repos.marketRules.get("sol-updown-15m")?.addedBy, "default");
     });
+  });
+});
+describe("garde hot-swap strategyId", () => {
+  it("refuse avec position ouverte ou GTC resting, autorise sinon", () => {
+    assert.equal(strategyHotSwapBlockReason(0, 0), null);
+    assert.match(strategyHotSwapBlockReason(1, 0) ?? "", /Cannot change strategyId/);
+    assert.match(strategyHotSwapBlockReason(0, 2) ?? "", /resting order/);
+    assert.match(strategyHotSwapBlockReason(3, 1) ?? "", /3 open position/);
   });
 });

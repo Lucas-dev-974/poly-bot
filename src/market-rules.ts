@@ -112,3 +112,21 @@ export function toggleTradingBlockReason(
   }
   return null;
 }
+/**
+ * Garde hot-swap strategyId : refusé s'il existe une position ouverte
+ * ou un ordre GTC resting (changement de moteur dangereux avec exposition).
+ * Retourne null si autorisé, sinon la raison du refus.
+ */
+export function strategyHotSwapBlockReason(
+  openPositionsCount: number,
+  restingOrdersCount: number,
+): string | null {
+  if (openPositionsCount > 0 || restingOrdersCount > 0) {
+    return (
+      "Cannot change strategyId while open exposure exists " +
+      `(${openPositionsCount} open position(s), ${restingOrdersCount} resting order(s)). ` +
+      "Close or cancel them first."
+    );
+  }
+  return null;
+}

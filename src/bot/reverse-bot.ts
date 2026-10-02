@@ -6,7 +6,12 @@ import { log } from "../logger.js";
 import { MarketScanner } from "../market-scanner.js";
 import { MarketDataProvider } from "../market-data.js";
 import { PositionResolver } from "../position-resolver.js";
-import type { EditableConfigKey } from "../runtime-settings.js";
+import {
+  snapshotEditableSettings,
+  writeRuntimeSettings,
+  type EditableConfigKey,
+} from "../runtime-settings.js";
+import type { StrategyId } from "../strategy/ids.js";
 import { createStrategy } from "../strategy/registry.js";
 import type { TradingStrategy } from "../strategy/trading-strategy.js";
 import { TradeTracker } from "../trade-tracker.js";
@@ -17,7 +22,7 @@ import { LiveOrderLifecycle } from "./live-order-lifecycle.js";
 import { OpportunityExecutor } from "./opportunity-executor.js";
 import { RestingManager } from "./resting-manager.js";
 import { TickSnapshots } from "./tick-snapshots.js";
-import { MarketRuleStore, splitEventsByRules } from "../market-rules.js";
+import { MarketRuleStore, splitEventsByRules, strategyHotSwapBlockReason } from "../market-rules.js";
 import { favBandLossStreak } from "../strategy/whipsaw.js";
 import type { FavBandWhipsawStatus } from "../strategy/fav-band-strategy.js";
 import type { FavBandStrategy } from "../strategy/fav-band-strategy.js";
@@ -343,19 +348,45 @@ export class ReverseBot {
       this.resolver?.reseed(this.config.simRandomSeed);
     }
     if (changed.has("strategyId")) {
-      this.strategy = createStrategy(this.config.strategyId, this.repos);
-      this.lifecycle.setStrategy(this.strategy);
-      this.resting.setStrategy(this.strategy);
-      this.executor.setStrategy(this.strategy);
-      log("Trading engine swapped", {
-        strategyId: this.strategy.id,
-        label: this.strategy.label,
-      });
-      // Push whipsaw status immediately when the new engine is fav-band,
-      // instead of waiting for the next 5s interval tick (dashboard indicator).
-      const status = this.getStrategyStatus();
-      if (status) {
-        bus.emit({ type: "strategyStatus", status });
+      const openCount = this.tracker.getOpenPositions().length;
+      const restingCount = this.tracker.getAllPostedOrders().length;
+      const blockReason = strategyHotSwapBlockReason(openCount, restingCount);
+      if (blockReason && this.config.strategyId !== this.strategy.id) {
+        // Config was already mutated by applyRuntimeSettings — revert to the
+        // live engine id so we do not orphan positions under a new strategy.
+        // Also re-persist: applyRuntimeSettings may have already written the
+        // rejected strategyId to bot-settings.json (race after dashboard 409
+        // check, or any ungarded caller).
+        (this.config as { strategyId: StrategyId }).strategyId = this.strategy.id;
+        void writeRuntimeSettings(
+          snapshotEditableSettings(this.config, this.strategy.leadsWithEdge),
+        ).catch((err) => {
+          log("Failed to re-persist strategyId after blocked hot-swap", {
+            error: err instanceof Error ? err.message : String(err),
+          });
+        });
+        log("Blocked strategyId hot-swap while open exposure exists", {
+          reason: blockReason,
+          openCount,
+          restingCount,
+          keptStrategyId: this.strategy.id,
+        });
+        bus.emit({ type: "error", message: blockReason });
+      } else {
+        this.strategy = createStrategy(this.config.strategyId, this.repos);
+        this.lifecycle.setStrategy(this.strategy);
+        this.resting.setStrategy(this.strategy);
+        this.executor.setStrategy(this.strategy);
+        log("Trading engine swapped", {
+          strategyId: this.strategy.id,
+          label: this.strategy.label,
+        });
+        // Push whipsaw status immediately when the new engine is fav-band,
+        // instead of waiting for the next 5s interval tick (dashboard indicator).
+        const status = this.getStrategyStatus();
+        if (status) {
+          bus.emit({ type: "strategyStatus", status });
+        }
       }
     }
     bus.emit({ type: "config", config: toPublicConfig(this.config) });

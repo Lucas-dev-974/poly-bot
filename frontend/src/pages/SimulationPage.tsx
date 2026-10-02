@@ -249,10 +249,14 @@ export function SimulationPage(): JSX.Element {
     setSending(true);
     try {
       const res = await api.simReset();
-      if (!res.ok) throw new Error(res.error ?? "Échec de la réinitialisation");
+      if (!res.ok) throw new Error(res.error ?? "Echec de la reinitialisation");
       await loadInitialState();
-      replaceSimLists([], []);
-      addLog("Simulation réinitialisée (capital + positions + journal)");
+      const n = res.archived ?? 0;
+      addLog(
+        n > 0
+          ? `Positions résolues archivées (${n}) puis vidées — positions ouvertes conservées`
+          : "Aucune position résolue à archiver — positions ouvertes conservées",
+      );
     } catch (e) {
       pushError("Simulation : " + toMessage(e), { group: "sim-error", replaceGroup: true });
     } finally {
@@ -527,7 +531,7 @@ export function SimulationPage(): JSX.Element {
             {simConfigState()?.enabled ? "Arrêter" : "Démarrer"}
           </button>
           <button class="btn danger" onClick={() => setConfirmReset(true)}>
-            Réinitialiser
+            Archiver résolues
           </button>
         </div>
       </header>
@@ -900,6 +904,7 @@ export function SimulationPage(): JSX.Element {
                   <th>Marché</th>
                   <th>Outcome</th>
                   <th>Kind</th>
+                  <th>Moteur</th>
                   <th>Fill</th>
                   <th>Size</th>
                   <th>Coût</th>
@@ -915,6 +920,7 @@ export function SimulationPage(): JSX.Element {
                       <td>{p.eventTitle}</td>
                       <td>{p.outcome}</td>
                       <td>{p.kind}</td>
+                      <td>{p.strategyId ?? "—"}</td>
                       <td>{fmtPrice(p.fillPrice)}</td>
                       <td>{fmtShares(p.size)}</td>
                       <td>{fmtUsd(p.cost)}</td>
@@ -1013,6 +1019,15 @@ export function SimulationPage(): JSX.Element {
             />
             Plus récent d'abord
           </label>
+          <button
+            class="btn danger sim-tab-archive"
+            type="button"
+            disabled={sending() || simResolvedPositions().length === 0}
+            title="Archiver les positions résolues en DB puis vider cette liste (ouvertes intactes)"
+            onClick={() => setConfirmReset(true)}
+          >
+            Archiver résolues
+          </button>
         </div>
 
         <Show when={historyTab() === "resolved"} fallback={
@@ -1084,6 +1099,7 @@ export function SimulationPage(): JSX.Element {
                   <th>Marché</th>
                   <th>Outcome</th>
                   <th>Kind</th>
+                  <th>Moteur</th>
                   <th>Fill</th>
                   <th>Vente</th>
                   <th>Size</th>
@@ -1100,6 +1116,7 @@ export function SimulationPage(): JSX.Element {
                       <td>{p.eventTitle}</td>
                       <td>{p.outcome}</td>
                       <td>{p.kind}</td>
+                      <td>{p.strategyId ?? "—"}</td>
                       <td>{fmtPrice(p.fillPrice)}</td>
                       <td>{p.sellPrice != null ? fmtPrice(p.sellPrice) : "—"}</td>
                       <td>{fmtShares(p.size)}</td>
@@ -1128,9 +1145,9 @@ export function SimulationPage(): JSX.Element {
 
       <ConfirmModal
         open={confirmReset()}
-        title="Réinitialiser la simulation ?"
-        message="Le capital revient à la valeur initiale et toutes les positions/ordres simulés sont effacés. Irréversible."
-        confirmLabel="Réinitialiser"
+        title="Archiver les positions résolues ?"
+        message="Les positions résolues sont copiées dans l'archive DB puis retirées de la liste. Les positions ouvertes, ordres en attente et le capital restent intacts."
+        confirmLabel="Archiver & vider"
         onConfirm={() => void doReset()}
         onCancel={() => setConfirmReset(false)}
       />

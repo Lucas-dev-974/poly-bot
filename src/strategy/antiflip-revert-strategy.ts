@@ -48,7 +48,7 @@ import type {
  * partage l'univers scanné du bot).
  *
  * Exécution : un seul FOK BUY du favori déchu, hold jusqu'à résolution.
- * Pas de hedge, pas de défense. Un seul déclenchement par paire
+ * Pas de hedge; take-profit optionnel via defend (antiflipTakeProfitPct). Un seul déclenchement par paire
  * (getFilledCheapSizeForPair / countLegsByKind), retry après un FOK tué.
  */
 interface LeaderAskSample {
@@ -79,8 +79,14 @@ const LEADER_ASK_STALE_MS = 1_000;
 export class AntiflipRevertStrategy implements TradingStrategy {
   readonly id = "antiflip-revert" as const;
   readonly label =
-    "Antiflip-revert: FOK buy the deposed favorite right after an identity flip; hold to resolve (no hedge)";
+    "Antiflip-revert: FOK buy the deposed favorite right after an identity flip; hold to resolve (optional TP via defend)";
   readonly leadsWithEdge = false;
+  /**
+   * Optional take-profit (`antiflipTakeProfitPct`) reuses the defend pipeline
+   * (live defendUncoveredPairs / backtest defendCheapLegs), matching paper's
+   * bid >= fill * (1 + TP%) exit in PaperTradingEngine.onBooks.
+   */
+  readonly usesDefendAsExit = true;
 
   private readonly states = new Map<string, FlipState>();
 
@@ -291,12 +297,26 @@ export class AntiflipRevertStrategy implements TradingStrategy {
     return "keep";
   }
 
-  shouldDefend(_ctx: DefendContext): boolean {
-    return false;
+  shouldDefend(ctx: DefendContext): boolean {
+    return this.takeProfitTriggered(ctx);
   }
 
-  defendShares(_ctx: DefendContext): number {
-    return 0;
+  defendShares(ctx: DefendContext): number {
+    if (!this.shouldDefend(ctx)) return 0;
+    return round2(ctx.filledCheap);
+  }
+
+  /** Held-token bid >= fill * (1 + antiflipTakeProfitPct). Paper onBooks parity. */
+  private takeProfitTriggered(ctx: DefendContext): boolean {
+    const tpPct = ctx.config.antiflipTakeProfitPct ?? 0;
+    if (tpPct <= 0) return false;
+    if (ctx.filledCheap <= 0) return false;
+    const fillPrice = ctx.tracker?.getCheapFillPriceForPair(ctx.pairId) ?? null;
+    if (fillPrice == null || fillPrice <= 0) return false;
+    const bid = ctx.cheapBid ?? null;
+    if (bid == null) return false;
+    const target = round2(fillPrice * (1 + tpPct));
+    return bid >= target;
   }
 
   hedgeAtPostTime(_ctx: HedgePostContext): HedgePostDecision {

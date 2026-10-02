@@ -56,6 +56,7 @@ import {
 } from "./strategy-chart-api.js";
 import {
   prefixesWithLiveExposure,
+  strategyHotSwapBlockReason,
   toggleTradingBlockReason,
   type MarketRuleStore,
 } from "../market-rules.js";
@@ -700,6 +701,16 @@ export class DashboardServer {
     }
   }
 
+  /** Block strategyId change while open positions or resting GTCs exist. */
+  private assertCanHotSwapStrategy(nextStrategyId: string): void {
+    if (nextStrategyId === this.config.strategyId) return;
+    const reason = strategyHotSwapBlockReason(
+      this.tracker?.getOpenPositions().length ?? 0,
+      this.tracker?.getAllPostedOrders().length ?? 0,
+    );
+    if (reason) throw new Error(reason);
+  }
+
   private async handlePatchConfig(
     req: import("node:http").IncomingMessage,
     res: import("node:http").ServerResponse,
@@ -715,6 +726,9 @@ export class DashboardServer {
       const parsed = JSON.parse(body) as unknown;
       const patch = sanitizePatch(parsed);
       const nextId = patch.strategyId ?? this.config.strategyId;
+      if (patch.strategyId !== undefined) {
+        this.assertCanHotSwapStrategy(String(nextId));
+      }
       if (typeof nextId === "string" && nextId.startsWith("custom:")) {
         if (!this.repos?.strategyGraphs.get(nextId)) {
           throw new Error(`Unknown custom strategy: ${nextId}`);
@@ -745,7 +759,9 @@ export class DashboardServer {
         message.startsWith("Unknown custom") ||
         message.includes("must be")
         ? 400
-        : 500;
+        : message.startsWith("Cannot change strategyId")
+          ? 409
+          : 500;
       res.writeHead(status, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ ok: false, error: message }));
     }
@@ -976,6 +992,7 @@ export class DashboardServer {
     }
     try {
       const id = parseStrategyId(rawId);
+      this.assertCanHotSwapStrategy(id);
       const graph = this.repos?.strategyGraphs.get(id);
       if (!graph) {
         res.writeHead(404, { "Content-Type": "application/json" });
@@ -998,7 +1015,8 @@ export class DashboardServer {
       );
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      res.writeHead(400, { "Content-Type": "application/json" });
+      const status = message.startsWith("Cannot change strategyId") ? 409 : 400;
+      res.writeHead(status, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ ok: false, error: message }));
     }
   }

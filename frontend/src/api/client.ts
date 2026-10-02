@@ -453,7 +453,10 @@ export const api = {
       body: JSON.stringify(patch),
     }),
   simReset: () =>
-    request<{ ok: boolean; error?: string }>("/api/sim/reset", { method: "POST" }),
+    request<{ ok: boolean; error?: string; archived?: number; archiveBatchId?: string }>(
+      "/api/sim/reset",
+      { method: "POST" },
+    ),
   simPositions: (status: "open" | "resolved" = "open") =>
     request<{ positions: SimulatedPosition[] }>(
       `/api/sim/positions?status=${status}`,

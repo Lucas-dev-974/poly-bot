@@ -101,7 +101,7 @@ export interface SimulatedPosition {
   fillReason: FillReason;
   pairId: string;
   bestAskAtFill?: number | null;
-  /** Type d'ordre ayant crÃ©Ã© la position : GTC, FOK, FAK ou SIM (dry-run). */
+  /** Type d'ordre ayant crÃ©Ã© la position : GTC, FOK, FAK ou SIM (paper / historical). */
   orderType?: "GTC" | "FOK" | "FAK" | "SIM";
   /** Moteur qui a pris la position. Absent sur les lignes antérieures à la migration. */
   strategyId?: StrategyId;
@@ -157,7 +157,7 @@ export interface SimConfigState {
   strategyId: string;
   presetId: string | null;
   capitalInitial: number;
-  /** Config effective (preset + settings) — resynchronise le panneau 5m. */
+  /** Public-safe effective config (preset + settings; no privateKey / CLOB / builder secrets). */
   effectiveConfig?: BotConfig;
 }
 

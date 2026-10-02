@@ -111,7 +111,7 @@ export interface SimulatedPosition {
   fillReason: FillReason;
   pairId: string;
   bestAskAtFill?: number | null;
-  /** Type d'ordre ayant créé la position : GTC (limit resting), FOK (fill-or-kill), FAK (fill-and-kill), SIM (dry-run). */
+  /** Type d'ordre ayant créé la position : GTC (limit resting), FOK (fill-or-kill), FAK (fill-and-kill), SIM (paper / historical). */
   orderType?: "GTC" | "FOK" | "FAK" | "SIM";
   /** Moteur qui a pris la position. Absent sur les lignes antérieures à la migration. */
   strategyId?: StrategyId;

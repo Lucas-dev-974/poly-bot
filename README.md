@@ -307,7 +307,7 @@ src/
 
 | Feature | Description |
 |---------|-------------|
-| **Dual mode** | `DRY_RUN=true` (simulation) / `DRY_RUN=false` (live CLOB orders) |
+| **Live + paper sim** | Live CLOB trading; paper simulation on the dashboard Simulation page (no `DRY_RUN`) |
 | **Persistence** | SQLite (WAL) for positions, pairs, ledger, order history, window claims |
 | **Dashboard** | Real-time SSE dashboard at `http://localhost:3105` |
 | **Redemption** | V2 deposit-wallet (POLY_1271) on-chain redeem via relayer |
@@ -320,17 +320,16 @@ Two files, no overlap:
 
 | File | What it holds |
 |------|----------------|
-| `.env` | Secrets and infra: `DRY_RUN`, keys, hosts, dashboard port, DB paths |
+| `.env` | Secrets and infra: keys, `READONLY_LIVE`, hosts, dashboard port, DB paths |
 | `data/bot-settings.json` | **All strategy parameters** (bands, lock, budgets, poll, sim). Edited from the dashboard. |
 
-Copy `.env.example` to `.env`. Copy `bot-settings.example.json` to `data/bot-settings.json` (or save once from the dashboard). Named **parameter packs** live in `config/presets/` and each file **must** declare `strategyId`. The two shipped packs (**Couverture max**, **Conservateur**) are `arb`. Pick the **Moteur** then a profil in the dashboard Configuration dialog, then **Enregistrer**. Live (`DRY_RUN=false`) **refuses to start** without `data/bot-settings.json`. Leftover `CHEAP_*` / `EXPENSIVE_*` / `POLL_*` / `STRATEGY_ID` in `.env` are ignored.
+Copy `.env.example` to `.env`. Copy `bot-settings.example.json` to `data/bot-settings.json` (or save once from the dashboard). Named **parameter packs** live in `config/presets/` and each file **must** declare `strategyId`. The two shipped packs (**Couverture max**, **Conservateur**) are `arb`. Pick the **Moteur** then a profil in the dashboard Configuration dialog, then **Enregistrer**. Live trading **refuses to start** without `data/bot-settings.json` (and without `PRIVATE_KEY` unless `READONLY_LIVE=true`). Leftover `CHEAP_*` / `EXPENSIVE_*` / `POLL_*` / `STRATEGY_ID` in `.env` are ignored.
 
 ```bash
 # .env — secrets + infra
-DRY_RUN=true                    # true = simulation, false = live trading
-PRIVATE_KEY=0x...               # EOA private key (required for live)
-FUNDER_ADDRESS=0x...            # Deposit wallet address (for redemption)
-READONLY_LIVE=false
+PRIVATE_KEY=0x...               # EOA private key (required for live trading)
+FUNDER_ADDRESS=0x...            # Deposit wallet address (for redemption / readonly)
+READONLY_LIVE=false             # true = watch markets + balance, place no orders
 SIGNATURE_TYPE=3                # POLY_1271 deposit wallet
 AUTO_REDEEM_WINNERS=false
 
@@ -353,7 +352,7 @@ BUILDER_PASSPHRASE=...
 
 # Database
 PERSISTENCE_ENABLED=true
-DB_PATH=data/bot.db              # dry-run history
+DB_PATH=data/bot-live.db         # live trading history
 DB_PATH_LIVE=data/bot-live.db    # live trading history (separate)
 
 # Dashboard
@@ -396,7 +395,7 @@ npm install
 # Build TypeScript
 npm run build
 
-# Run (dry-run by default)
+# Run (live bot; use READONLY_LIVE=true to watch without trading)
 npm start
 
 # Or with tsx watch (auto-restart on change)
@@ -440,7 +439,7 @@ Live / trading     positions, arb_pairs, orders, posted_orders, trade_keys,
 Enregistrement     market_snapshots, book_snapshots, opportunity_snapshots,
 (dataset ML)       market_rules, market_resolutions, stats_snapshots, balance_snapshots
 Simulation         ledger + sim_pairs, sim_positions, sim_posted_orders, sim_trades,
-(paper / dry-run)  sim_window_claims, sim_trade_keys, sim_retry_counts, sim_state
+(paper trading)  sim_window_claims, sim_trade_keys, sim_retry_counts, sim_state
 Backtest           backtest_runs, backtest_trades, backtest_positions
 Graphs custom      strategy_graphs
 Events             events (persisted bot events, SSE replay)
@@ -486,8 +485,8 @@ npm run build
 # Unit tests (node:test)
 npm test
 
-# Run simulation (dry-run)
-DRY_RUN=true npm start
+# Paper simulation is the dashboard Simulation page (not an env flag)
+npm start
 ```
 
 ## Project Structure Rationale

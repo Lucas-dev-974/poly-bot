@@ -13,6 +13,7 @@ export class Database {
     mkdirSync(dirname(path), { recursive: true });
     this.conn = new DatabaseSync(path);
     this.conn.exec("PRAGMA journal_mode = WAL");
+    this.conn.exec("PRAGMA busy_timeout = 5000");
     this.conn.exec("PRAGMA foreign_keys = ON");
   }
 
@@ -393,6 +394,37 @@ export class Database {
       );
       CREATE INDEX IF NOT EXISTS idx_sim_posted_orders_slug ON sim_posted_orders(eventSlug);
 
+
+      CREATE TABLE IF NOT EXISTS sim_positions_archive (
+        archiveId INTEGER PRIMARY KEY AUTOINCREMENT,
+        archiveBatchId TEXT NOT NULL,
+        archivedAt INTEGER NOT NULL,
+        id TEXT NOT NULL,
+        eventSlug TEXT NOT NULL,
+        eventTitle TEXT NOT NULL,
+        tokenId TEXT NOT NULL,
+        outcome TEXT NOT NULL,
+        outcomeIndex INTEGER NOT NULL,
+        kind TEXT NOT NULL,
+        limitPrice REAL NOT NULL,
+        fillPrice REAL NOT NULL,
+        size REAL NOT NULL,
+        cost REAL NOT NULL,
+        windowEnd INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        resolvedAt INTEGER,
+        pnl REAL,
+        fillReason TEXT NOT NULL,
+        pairId TEXT NOT NULL,
+        bestAskAtFill REAL,
+        orderType TEXT,
+        strategyId TEXT,
+        sellPrice REAL,
+        createdAt INTEGER NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_sim_positions_archive_batch ON sim_positions_archive(archiveBatchId);
+      CREATE INDEX IF NOT EXISTS idx_sim_positions_archive_archivedAt ON sim_positions_archive(archivedAt);
+
       CREATE TABLE IF NOT EXISTS sim_trade_keys (
         key TEXT PRIMARY KEY,
         createdAt INTEGER NOT NULL
@@ -431,6 +463,9 @@ export class Database {
     this.addColumnIfMissing("positions", "orderType", "TEXT");
     this.addColumnIfMissing("positions", "strategyId", "TEXT");
     this.addColumnIfMissing("positions", "sellPrice", "REAL");
+    this.addColumnIfMissing("sim_positions", "orderType", "TEXT");
+    this.addColumnIfMissing("sim_positions", "strategyId", "TEXT");
+    this.addColumnIfMissing("sim_positions", "sellPrice", "REAL");
     this.addColumnIfMissing("backtest_positions", "sellPrice", "REAL");
     // Heure réelle du fill (ms). Pour un GTC resting, diffère de ts (heure de placement).
     this.addColumnIfMissing("orders", "filledTs", "INTEGER");
@@ -519,6 +554,7 @@ export class Database {
       DELETE FROM sim_trade_keys;
       DELETE FROM sim_retry_counts;
       DELETE FROM sim_window_claims;
+      DELETE FROM sim_positions_archive;
     `);
   }
 

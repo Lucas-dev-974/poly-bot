@@ -52,6 +52,13 @@ export interface TickExecutorBaseCtx {
   books: TokenBook[];
   nowMs: number;
   sink: TickExecutorSink;
+  /**
+   * When false, only match resting + manageRestingPolicy (defend / edge-sell /
+   * cancel). No findOpportunities. Default true. Paper uses false when the
+   * market-rules family has trading off — mirror live manageLiveResting before
+   * the trading gate.
+   */
+  allowNewEntries?: boolean;
 }
 
 export type TickExecutorCtx = TickExecutorBaseCtx & {
@@ -61,15 +68,19 @@ export type TickExecutorCtx = TickExecutorBaseCtx & {
 export function processTick(ctx: TickExecutorBaseCtx): void {
   const tick: TickExecutorCtx = { ...ctx, filledThisTick: new Set<string>() };
   matchResting(tick);
+  // Always manage exits / resting policy (defend, edge-sell, cancel) — same as
+  // live manageLiveResting, which runs before the trading-off gate.
+  manageRestingPolicy(tick);
 
+  const allowNewEntries = ctx.allowNewEntries !== false;
   if (
+    allowNewEntries &&
     isWithinMinutesBeforeClose(
       minutesLeft(ctx.event.windowEnd, ctx.nowMs),
       ctx.config.minutesBeforeCloseMin,
       ctx.config.minutesBeforeCloseMax,
     )
   ) {
-    manageRestingPolicy(tick);
     const opportunities = ctx.strategy.findOpportunities({
       config: ctx.config,
       tracker: ctx.tracker,
@@ -93,8 +104,6 @@ export function processTick(ctx: TickExecutorBaseCtx): void {
     for (const opp of opportunities) {
       executeOpp(tick, opp);
     }
-  } else {
-    manageRestingPolicy(tick);
   }
 }
 

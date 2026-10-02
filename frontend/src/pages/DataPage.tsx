@@ -2,6 +2,7 @@ import { For, Show, createSignal, onMount } from "solid-js";
 import type { JSX } from "solid-js";
 import { api } from "../api/client";
 import { navigate } from "../router";
+import "../styles/data.css";
 
 interface DbTableStat {
   name: string;

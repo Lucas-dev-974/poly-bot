@@ -4,6 +4,7 @@ import { TABS, type TabId } from "../guide/data";
 import { ArchTab, HedgeTab, ShipTab, StoryTab, UiTab } from "../guide/GuideTabs";
 import { GuidePill, GuideRow, GuideStack, GuideStat } from "../guide/GuideUi";
 import { navigate } from "../router";
+import "../styles/guide.css";
 
 export function StrategyGuidePage(): JSX.Element {
   const [tab, setTab] = createSignal<TabId>("story");

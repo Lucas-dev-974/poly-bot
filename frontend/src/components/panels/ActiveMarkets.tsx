@@ -1,4 +1,6 @@
 import { For, Index, Show, createMemo, createSignal } from "solid-js";
+import { LazyMarketHistoryModal } from "../modals/LazyMarketHistoryModal";
+import { marketToChartTarget } from "../../utils/chart-target-adapters";
 import type { JSX } from "solid-js";
 import { Badge } from "../ui/Badge";
 import { EmptyState } from "../ui/EmptyState";
@@ -9,7 +11,6 @@ import {
   useMarketRulesAutoRefresh,
 } from "../../stores/marketRulesStore";
 import { countdown, fmtPrice, fmtShares, pct, fmtSpread } from "../../utils/format";
-import { MarketHistoryModal, marketToChartTarget } from "../modals/MarketHistoryModal";
 import { api } from "../../api/client";
 import { pushInfo } from "../../stores/toastStore";
 import type { MarketView, TokenBook } from "../../types";
@@ -391,7 +392,7 @@ export function ActiveMarkets(props: { now: number }): JSX.Element {
       </Panel>
       <Show when={chartMarket()}>
         {(m) => (
-          <MarketHistoryModal
+          <LazyMarketHistoryModal
             target={marketToChartTarget(m())}
             onClose={() => setChartMarket(null)}
           />

@@ -1,4 +1,5 @@
 import { For, Show, createEffect, createMemo, createSignal, onMount } from "solid-js";
+import { useTableWindow } from "../hooks/useTableWindow";
 import type { JSX } from "solid-js";
 import { api, type SimEngineState, type SimConfigPatch } from "../api/client";
 import { countdownClass, pnlClass, toMessage } from "./simPageHelpers";
@@ -9,11 +10,11 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { Panel } from "../components/ui/Panel";
 import { ConfirmModal } from "../components/modals/ConfirmModal";
 import { CollapsibleSection, CollapseChevron, isCollapsed, writeCollapsed } from "../components/ui/Collapsible";
+import { LazyMarketHistoryModal } from "../components/modals/LazyMarketHistoryModal";
 import {
-  MarketHistoryModal,
   simTradeToChartTarget,
   simulatedPositionToChartTarget,
-} from "../components/modals/MarketHistoryModal";
+} from "../utils/chart-target-adapters";
 import {
   allPresetsForStrategy,
   STRATEGY_ENGINE_OPTIONS,
@@ -64,6 +65,7 @@ import {
 import { countdown, fmtPrice, fmtShares, fmtUsd, pct, timeStr } from "../utils/format";
 import { addLog } from "../stores/logStore";
 import { pushError } from "../stores/toastStore";
+import "../styles/sim.css";
 
 /** Titre du marché pour un tokenId (lookup dans le store markets SSE). */
 function marketTitleForToken(tokenId: string): string {
@@ -487,6 +489,9 @@ export function SimulationPage(): JSX.Element {
     list.sort((a, b) => b.ts - a.ts);
     return reverseOrder() ? list : list.reverse();
   });
+
+  const journalWindow = useTableWindow(() => sortedJournal().length, { rowHeight: 34, maxHeightPx: 480 });
+  const resolvedWindow = useTableWindow(() => sortedResolved().length, { rowHeight: 34, maxHeightPx: 480 });
 
   return (
     <div class="page simulation-page">
@@ -1019,6 +1024,12 @@ export function SimulationPage(): JSX.Element {
             when={sortedJournal().length > 0}
             fallback={<EmptyState text="Aucun ordre simulé pour l'instant." />}
           >
+            <div
+              class="sim-table-scroll"
+              ref={journalWindow.setRef}
+              onScroll={journalWindow.onScroll}
+              style={journalWindow.scrollerStyle()}
+            >
             <table class="sim-table">
               <thead>
                 <tr>
@@ -1036,7 +1047,12 @@ export function SimulationPage(): JSX.Element {
                 </tr>
               </thead>
               <tbody>
-                <For each={sortedJournal()}>
+                  <Show when={journalWindow.active() && journalWindow.padTop() > 0}>
+                    <tr aria-hidden="true">
+                      <td colspan="11" style={{ height: `${journalWindow.padTop()}px`, padding: "0", border: "none" }} />
+                    </tr>
+                  </Show>
+                <For each={journalWindow.slice(sortedJournal())}>
                   {(t) => (
                     <tr
                       class={t.filled ? "" : "sim-resting-row"}
@@ -1067,8 +1083,14 @@ export function SimulationPage(): JSX.Element {
                     </tr>
                   )}
                 </For>
+                  <Show when={journalWindow.active() && journalWindow.padBottom() > 0}>
+                    <tr aria-hidden="true">
+                      <td colspan="11" style={{ height: `${journalWindow.padBottom()}px`, padding: "0", border: "none" }} />
+                    </tr>
+                  </Show>
               </tbody>
             </table>
+            </div>
           </Show>
         }>
           {/* Onglet positions résolues */}
@@ -1076,6 +1098,12 @@ export function SimulationPage(): JSX.Element {
             when={sortedResolved().length > 0}
             fallback={<EmptyState text="Aucune position résolue pour l'instant." />}
           >
+            <div
+              class="sim-table-scroll"
+              ref={resolvedWindow.setRef}
+              onScroll={resolvedWindow.onScroll}
+              style={resolvedWindow.scrollerStyle()}
+            >
             <table class="sim-table">
               <thead>
                 <tr>
@@ -1093,7 +1121,12 @@ export function SimulationPage(): JSX.Element {
                 </tr>
               </thead>
               <tbody>
-                <For each={sortedResolved()}>
+                  <Show when={resolvedWindow.active() && resolvedWindow.padTop() > 0}>
+                    <tr aria-hidden="true">
+                      <td colspan="11" style={{ height: `${resolvedWindow.padTop()}px`, padding: "0", border: "none" }} />
+                    </tr>
+                  </Show>
+                <For each={resolvedWindow.slice(sortedResolved())}>
                   {(p) => (
                     <tr title={p.eventSlug}>
                       <td>{p.eventTitle}</td>
@@ -1119,8 +1152,14 @@ export function SimulationPage(): JSX.Element {
                     </tr>
                   )}
                 </For>
+                  <Show when={resolvedWindow.active() && resolvedWindow.padBottom() > 0}>
+                    <tr aria-hidden="true">
+                      <td colspan="11" style={{ height: `${resolvedWindow.padBottom()}px`, padding: "0", border: "none" }} />
+                    </tr>
+                  </Show>
               </tbody>
             </table>
+            </div>
           </Show>
         </Show>
         </CollapsibleSection>
@@ -1138,7 +1177,7 @@ export function SimulationPage(): JSX.Element {
       {/* Dialog graphique : historique de prix du marché + markers entrée/sortie */}
       <Show when={chartTarget()}>
         {(t) => (
-          <MarketHistoryModal target={t()} onClose={() => setChartTarget(null)} />
+          <LazyMarketHistoryModal target={t()} onClose={() => setChartTarget(null)} />
         )}
       </Show>
     </div>

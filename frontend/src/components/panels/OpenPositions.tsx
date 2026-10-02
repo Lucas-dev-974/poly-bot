@@ -1,4 +1,6 @@
 import { For, Show, createMemo, createSignal } from "solid-js";
+import { LazyMarketHistoryModal } from "../modals/LazyMarketHistoryModal";
+import { simulatedPositionToChartTarget } from "../../utils/chart-target-adapters";
 import type { JSX } from "solid-js";
 import { Badge } from "../ui/Badge";
 import { EmptyState } from "../ui/EmptyState";
@@ -7,7 +9,6 @@ import { markets } from "../../stores/marketStore";
 import { openPositionList } from "../../stores/positionStore";
 import { currentQuotesForPosition, marketCoverage } from "../../utils/helpers";
 import { countdown, fmtPrice, fmtUsd } from "../../utils/format";
-import { MarketHistoryModal, simulatedPositionToChartTarget } from "../modals/MarketHistoryModal";
 import type { SimulatedPosition } from "../../types";
 
 // PNL latent + quotes du token d'une position : (bid courant - fillPrice) × size.
@@ -204,7 +205,7 @@ export function OpenPositions(props: {
       </Panel>
       <Show when={chartPosition()}>
         {(p) => (
-          <MarketHistoryModal
+          <LazyMarketHistoryModal
             target={simulatedPositionToChartTarget(p())}
             onClose={() => setChartPosition(null)}
           />

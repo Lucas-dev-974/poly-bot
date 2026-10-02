@@ -1,4 +1,6 @@
 import { For, Show, createMemo, createSignal } from "solid-js";
+import { LazyMarketHistoryModal } from "../modals/LazyMarketHistoryModal";
+import { positionToChartTarget } from "../../utils/chart-target-adapters";
 import type { JSX } from "solid-js";
 import { Badge } from "../ui/Badge";
 import { EmptyState } from "../ui/EmptyState";
@@ -12,7 +14,6 @@ import { orders } from "../../stores/orderStore";
 import { openPositionList, resolvedPositions } from "../../stores/positionStore";
 import { dateTimeStr, fmtPrice, fmtUsd } from "../../utils/format";
 import { marketRecencyMs } from "../../utils/market";
-import { MarketHistoryModal, positionToChartTarget } from "../modals/MarketHistoryModal";
 import type { PolymarketPosition, PositionKind, StrategyId } from "../../types";
 
 /** Identifie un marché par son créneau visible (titre = date + heure), pas par token. */
@@ -443,7 +444,7 @@ export function PolymarketPositions(props: {
     </Panel>
     <Show when={chartPosition()}>
       {(p) => (
-        <MarketHistoryModal
+        <LazyMarketHistoryModal
           target={positionToChartTarget(p())}
           onClose={() => setChartPosition(null)}
         />

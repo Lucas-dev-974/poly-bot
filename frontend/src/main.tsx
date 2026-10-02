@@ -7,11 +7,6 @@ import { currentRoute, type AppRoute } from "./router";
 import "./styles/variables.css";
 import "./styles/globals.css";
 import "./styles/components.css";
-import "./styles/guide.css";
-import "./styles/backtest.css";
-import "./styles/strategy-editor.css";
-import "./styles/data.css";
-import "./styles/sim.css";
 
 // Code-splitting : chaque page lourde est un chunk séparé, chargé à la
 // demande. Le dashboard (page par défaut, petit) reste eager pour un

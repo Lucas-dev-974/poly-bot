@@ -27,6 +27,7 @@ import {
   type ChartRule,
   type StrategyGraph,
 } from "../strategy-editor/graph-types";
+import "../styles/strategy-editor.css";
 
 /** 1× = 15 min de marché en 20 s. */
 const MARKET_SEC_PER_WALL_SEC = 45;

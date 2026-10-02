@@ -49,6 +49,7 @@ import {
   commitUserPreset,
   removeUserPreset,
 } from "../stores/userPresetsStore";
+import "../styles/backtest.css";
 
 export function BacktestPage(): JSX.Element {
   // Windows/series/runs : store persistant (survivent à la navigation) —

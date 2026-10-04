@@ -49,6 +49,7 @@ import {
   simConfigState,
   simEffectiveConfig,
   setSimEffectiveConfig,
+  setSimBalance,
   simOpenPositions,
   setSimConfigState,
   setSimOpenPositions,
@@ -82,6 +83,10 @@ export function SimulationPage(): JSX.Element {
   const [engine, setEngine] = createSignal<StrategyId>("arb");
   const [presetId, setPresetId] = createSignal<string>("");
   const [capitalInput, setCapitalInput] = createSignal("");
+  // Édition inline du KPI « Capital total » (clic sur la valeur → champ →
+  // Enter/blur applique, Échap annule).
+  const [editingCapital, setEditingCapital] = createSignal(false);
+  const [capitalEditInput, setCapitalEditInput] = createSignal("");
   const [confirmReset, setConfirmReset] = createSignal(false);
   // Presets utilisateur : store réactif partagé (localStorage hydraté au boot,
   // mutations via commitUserPreset/removeUserPreset).
@@ -188,6 +193,75 @@ export function SimulationPage(): JSX.Element {
       pushError("Simulation : " + toMessage(e), { group: "sim-error", replaceGroup: true });
     } finally {
       setSending(false);
+    }
+  }
+
+  /** Ouvre l'édition inline du KPI Capital total, préremplie avec le total courant. */
+  function startCapitalEdit(): void {
+    if (editingCapital() || sending() || !simBalance()) return;
+    setCapitalEditInput(simBalance()!.total.toFixed(2));
+    setEditingCapital(true);
+  }
+
+  function cancelCapitalEdit(): void {
+    setEditingCapital(false);
+    setCapitalEditInput("");
+  }
+
+  /**
+   * Valide l'édition inline du KPI « Capital total » : le moteur n'accepte que
+   * le cash (patch `capital` = remplacement du cash + capitalInitial), donc le
+   * total voulu est converti en cash = total − valeur des positions courantes.
+   * Refusé si négatif (total < valeur des positions). Échap = annulation, vide
+   * ou inchangé = no-op silencieux.
+   */
+  async function commitCapitalEdit(): Promise<void> {
+    if (!editingCapital()) return;
+    const raw = capitalEditInput().trim();
+    setEditingCapital(false);
+    setCapitalEditInput("");
+    if (!raw) return; // Vide = annulation silencieuse.
+    const total = Number(raw.replace(",", "."));
+    if (!Number.isFinite(total) || total <= 0) {
+      pushError("Capital total : entrez un montant positif.", { group: "sim-error", replaceGroup: true });
+      return;
+    }
+    const balance = simBalance();
+    if (!balance) return;
+    const rounded = Math.round(total * 100) / 100;
+    if (Math.abs(rounded - balance.total) < 0.005) return; // Inchangé.
+    const cashWanted = Math.round((rounded - balance.positionsValue) * 100) / 100;
+    if (cashWanted < 0) {
+      pushError(
+        `Total impossible : les positions valent ${fmtUsd(balance.positionsValue)} (cash ne peut pas être négatif).`,
+        { group: "sim-error", replaceGroup: true },
+      );
+      return;
+    }
+    // No-op uniquement si le cash réel ne changerait pas (le patch `capital`
+    // remplace le cash courant). Comparer à capitalInitial serait faux : le
+    // cash courant dérive de capitalInitial après gains/pertes.
+    if (Math.abs(cashWanted - balance.cash) < 0.005) {
+      addLog("Capital total inchangé (cash déjà à jour)");
+      return;
+    }
+    try {
+      const res = await api.simUpdateConfig({ capital: cashWanted });
+      if (!res.ok) throw new Error(res.error ?? "Échec de la modification du capital");
+      // Le PATCH renvoie le nouvel état moteur : rafraîchit le solde + stats immédiatement
+      // (sinon l'affichage attendrait le prochain tick SSE de 5 s).
+      const refreshed = await api.simState();
+      applyState(refreshed.state);
+      const st = refreshed.state;
+      setSimBalance({
+        cash: st.cash,
+        positionsValue: st.positionsValue,
+        total: st.total,
+      });
+      if (st.stats) setSimEngineStats(st.stats);
+      addLog(`Capital total édité : ${fmtUsd(rounded)} (cash ${fmtUsd(cashWanted)}, était ${fmtUsd(balance.cash)})`);
+    } catch (e) {
+      pushError("Simulation : " + toMessage(e), { group: "sim-error", replaceGroup: true });
     }
   }
 
@@ -504,15 +578,54 @@ export function SimulationPage(): JSX.Element {
       <CollapsibleSection id="sim-kpis" title="Capital & P&L (KPI)">
       <div class="sim-kpis">
         <div class="sim-kpi sim-kpi-capital">
-          <span class="sim-kpi-label">Capital total</span>
+          <span class="sim-kpi-label">Capital total <span class="sim-kpi-editable-hint">(cliquer pour modifier)</span></span>
           <Show when={simBalance()} fallback={<span class="sim-kpi-value sim-muted">—</span>}>
             {(b) => (
-              <>
-                <span class="sim-kpi-value">{fmtUsd(b().total)}</span>
-                <span class="sim-kpi-sub">
-                  cash {fmtUsd(b().cash)} · positions {fmtUsd(b().positionsValue)}
-                </span>
-              </>
+              <Show
+                when={editingCapital()}
+                fallback={
+                  <>
+                    <button
+                      type="button"
+                      class="sim-kpi-value sim-kpi-capital-btn"
+                      title="Cliquer pour modifier le capital total"
+                      disabled={sending()}
+                      onClick={() => startCapitalEdit()}
+                    >
+                      {fmtUsd(b().total)}
+                    </button>
+                    <span class="sim-kpi-sub">
+                      cash {fmtUsd(b().cash)} · positions {fmtUsd(b().positionsValue)}
+                    </span>
+                  </>
+                }
+              >
+                <input
+                  class="sim-kpi-value sim-kpi-capital-edit"
+                  type="number"
+                  min="1"
+                  step="1"
+                  value={capitalEditInput()}
+                  disabled={sending()}
+                  ref={(el) => {
+                    queueMicrotask(() => {
+                      el.focus();
+                      el.select();
+                    });
+                  }}
+                  onInput={(e) => setCapitalEditInput(e.currentTarget.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      void commitCapitalEdit();
+                    } else if (e.key === "Escape") {
+                      e.preventDefault();
+                      cancelCapitalEdit();
+                    }
+                  }}
+                  onBlur={() => void commitCapitalEdit()}
+                />
+              </Show>
             )}
           </Show>
         </div>

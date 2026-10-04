@@ -145,6 +145,9 @@ export class PaperTradingEngine {
       this.ledger = new BacktestLedger(patch.capital);
       this.repos?.simState.set("capitalInitial", String(patch.capital));
       this.repos?.simState.set("capitalCash", String(patch.capital));
+      // Émission immédiate : sans cela, les clients attendraient le prochain
+      // tick emitBalance (5 s) pour voir le nouveau solde.
+      this.emitBalance();
     }
     if (patch.strategyId || patch.presetId !== undefined || patch.settings) {
       const strategyId = patch.strategyId ?? this.effectiveConfig.strategyId;

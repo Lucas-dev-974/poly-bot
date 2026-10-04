@@ -86,6 +86,53 @@
   color: var(--accent, #4f8cff);
 }
 
+/* KPI Capital total éditable : la valeur est un bouton stylé en texte
+   (clic → champ inline) ; le champ reprend la typo de la valeur. */
+.sim-kpi-capital-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+  align-self: flex-start;
+  border-bottom: 1px dashed transparent;
+  transition: border-color 0.15s ease, filter 0.15s ease;
+  font-family: inherit;
+}
+
+.sim-kpi-capital-btn:hover,
+.sim-kpi-capital-btn:focus-visible {
+  border-bottom-color: currentColor;
+  filter: brightness(1.25);
+  outline: none;
+}
+
+.sim-kpi-capital-edit {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg, #0f1115);
+  border: 1px solid var(--accent, #4f8cff);
+  border-radius: 6px;
+  padding: 0 8px;
+  align-self: flex-start;
+  min-width: 150px;
+}
+
+.sim-kpi-capital-edit:focus {
+  outline: none;
+  border-color: var(--accent, #4f8cff);
+}
+
+/* Indice « (cliquer pour modifier) » discret dans le label du KPI. */
+.sim-kpi-editable-hint {
+  font-size: 9px;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--muted, #8b93a3);
+  opacity: 0.75;
+}
+
 /* Ligne de valeur du KPI P&L réalisé : réalisé à gauche, latent à droite. */
 .sim-kpi-pnl-row {
   display: flex;

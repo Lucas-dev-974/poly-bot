@@ -107,7 +107,7 @@ positifs), mais la config hot-appliquée (bande étendue à 0.60, sizing
 déridé) n'a aucun chiffre backtest derrière elle — retour à
 band-070-085_min200_max600 recommandé, minElapsed 300 à backtester.
 **Rapport d'audit complet (code + wiring + backtest + live + runs du jour)**
-: `RAPPORT-fav-band-audit.md` à la racine (findings F1–F9, recommandations R1–R5
+: `docs/RAPPORT-fav-band-audit.md` (findings F1–F9, recommandations R1–R5
 ; note : `tests/fav-band.test.ts` absent du script `npm test`).
 **Sortie dégradation (2026-09-20, implémentée)** : la règle « pics de plus en
 plus bas » est câblée full-stack (config/runtime-settings/stratégie/UI dialog +

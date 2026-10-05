@@ -285,10 +285,10 @@ def main():
         "markets": all_results
     }
     
-    with open("lower_low_analysis_sample.json", "w") as f:
+    with open("audits/backtest/fav-band/lower_low_analysis_sample.json", "w") as f:
         json.dump(output, f, indent=2)
     
-    print(f"\nRésultats sauvés dans lower_low_analysis_sample.json")
+    print(f"\nRésultats sauvés dans audits/backtest/fav-band/lower_low_analysis_sample.json")
 
 
 if __name__ == "__main__":

@@ -353,7 +353,7 @@ export const NEW_FILES: [string, string][] = [
   ["src/strategy/open-entry-strategy.ts", "Politique open-entry — favori émergent, FOK, SL dual-scale + hold"],
   ["src/strategy/fav-band-strategy.ts", "Politique fav-band — favori mid-band, FOK, hold (+ whipsaw / inverse / exit)"],
   ["src/strategy/probability-repricing-strategy.ts", "Politique probability-repricing — dislocation z-score, exits bid stricts"],
-  ["probability-repricing-implementation.md", "Doc d'implémentation probability-repricing (racine du repo)"],
+  ["docs/probability-repricing-implementation.md", "Doc d'implémentation probability-repricing"],
   ["src/strategy/barbell-sizing.ts", "pairLockOk toujours true"],
   ["src/strategy/registry.ts", "createStrategy(id, repos) natif + custom"],
   ["src/strategy/graph/", "DSL + interpréteur GraphStrategy"],

@@ -1,6 +1,6 @@
-﻿# Fav-band — comparaison définitions de sortie (A pics cassés vs B creux confirmés)
+# Fav-band — comparaison définitions de sortie (A pics cassés vs B creux confirmés)
 
-**Date** : 2026-09-20 · **Scope** : exemples synthétiques + lecture des artefacts existants (`lower-lows.ts`, `analyze_lower_lows_fast.py`, audit exit-rule). Pas de changement live. PnL `runBacktest` B non rejoué ici (wiring exit mode B pas branché sur le runner).
+**Date** : 2026-09-20 · **Scope** : exemples synthétiques + lecture des artefacts existants (`lower-lows.ts`, `scripts/python/analyze_lower_lows_fast.py`, audit exit-rule). Pas de changement live. PnL `runBacktest` B non rejoué ici (wiring exit mode B pas branché sur le runner).
 
 ## Définitions
 

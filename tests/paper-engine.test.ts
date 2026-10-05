@@ -310,4 +310,74 @@ describe("PaperTradingEngine", () => {
     );
     repos.db.close();
   });
+
+  it("getResolvedPage pagine la DB complète avec total/totalPages", () => {
+    const repos = simRepos();
+    // Seed 7 positions résolues (won/lost) avec resolvedAt croissants.
+    for (let i = 0; i < 7; i++) {
+      repos.simPositions.insert({
+        id: `paged-seed-${i}`,
+        eventSlug: "btc-updown-5m-1700000000",
+        eventTitle: "BTC Up/Down",
+        tokenId: "t-up",
+        outcome: "Up",
+        outcomeIndex: 0,
+        kind: "cheap",
+        limitPrice: 0.1,
+        fillPrice: 0.1,
+        size: 10,
+        cost: 1,
+        windowEnd: 1700000000,
+        status: i % 2 === 0 ? "won" : "lost",
+        resolvedAt: Date.now() - (7 - i) * 60_000,
+        pnl: i % 2 === 0 ? 0.9 : -1,
+        fillReason: "marketable",
+        pairId: "btc-updown-5m-1700000000:0",
+      });
+    }
+    const engine = new PaperTradingEngine(baseConfig(), repos);
+    engine.init();
+
+    // Page 2, taille 3 : 3 items (7 = 3 + 3 + 1).
+    const p2 = engine.getResolvedPage(2, 3);
+    assert.equal(p2.page, 2);
+    assert.equal(p2.total, 7);
+    assert.equal(p2.totalPages, 3);
+    assert.equal(p2.positions.length, 3);
+
+    // Page 3 = les plus anciennes : 1 item.
+    const p3 = engine.getResolvedPage(3, 3);
+    assert.equal(p3.page, 3);
+    assert.equal(p3.positions.length, 1);
+    assert.ok(
+      (p3.positions[0]!.resolvedAt ?? 0) <= (p2.positions[p2.positions.length - 1]!.resolvedAt ?? 0),
+      "page 3 = resolvedAt plus anciens que fin de page 2",
+    );
+
+    // Page 3 = plus anciennes en dernier : ordre décroissant resolvedAt.
+    const p1 = engine.getResolvedPage(1, 3);
+    assert.equal(p1.positions.length, 3);
+    for (let i = 1; i < p1.positions.length; i++) {
+      assert.ok(
+        (p1.positions[i - 1]!.resolvedAt ?? 0) >= (p1.positions[i]!.resolvedAt ?? 0),
+        "ordre décroissant resolvedAt",
+      );
+    }
+
+    // Clamp : page au-delà de la dernière → dernière page.
+    const p9 = engine.getResolvedPage(99, 3);
+    assert.equal(p9.page, 3);
+    assert.equal(p9.positions.length, 1);
+
+    // DB vide → 0 item, au moins 1 page.
+    repos.db.close();
+    const reposEmpty = simRepos();
+    const engineEmpty = new PaperTradingEngine(baseConfig(), reposEmpty);
+    engineEmpty.init();
+    const p0 = engineEmpty.getResolvedPage(1, 50);
+    assert.equal(p0.total, 0);
+    assert.equal(p0.totalPages, 1);
+    assert.equal(p0.positions.length, 0);
+    reposEmpty.db.close();
+  });
 });

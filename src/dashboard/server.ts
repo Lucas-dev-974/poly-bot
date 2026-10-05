@@ -5,6 +5,7 @@ import {
   handleSimConfigPatch,
   handleSimControl,
   handleSimPositions,
+  handleSimResolvedPaged,
   handleSimReset,
   handleSimResting,
   handleSimState,
@@ -316,6 +317,12 @@ export class DashboardServer {
       if (url.pathname === "/api/sim/positions") {
         if (!this.simEngine) return simEngineMissing(res);
         handleSimPositions(this.simEngine, url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/sim/resolved") {
+        if (!this.simEngine) return simEngineMissing(res);
+        handleSimResolvedPaged(this.simEngine, url, res);
         return;
       }
 

@@ -11,6 +11,16 @@ export interface SimStateResponse {
   trades: SimTrade[];
 }
 
+/** Réponse GET /api/sim/resolved (positions résolues paginées). */
+export interface SimResolvedPagedResponse {
+  ok: boolean;
+  positions: SimulatedPosition[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
 /** Ligne de l'historique des ordres simulés (sim_trades). */
 export interface SimTrade {
   ts: number;
@@ -460,6 +470,10 @@ export const api = {
   simPositions: (status: "open" | "resolved" = "open") =>
     request<{ positions: SimulatedPosition[] }>(
       `/api/sim/positions?status=${status}`,
+    ),
+  simResolvedPaged: (page: number, pageSize: number) =>
+    request<SimResolvedPagedResponse>(
+      `/api/sim/resolved?page=${Math.max(1, Math.floor(page))}&pageSize=${pageSize}`,
     ),
   simTrades: (
     limit = 200,

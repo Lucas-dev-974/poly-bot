@@ -31,6 +31,30 @@ export function handleSimState(engine: PaperTradingEngine, res: ServerResponse):
   }));
 }
 
+const SIM_RESOLVED_PAGE_SIZES = [25, 50, 100, 200];
+
+/** GET /api/sim/resolved?page=1&pageSize=50 — pagination sur la DB complète. */
+export function handleSimResolvedPaged(
+  engine: PaperTradingEngine,
+  url: URL,
+  res: ServerResponse,
+): void {
+  const pageRaw = Number(url.searchParams.get("page") ?? 1);
+  const sizeRaw = Number(url.searchParams.get("pageSize") ?? 50);
+  const page = Number.isFinite(pageRaw) && pageRaw >= 1 ? Math.floor(pageRaw) : 1;
+  const pageSize = SIM_RESOLVED_PAGE_SIZES.includes(sizeRaw) ? sizeRaw : 50;
+  const { positions, page: clampedPage, total, totalPages } = engine.getResolvedPage(page, pageSize);
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({
+    ok: true,
+    positions,
+    page: clampedPage,
+    pageSize,
+    total,
+    totalPages,
+  }));
+}
+
 export async function handleSimControl(
   engine: PaperTradingEngine,
   req: IncomingMessage,

@@ -92,6 +92,31 @@ export class SimPositionRepository {
       .reverse();
   }
 
+  /** Nombre total de positions résolues (status != open) — source DB complète. */
+  countResolved(): number {
+    const row = this.db.get<{ c: number }>(
+      "SELECT COUNT(*) AS c FROM sim_positions WHERE status != 'open'",
+    );
+    return row?.c ?? 0;
+  }
+
+  /**
+   * Page de positions résolues triées plus récent d'abord (page 1 = les plus
+   * récentes). Lit la DB complète : sans le plafond MAX_RESOLVED_IN_MEMORY du
+   * tracker. `offset` = (page - 1) × pageSize.
+   */
+  resolvedPaged(limit: number, offset: number): SimulatedPosition[] {
+    return this.db
+      .all<PositionRow>(
+        `SELECT * FROM sim_positions
+         WHERE status != 'open'
+         ORDER BY COALESCE(resolvedAt, createdAt) DESC
+         LIMIT ? OFFSET ?`,
+        [limit, offset],
+      )
+      .map(toPosition);
+  }
+
   countLegsByKind(pairId: string, kind: string): number {
     const row = this.db.get<{ count: number }>(
       "SELECT COUNT(*) as count FROM sim_positions WHERE pairId = ? AND kind = ?",

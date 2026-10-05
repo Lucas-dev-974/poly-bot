@@ -60,6 +60,12 @@ import {
   setSimResting,
   simJournal,
   setSimJournal,
+  simResolvedPaging,
+  simResolvedPagedActive,
+  fetchSimResolvedPage,
+  resetSimResolvedPaging,
+  setSimResolvedPageSize,
+  SIM_RESOLVED_PAGE_SIZES,
 } from "../stores/simStore";
 import { countdown, fmtPrice, fmtShares, fmtUsd, pct, timeStr } from "../utils/format";
 import { addLog } from "../stores/logStore";
@@ -129,6 +135,11 @@ export function SimulationPage(): JSX.Element {
       replaceSimLists(data.open, data.resolved);
       replaceSimRestingAndJournal(data.resting ?? [], data.trades ?? []);
       if (data.state.stats) setSimEngineStats(data.state.stats);
+      // Interim = liste vivante /api/sim/state (plafond 200) ; le fetch paginé
+      // DB complète remplace immédiatement si disponible — sinon fallback vivant.
+      const pg = simResolvedPaging();
+      const fetched = await fetchSimResolvedPage(pg.page, pg.pageSize);
+      if (fetched === null) resetSimResolvedPaging();
     } catch {
       addLog("Simulation : chargement de l'état impossible", undefined, true);
     }
@@ -285,6 +296,7 @@ export function SimulationPage(): JSX.Element {
     try {
       const res = await api.simReset();
       if (!res.ok) throw new Error(res.error ?? "Echec de la reinitialisation");
+      resetSimResolvedPaging();
       await loadInitialState();
       const n = res.archived ?? 0;
       addLog(
@@ -525,6 +537,33 @@ export function SimulationPage(): JSX.Element {
   onMount(() => {
     void loadInitialState();
   });
+
+  // ── Pagination positions résolues (/api/sim/resolved — DB complète) ──────
+  // PagedActive true : mode paginé (page demandée au serveur). False = mode
+  // vivant (hydratation /api/sim/state + préfixe SSE), fallback si fetch KO.
+  const pg = simResolvedPaging;
+  const pgdActive = simResolvedPagedActive;
+
+  async function gotoPage(page: number): Promise<void> {
+    const p = pg();
+    const target = Math.min(Math.max(1, page), p.totalPages);
+    setSending(true);
+    const ok = (await fetchSimResolvedPage(target, p.pageSize)) !== null;
+    if (!ok) {
+      pushError("Pagination : chargement de la page impossible", { group: "sim-error", replaceGroup: true });
+    }
+    setSending(false);
+  }
+
+  async function changePageSize(size: number): Promise<void> {
+    setSimResolvedPageSize(size);
+    setSending(true);
+    const ok = (await fetchSimResolvedPage(1, size)) !== null;
+    if (!ok) {
+      pushError("Pagination : rechargement impossible", { group: "sim-error", replaceGroup: true });
+    }
+    setSending(false);
+  }
 
   // Listes triées : "Plus récent d'abord" trié explicitement (le store peut
   // contenir un mélange hydratation REST + events SSE insérés en queue).
@@ -1069,7 +1108,7 @@ export function SimulationPage(): JSX.Element {
             class={`sim-tab ${historyTab() === "resolved" ? "active" : ""}`}
             onClick={() => setHistoryTab("resolved")}
           >
-            Positions résolues ({simResolvedPositions().length})
+            Positions résolues ({pgdActive() ? pg().total : simResolvedPositions().length})
           </button>
           <button
             class={`sim-tab ${historyTab() === "journal" ? "active" : ""}`}
@@ -1095,6 +1134,71 @@ export function SimulationPage(): JSX.Element {
             Archiver résolues
           </button>
         </div>
+
+        {/* Barre de pagination (onglet positions résolues) : la page est
+            demandée au serveur (DB complète) ; total + totalPages viennent du
+            COUNT SQL — sans le plafond slice(0, 200) de /api/sim/state.
+            Masquée en mode vivant (fetch paginé KO) : pas de total fiable. */}
+        <Show when={historyTab() === "resolved" && pgdActive()}>
+          <div class="sim-pagination">
+            <span class="sim-pagination-info" title="Total des positions résolues en DB (source complète)">
+              {pg().total} résolue{pg().total === 1 ? "" : "s"} · page {pg().page} / {pg().totalPages}
+            </span>
+            <label class="sim-pagination-size">
+              Par page
+              <select
+                disabled={sending()}
+                value={String(pg().pageSize)}
+                onChange={(e) => void changePageSize(Number(e.currentTarget.value))}
+              >
+                <For each={SIM_RESOLVED_PAGE_SIZES}>
+                  {(s) => <option value={String(s)}>{s}</option>}
+                </For>
+              </select>
+            </label>
+            <div class="sim-pagination-nav">
+              <button
+                class="btn sim-pagination-btn"
+                type="button"
+                disabled={sending() || pg().page <= 1}
+                onClick={() => void gotoPage(1)}
+                title="Première page"
+              >
+                «
+              </button>
+              <button
+                class="btn sim-pagination-btn"
+                type="button"
+                disabled={sending() || pg().page <= 1}
+                onClick={() => void gotoPage(pg().page - 1)}
+                title="Page précédente"
+              >
+                ‹
+              </button>
+              <span class="sim-pagination-page">
+                {pg().page} / {pg().totalPages}
+              </span>
+              <button
+                class="btn sim-pagination-btn"
+                type="button"
+                disabled={sending() || pg().page >= pg().totalPages}
+                onClick={() => void gotoPage(pg().page + 1)}
+                title="Page suivante"
+              >
+                ›
+              </button>
+              <button
+                class="btn sim-pagination-btn"
+                type="button"
+                disabled={sending() || pg().page >= pg().totalPages}
+                onClick={() => void gotoPage(pg().totalPages)}
+                title="Dernière page"
+              >
+                »
+              </button>
+            </div>
+          </div>
+        </Show>
 
         <Show when={historyTab() === "resolved"} fallback={
           /* Onglet journal : chaque ordre simulé (rempli ou non) */

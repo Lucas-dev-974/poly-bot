@@ -337,6 +337,29 @@ export class PaperTradingEngine {
   }
 
   /**
+   * Page de positions résolues triées plus récent d'abord + métadonnées de
+   * pagination. Source = DB complète (sim_positions) : au-delà du plafond
+   * mémoire MAX_RESOLVED_IN_MEMORY (500) du tracker. La page demandée est
+   * clampée à [1, totalPages] et renvoyée.
+   */
+  getResolvedPage(page: number, pageSize: number): {
+    positions: SimulatedPosition[];
+    page: number;
+    total: number;
+    totalPages: number;
+  } {
+    if (!this.repos) return { positions: [], page: 1, total: 0, totalPages: 1 };
+    const total = this.repos.simPositions.countResolved();
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    const clampedPage = Math.min(Math.max(1, Math.floor(page)), totalPages);
+    const positions = this.repos.simPositions.resolvedPaged(
+      pageSize,
+      (clampedPage - 1) * pageSize,
+    );
+    return { positions, page: clampedPage, total, totalPages };
+  }
+
+  /**
    * Statut du filtre whipsaw fav-band pour le panneau Simulation (miroir de
    * ReverseBot.getStrategyStatus). Le moteur sim partage FavBandStrategy avec
    * le bot live : la pause est armée par les pertes des positions SIMULÉES

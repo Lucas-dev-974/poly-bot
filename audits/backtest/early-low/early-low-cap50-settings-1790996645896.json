@@ -1,0 +1,49 @@
+{
+  "note": "Temp settings for offline backtest. Preset early-low with simulatedCapital=50 only. earlyLowOrderUsdc=1, earlyLowBuyAskMax=0.12, hold (earlyLowExitEnabled=false). maxExposureUsdc left at preset 450. bot-settings.json untouched.",
+  "presetId": "early-low",
+  "overrides": {
+    "simulatedCapital": 50
+  },
+  "exposureNote": "No maxExposure capping. Preset maxExposureUsdc=450 is above the 50 bankroll; the ledger (simulatedCapital) is the cash constraint, not exposure.",
+  "settings": {
+    "pollIntervalMs": 1000,
+    "marketSlugPrefixes": [
+      "btc-updown-15m"
+    ],
+    "strategyId": "early-low",
+    "enableExpensiveHedge": false,
+    "arbAskLockOnly": false,
+    "arbAskSumMax": null,
+    "earlyLowBuyAskMin": 0,
+    "earlyLowBuyAskMax": 0.12,
+    "earlyLowMaxElapsedSec": 150,
+    "earlyLowMaxSpread": 0.06,
+    "earlyLowOrderUsdc": 1,
+    "earlyLowExitEnabled": false,
+    "earlyLowExitAsk": 0.4,
+    "earlyLowExitMomentumMin": 0,
+    "earlyLow15mOnly": true,
+    "earlyLowDropEntryEnabled": false,
+    "earlyLowDropEntryPriceMin": 0.15,
+    "earlyLowDropMin": 0.05,
+    "earlyLowDropMinElapsedSec": 0,
+    "earlyLowTrailingEnabled": false,
+    "earlyLowTrailingOffset": 0.02,
+    "earlyLowStopLossEnabled": false,
+    "earlyLowStopLossBidMax": 0.02,
+    "earlyLowExitMaxElapsedSec": 0,
+    "maxSharesPerOrder": 30,
+    "maxOpenPositionsPerSide": 1,
+    "maxExposureUsdc": 450,
+    "minutesBeforeCloseMin": 0,
+    "minutesBeforeCloseMax": 15,
+    "minMinutesBeforeCloseToBuy": null,
+    "simulatedCapital": 50,
+    "simFillProbabilityNonMarketable": 0.3,
+    "simResolveDelaySeconds": 5,
+    "simResolveRetryIntervalMs": 5000,
+    "simResolveMaxRetries": 5,
+    "simResolveFallback": "none",
+    "simMaxRetryAttempts": 20
+  }
+}

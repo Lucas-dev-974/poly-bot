@@ -1,0 +1,1099 @@
+{
+  "generatedAt": "2026-10-04T04:44:05.102Z",
+  "stakeUsd": 4,
+  "maxSpread": 0.1,
+  "completeness": {
+    "prefix": "btc-updown-15m-",
+    "windowSec": 900,
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "edgeGapApplied": false,
+    "nComplete": 1272,
+    "nTrain": 763,
+    "nHoldout": 509,
+    "trainFirstStart": 1788848100,
+    "holdoutFirstStart": 1789794900,
+    "lastStart": 1791088200
+  },
+  "fills": "taker buy at bestAsk, taker sell at bestBid; no mid fill; spread is the cost; no extra fee",
+  "spotSeriesInDb": false,
+  "literature": "No chainlink/binance/spot table, so spot-lead was not tested. Extra concept favorite-dip-scalp follows Cardozo & Rivero-Wildemauwe arXiv:2609.12878 (Polymarket favorite-longshot: sub-10c buys lose, >=90c buys earn) rather than buying the longshot dip. OpenMarket arXiv:2607.26245 reports 15m books usually one tick wide and no short-horizon alpha vs the mid.",
+  "concepts": [
+    {
+      "id": "panic-dip-bounce",
+      "plain": "Buy the first side whose ask drops by D over L seconds and is still in [0.15,0.45]. Sell at bid when +T, -S, 120s, or window end.",
+      "selection": "no WR>=55% cell; best train PnL among n>=40",
+      "eligibleTrainCells": 0,
+      "frozen": {
+        "D": 0.18,
+        "L": 15,
+        "T": 0.15,
+        "S": 0.06,
+        "band": [
+          0.15,
+          0.45
+        ],
+        "holdSec": 120,
+        "maxSpread": 0.1
+      },
+      "train": {
+        "params": {
+          "D": 0.18,
+          "L": 15,
+          "T": 0.15,
+          "S": 0.06,
+          "band": [
+            0.15,
+            0.45
+          ],
+          "holdSec": 120,
+          "maxSpread": 0.1
+        },
+        "n": 452,
+        "wins": 146,
+        "losses": 306,
+        "winRate": 0.323009,
+        "pnl": -10.51849,
+        "pnlPer1": -2.629623,
+        "avgWin": 1.846604,
+        "avgLoss": -0.915434,
+        "exitReasons": {
+          "sl": 299,
+          "tp": 118,
+          "time": 34,
+          "end": 1
+        }
+      },
+      "holdout": {
+        "n": 293,
+        "wins": 77,
+        "losses": 216,
+        "winRate": 0.262799,
+        "pnl": -55.318755,
+        "pnlPer1": -13.829689,
+        "avgWin": 1.912369,
+        "avgLoss": -0.93783,
+        "exitReasons": {
+          "tp": 60,
+          "sl": 206,
+          "time": 27
+        }
+      },
+      "clearsBar": false,
+      "trainTop": [
+        {
+          "params": {
+            "D": 0.18,
+            "L": 15,
+            "T": 0.15,
+            "S": 0.06,
+            "band": [
+              0.15,
+              0.45
+            ],
+            "holdSec": 120,
+            "maxSpread": 0.1
+          },
+          "n": 452,
+          "winRate": 0.323009,
+          "pnl": -10.51849,
+          "pnlPer1": -2.629623,
+          "avgWin": 1.846604,
+          "avgLoss": -0.915434
+        },
+        {
+          "params": {
+            "D": 0.18,
+            "L": 15,
+            "T": 0.1,
+            "S": 0.06,
+            "band": [
+              0.15,
+              0.45
+            ],
+            "holdSec": 120,
+            "maxSpread": 0.1
+          },
+          "n": 452,
+          "winRate": 0.371681,
+          "pnl": -18.75227,
+          "pnlPer1": -4.688067,
+          "avgWin": 1.443984,
+          "avgLoss": -0.920217
+        },
+        {
+          "params": {
+            "D": 0.18,
+            "L": 15,
+            "T": 0.15,
+            "S": 0.1,
+            "band": [
+              0.15,
+              0.45
+            ],
+            "holdSec": 120,
+            "maxSpread": 0.1
+          },
+          "n": 452,
+          "winRate": 0.389381,
+          "pnl": -21.8064,
+          "pnlPer1": -5.4516,
+          "avgWin": 1.879576,
+          "avgLoss": -1.277579
+        },
+        {
+          "params": {
+            "D": 0.18,
+            "L": 15,
+            "T": 0.1,
+            "S": 0.1,
+            "band": [
+              0.15,
+              0.45
+            ],
+            "holdSec": 120,
+            "maxSpread": 0.1
+          },
+          "n": 452,
+          "winRate": 0.442478,
+          "pnl": -33.998753,
+          "pnlPer1": -8.499688,
+          "avgWin": 1.473364,
+          "avgLoss": -1.304252
+        },
+        {
+          "params": {
+            "D": 0.18,
+            "L": 15,
+            "T": 0.06,
+            "S": 0.06,
+            "band": [
+              0.15,
+              0.45
+            ],
+            "holdSec": 120,
+            "maxSpread": 0.1
+          },
+          "n": 452,
+          "winRate": 0.442478,
+          "pnl": -47.478299,
+          "pnlPer1": -11.869575,
+          "avgWin": 0.940108,
+          "avgLoss": -0.934524
+        },
+        {
+          "params": {
+            "D": 0.18,
+            "L": 15,
+            "T": 0.06,
+            "S": 0.1,
+            "band": [
+              0.15,
+              0.45
+            ],
+            "holdSec": 120,
+            "maxSpread": 0.1
+          },
+          "n": 452,
+          "winRate": 0.535398,
+          "pnl": -52.502154,
+          "pnlPer1": -13.125539,
+          "avgWin": 0.973533,
+          "avgLoss": -1.371891
+        },
+        {
+          "params": {
+            "D": 0.08,
+            "L": 60,
+            "T": 0.06,
+            "S": 0.06,
+            "band": [
+              0.15,
+              0.45
+            ],
+            "holdSec": 120,
+            "maxSpread": 0.1
+          },
+          "n": 763,
+          "winRate": 0.414155,
+          "pnl": -59.939338,
+          "pnlPer1": -14.984835,
+          "avgWin": 0.825536,
+          "avgLoss": -0.717693
+        },
+        {
+          "params": {
+            "D": 0.18,
+            "L": 30,
+            "T": 0.1,
+            "S": 0.1,
+            "band": [
+              0.15,
+              0.45
+            ],
+            "holdSec": 120,
+            "maxSpread": 0.1
+          },
+          "n": 597,
+          "winRate": 0.41876,
+          "pnl": -63.032858,
+          "pnlPer1": -15.758214,
+          "avgWin": 1.426241,
+          "avgLoss": -1.209202
+        }
+      ],
+      "skippedHoldout": null,
+      "examples": [
+        {
+          "slug": "btc-updown-15m-1789794900",
+          "side": 1,
+          "entryTs": 1789795144185,
+          "entryAsk": 0.22,
+          "exitBid": 0.37,
+          "pnl": 2.7272727272727275,
+          "reason": "tp"
+        },
+        {
+          "slug": "btc-updown-15m-1789795800",
+          "side": 1,
+          "entryTs": 1789796231026,
+          "entryAsk": 0.45,
+          "exitBid": 0.37,
+          "pnl": -0.7111111111111112,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789796700",
+          "side": 1,
+          "entryTs": 1789797045619,
+          "entryAsk": 0.26,
+          "exitBid": 0.41,
+          "pnl": 2.307692307692307,
+          "reason": "tp"
+        },
+        {
+          "slug": "btc-updown-15m-1789797600",
+          "side": 1,
+          "entryTs": 1789797738243,
+          "entryAsk": 0.32,
+          "exitBid": 0.47,
+          "pnl": 1.8749999999999996,
+          "reason": "tp"
+        },
+        {
+          "slug": "btc-updown-15m-1789802100",
+          "side": 0,
+          "entryTs": 1789802641847,
+          "entryAsk": 0.31,
+          "exitBid": 0.22,
+          "pnl": -1.1612903225806452,
+          "reason": "sl"
+        }
+      ]
+    },
+    {
+      "id": "complement-sum-snapback",
+      "plain": "When upAsk+downAsk >= threshold, buy the cheaper ask if it is in [0.20,0.48]. Exit when the sum falls under 1.02, or bid is +T / -S, or 90s, or window end.",
+      "selection": "no WR>=55% cell; best train PnL among n>=40",
+      "eligibleTrainCells": 0,
+      "frozen": {
+        "sumMin": 1.08,
+        "T": 0.04,
+        "S": 0.04,
+        "band": [
+          0.2,
+          0.48
+        ],
+        "sumExit": 1.02,
+        "holdSec": 90,
+        "maxSpread": 0.1
+      },
+      "train": {
+        "params": {
+          "sumMin": 1.08,
+          "T": 0.04,
+          "S": 0.04,
+          "band": [
+            0.2,
+            0.48
+          ],
+          "sumExit": 1.02,
+          "holdSec": 90,
+          "maxSpread": 0.1
+        },
+        "n": 61,
+        "wins": 12,
+        "losses": 49,
+        "winRate": 0.196721,
+        "pnl": -27.065377,
+        "pnlPer1": -6.766344,
+        "avgWin": 1.643145,
+        "avgLoss": -0.954757,
+        "exitReasons": {
+          "sl": 40,
+          "tp": 9,
+          "snap": 12
+        }
+      },
+      "holdout": {
+        "n": 30,
+        "wins": 2,
+        "losses": 28,
+        "winRate": 0.066667,
+        "pnl": -28.400054,
+        "pnlPer1": -7.100013,
+        "avgWin": 0.509402,
+        "avgLoss": -1.050673,
+        "exitReasons": {
+          "sl": 21,
+          "snap": 7,
+          "nobid": 1,
+          "tp": 1
+        }
+      },
+      "clearsBar": false,
+      "trainTop": [
+        {
+          "params": {
+            "sumMin": 1.08,
+            "T": 0.04,
+            "S": 0.04,
+            "band": [
+              0.2,
+              0.48
+            ],
+            "sumExit": 1.02,
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 61,
+          "winRate": 0.196721,
+          "pnl": -27.065377,
+          "pnlPer1": -6.766344,
+          "avgWin": 1.643145,
+          "avgLoss": -0.954757
+        },
+        {
+          "params": {
+            "sumMin": 1.08,
+            "T": 0.06,
+            "S": 0.04,
+            "band": [
+              0.2,
+              0.48
+            ],
+            "sumExit": 1.02,
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 61,
+          "winRate": 0.196721,
+          "pnl": -27.065377,
+          "pnlPer1": -6.766344,
+          "avgWin": 1.643145,
+          "avgLoss": -0.954757
+        },
+        {
+          "params": {
+            "sumMin": 1.08,
+            "T": 0.1,
+            "S": 0.04,
+            "band": [
+              0.2,
+              0.48
+            ],
+            "sumExit": 1.02,
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 61,
+          "winRate": 0.196721,
+          "pnl": -27.065377,
+          "pnlPer1": -6.766344,
+          "avgWin": 1.643145,
+          "avgLoss": -0.954757
+        },
+        {
+          "params": {
+            "sumMin": 1.08,
+            "T": 0.04,
+            "S": 0.06,
+            "band": [
+              0.2,
+              0.48
+            ],
+            "sumExit": 1.02,
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 61,
+          "winRate": 0.196721,
+          "pnl": -27.663198,
+          "pnlPer1": -6.915799,
+          "avgWin": 1.643145,
+          "avgLoss": -0.966958
+        },
+        {
+          "params": {
+            "sumMin": 1.08,
+            "T": 0.06,
+            "S": 0.06,
+            "band": [
+              0.2,
+              0.48
+            ],
+            "sumExit": 1.02,
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 61,
+          "winRate": 0.196721,
+          "pnl": -27.663198,
+          "pnlPer1": -6.915799,
+          "avgWin": 1.643145,
+          "avgLoss": -0.966958
+        },
+        {
+          "params": {
+            "sumMin": 1.08,
+            "T": 0.1,
+            "S": 0.06,
+            "band": [
+              0.2,
+              0.48
+            ],
+            "sumExit": 1.02,
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 61,
+          "winRate": 0.196721,
+          "pnl": -27.663198,
+          "pnlPer1": -6.915799,
+          "avgWin": 1.643145,
+          "avgLoss": -0.966958
+        },
+        {
+          "params": {
+            "sumMin": 1.08,
+            "T": 0.04,
+            "S": 0.1,
+            "band": [
+              0.2,
+              0.48
+            ],
+            "sumExit": 1.02,
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 61,
+          "winRate": 0.213115,
+          "pnl": -29.909515,
+          "pnlPer1": -7.477379,
+          "avgWin": 1.539263,
+          "avgLoss": -1.039999
+        },
+        {
+          "params": {
+            "sumMin": 1.08,
+            "T": 0.06,
+            "S": 0.1,
+            "band": [
+              0.2,
+              0.48
+            ],
+            "sumExit": 1.02,
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 61,
+          "winRate": 0.213115,
+          "pnl": -29.909515,
+          "pnlPer1": -7.477379,
+          "avgWin": 1.539263,
+          "avgLoss": -1.039999
+        }
+      ],
+      "skippedHoldout": null,
+      "examples": [
+        {
+          "slug": "btc-updown-15m-1789796700",
+          "side": 1,
+          "entryTs": 1789797587926,
+          "entryAsk": 0.3,
+          "exitBid": 0.08,
+          "pnl": -2.933333333333333,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789849800",
+          "side": 0,
+          "entryTs": 1789850617177,
+          "entryAsk": 0.4,
+          "exitBid": 0.34,
+          "pnl": -0.6,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789860600",
+          "side": 0,
+          "entryTs": 1789861435451,
+          "entryAsk": 0.2,
+          "exitBid": 0.12,
+          "pnl": -1.6000000000000003,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789884000",
+          "side": 1,
+          "entryTs": 1789884874906,
+          "entryAsk": 0.42,
+          "exitBid": 0.25,
+          "pnl": -1.6190476190476188,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789945200",
+          "side": 0,
+          "entryTs": 1789945752242,
+          "entryAsk": 0.43,
+          "exitBid": 0.34,
+          "pnl": -0.8372093023255811,
+          "reason": "sl"
+        }
+      ]
+    },
+    {
+      "id": "deposed-side-bounce",
+      "plain": "After the higher-ask identity flips, buy the deposed ask while it is in [0.25,0.45] and the flip is still fresh. Scalp +T with a tight stop, max 90s. Not held to resolution.",
+      "selection": "no WR>=55% cell; best train PnL among n>=40",
+      "eligibleTrainCells": 0,
+      "frozen": {
+        "T": 0.12,
+        "S": 0.04,
+        "ageSec": 10,
+        "band": [
+          0.25,
+          0.45
+        ],
+        "holdSec": 90,
+        "maxSpread": 0.1
+      },
+      "train": {
+        "params": {
+          "T": 0.12,
+          "S": 0.04,
+          "ageSec": 10,
+          "band": [
+            0.25,
+            0.45
+          ],
+          "holdSec": 90,
+          "maxSpread": 0.1
+        },
+        "n": 615,
+        "wins": 154,
+        "losses": 461,
+        "winRate": 0.250407,
+        "pnl": -47.089561,
+        "pnlPer1": -11.77239,
+        "avgWin": 1.120961,
+        "avgLoss": -0.476611,
+        "exitReasons": {
+          "sl": 454,
+          "tp": 124,
+          "time": 37
+        }
+      },
+      "holdout": {
+        "n": 380,
+        "wins": 90,
+        "losses": 290,
+        "winRate": 0.236842,
+        "pnl": -43.806585,
+        "pnlPer1": -10.951646,
+        "avgWin": 1.155289,
+        "avgLoss": -0.509595,
+        "exitReasons": {
+          "sl": 277,
+          "time": 31,
+          "tp": 72
+        }
+      },
+      "clearsBar": false,
+      "trainTop": [
+        {
+          "params": {
+            "T": 0.12,
+            "S": 0.04,
+            "ageSec": 10,
+            "band": [
+              0.25,
+              0.45
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 615,
+          "winRate": 0.250407,
+          "pnl": -47.089561,
+          "pnlPer1": -11.77239,
+          "avgWin": 1.120961,
+          "avgLoss": -0.476611
+        },
+        {
+          "params": {
+            "T": 0.1,
+            "S": 0.04,
+            "ageSec": 10,
+            "band": [
+              0.25,
+              0.45
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 615,
+          "winRate": 0.265041,
+          "pnl": -47.553448,
+          "pnlPer1": -11.888362,
+          "avgWin": 1.034522,
+          "avgLoss": -0.478276
+        },
+        {
+          "params": {
+            "T": 0.12,
+            "S": 0.06,
+            "ageSec": 10,
+            "band": [
+              0.25,
+              0.45
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 615,
+          "winRate": 0.321951,
+          "pnl": -52.613149,
+          "pnlPer1": -13.153287,
+          "avgWin": 1.086635,
+          "avgLoss": -0.642127
+        },
+        {
+          "params": {
+            "T": 0.1,
+            "S": 0.06,
+            "ageSec": 10,
+            "band": [
+              0.25,
+              0.45
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 615,
+          "winRate": 0.334959,
+          "pnl": -53.100296,
+          "pnlPer1": -13.275074,
+          "avgWin": 1.01911,
+          "avgLoss": -0.643122
+        },
+        {
+          "params": {
+            "T": 0.08,
+            "S": 0.04,
+            "ageSec": 10,
+            "band": [
+              0.25,
+              0.45
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 615,
+          "winRate": 0.279675,
+          "pnl": -61.075703,
+          "pnlPer1": -15.268926,
+          "avgWin": 0.879155,
+          "avgLoss": -0.479211
+        },
+        {
+          "params": {
+            "T": 0.08,
+            "S": 0.06,
+            "ageSec": 10,
+            "band": [
+              0.25,
+              0.45
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 615,
+          "winRate": 0.360976,
+          "pnl": -63.19941,
+          "pnlPer1": -15.799852,
+          "avgWin": 0.860331,
+          "avgLoss": -0.646802
+        },
+        {
+          "params": {
+            "T": 0.06,
+            "S": 0.04,
+            "ageSec": 10,
+            "band": [
+              0.25,
+              0.45
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 615,
+          "winRate": 0.313821,
+          "pnl": -66.169125,
+          "pnlPer1": -16.542281,
+          "avgWin": 0.705188,
+          "avgLoss": -0.479314
+        },
+        {
+          "params": {
+            "T": 0.06,
+            "S": 0.06,
+            "ageSec": 10,
+            "band": [
+              0.25,
+              0.45
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 615,
+          "winRate": 0.4,
+          "pnl": -66.180971,
+          "pnlPer1": -16.545243,
+          "avgWin": 0.699941,
+          "avgLoss": -0.64598
+        }
+      ],
+      "skippedHoldout": null,
+      "examples": [
+        {
+          "slug": "btc-updown-15m-1789794900",
+          "side": 1,
+          "entryTs": 1789795227808,
+          "entryAsk": 0.42,
+          "exitBid": 0.38,
+          "pnl": -0.38095238095238076,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789795800",
+          "side": 1,
+          "entryTs": 1789796063506,
+          "entryAsk": 0.44,
+          "exitBid": 0.39,
+          "pnl": -0.4545454545454545,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789796700",
+          "side": 1,
+          "entryTs": 1789796821743,
+          "entryAsk": 0.44,
+          "exitBid": 0.51,
+          "pnl": 0.6363636363636365,
+          "reason": "time"
+        },
+        {
+          "slug": "btc-updown-15m-1789797600",
+          "side": 1,
+          "entryTs": 1789797732233,
+          "entryAsk": 0.4,
+          "exitBid": 0.35,
+          "pnl": -0.5000000000000004,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789798500",
+          "side": 1,
+          "entryTs": 1789798668984,
+          "entryAsk": 0.45,
+          "exitBid": 0.59,
+          "pnl": 1.244444444444444,
+          "reason": "tp"
+        }
+      ]
+    },
+    {
+      "id": "favorite-dip-scalp",
+      "plain": "Literature add-on (no spot series in DB): buy the current favorite after its ask drops by D over L seconds, but only while it is still the favorite and in [0.55,0.80]. Scalp +T / -S / 90s. Not a longshot buy.",
+      "selection": "no WR>=55% cell; best train PnL among n>=40",
+      "eligibleTrainCells": 0,
+      "frozen": {
+        "D": 0.15,
+        "L": 60,
+        "T": 0.1,
+        "S": 0.06,
+        "band": [
+          0.55,
+          0.8
+        ],
+        "holdSec": 90,
+        "maxSpread": 0.1
+      },
+      "train": {
+        "params": {
+          "D": 0.15,
+          "L": 60,
+          "T": 0.1,
+          "S": 0.06,
+          "band": [
+            0.55,
+            0.8
+          ],
+          "holdSec": 90,
+          "maxSpread": 0.1
+        },
+        "n": 456,
+        "wins": 184,
+        "losses": 272,
+        "winRate": 0.403509,
+        "pnl": -14.72815,
+        "pnlPer1": -3.682038,
+        "avgWin": 0.694891,
+        "avgLoss": -0.524221,
+        "exitReasons": {
+          "tp": 163,
+          "sl": 264,
+          "time": 29
+        }
+      },
+      "holdout": {
+        "n": 291,
+        "wins": 117,
+        "losses": 174,
+        "winRate": 0.402062,
+        "pnl": -17.528759,
+        "pnlPer1": -4.38219,
+        "avgWin": 0.682767,
+        "avgLoss": -0.559842,
+        "exitReasons": {
+          "sl": 171,
+          "tp": 104,
+          "time": 16
+        }
+      },
+      "clearsBar": false,
+      "trainTop": [
+        {
+          "params": {
+            "D": 0.15,
+            "L": 60,
+            "T": 0.1,
+            "S": 0.06,
+            "band": [
+              0.55,
+              0.8
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 456,
+          "winRate": 0.403509,
+          "pnl": -14.72815,
+          "pnlPer1": -3.682038,
+          "avgWin": 0.694891,
+          "avgLoss": -0.524221
+        },
+        {
+          "params": {
+            "D": 0.15,
+            "L": 60,
+            "T": 0.06,
+            "S": 0.06,
+            "band": [
+              0.55,
+              0.8
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 456,
+          "winRate": 0.475877,
+          "pnl": -18.106751,
+          "pnlPer1": -4.526688,
+          "avgWin": 0.501049,
+          "avgLoss": -0.530688
+        },
+        {
+          "params": {
+            "D": 0.15,
+            "L": 60,
+            "T": 0.04,
+            "S": 0.06,
+            "band": [
+              0.55,
+              0.8
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 456,
+          "winRate": 0.524123,
+          "pnl": -24.185746,
+          "pnlPer1": -6.046437,
+          "avgWin": 0.380309,
+          "avgLoss": -0.530321
+        },
+        {
+          "params": {
+            "D": 0.15,
+            "L": 60,
+            "T": 0.1,
+            "S": 0.04,
+            "band": [
+              0.55,
+              0.8
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 456,
+          "winRate": 0.315789,
+          "pnl": -24.588512,
+          "pnlPer1": -6.147128,
+          "avgWin": 0.708462,
+          "avgLoss": -0.405792
+        },
+        {
+          "params": {
+            "D": 0.15,
+            "L": 30,
+            "T": 0.06,
+            "S": 0.06,
+            "band": [
+              0.55,
+              0.8
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 438,
+          "winRate": 0.465753,
+          "pnl": -26.298952,
+          "pnlPer1": -6.574738,
+          "avgWin": 0.474853,
+          "avgLoss": -0.526363
+        },
+        {
+          "params": {
+            "D": 0.15,
+            "L": 15,
+            "T": 0.1,
+            "S": 0.06,
+            "band": [
+              0.55,
+              0.8
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 378,
+          "winRate": 0.383598,
+          "pnl": -28.295133,
+          "pnlPer1": -7.073783,
+          "avgWin": 0.710283,
+          "avgLoss": -0.56346
+        },
+        {
+          "params": {
+            "D": 0.15,
+            "L": 60,
+            "T": 0.06,
+            "S": 0.04,
+            "band": [
+              0.55,
+              0.8
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 456,
+          "winRate": 0.379386,
+          "pnl": -28.300898,
+          "pnlPer1": -7.075224,
+          "avgWin": 0.49701,
+          "avgLoss": -0.403829
+        },
+        {
+          "params": {
+            "D": 0.15,
+            "L": 30,
+            "T": 0.04,
+            "S": 0.06,
+            "band": [
+              0.55,
+              0.8
+            ],
+            "holdSec": 90,
+            "maxSpread": 0.1
+          },
+          "n": 438,
+          "winRate": 0.520548,
+          "pnl": -29.284651,
+          "pnlPer1": -7.321163,
+          "avgWin": 0.363747,
+          "avgLoss": -0.534376
+        }
+      ],
+      "skippedHoldout": null,
+      "examples": [
+        {
+          "slug": "btc-updown-15m-1789794900",
+          "side": 0,
+          "entryTs": 1789795202572,
+          "entryAsk": 0.57,
+          "exitBid": 0.49,
+          "pnl": -0.5614035087719296,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789795800",
+          "side": 0,
+          "entryTs": 1789796407625,
+          "entryAsk": 0.6,
+          "exitBid": 0.53,
+          "pnl": -0.46666666666666634,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789796700",
+          "side": 0,
+          "entryTs": 1789797419318,
+          "entryAsk": 0.76,
+          "exitBid": 0.64,
+          "pnl": -0.6315789473684211,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789797600",
+          "side": 0,
+          "entryTs": 1789797829848,
+          "entryAsk": 0.56,
+          "exitBid": 0.5,
+          "pnl": -0.42857142857142894,
+          "reason": "sl"
+        },
+        {
+          "slug": "btc-updown-15m-1789798500",
+          "side": 0,
+          "entryTs": 1789798680112,
+          "entryAsk": 0.56,
+          "exitBid": 0.5,
+          "pnl": -0.42857142857142894,
+          "reason": "sl"
+        }
+      ]
+    }
+  ]
+}

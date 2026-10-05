@@ -1,0 +1,58 @@
+{
+  "generatedAt": "2026-10-02T11:56:57.085Z",
+  "dbPath": "data\\bot-live.db",
+  "sources": {
+    "live": {
+      "table": "positions",
+      "filter": "strategyId='fav-band' AND status IN ('won','lost','sold')",
+      "count": 673
+    },
+    "backtest": null,
+    "cap50Json": {
+      "path": "audits\\backtest\\fav-band\\fav-band-opt-cap50-1790938381315.json",
+      "note": "Summary-only audit (pnl/trades/wr). No per-position rows â€” cannot join ticks from this file alone.",
+      "row": {
+        "label": "fav-band-opt_cap50",
+        "presetId": "fav-band-opt",
+        "ms": 120488,
+        "capitalStart": 50,
+        "pnl": 428.28,
+        "pnlPct": 856.56,
+        "fills": 1054,
+        "rejects": 13,
+        "windows": 1105,
+        "skippedIncomplete": 791,
+        "trades": 1054,
+        "wins": 797,
+        "losses": 257,
+        "wr": 75.6,
+        "maxDd": 238.51,
+        "worst": -15,
+        "minEquity": 50,
+        "endEquity": 478.28,
+        "pnlPerDd": 1.796,
+        "configSnapshot": {
+          "favBandOrderUsdc": 15,
+          "favBandAskMin": 0.7,
+          "favBandAskMax": 0.85,
+          "favBandMinElapsedSec": 200,
+          "favBandMaxElapsedSec": 600,
+          "maxSharesPerOrder": 40,
+          "maxExposureUsdc": 40,
+          "maxOpenPositionsPerSide": 1,
+          "simulatedCapital": 50
+        }
+      },
+      "windowsComplete": 1105
+    }
+  },
+  "counts": {
+    "total": 673,
+    "win": 466,
+    "loss": 207,
+    "flat": 0,
+    "coverageOk": 672,
+    "coveragePartial": 1
+  },
+  "tickCacheSlugs": 641
+}

@@ -1,0 +1,426 @@
+{
+  "generatedAt": "2026-10-04T05:36:22.045Z",
+  "split": {
+    "nTrain": 763,
+    "nHoldout": 509,
+    "trainFirstStart": 1788848100,
+    "holdoutFirstStart": 1789794900
+  },
+  "replayFrozenRule": {
+    "note": "Same confirmed bounce as bounce-results best train cell, all elapsed.",
+    "n": 720,
+    "wins": 361,
+    "losses": 359,
+    "winRate": 0.501389,
+    "pnl": -82.8647,
+    "pnlPer1": -20.722955,
+    "avgWin": 0.756397,
+    "avgLoss": -0.991432,
+    "exitReasons": {
+      "sl": 344,
+      "tp": 354,
+      "time": 22
+    }
+  },
+  "elapsedBins": [
+    {
+      "id": "elapsed-slice",
+      "params": {
+        "bin": "0-3min",
+        "D": 0.12,
+        "L": 45,
+        "lift": 0.02,
+        "T": 0.05,
+        "S": 0.08,
+        "holdSec": 120
+      },
+      "n": 537,
+      "wins": 271,
+      "losses": 266,
+      "winRate": 0.504655,
+      "pnl": -56.2868,
+      "pnlPer1": -14.075604,
+      "avgWin": 0.736632,
+      "avgLoss": -0.962083,
+      "exitReasons": {
+        "sl": 255,
+        "tp": 265,
+        "time": 17
+      }
+    },
+    {
+      "id": "elapsed-slice",
+      "params": {
+        "bin": "3-6min",
+        "D": 0.12,
+        "L": 45,
+        "lift": 0.02,
+        "T": 0.05,
+        "S": 0.08,
+        "holdSec": 120
+      },
+      "n": 128,
+      "wins": 64,
+      "losses": 64,
+      "winRate": 0.5,
+      "pnl": -18.1368,
+      "pnlPer1": -4.536222,
+      "avgWin": 0.762594,
+      "avgLoss": -1.045981,
+      "exitReasons": {
+        "sl": 62,
+        "tp": 64,
+        "time": 2
+      }
+    },
+    {
+      "id": "elapsed-slice",
+      "params": {
+        "bin": "6-9min",
+        "D": 0.12,
+        "L": 45,
+        "lift": 0.02,
+        "T": 0.05,
+        "S": 0.08,
+        "holdSec": 120
+      },
+      "n": 42,
+      "wins": 22,
+      "losses": 20,
+      "winRate": 0.52381,
+      "pnl": 0.4804,
+      "pnlPer1": 0.120145,
+      "avgWin": 1.015391,
+      "avgLoss": -1.09291,
+      "exitReasons": {
+        "sl": 18,
+        "tp": 21,
+        "time": 3
+      }
+    },
+    {
+      "id": "elapsed-slice",
+      "params": {
+        "bin": "9-12min",
+        "D": 0.12,
+        "L": 45,
+        "lift": 0.02,
+        "T": 0.05,
+        "S": 0.08,
+        "holdSec": 120
+      },
+      "n": 11,
+      "wins": 3,
+      "losses": 8,
+      "winRate": 0.272727,
+      "pnl": -8.6185,
+      "pnlPer1": -2.155516,
+      "avgWin": 0.540333,
+      "avgLoss": -1.279937,
+      "exitReasons": {
+        "tp": 3,
+        "sl": 8
+      }
+    },
+    {
+      "id": "elapsed-slice",
+      "params": {
+        "bin": "12-15min",
+        "D": 0.12,
+        "L": 45,
+        "lift": 0.02,
+        "T": 0.05,
+        "S": 0.08,
+        "holdSec": 120
+      },
+      "n": 2,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 0.5,
+      "pnl": -0.303,
+      "pnlPer1": -0.075758,
+      "avgWin": 0.6666,
+      "avgLoss": -0.9696,
+      "exitReasons": {
+        "tp": 1,
+        "sl": 1
+      }
+    }
+  ],
+  "hotBinsTried": [],
+  "secondDip": "Second time a token's ask is down 0.10 over 30s, after the prior dip has lifted 0.02 or the drop condition has gone false. Enter only that second dip, and only once ask lifts 0.02 off a low in [0.15, 0.40], entry ask <= 0.45.",
+  "cells": [
+    {
+      "id": "elapsed-slice",
+      "params": {
+        "bin": "0-3min",
+        "D": 0.12,
+        "L": 45,
+        "lift": 0.02,
+        "T": 0.05,
+        "S": 0.08,
+        "holdSec": 120
+      },
+      "n": 537,
+      "wins": 271,
+      "losses": 266,
+      "winRate": 0.504655,
+      "pnl": -56.2868,
+      "pnlPer1": -14.075604,
+      "avgWin": 0.736632,
+      "avgLoss": -0.962083,
+      "exitReasons": {
+        "sl": 255,
+        "tp": 265,
+        "time": 17
+      }
+    },
+    {
+      "id": "elapsed-slice",
+      "params": {
+        "bin": "3-6min",
+        "D": 0.12,
+        "L": 45,
+        "lift": 0.02,
+        "T": 0.05,
+        "S": 0.08,
+        "holdSec": 120
+      },
+      "n": 128,
+      "wins": 64,
+      "losses": 64,
+      "winRate": 0.5,
+      "pnl": -18.1368,
+      "pnlPer1": -4.536222,
+      "avgWin": 0.762594,
+      "avgLoss": -1.045981,
+      "exitReasons": {
+        "sl": 62,
+        "tp": 64,
+        "time": 2
+      }
+    },
+    {
+      "id": "elapsed-slice",
+      "params": {
+        "bin": "6-9min",
+        "D": 0.12,
+        "L": 45,
+        "lift": 0.02,
+        "T": 0.05,
+        "S": 0.08,
+        "holdSec": 120
+      },
+      "n": 42,
+      "wins": 22,
+      "losses": 20,
+      "winRate": 0.52381,
+      "pnl": 0.4804,
+      "pnlPer1": 0.120145,
+      "avgWin": 1.015391,
+      "avgLoss": -1.09291,
+      "exitReasons": {
+        "sl": 18,
+        "tp": 21,
+        "time": 3
+      }
+    },
+    {
+      "id": "elapsed-slice",
+      "params": {
+        "bin": "9-12min",
+        "D": 0.12,
+        "L": 45,
+        "lift": 0.02,
+        "T": 0.05,
+        "S": 0.08,
+        "holdSec": 120
+      },
+      "n": 11,
+      "wins": 3,
+      "losses": 8,
+      "winRate": 0.272727,
+      "pnl": -8.6185,
+      "pnlPer1": -2.155516,
+      "avgWin": 0.540333,
+      "avgLoss": -1.279937,
+      "exitReasons": {
+        "tp": 3,
+        "sl": 8
+      }
+    },
+    {
+      "id": "elapsed-slice",
+      "params": {
+        "bin": "12-15min",
+        "D": 0.12,
+        "L": 45,
+        "lift": 0.02,
+        "T": 0.05,
+        "S": 0.08,
+        "holdSec": 120
+      },
+      "n": 2,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 0.5,
+      "pnl": -0.303,
+      "pnlPer1": -0.075758,
+      "avgWin": 0.6666,
+      "avgLoss": -0.9696,
+      "exitReasons": {
+        "tp": 1,
+        "sl": 1
+      }
+    },
+    {
+      "id": "second-dip",
+      "params": {
+        "drop": 0.1,
+        "L": 30,
+        "whichDip": 2,
+        "lowBand": [
+          0.15,
+          0.4
+        ],
+        "lift": 0.02,
+        "T": 0.04,
+        "S": 0.06,
+        "holdSec": 120
+      },
+      "n": 319,
+      "wins": 146,
+      "losses": 173,
+      "winRate": 0.45768,
+      "pnl": -47.0236,
+      "pnlPer1": -11.759895,
+      "avgWin": 0.641396,
+      "avgLoss": -0.813106,
+      "exitReasons": {
+        "sl": 168,
+        "tp": 145,
+        "time": 6
+      }
+    },
+    {
+      "id": "second-dip",
+      "params": {
+        "drop": 0.1,
+        "L": 30,
+        "whichDip": 2,
+        "lowBand": [
+          0.15,
+          0.4
+        ],
+        "lift": 0.02,
+        "T": 0.04,
+        "S": 0.1,
+        "holdSec": 120
+      },
+      "n": 319,
+      "wins": 178,
+      "losses": 141,
+      "winRate": 0.557994,
+      "pnl": -46.8863,
+      "pnlPer1": -11.724983,
+      "avgWin": 0.649881,
+      "avgLoss": -1.152944,
+      "exitReasons": {
+        "sl": 112,
+        "tp": 176,
+        "time": 31
+      }
+    },
+    {
+      "id": "second-dip",
+      "params": {
+        "drop": 0.1,
+        "L": 30,
+        "whichDip": 2,
+        "lowBand": [
+          0.15,
+          0.4
+        ],
+        "lift": 0.02,
+        "T": 0.06,
+        "S": 0.06,
+        "holdSec": 120
+      },
+      "n": 319,
+      "wins": 123,
+      "losses": 196,
+      "winRate": 0.38558,
+      "pnl": -49.3042,
+      "pnlPer1": -12.329799,
+      "avgWin": 0.880219,
+      "avgLoss": -0.803934,
+      "exitReasons": {
+        "sl": 191,
+        "tp": 122,
+        "time": 6
+      }
+    },
+    {
+      "id": "second-dip",
+      "params": {
+        "drop": 0.1,
+        "L": 30,
+        "whichDip": 2,
+        "lowBand": [
+          0.15,
+          0.4
+        ],
+        "lift": 0.02,
+        "T": 0.06,
+        "S": 0.1,
+        "holdSec": 120
+      },
+      "n": 319,
+      "wins": 157,
+      "losses": 162,
+      "winRate": 0.492163,
+      "pnl": -50.1388,
+      "pnlPer1": -12.537857,
+      "avgWin": 0.86535,
+      "avgLoss": -1.148141,
+      "exitReasons": {
+        "sl": 129,
+        "tp": 151,
+        "time": 39
+      }
+    }
+  ],
+  "ceilingTrainN40": {
+    "id": "second-dip",
+    "params": {
+      "drop": 0.1,
+      "L": 30,
+      "whichDip": 2,
+      "lowBand": [
+        0.15,
+        0.4
+      ],
+      "lift": 0.02,
+      "T": 0.04,
+      "S": 0.1,
+      "holdSec": 120
+    },
+    "n": 319,
+    "wins": 178,
+    "losses": 141,
+    "winRate": 0.557994,
+    "pnl": -46.8863,
+    "pnlPer1": -11.724983,
+    "avgWin": 0.649881,
+    "avgLoss": -1.152944,
+    "exitReasons": {
+      "sl": 112,
+      "tp": 176,
+      "time": 31
+    }
+  },
+  "frozen": null,
+  "train": null,
+  "holdout": null,
+  "clearsBar": false
+}

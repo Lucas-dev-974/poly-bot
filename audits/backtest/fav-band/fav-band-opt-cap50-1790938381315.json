@@ -1,0 +1,45 @@
+{
+  "note": "Offline official runBacktest. Preset fav-band-opt (validated grid winner) with simulatedCapital=50 only. maxExposureUsdc left at preset 40.",
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "capital": 50,
+  "presetId": "fav-band-opt",
+  "settingsPath": "audits\\backtest\\fav-band\\fav-band-opt-cap50-settings-1790938214162.json",
+  "windowsComplete": 1105,
+  "windowsIncompleteSkipped": 791,
+  "row": {
+    "label": "fav-band-opt_cap50",
+    "presetId": "fav-band-opt",
+    "ms": 120488,
+    "capitalStart": 50,
+    "pnl": 428.28,
+    "pnlPct": 856.56,
+    "fills": 1054,
+    "rejects": 13,
+    "windows": 1105,
+    "skippedIncomplete": 791,
+    "trades": 1054,
+    "wins": 797,
+    "losses": 257,
+    "wr": 75.6,
+    "maxDd": 238.51,
+    "worst": -15,
+    "minEquity": 50,
+    "endEquity": 478.28,
+    "pnlPerDd": 1.796,
+    "configSnapshot": {
+      "favBandOrderUsdc": 15,
+      "favBandAskMin": 0.7,
+      "favBandAskMax": 0.85,
+      "favBandMinElapsedSec": 200,
+      "favBandMaxElapsedSec": 600,
+      "maxSharesPerOrder": 40,
+      "maxExposureUsdc": 40,
+      "maxOpenPositionsPerSide": 1,
+      "simulatedCapital": 50
+    }
+  }
+}

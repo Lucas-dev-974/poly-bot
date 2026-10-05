@@ -1,0 +1,40 @@
+{
+  "note": "Temp settings for offline backtest. Preset antiflip-revert with simulatedCapital=50 and antiflipOrderUsdc=4. Band 0.35-0.45, deposed floor 0.40 kept. maxExposureUsdc left at preset 450 because computeSize floors shares to the USDC budget and the marketable fill price is min(limit, ask), so a fill cannot cost more than 4 USDC. maxSharesPerOrder left at preset 30 (does not bind: 4/0.40 = 10 shares). bot-settings.json untouched.",
+  "presetId": "antiflip-revert",
+  "overrides": {
+    "simulatedCapital": 50,
+    "antiflipOrderUsdc": 4
+  },
+  "exposureNote": "No maxExposure capping. Preset maxExposureUsdc=450 is above the 50 bankroll and above a 4 USDC order. Order size is antiflipOrderUsdc=4. Cash constraint is simulatedCapital via the ledger, not maxExposure.",
+  "settings": {
+    "pollIntervalMs": 1000,
+    "marketSlugPrefixes": [
+      "btc-updown-15m"
+    ],
+    "strategyId": "antiflip-revert",
+    "enableExpensiveHedge": false,
+    "arbAskLockOnly": false,
+    "arbAskSumMax": null,
+    "antiflipBandMin": 0.35,
+    "antiflipBandMax": 0.45,
+    "antiflipDeposedAskMin": 0.4,
+    "antiflipFlipLookbackMs": 90000,
+    "antiflipMinElapsedSec": 240,
+    "antiflipMaxElapsedSec": null,
+    "antiflipMaxSpread": 0.05,
+    "antiflipOrderUsdc": 4,
+    "maxSharesPerOrder": 30,
+    "maxOpenPositionsPerSide": 1,
+    "maxExposureUsdc": 450,
+    "minutesBeforeCloseMin": 0,
+    "minutesBeforeCloseMax": 15,
+    "minMinutesBeforeCloseToBuy": null,
+    "simulatedCapital": 50,
+    "simFillProbabilityNonMarketable": 0.3,
+    "simResolveDelaySeconds": 5,
+    "simResolveRetryIntervalMs": 5000,
+    "simResolveMaxRetries": 5,
+    "simResolveFallback": "none",
+    "simMaxRetryAttempts": 20
+  }
+}

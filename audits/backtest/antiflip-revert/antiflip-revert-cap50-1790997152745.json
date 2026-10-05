@@ -1,0 +1,59 @@
+{
+  "note": "Offline official runBacktest. Preset antiflip-revert with simulatedCapital=50 only. Band 0.35-0.45 and order 15 left as preset.",
+  "criteria": {
+    "minTicks": 601,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "capital": 50,
+  "presetId": "antiflip-revert",
+  "settingsPath": "audits\\backtest\\antiflip-revert\\antiflip-revert-cap50-settings-1790996935411.json",
+  "windowsComplete": 1169,
+  "windowsIncompleteSkipped": 792,
+  "row": {
+    "label": "antiflip-revert_cap50",
+    "presetId": "antiflip-revert",
+    "ms": 165261,
+    "capitalStart": 50,
+    "capitalEnd": 5.9,
+    "pnl": -44.1,
+    "pnlPct": -88.2,
+    "fills": 8,
+    "rejects": 28146,
+    "rejectReasons": [],
+    "windows": 1169,
+    "skippedIncomplete": 792,
+    "unresolvedWindows": 0,
+    "trackerWins": 2,
+    "trackerLosses": 6,
+    "trackerWinRate": 0.25,
+    "trades": 8,
+    "wins": 2,
+    "losses": 6,
+    "wr": 25,
+    "maxDd": 52.5,
+    "worst": -13.5,
+    "worstWindow": "btc-updown-15m-1788857100",
+    "worstWindowTies": [
+      "btc-updown-15m-1788857100",
+      "btc-updown-15m-1788858900"
+    ],
+    "minEquity": 5.9,
+    "endEquity": 5.9,
+    "pnlPerDd": -0.84,
+    "configSnapshot": {
+      "antiflipOrderUsdc": 15,
+      "antiflipBandMin": 0.35,
+      "antiflipBandMax": 0.45,
+      "antiflipDeposedAskMin": 0.4,
+      "antiflipFlipLookbackMs": 90000,
+      "antiflipMinElapsedSec": 240,
+      "antiflipMaxElapsedSec": null,
+      "antiflipMaxSpread": 0.05,
+      "maxSharesPerOrder": 30,
+      "maxExposureUsdc": 450,
+      "maxOpenPositionsPerSide": 1,
+      "simulatedCapital": 50
+    }
+  }
+}

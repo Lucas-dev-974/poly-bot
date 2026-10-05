@@ -1,0 +1,1721 @@
+{
+  "generatedAt": "2026-10-04T04:50:52.795Z",
+  "stakeUsd": 4,
+  "shareSizing": "computeSize: floor(stake/price*100)/100 shares, minimum 5. Same as src/utils/prices.ts. maxShares uncapped.",
+  "pnlDefinition": "Engine $ PnL uses floored shares. pnlPer1 is the per-$1 formula: hold win 1/ask-1 loss -1; scalp (exit-entry)/entry. Win means engine PnL > 0. A scratch is not a win.",
+  "split": {
+    "nComplete": 1272,
+    "nTrain": 763,
+    "nHoldout": 509,
+    "trainFirstStart": 1788848100,
+    "holdoutFirstStart": 1789794900,
+    "lastStart": 1791088200,
+    "trainResolved": 763,
+    "holdoutResolved": 474
+  },
+  "calibration": {
+    "samples": 44061,
+    "rawCells": 296,
+    "keptCells": 207,
+    "cellsFairGe060": 82,
+    "trainWindowsSkippedNoResolution": 0,
+    "cells": [
+      {
+        "eBin": 0,
+        "askLo": 0.35,
+        "n": 127,
+        "wins": 40,
+        "fair": 0.314961
+      },
+      {
+        "eBin": 0,
+        "askLo": 0.4,
+        "n": 284,
+        "wins": 114,
+        "fair": 0.401408
+      },
+      {
+        "eBin": 0,
+        "askLo": 0.45,
+        "n": 747,
+        "wins": 360,
+        "fair": 0.481928
+      },
+      {
+        "eBin": 0,
+        "askLo": 0.5,
+        "n": 981,
+        "wins": 493,
+        "fair": 0.502548
+      },
+      {
+        "eBin": 0,
+        "askLo": 0.55,
+        "n": 493,
+        "wins": 263,
+        "fair": 0.533469
+      },
+      {
+        "eBin": 0,
+        "askLo": 0.6,
+        "n": 222,
+        "wins": 154,
+        "fair": 0.693694
+      },
+      {
+        "eBin": 1,
+        "askLo": 0.25,
+        "n": 100,
+        "wins": 25,
+        "fair": 0.25
+      },
+      {
+        "eBin": 1,
+        "askLo": 0.3,
+        "n": 172,
+        "wins": 50,
+        "fair": 0.290698
+      },
+      {
+        "eBin": 1,
+        "askLo": 0.35,
+        "n": 313,
+        "wins": 112,
+        "fair": 0.357827
+      },
+      {
+        "eBin": 1,
+        "askLo": 0.4,
+        "n": 334,
+        "wins": 141,
+        "fair": 0.422156
+      },
+      {
+        "eBin": 1,
+        "askLo": 0.45,
+        "n": 430,
+        "wins": 213,
+        "fair": 0.495349
+      },
+      {
+        "eBin": 1,
+        "askLo": 0.5,
+        "n": 499,
+        "wins": 245,
+        "fair": 0.490982
+      },
+      {
+        "eBin": 1,
+        "askLo": 0.55,
+        "n": 353,
+        "wins": 191,
+        "fair": 0.541076
+      },
+      {
+        "eBin": 1,
+        "askLo": 0.6,
+        "n": 331,
+        "wins": 218,
+        "fair": 0.65861
+      },
+      {
+        "eBin": 1,
+        "askLo": 0.65,
+        "n": 222,
+        "wins": 148,
+        "fair": 0.666667
+      },
+      {
+        "eBin": 1,
+        "askLo": 0.7,
+        "n": 135,
+        "wins": 89,
+        "fair": 0.659259
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.2,
+        "n": 93,
+        "wins": 20,
+        "fair": 0.215054
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.25,
+        "n": 158,
+        "wins": 43,
+        "fair": 0.272152
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.3,
+        "n": 234,
+        "wins": 61,
+        "fair": 0.260684
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.35,
+        "n": 260,
+        "wins": 85,
+        "fair": 0.326923
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.4,
+        "n": 307,
+        "wins": 123,
+        "fair": 0.400651
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.45,
+        "n": 340,
+        "wins": 158,
+        "fair": 0.464706
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.5,
+        "n": 321,
+        "wins": 162,
+        "fair": 0.504673
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.55,
+        "n": 334,
+        "wins": 193,
+        "fair": 0.577844
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.6,
+        "n": 276,
+        "wins": 179,
+        "fair": 0.648551
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.65,
+        "n": 255,
+        "wins": 179,
+        "fair": 0.701961
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.7,
+        "n": 183,
+        "wins": 141,
+        "fair": 0.770492
+      },
+      {
+        "eBin": 2,
+        "askLo": 0.75,
+        "n": 112,
+        "wins": 84,
+        "fair": 0.75
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.15,
+        "n": 96,
+        "wins": 14,
+        "fair": 0.145833
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.2,
+        "n": 154,
+        "wins": 35,
+        "fair": 0.227273
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.25,
+        "n": 189,
+        "wins": 37,
+        "fair": 0.195767
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.3,
+        "n": 231,
+        "wins": 62,
+        "fair": 0.268398
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.35,
+        "n": 244,
+        "wins": 77,
+        "fair": 0.315574
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.4,
+        "n": 268,
+        "wins": 106,
+        "fair": 0.395522
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.45,
+        "n": 250,
+        "wins": 116,
+        "fair": 0.464
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.5,
+        "n": 239,
+        "wins": 120,
+        "fair": 0.502092
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.55,
+        "n": 262,
+        "wins": 156,
+        "fair": 0.59542
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.6,
+        "n": 253,
+        "wins": 155,
+        "fair": 0.612648
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.65,
+        "n": 236,
+        "wins": 184,
+        "fair": 0.779661
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.7,
+        "n": 211,
+        "wins": 157,
+        "fair": 0.744076
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.75,
+        "n": 165,
+        "wins": 128,
+        "fair": 0.775758
+      },
+      {
+        "eBin": 3,
+        "askLo": 0.8,
+        "n": 122,
+        "wins": 99,
+        "fair": 0.811475
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.15,
+        "n": 158,
+        "wins": 29,
+        "fair": 0.183544
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.2,
+        "n": 182,
+        "wins": 34,
+        "fair": 0.186813
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.25,
+        "n": 189,
+        "wins": 34,
+        "fair": 0.179894
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.3,
+        "n": 212,
+        "wins": 46,
+        "fair": 0.216981
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.35,
+        "n": 212,
+        "wins": 74,
+        "fair": 0.349057
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.4,
+        "n": 228,
+        "wins": 95,
+        "fair": 0.416667
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.45,
+        "n": 219,
+        "wins": 112,
+        "fair": 0.511416
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.5,
+        "n": 190,
+        "wins": 98,
+        "fair": 0.515789
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.55,
+        "n": 221,
+        "wins": 119,
+        "fair": 0.538462
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.6,
+        "n": 209,
+        "wins": 127,
+        "fair": 0.607656
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.65,
+        "n": 233,
+        "wins": 168,
+        "fair": 0.72103
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.7,
+        "n": 188,
+        "wins": 148,
+        "fair": 0.787234
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.75,
+        "n": 191,
+        "wins": 160,
+        "fair": 0.837696
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.8,
+        "n": 175,
+        "wins": 145,
+        "fair": 0.828571
+      },
+      {
+        "eBin": 4,
+        "askLo": 0.85,
+        "n": 98,
+        "wins": 79,
+        "fair": 0.806122
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.1,
+        "n": 121,
+        "wins": 12,
+        "fair": 0.099174
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.15,
+        "n": 166,
+        "wins": 29,
+        "fair": 0.174699
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.2,
+        "n": 169,
+        "wins": 29,
+        "fair": 0.171598
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.25,
+        "n": 207,
+        "wins": 45,
+        "fair": 0.217391
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.3,
+        "n": 189,
+        "wins": 50,
+        "fair": 0.26455
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.35,
+        "n": 185,
+        "wins": 65,
+        "fair": 0.351351
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.4,
+        "n": 198,
+        "wins": 82,
+        "fair": 0.414141
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.45,
+        "n": 186,
+        "wins": 85,
+        "fair": 0.456989
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.5,
+        "n": 197,
+        "wins": 107,
+        "fair": 0.543147
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.55,
+        "n": 193,
+        "wins": 105,
+        "fair": 0.544041
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.6,
+        "n": 179,
+        "wins": 118,
+        "fair": 0.659218
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.65,
+        "n": 177,
+        "wins": 117,
+        "fair": 0.661017
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.7,
+        "n": 199,
+        "wins": 154,
+        "fair": 0.773869
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.75,
+        "n": 191,
+        "wins": 155,
+        "fair": 0.811518
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.8,
+        "n": 177,
+        "wins": 141,
+        "fair": 0.79661
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.85,
+        "n": 148,
+        "wins": 133,
+        "fair": 0.898649
+      },
+      {
+        "eBin": 5,
+        "askLo": 0.9,
+        "n": 83,
+        "wins": 77,
+        "fair": 0.927711
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.05,
+        "n": 105,
+        "wins": 5,
+        "fair": 0.047619
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.1,
+        "n": 189,
+        "wins": 11,
+        "fair": 0.058201
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.15,
+        "n": 181,
+        "wins": 38,
+        "fair": 0.209945
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.2,
+        "n": 169,
+        "wins": 23,
+        "fair": 0.136095
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.25,
+        "n": 182,
+        "wins": 33,
+        "fair": 0.181319
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.3,
+        "n": 185,
+        "wins": 49,
+        "fair": 0.264865
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.35,
+        "n": 144,
+        "wins": 52,
+        "fair": 0.361111
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.4,
+        "n": 166,
+        "wins": 71,
+        "fair": 0.427711
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.45,
+        "n": 156,
+        "wins": 88,
+        "fair": 0.564103
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.5,
+        "n": 175,
+        "wins": 75,
+        "fair": 0.428571
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.55,
+        "n": 150,
+        "wins": 82,
+        "fair": 0.546667
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.6,
+        "n": 163,
+        "wins": 101,
+        "fair": 0.619632
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.65,
+        "n": 160,
+        "wins": 109,
+        "fair": 0.68125
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.7,
+        "n": 171,
+        "wins": 139,
+        "fair": 0.812865
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.75,
+        "n": 181,
+        "wins": 154,
+        "fair": 0.850829
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.8,
+        "n": 171,
+        "wins": 144,
+        "fair": 0.842105
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.85,
+        "n": 184,
+        "wins": 156,
+        "fair": 0.847826
+      },
+      {
+        "eBin": 6,
+        "askLo": 0.9,
+        "n": 147,
+        "wins": 140,
+        "fair": 0.952381
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.05,
+        "n": 173,
+        "wins": 8,
+        "fair": 0.046243
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.1,
+        "n": 190,
+        "wins": 16,
+        "fair": 0.084211
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.15,
+        "n": 188,
+        "wins": 25,
+        "fair": 0.132979
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.2,
+        "n": 188,
+        "wins": 27,
+        "fair": 0.143617
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.25,
+        "n": 175,
+        "wins": 45,
+        "fair": 0.257143
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.3,
+        "n": 139,
+        "wins": 39,
+        "fair": 0.280576
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.35,
+        "n": 136,
+        "wins": 54,
+        "fair": 0.397059
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.4,
+        "n": 135,
+        "wins": 67,
+        "fair": 0.496296
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.45,
+        "n": 128,
+        "wins": 57,
+        "fair": 0.445313
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.5,
+        "n": 137,
+        "wins": 69,
+        "fair": 0.50365
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.55,
+        "n": 135,
+        "wins": 77,
+        "fair": 0.57037
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.6,
+        "n": 143,
+        "wins": 79,
+        "fair": 0.552448
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.65,
+        "n": 130,
+        "wins": 83,
+        "fair": 0.638462
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.7,
+        "n": 164,
+        "wins": 123,
+        "fair": 0.75
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.75,
+        "n": 180,
+        "wins": 154,
+        "fair": 0.855556
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.8,
+        "n": 182,
+        "wins": 153,
+        "fair": 0.840659
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.85,
+        "n": 183,
+        "wins": 163,
+        "fair": 0.89071
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.9,
+        "n": 190,
+        "wins": 176,
+        "fair": 0.926316
+      },
+      {
+        "eBin": 7,
+        "askLo": 0.95,
+        "n": 110,
+        "wins": 105,
+        "fair": 0.954545
+      },
+      {
+        "eBin": 8,
+        "askLo": 0,
+        "n": 110,
+        "wins": 2,
+        "fair": 0.018182
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.05,
+        "n": 199,
+        "wins": 8,
+        "fair": 0.040201
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.1,
+        "n": 205,
+        "wins": 23,
+        "fair": 0.112195
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.15,
+        "n": 195,
+        "wins": 24,
+        "fair": 0.123077
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.2,
+        "n": 177,
+        "wins": 30,
+        "fair": 0.169492
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.25,
+        "n": 157,
+        "wins": 39,
+        "fair": 0.248408
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.3,
+        "n": 139,
+        "wins": 44,
+        "fair": 0.316547
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.35,
+        "n": 112,
+        "wins": 45,
+        "fair": 0.401786
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.4,
+        "n": 103,
+        "wins": 44,
+        "fair": 0.427184
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.45,
+        "n": 112,
+        "wins": 56,
+        "fair": 0.5
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.5,
+        "n": 101,
+        "wins": 51,
+        "fair": 0.50495
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.55,
+        "n": 104,
+        "wins": 55,
+        "fair": 0.528846
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.6,
+        "n": 104,
+        "wins": 58,
+        "fair": 0.557692
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.65,
+        "n": 129,
+        "wins": 87,
+        "fair": 0.674419
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.7,
+        "n": 151,
+        "wins": 110,
+        "fair": 0.728477
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.75,
+        "n": 168,
+        "wins": 134,
+        "fair": 0.797619
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.8,
+        "n": 183,
+        "wins": 154,
+        "fair": 0.84153
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.85,
+        "n": 217,
+        "wins": 195,
+        "fair": 0.898618
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.9,
+        "n": 185,
+        "wins": 171,
+        "fair": 0.924324
+      },
+      {
+        "eBin": 8,
+        "askLo": 0.95,
+        "n": 194,
+        "wins": 190,
+        "fair": 0.979381
+      },
+      {
+        "eBin": 9,
+        "askLo": 0,
+        "n": 199,
+        "wins": 4,
+        "fair": 0.020101
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.05,
+        "n": 258,
+        "wins": 9,
+        "fair": 0.034884
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.1,
+        "n": 199,
+        "wins": 22,
+        "fair": 0.110553
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.15,
+        "n": 180,
+        "wins": 27,
+        "fair": 0.15
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.2,
+        "n": 158,
+        "wins": 30,
+        "fair": 0.189873
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.25,
+        "n": 112,
+        "wins": 29,
+        "fair": 0.258929
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.3,
+        "n": 104,
+        "wins": 35,
+        "fair": 0.336538
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.35,
+        "n": 95,
+        "wins": 34,
+        "fair": 0.357895
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.4,
+        "n": 113,
+        "wins": 54,
+        "fair": 0.477876
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.45,
+        "n": 95,
+        "wins": 41,
+        "fair": 0.431579
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.5,
+        "n": 87,
+        "wins": 46,
+        "fair": 0.528736
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.55,
+        "n": 107,
+        "wins": 54,
+        "fair": 0.504673
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.6,
+        "n": 92,
+        "wins": 56,
+        "fair": 0.608696
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.65,
+        "n": 98,
+        "wins": 65,
+        "fair": 0.663265
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.7,
+        "n": 112,
+        "wins": 77,
+        "fair": 0.6875
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.75,
+        "n": 138,
+        "wins": 114,
+        "fair": 0.826087
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.8,
+        "n": 181,
+        "wins": 152,
+        "fair": 0.839779
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.85,
+        "n": 185,
+        "wins": 161,
+        "fair": 0.87027
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.9,
+        "n": 227,
+        "wins": 209,
+        "fair": 0.920705
+      },
+      {
+        "eBin": 9,
+        "askLo": 0.95,
+        "n": 287,
+        "wins": 282,
+        "fair": 0.982578
+      },
+      {
+        "eBin": 10,
+        "askLo": 0,
+        "n": 325,
+        "wins": 6,
+        "fair": 0.018462
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.05,
+        "n": 270,
+        "wins": 15,
+        "fair": 0.055556
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.1,
+        "n": 169,
+        "wins": 19,
+        "fair": 0.112426
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.15,
+        "n": 166,
+        "wins": 24,
+        "fair": 0.144578
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.2,
+        "n": 120,
+        "wins": 16,
+        "fair": 0.133333
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.25,
+        "n": 103,
+        "wins": 37,
+        "fair": 0.359223
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.3,
+        "n": 91,
+        "wins": 32,
+        "fair": 0.351648
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.35,
+        "n": 85,
+        "wins": 34,
+        "fair": 0.4
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.4,
+        "n": 96,
+        "wins": 40,
+        "fair": 0.416667
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.45,
+        "n": 80,
+        "wins": 37,
+        "fair": 0.4625
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.5,
+        "n": 86,
+        "wins": 44,
+        "fair": 0.511628
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.55,
+        "n": 95,
+        "wins": 51,
+        "fair": 0.536842
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.6,
+        "n": 94,
+        "wins": 59,
+        "fair": 0.62766
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.65,
+        "n": 81,
+        "wins": 53,
+        "fair": 0.654321
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.7,
+        "n": 96,
+        "wins": 58,
+        "fair": 0.604167
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.75,
+        "n": 120,
+        "wins": 95,
+        "fair": 0.791667
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.8,
+        "n": 146,
+        "wins": 128,
+        "fair": 0.876712
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.85,
+        "n": 160,
+        "wins": 134,
+        "fair": 0.8375
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.9,
+        "n": 226,
+        "wins": 210,
+        "fair": 0.929204
+      },
+      {
+        "eBin": 10,
+        "askLo": 0.95,
+        "n": 383,
+        "wins": 374,
+        "fair": 0.976501
+      },
+      {
+        "eBin": 11,
+        "askLo": 0,
+        "n": 446,
+        "wins": 9,
+        "fair": 0.020179
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.05,
+        "n": 295,
+        "wins": 11,
+        "fair": 0.037288
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.1,
+        "n": 137,
+        "wins": 12,
+        "fair": 0.087591
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.15,
+        "n": 107,
+        "wins": 11,
+        "fair": 0.102804
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.2,
+        "n": 97,
+        "wins": 27,
+        "fair": 0.278351
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.25,
+        "n": 104,
+        "wins": 34,
+        "fair": 0.326923
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.3,
+        "n": 105,
+        "wins": 46,
+        "fair": 0.438095
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.35,
+        "n": 87,
+        "wins": 32,
+        "fair": 0.367816
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.6,
+        "n": 83,
+        "wins": 50,
+        "fair": 0.60241
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.65,
+        "n": 99,
+        "wins": 60,
+        "fair": 0.606061
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.7,
+        "n": 96,
+        "wins": 61,
+        "fair": 0.635417
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.75,
+        "n": 102,
+        "wins": 66,
+        "fair": 0.647059
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.8,
+        "n": 103,
+        "wins": 89,
+        "fair": 0.864078
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.85,
+        "n": 115,
+        "wins": 107,
+        "fair": 0.930435
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.9,
+        "n": 217,
+        "wins": 200,
+        "fair": 0.921659
+      },
+      {
+        "eBin": 11,
+        "askLo": 0.95,
+        "n": 450,
+        "wins": 441,
+        "fair": 0.98
+      },
+      {
+        "eBin": 11,
+        "askLo": 1,
+        "n": 104,
+        "wins": 102,
+        "fair": 0.980769
+      },
+      {
+        "eBin": 12,
+        "askLo": 0,
+        "n": 649,
+        "wins": 10,
+        "fair": 0.015408
+      },
+      {
+        "eBin": 12,
+        "askLo": 0.05,
+        "n": 232,
+        "wins": 10,
+        "fair": 0.043103
+      },
+      {
+        "eBin": 12,
+        "askLo": 0.1,
+        "n": 124,
+        "wins": 13,
+        "fair": 0.104839
+      },
+      {
+        "eBin": 12,
+        "askLo": 0.15,
+        "n": 101,
+        "wins": 18,
+        "fair": 0.178218
+      },
+      {
+        "eBin": 12,
+        "askLo": 0.3,
+        "n": 82,
+        "wins": 22,
+        "fair": 0.268293
+      },
+      {
+        "eBin": 12,
+        "askLo": 0.7,
+        "n": 82,
+        "wins": 57,
+        "fair": 0.695122
+      },
+      {
+        "eBin": 12,
+        "askLo": 0.85,
+        "n": 125,
+        "wins": 112,
+        "fair": 0.896
+      },
+      {
+        "eBin": 12,
+        "askLo": 0.9,
+        "n": 171,
+        "wins": 160,
+        "fair": 0.935673
+      },
+      {
+        "eBin": 12,
+        "askLo": 0.95,
+        "n": 454,
+        "wins": 442,
+        "fair": 0.973568
+      },
+      {
+        "eBin": 12,
+        "askLo": 1,
+        "n": 179,
+        "wins": 177,
+        "fair": 0.988827
+      },
+      {
+        "eBin": 13,
+        "askLo": 0,
+        "n": 884,
+        "wins": 6,
+        "fair": 0.006787
+      },
+      {
+        "eBin": 13,
+        "askLo": 0.05,
+        "n": 156,
+        "wins": 3,
+        "fair": 0.019231
+      },
+      {
+        "eBin": 13,
+        "askLo": 0.1,
+        "n": 95,
+        "wins": 16,
+        "fair": 0.168421
+      },
+      {
+        "eBin": 13,
+        "askLo": 0.85,
+        "n": 83,
+        "wins": 72,
+        "fair": 0.86747
+      },
+      {
+        "eBin": 13,
+        "askLo": 0.9,
+        "n": 120,
+        "wins": 113,
+        "fair": 0.941667
+      },
+      {
+        "eBin": 13,
+        "askLo": 0.95,
+        "n": 361,
+        "wins": 355,
+        "fair": 0.98338
+      },
+      {
+        "eBin": 13,
+        "askLo": 1,
+        "n": 231,
+        "wins": 231,
+        "fair": 1
+      },
+      {
+        "eBin": 14,
+        "askLo": 0,
+        "n": 1254,
+        "wins": 4,
+        "fair": 0.00319
+      },
+      {
+        "eBin": 14,
+        "askLo": 0.95,
+        "n": 168,
+        "wins": 164,
+        "fair": 0.97619
+      }
+    ],
+    "trainGrid": [
+      {
+        "margin": 0.03,
+        "exit": "hold",
+        "n": 762,
+        "wins": 484,
+        "losses": 278,
+        "winRate": 0.635171,
+        "pnl": 107.8982,
+        "pnlPer1": 27.013519,
+        "avgWin": 2.51856,
+        "avgLoss": -3.996708,
+        "exitReasons": {
+          "resolve_loss": 278,
+          "resolve_win": 484
+        },
+        "noResolution": 0
+      },
+      {
+        "margin": 0.03,
+        "exit": "scalp",
+        "n": 762,
+        "wins": 366,
+        "losses": 396,
+        "winRate": 0.480315,
+        "pnl": -33.2674,
+        "pnlPer1": -8.320519,
+        "avgWin": 0.578661,
+        "avgLoss": -0.618832,
+        "exitReasons": {
+          "sl": 396,
+          "tp": 366
+        },
+        "noResolution": 0
+      },
+      {
+        "margin": 0.05,
+        "exit": "hold",
+        "n": 761,
+        "wins": 493,
+        "losses": 268,
+        "winRate": 0.647832,
+        "pnl": 135.6046,
+        "pnlPer1": 33.938924,
+        "avgWin": 2.447704,
+        "avgLoss": -3.996693,
+        "exitReasons": {
+          "resolve_win": 493,
+          "resolve_loss": 268
+        },
+        "noResolution": 0
+      },
+      {
+        "margin": 0.05,
+        "exit": "scalp",
+        "n": 761,
+        "wins": 360,
+        "losses": 401,
+        "winRate": 0.473062,
+        "pnl": -31.8658,
+        "pnlPer1": -7.97078,
+        "avgWin": 0.601499,
+        "avgLoss": -0.619465,
+        "exitReasons": {
+          "tp": 360,
+          "sl": 401
+        },
+        "noResolution": 0
+      },
+      {
+        "margin": 0.08,
+        "exit": "hold",
+        "n": 703,
+        "wins": 483,
+        "losses": 220,
+        "winRate": 0.687055,
+        "pnl": 217.3118,
+        "pnlPer1": 54.377873,
+        "avgWin": 2.270229,
+        "avgLoss": -3.996403,
+        "exitReasons": {
+          "resolve_win": 483,
+          "resolve_loss": 220
+        },
+        "noResolution": 0
+      },
+      {
+        "margin": 0.08,
+        "exit": "scalp",
+        "n": 703,
+        "wins": 308,
+        "losses": 395,
+        "winRate": 0.438122,
+        "pnl": -25.6148,
+        "pnlPer1": -6.410539,
+        "avgWin": 0.687049,
+        "avgLoss": -0.600572,
+        "exitReasons": {
+          "tp": 308,
+          "sl": 395
+        },
+        "noResolution": 0
+      }
+    ],
+    "trainGate": true,
+    "frozen": {
+      "margin": 0.08,
+      "exit": "hold"
+    },
+    "train": {
+      "margin": 0.08,
+      "exit": "hold",
+      "n": 703,
+      "wins": 483,
+      "losses": 220,
+      "winRate": 0.687055,
+      "pnl": 217.3118,
+      "pnlPer1": 54.377873,
+      "avgWin": 2.270229,
+      "avgLoss": -3.996403,
+      "exitReasons": {
+        "resolve_win": 483,
+        "resolve_loss": 220
+      },
+      "examples": [
+        {
+          "slug": "btc-updown-15m-1788848100",
+          "side": 1,
+          "entryAsk": 0.65,
+          "fair": 0.779661,
+          "size": 6.15,
+          "pnl": 2.1525,
+          "pnlPer1": 0.538462,
+          "reason": "resolve_win"
+        },
+        {
+          "slug": "btc-updown-15m-1788849000",
+          "side": 0,
+          "entryAsk": 0.69,
+          "fair": 0.779661,
+          "size": 5.79,
+          "pnl": 1.7949,
+          "pnlPer1": 0.449275,
+          "reason": "resolve_win"
+        },
+        {
+          "slug": "btc-updown-15m-1788849900",
+          "side": 0,
+          "entryAsk": 0.6,
+          "fair": 0.693694,
+          "size": 6.66,
+          "pnl": -3.996,
+          "pnlPer1": -1,
+          "reason": "resolve_loss"
+        },
+        {
+          "slug": "btc-updown-15m-1788850800",
+          "side": 0,
+          "entryAsk": 0.7,
+          "fair": 0.812865,
+          "size": 5.71,
+          "pnl": 1.713,
+          "pnlPer1": 0.428571,
+          "reason": "resolve_win"
+        },
+        {
+          "slug": "btc-updown-15m-1788851700",
+          "side": 1,
+          "entryAsk": 0.6,
+          "fair": 0.693694,
+          "size": 6.66,
+          "pnl": -3.996,
+          "pnlPer1": -1,
+          "reason": "resolve_loss"
+        }
+      ],
+      "noResolution": 0
+    },
+    "holdout": {
+      "n": 410,
+      "wins": 261,
+      "losses": 149,
+      "winRate": 0.636585,
+      "pnl": 4.329,
+      "pnlPer1": 1.077018,
+      "avgWin": 2.298,
+      "avgLoss": -3.996303,
+      "exitReasons": {
+        "resolve_win": 261,
+        "resolve_loss": 149
+      },
+      "examples": [
+        {
+          "slug": "btc-updown-15m-1789794900",
+          "side": 0,
+          "entryAsk": 0.65,
+          "fair": 0.779661,
+          "size": 6.15,
+          "pnl": 2.1525,
+          "pnlPer1": 0.538462,
+          "reason": "resolve_win"
+        },
+        {
+          "slug": "btc-updown-15m-1789795800",
+          "side": 1,
+          "entryAsk": 0.6,
+          "fair": 0.693694,
+          "size": 6.66,
+          "pnl": 2.664,
+          "pnlPer1": 0.666667,
+          "reason": "resolve_win"
+        },
+        {
+          "slug": "btc-updown-15m-1789796700",
+          "side": 0,
+          "entryAsk": 0.7,
+          "fair": 0.812865,
+          "size": 5.71,
+          "pnl": 1.713,
+          "pnlPer1": 0.428571,
+          "reason": "resolve_win"
+        },
+        {
+          "slug": "btc-updown-15m-1789797600",
+          "side": 0,
+          "entryAsk": 0.69,
+          "fair": 0.779661,
+          "size": 5.79,
+          "pnl": -3.9951,
+          "pnlPer1": -1,
+          "reason": "resolve_loss"
+        },
+        {
+          "slug": "btc-updown-15m-1789798500",
+          "side": 0,
+          "entryAsk": 0.6,
+          "fair": 0.693694,
+          "size": 6.66,
+          "pnl": -3.996,
+          "pnlPer1": -1,
+          "reason": "resolve_loss"
+        }
+      ],
+      "noResolution": 28
+    },
+    "clearsBar": true
+  },
+  "touchFill": null
+}

@@ -1,0 +1,45 @@
+{
+  "note": "Temp settings for offline backtest. Preset fav-band-opt with simulatedCapital=50 only. maxExposureUsdc kept at preset 40 (80% of bankroll). bot-settings.json untouched.",
+  "presetId": "fav-band-opt",
+  "overrides": {
+    "simulatedCapital": 50
+  },
+  "exposureNote": "No extra maxExposure capping: preset maxExposureUsdc=40 already <= capital 50.",
+  "settings": {
+    "pollIntervalMs": 1000,
+    "marketSlugPrefixes": [
+      "btc-updown-15m"
+    ],
+    "strategyId": "fav-band",
+    "enableExpensiveHedge": false,
+    "arbAskLockOnly": false,
+    "arbAskSumMax": null,
+    "favBandOrderUsdc": 15,
+    "favBandAskMin": 0.7,
+    "favBandAskMax": 0.85,
+    "favBandMinElapsedSec": 200,
+    "favBandMaxElapsedSec": 600,
+    "favBandExitEnabled": false,
+    "favBandExitMinLowerHighDrop": 0.05,
+    "favBandExitRetraceRatio": 0.25,
+    "favBandExitConsecutive": 3,
+    "favBandExitLookbackMs": 120000,
+    "favBandExitMinElapsedSec": 0,
+    "favBandExitLossOnly": true,
+    "favBandExitSwitchEnabled": false,
+    "favBandExitSwitchOrderUsdc": 15,
+    "maxSharesPerOrder": 40,
+    "maxOpenPositionsPerSide": 1,
+    "maxExposureUsdc": 40,
+    "minutesBeforeCloseMin": 0,
+    "minutesBeforeCloseMax": 15,
+    "minMinutesBeforeCloseToBuy": null,
+    "simulatedCapital": 50,
+    "simFillProbabilityNonMarketable": 0.3,
+    "simResolveDelaySeconds": 5,
+    "simResolveRetryIntervalMs": 5000,
+    "simResolveMaxRetries": 5,
+    "simResolveFallback": "none",
+    "simMaxRetryAttempts": 20
+  }
+}

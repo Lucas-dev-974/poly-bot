@@ -13,7 +13,7 @@ interface StrategyGraphRow {
   updatedAt: number;
 }
 
-export interface StrategyGraphMeta {
+interface StrategyGraphMeta {
   id: string;
   name: string;
   description: string | null;

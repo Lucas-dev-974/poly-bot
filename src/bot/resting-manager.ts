@@ -33,7 +33,7 @@ function parseGammaList(value: unknown): string[] {
   return [];
 }
 
-export type RestingManagerDeps = {
+type RestingManagerDeps = {
   config: BotConfig; // shared mutable ref — do not copy
   trader: Trader;
   tracker: TradeTracker;

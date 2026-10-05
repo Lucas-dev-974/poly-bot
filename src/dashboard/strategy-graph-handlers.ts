@@ -289,7 +289,7 @@ export async function handleActivateStrategy(
   }
 }
 
-export function parseGraphBody(value: unknown): StrategyGraph {
+function parseGraphBody(value: unknown): StrategyGraph {
   if (!value || typeof value !== "object") {
     throw new Error("Invalid strategy graph");
   }

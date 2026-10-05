@@ -9,7 +9,7 @@ export interface ClobSocketMessage {
 type MessageHandler = (data: ClobSocketMessage) => void;
 type StatusHandler = (connected: boolean) => void;
 
-export interface ClobSocketOptions {
+interface ClobSocketOptions {
   url: string;
   onMessage: MessageHandler;
   /** Changement d'état connecté/déconnecté (appelé aussi à chaque reconnexion). */

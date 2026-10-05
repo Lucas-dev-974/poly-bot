@@ -1,8 +1,8 @@
 import type { Database } from "./database.js";
 
-export type BacktestRunStatus = "running" | "done" | "error" | "cancelled";
+type BacktestRunStatus = "running" | "done" | "error" | "cancelled";
 
-export interface BacktestRunRow {
+interface BacktestRunRow {
   id: string;
   startedAt: number;
   finishedAt: number | null;

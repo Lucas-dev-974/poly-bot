@@ -1,20 +1,20 @@
 import { edgeLeadChartRules as edgeLeadChartRulesShared } from "../../../src/strategy/chart-rule-presets";
-export type GraphNodeId = string;
+type GraphNodeId = string;
 
-export type GraphOp = string;
+type GraphOp = string;
 
-export type GraphParam =
+type GraphParam =
   | { kind: "config"; key: string }
   | { kind: "literal"; value: number | string | boolean | null }
   | { kind: "ref"; node: GraphNodeId };
 
-export interface GraphNode {
+interface GraphNode {
   id: GraphNodeId;
   op: GraphOp;
   params: Record<string, GraphParam>;
 }
 
-export interface GraphEdge {
+interface GraphEdge {
   from: GraphNodeId;
   to: GraphNodeId;
   kind?: "data" | "control";
@@ -70,12 +70,12 @@ export interface StrategyGraph {
 }
 
 export const DEFAULT_CHART_DURATION_SEC = 900;
-export const CHART_SNAP_SEC = 60;
-export const CHART_SNAP_PRICE = 0.01;
+const CHART_SNAP_SEC = 60;
+const CHART_SNAP_PRICE = 0.01;
 export const DEFAULT_LOOKBACK_MS = 5000;
 export const DEFAULT_MIN_SLOPE = 0.002;
 
-export function snapChartSec(sec: number, durationSec: number): number {
+function snapChartSec(sec: number, durationSec: number): number {
   const snapped = Math.round(sec / CHART_SNAP_SEC) * CHART_SNAP_SEC;
   return Math.min(Math.max(snapped, 0), durationSec);
 }
@@ -96,7 +96,7 @@ export function snapChartRange(
   return { startSec, endSec };
 }
 
-export function snapChartPrice(price: number): number {
+function snapChartPrice(price: number): number {
   const snapped = Math.round(price / CHART_SNAP_PRICE) * CHART_SNAP_PRICE;
   return Math.min(Math.max(Number(snapped.toFixed(2)), 0), 1);
 }
@@ -220,7 +220,6 @@ export function chartRuleIndexLabel(rules: ChartRule[], id: string): string {
 
 export {
   chartRuleLinks,
-  chartRulesHaveCycle,
   linkChartRules,
   orderChartRules,
   stripDependsOn,

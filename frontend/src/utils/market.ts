@@ -5,7 +5,7 @@
  *     btc-updown-5m-1781178900  → start=1781178900, end=1781179200 (5 min)
  *     btc-updown-4h-...         → 4 heures
  */
-export interface MarketWindow {
+interface MarketWindow {
   start: number; // secondes Unix
   end: number; // secondes Unix
 }
@@ -46,7 +46,7 @@ export function parseSlugWindow(slug: string): MarketWindow | null {
  * Ex: "Bitcoin Up or Down - September 7, 10:30PM-10:45PM ET"
  * Ne pas utiliser `timestamp` API : c'est l'heure de redeem, pas le marché.
  */
-export function parseTitleWindowMs(title: string, endDate?: string): number {
+function parseTitleWindowMs(title: string, endDate?: string): number {
   const match = title.match(
     /(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s+(\d{1,2}):(\d{2})\s*(AM|PM)/i,
   );

@@ -223,7 +223,7 @@ function parseJsonUnknown(json: string | null): unknown {
   }
 }
 
-export function parseBacktestRequest(json: string): {
+function parseBacktestRequest(json: string): {
   strategyId?: string;
   presetId?: string;
   useCurrentConfig: boolean;

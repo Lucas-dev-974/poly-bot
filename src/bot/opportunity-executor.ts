@@ -13,7 +13,7 @@ import type { BalanceGuard } from "./balance-guard.js";
 import type { LiveOrderLifecycle } from "./live-order-lifecycle.js";
 import { orderTypeFor } from "./order-type.js";
 
-export type OpportunityExecutorDeps = {
+type OpportunityExecutorDeps = {
   config: BotConfig; // shared mutable reference - do not copy
   trader: Trader;
   tracker: TradeTracker;

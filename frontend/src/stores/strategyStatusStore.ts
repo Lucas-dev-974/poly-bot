@@ -7,7 +7,7 @@ import type { FavBandWhipsawStatus } from "../types";
  * remainingMs est mesuré au moment de l'émission, il faut donc le décrémenter
  * avec l'horloge locale entre deux events.
  */
-export interface StrategyStatusSnapshot {
+interface StrategyStatusSnapshot {
   status: FavBandWhipsawStatus;
   receivedAt: number;
 }

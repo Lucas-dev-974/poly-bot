@@ -1,6 +1,6 @@
 import type { Repositories } from "../db/index.js";
 
-export type StrategyChartWindow = {
+type StrategyChartWindow = {
   eventSlug: string;
   eventTitle: string;
   windowStart: number;
@@ -8,7 +8,7 @@ export type StrategyChartWindow = {
   ticks: number;
 };
 
-export type StrategyChartSeriesPoint = {
+type StrategyChartSeriesPoint = {
   t: number;
   ask: number | null;
   bid: number | null;

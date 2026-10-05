@@ -19,10 +19,10 @@ import {
 } from "../predicates.js";
 import type { GraphContext, GraphOp } from "./types.js";
 
-export type PortGetter = (name: string) => unknown;
+type PortGetter = (name: string) => unknown;
 
 export type SamplePoint = { ts: number; ask: number };
-export type SampleState = { samples: SamplePoint[] };
+type SampleState = { samples: SamplePoint[] };
 
 export type GraphRuntimeState = {
   buffer: EdgeConfirmBuffer;
@@ -31,7 +31,7 @@ export type GraphRuntimeState = {
   sampleWindows: Map<string, SamplePoint[]>;
 };
 
-export type EmitAcc = TradeOpportunity[];
+type EmitAcc = TradeOpportunity[];
 
 const TEMPORAL: ReadonlySet<GraphOp> = new Set([
   "windowStartSec",
@@ -52,7 +52,7 @@ export function isTemporalOp(op: GraphOp): boolean {
   return TEMPORAL.has(op);
 }
 
-export function sampleWindowKey(nodeId: string, pairId: string): string {
+function sampleWindowKey(nodeId: string, pairId: string): string {
   return `${nodeId}::${pairId}`;
 }
 

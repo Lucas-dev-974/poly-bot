@@ -13,7 +13,6 @@ import {
   PUSD,
 } from "./relayer.js";
 import { recordQuotaExceeded, recordQuotaOk } from "./relayer-quota.js";
-import type { RedeemResult } from "./relayer.js";
 
 /**
  * Withdraw pUSD from the Polymarket deposit wallet (V2) to an external
@@ -57,13 +56,13 @@ export function buildTransferCalldata(to: Address, amountUsd: number): string {
   });
 }
 
-export interface WithdrawValidationOk {
+interface WithdrawValidationOk {
   ok: true;
   amount: number;
   to: Address;
 }
 
-export interface WithdrawValidationError {
+interface WithdrawValidationError {
   ok: false;
   error: string;
 }
@@ -188,12 +187,12 @@ async function withTimeout<T>(
 // Relayer flow (mirrors redeemViaRelayer)
 // ---------------------------------------------------------------------------
 
-export interface WithdrawRequest {
+interface WithdrawRequest {
   to: Address;
   amountUsd: number;
 }
 
-export interface WithdrawResult {
+interface WithdrawResult {
   txHash: string;
   transactionId: string;
 }
@@ -260,5 +259,3 @@ export async function withdrawViaRelayer(
     transactionId: response.transactionID,
   };
 }
-
-export type { RedeemResult };

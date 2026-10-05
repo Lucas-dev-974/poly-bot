@@ -41,7 +41,7 @@ export interface TickExecutorSink {
   onPositionOpened?(position: SimulatedPosition): void;
 }
 
-export interface TickExecutorBaseCtx {
+interface TickExecutorBaseCtx {
   runId: string;
   config: BotConfig;
   strategy: TradingStrategy;
@@ -61,7 +61,7 @@ export interface TickExecutorBaseCtx {
   allowNewEntries?: boolean;
 }
 
-export type TickExecutorCtx = TickExecutorBaseCtx & {
+type TickExecutorCtx = TickExecutorBaseCtx & {
   filledThisTick: Set<string>;
 };
 

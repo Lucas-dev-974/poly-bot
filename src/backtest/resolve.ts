@@ -3,7 +3,7 @@ import type { Repositories } from "../db/index.js";
 import { extractWinner, extractSettlement, type GammaMarketResult } from "../position-resolver.js";
 import { getMarketHistory } from "../dashboard/market-history.js";
 
-export interface WindowWinner {
+interface WindowWinner {
   winnerOutcomeIndex: number;
   source: string;
 }

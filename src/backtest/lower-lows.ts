@@ -5,7 +5,7 @@
 
 import type { BacktestSeriesPoint } from "./types.js";
 
-export interface LowerLowEvent {
+interface LowerLowEvent {
   sequenceId: number;
   lowNumber: number;
   lowPrice: number;
@@ -16,7 +16,7 @@ export interface LowerLowEvent {
   requiredBounceCents: number;
 }
 
-export interface LowerLowAnalysisResult {
+interface LowerLowAnalysisResult {
   slug: string;
   up: {
     events: LowerLowEvent[];
@@ -41,7 +41,7 @@ export interface LowerLowParams {
   lookbackMs: number;         // favBandExitLookbackMs
 }
 
-export const DEFAULT_LOWER_LOW_PARAMS: LowerLowParams = {
+const DEFAULT_LOWER_LOW_PARAMS: LowerLowParams = {
   minSwingCents: 5,        // 0.05 = 5¢
   retraceRatio: 0.25,      // 25%
   consecutiveRequired: 3,  // 3 lower-lows

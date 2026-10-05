@@ -1,9 +1,7 @@
 import { createSignal } from "solid-js";
 import type { BotEvent } from "../types";
 
-export type WsChannel = "market" | "user";
-
-export interface WsChannelState {
+interface WsChannelState {
   connected: boolean;
   reconnects: number;
 }

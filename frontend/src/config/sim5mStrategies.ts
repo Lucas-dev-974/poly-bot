@@ -10,7 +10,7 @@
  * (antiflipTakeProfitPct) — WR soldés 80-86%, trades ~4× plus courts, EV
  * inférieure au hold (audit 13 : results/13-intrabar-tp.md).
  */
-export interface Sim5mStrategyDef {
+interface Sim5mStrategyDef {
   /** Preset id (config/presets/*.json + STRATEGY_PRESETS). */
   presetId: string;
   /** Moteur porteur des règles (const du registry). */

@@ -5,7 +5,7 @@ import type { TradeTracker } from "../trade-tracker.js";
 import type { TokenBook, TradeOpportunity, UpDownEvent } from "../types.js";
 import { gammaMarketStats } from "../utils/market.js";
 
-export type TickSnapshotsDeps = {
+type TickSnapshotsDeps = {
   config: BotConfig; // shared mutable ref
   repos?: Repositories;
   tracker: TradeTracker;

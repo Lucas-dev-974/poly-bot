@@ -400,7 +400,7 @@ export class WindowClaimRepository {
 }
 
 
-export interface OrderRow {
+interface OrderRow {
   ts: number;
   tradeKey: string;
   eventSlug: string;

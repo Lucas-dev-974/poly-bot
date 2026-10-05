@@ -1,6 +1,6 @@
 export type SectionId = "presets" | "markets" | "cheap" | "hedge" | "edge" | "fav" | "dip" | "antiflip" | "flipconf" | "earlyconv" | "earlylow" | "openentry" | "repricing" | "risk" | "window";
 
-export interface SectionDef {
+interface SectionDef {
   id: SectionId;
   label: string;
   icon: string;

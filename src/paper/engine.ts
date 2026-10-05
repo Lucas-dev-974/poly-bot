@@ -23,7 +23,7 @@ import type { SimulatedPosition, SimulatedStats, TokenBook, UpDownEvent } from "
 // config et tables DB propres (sim_*). Aucun ordre réel n'est envoyé.
 // ============================================================
 
-export interface SimEngineState {
+interface SimEngineState {
   enabled: boolean;
   cash: number;
   positionsValue: number;

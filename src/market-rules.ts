@@ -2,7 +2,7 @@ import { prefixOfSlug } from "./utils/market.js";
 import type { Repositories } from "./db/index.js";
 import type { UpDownEvent } from "./types.js";
 
-export type MarketFlags = { recording: boolean; trading: boolean };
+type MarketFlags = { recording: boolean; trading: boolean };
 
 /** Famille absente de la table = comportement historique (tout enregistré + tradable). */
 export const DEFAULT_MARKET_FLAGS: MarketFlags = { recording: true, trading: true };
@@ -78,7 +78,7 @@ export function prefixesWithLiveExposure(
   return out;
 }
 
-export interface FlaggedEvent {
+interface FlaggedEvent {
   event: UpDownEvent;
   recording: boolean;
   trading: boolean;

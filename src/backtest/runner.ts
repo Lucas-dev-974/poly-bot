@@ -22,7 +22,7 @@ import { booksFromRows } from "./windows.js";
 
 const YIELD_EVERY = 50;
 
-export interface RunnerHooks {
+interface RunnerHooks {
   shouldCancel: () => boolean;
   onProgress: (current: number, total: number, eventSlug: string | null) => void;
 }

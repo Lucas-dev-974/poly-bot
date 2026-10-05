@@ -1,10 +1,10 @@
 import { parseWindowStart, windowSecondsFromSlug, WINDOW_SECONDS } from "../utils/market.js";
 
 export const EXPECTED_TICKS = 900;
-export const WINDOW_MS = WINDOW_SECONDS * 1000;
+const WINDOW_MS = WINDOW_SECONDS * 1000;
 export const MIN_TICKS = 855;
-export const MAX_GAP_MS = 2000;
-export const MAX_EDGE_GAP_MS = 2000;
+const MAX_GAP_MS = 2000;
+const MAX_EDGE_GAP_MS = 2000;
 
 /**
  * Ticks attendus pour une durée de fenêtre au tick bot 1 Hz (900 pour 15m,
@@ -21,7 +21,7 @@ export function minTicksForDuration(durationSec: number): number {
   return Math.round(expectedTicksForDuration(durationSec) * 0.95);
 }
 
-export interface CompletenessStats {
+interface CompletenessStats {
   tickCount: number;
   maxGapMs: number;
   gapCount: number;

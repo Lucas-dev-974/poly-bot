@@ -50,7 +50,7 @@ export function cheapAskInBand(ask: number, config: BotConfig): boolean {
 }
 
 /** Ask edge hors [edgeBandMin, edgeBandMax] → cancel le GTC favori. */
-export function configEdgeOrderAction(
+function configEdgeOrderAction(
   ask: number | null | undefined,
   config: BotConfig,
 ): EdgeOrderAction {

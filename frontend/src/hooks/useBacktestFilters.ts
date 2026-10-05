@@ -7,7 +7,7 @@ import {
 } from "../stores/backtestStore";
 import type { BacktestWindowMeta, CompletenessRequest } from "../types";
 
-export function dayKey(windowStart: number): string {
+function dayKey(windowStart: number): string {
   const d = new Date(windowStart * 1000);
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -16,7 +16,7 @@ export function dayKey(windowStart: number): string {
 }
 
 /** Tri des timeframes par durée croissante ("5m" avant "15m" avant "1h"). */
-export function byDurationAsc(a: string, b: string): number {
+function byDurationAsc(a: string, b: string): number {
   const toSec = (tf: string): number => {
     const m = tf.match(/^(\d+)([mh])$/);
     if (!m) return Number.MAX_SAFE_INTEGER;
@@ -169,5 +169,3 @@ export function useBacktestFilters() {
     disposeFilters,
   };
 }
-
-export type BacktestFiltersApi = ReturnType<typeof useBacktestFilters>;

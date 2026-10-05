@@ -6,7 +6,7 @@ import {
   visibleRowRange,
 } from "../utils/visible-window";
 
-export type TableWindow = {
+type TableWindow = {
   /** True dès que rowCount ≥ threshold — active le cage scroll + spacers. */
   active: Accessor<boolean>;
   range: Accessor<{ start: number; end: number }>;

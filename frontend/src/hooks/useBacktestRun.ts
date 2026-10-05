@@ -13,7 +13,7 @@ import type {
 import { formToSettings, validateConfigForm, type ConfigFormState } from "../utils/configForm";
 import { dateRange } from "./useBacktestFilters";
 
-export type UseBacktestRunDeps = {
+type UseBacktestRunDeps = {
   form: Accessor<ConfigFormState | null>;
   dateKey: Accessor<string>;
   filtered: Accessor<BacktestWindowMeta[]>;
@@ -283,5 +283,3 @@ export function useBacktestRun(deps: UseBacktestRunDeps) {
     disposeRun,
   };
 }
-
-export type BacktestRunApi = ReturnType<typeof useBacktestRun>;

@@ -6,7 +6,7 @@ import type { SimulatedPosition } from "./types.js";
 import { SeededRng } from "./utils/random.js";
 
 /** Verdict de règlement d'un marché binaire. */
-export type SettlementVerdict = "win" | "lose" | "void";
+type SettlementVerdict = "win" | "lose" | "void";
 
 /** Prix de remboursement par token sur un règlement 50/50 (void). */
 export const VOID_SETTLEMENT_PRICE = 0.5;

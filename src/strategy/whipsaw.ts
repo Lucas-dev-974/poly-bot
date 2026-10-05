@@ -1,7 +1,7 @@
 import type { SimulatedPosition } from "../types.js";
 
 /** Inputs for the fav-band whipsaw score (0-100). */
-export type WhipsawScoreInput = {
+type WhipsawScoreInput = {
   intraFlips: number;
   askRange: number | null;
   priorWinnerFlipRate: number;

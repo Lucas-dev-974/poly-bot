@@ -1,14 +1,5 @@
-export type TabId = "story" | "arch" | "hedge" | "ui" | "ship";
 export type EngineId = "arb" | "barbell" | "edge-lead" | "reverse" | "dip-revert" | "fav-band" | "antiflip-revert" | "flip-confirm" | "early-conviction" | "early-low" | "open-entry" | "probability-repricing";
 export type PhaseId = "mid" | "done";
-
-export const TABS: { id: TabId; label: string }[] = [
-  { id: "story", label: "Les 12 moteurs" },
-  { id: "arch", label: "Architecture" },
-  { id: "hedge", label: "Hedge au POST" },
-  { id: "ui", label: "Moteur & presets" },
-  { id: "ship", label: "Livrables" },
-];
 
 export const ENGINE_META: Record<
   EngineId,
@@ -102,7 +93,7 @@ export const ENGINE_META: Record<
 
 export const CHEAP = 10;
 export const HEDGE_MID = 3;
-export const RATIO = 0.5;
+const RATIO = 0.5;
 
 export const FLOW_NODES = [
   { id: "tick", label: "ReverseBot.tick", sub: "scan + pause" },
@@ -612,7 +603,7 @@ export const REPRICING_LIFE_EDGES: LifeEdge[] = [
   { from: "forced", to: "flat", label: "" },
 ];
 
-export type SlotKind = "covered" | "needHedge" | "keepBet";
+type SlotKind = "covered" | "needHedge" | "keepBet";
 
 export function slotKind(index: number, hedgeFilled: number, engine: EngineId): SlotKind {
   if (index < hedgeFilled) return "covered";

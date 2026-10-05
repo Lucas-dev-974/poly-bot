@@ -1,4 +1,4 @@
-export type DagLayoutConfig = {
+type DagLayoutConfig = {
   nodes: { id: string }[];
   edges: { from: string; to: string }[];
   direction: "horizontal" | "vertical";
@@ -9,8 +9,8 @@ export type DagLayoutConfig = {
   padding: number;
 };
 
-export type LayoutNode = { id: string; x: number; y: number };
-export type LayoutEdge = {
+type LayoutNode = { id: string; x: number; y: number };
+type LayoutEdge = {
   from: string;
   to: string;
   sourceX: number;
@@ -19,7 +19,7 @@ export type LayoutEdge = {
   targetY: number;
 };
 
-export type DagLayout = {
+type DagLayout = {
   width: number;
   height: number;
   nodes: LayoutNode[];

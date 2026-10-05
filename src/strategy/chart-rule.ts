@@ -7,13 +7,12 @@ import {
 import { edgeLeadChartRules as edgeLeadChartRulesPreset } from "./chart-rule-presets.js";
 
 export {
-  chartRulesHaveCycle,
   orderChartRules,
   uniqueDependsOn,
 } from "./chart-rule-deps.js";
 
 export const DEFAULT_LOOKBACK_MS = 5000;
-export const DEFAULT_MIN_SLOPE = 0.002;
+const DEFAULT_MIN_SLOPE = 0.002;
 
 export type NormalizedChartRule = ChartRule & {
   lookbackMs: number;

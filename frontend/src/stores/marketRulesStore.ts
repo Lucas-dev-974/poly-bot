@@ -30,7 +30,7 @@ export function applyMarketRules(res: MarketRulesResponse): void {
  * de STALE_MS, sinon déduplique les appelants concurrents sur un seul fetch.
  * Échec silencieux : l'état précédent est conservé.
  */
-export function ensureFreshRules(): Promise<void> {
+function ensureFreshRules(): Promise<void> {
   if (Date.now() - lastFetchedAt() < STALE_MS) return Promise.resolve();
   if (inflight) return inflight;
   inflight = (async () => {

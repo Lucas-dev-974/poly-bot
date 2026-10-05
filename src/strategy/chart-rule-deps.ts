@@ -1,5 +1,5 @@
 /** Minimal rule shape for dependsOn helpers. Shared with the chart editor. */
-export type ChartRuleDep = {
+type ChartRuleDep = {
   id: string;
   dependsOn?: string[];
 };

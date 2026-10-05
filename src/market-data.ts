@@ -18,7 +18,7 @@ export interface BookSource {
   getTokenBook(tokenId: string): Promise<TokenBook | null>;
 }
 
-export interface WsStatusPayload {
+interface WsStatusPayload {
   channel: "market" | "user";
   connected: boolean;
   reconnects: number;

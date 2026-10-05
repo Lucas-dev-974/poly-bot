@@ -31,7 +31,7 @@ export function resolvePublicDir(): { html: string; dir: string } {
 }
 
 // MIME types pour les assets statiques servis depuis public/ (build Vite).
-export const MIME_TYPES: Record<string, string> = {
+const MIME_TYPES: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript",
   ".css": "text/css",

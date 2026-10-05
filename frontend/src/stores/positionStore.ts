@@ -30,12 +30,6 @@ export function addResolved(position: SimulatedPosition): void {
   });
 }
 
-export function clearPositions(): void {
-  // Solid setStore({}) merges — it does not delete existing keys.
-  setOpenPositions(reconcile({}));
-  setResolvedPositions([]);
-}
-
 export function replaceOpen(list: SimulatedPosition[]): void {
   const next: Record<string, SimulatedPosition> = {};
   for (const position of list) {

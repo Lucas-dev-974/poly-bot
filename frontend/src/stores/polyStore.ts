@@ -45,12 +45,6 @@ export function failRedeem(conditionId: string): void {
   setRedeemingConditions(conditionId, false);
 }
 
-export function clearPoly(): void {
-  setPolyPositions([]);
-  setRedeemingConditions(reconcile({}));
-  setRedeemedConditions(reconcile({}));
-}
-
 /**
  * Fallback REST : les positions Polymarket n'ont QUE le SSE (aucun autre
  * réconciliateur — l'event polymarketPositions est un replace complet, donc

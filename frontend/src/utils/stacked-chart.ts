@@ -7,13 +7,13 @@ export const CHART_LABEL_W = 108;
 export const CHART_ROW_H = 34;
 export const CHART_PLOT_PAD = { top: 4, right: 40, bottom: 4, left: 6 };
 /** Trous plus larges que le poll live (3–5 s) : une coupure à 2 s effaçait toute la courbe. */
-export const CHART_GAP_CUT_SEC = 8;
+const CHART_GAP_CUT_SEC = 8;
 /** Bande gauche/droite du canvas : molette = pan vertical, pas zoom. */
-export const CHART_EDGE_SCROLL_MIN_PX = 64;
-export const CHART_EDGE_SCROLL_MAX_PX = 150;
-export const CHART_EDGE_SCROLL_FRAC = 0.13;
+const CHART_EDGE_SCROLL_MIN_PX = 64;
+const CHART_EDGE_SCROLL_MAX_PX = 150;
+const CHART_EDGE_SCROLL_FRAC = 0.13;
 
-export interface SparkPoint {
+interface SparkPoint {
   t: number;
   upMid: number | null;
   downMid: number | null;
@@ -27,7 +27,7 @@ export interface SparkPoint {
   downAskSize?: number | null;
 }
 
-export type SeriesKey = "upMid" | "downMid" | "volume" | "liquidity";
+type SeriesKey = "upMid" | "downMid" | "volume" | "liquidity";
 
 export interface ChartViewBox {
   x: number;
@@ -239,7 +239,7 @@ export function isSellMark(row: { id: string; side?: string; status?: string }):
   return row.side === "SELL" || row.id.includes(":sold-");
 }
 
-export type PositionOverlayMark = {
+type PositionOverlayMark = {
   id: string;
   ts: number;
   fillPrice: number;
@@ -366,7 +366,7 @@ export function groupPositionsBySlug<T extends { eventSlug: string }>(rows: T[])
   return map;
 }
 
-export interface WalletTradeMatchInput {
+interface WalletTradeMatchInput {
   timestamp: number;
   price: number;
   size: number;
@@ -447,10 +447,6 @@ export function markerRadiiWorld(
     ry = cap;
   }
   return { rx: Math.max(rx, 0.8), ry: Math.max(ry, 0.8) };
-}
-
-export function markerRadiusWorld(vbH: number, containerH: number, px = 5.5): number {
-  return markerRadiiWorld(vbH, vbH, containerH, containerH, px).ry;
 }
 
 export function overlayMarksForWindow<T extends { id: string; ts: number; fillPrice: number }>(

@@ -7,7 +7,7 @@ const STORAGE_KEY = "ui-collapsed-sections";
  * Map id → plié lue depuis localStorage. Une clé absente = section dépliée
  * (état par défaut) ; `true` = pliée. Lecture synchrone (petit JSON).
  */
-export function readCollapsedMap(): Record<string, boolean> {
+function readCollapsedMap(): Record<string, boolean> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};

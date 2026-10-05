@@ -12,7 +12,7 @@ import { listStrategyPresets } from "../strategy-presets.js";
 // par la simulation live (src/paper/engine.ts).
 // ============================================================
 
-export interface EffectiveConfigRequest {
+interface EffectiveConfigRequest {
   strategyId: StrategyId;
   presetId?: string;
   useCurrentConfig?: boolean;

@@ -1,7 +1,7 @@
 // Types miroir du backend (src/types.ts + src/dashboard/events.ts)
 // Garder synchronisÃ© avec le backend lors des changements.
 
-export type TradeSide = "BUY" | "SELL";
+type TradeSide = "BUY" | "SELL";
 export type NativeStrategyId = "arb" | "barbell" | "edge-lead" | "reverse" | "fav-band" | "dip-revert" | "antiflip-revert" | "flip-confirm" | "early-conviction" | "early-low" | "open-entry" | "probability-repricing";
 export type StrategyId = NativeStrategyId | `custom:${string}`;
 
@@ -107,21 +107,6 @@ export interface SimulatedPosition {
   strategyId?: StrategyId;
   /** Prix de vente si la position a été sold (defend / edge-sell). `null` = non vendue. */
   sellPrice?: number | null;
-}
-
-export type ArbPairStatus = "open" | "partial" | "covered" | "resolved";
-
-export interface SimulatedArbPair {
-  id: string;
-  eventSlug: string;
-  eventTitle: string;
-  windowEnd: number;
-  cheapLegs: SimulatedPosition[];
-  expensiveLegs: SimulatedPosition[];
-  status: ArbPairStatus;
-  realizedPnl?: number;
-  resolvedAt?: number;
-  directional?: boolean;
 }
 
 export interface SimulatedStats {

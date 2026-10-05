@@ -51,13 +51,13 @@ export function runPresetLabel(run: BacktestRunSummary | null, strategyId?: stri
   return engine;
 }
 
-export interface SettingRow {
+interface SettingRow {
   key: string;
   label: string;
   value: string;
 }
 
-export interface SettingGroup {
+interface SettingGroup {
   id: string;
   label: string;
   rows: SettingRow[];

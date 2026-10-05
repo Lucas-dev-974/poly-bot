@@ -13,7 +13,7 @@ Tout changement de **comportement**, **API**, **config** ou **UI** lié aux mote
 | Zone | Fichiers |
 |------|----------|
 | Données / tableaux | `frontend/src/guide/data.ts` |
-| Onglets & texte | `frontend/src/guide/GuideTabs.tsx` |
+| Onglets & texte | `frontend/src/guide/tabs/*.tsx` (lazy-loaded par `StrategyGuidePage.tsx`, métadonnées dans `tabsMeta.ts`) |
 | Diagrammes SVG | `frontend/src/guide/Diagrams.tsx` |
 | Shell page | `frontend/src/pages/StrategyGuidePage.tsx` |
 | README | moteur listé dans l'intro + section dédiée si nouveau moteur |

@@ -1,13 +1,13 @@
 import type { BotConfig } from "../config.js";
 
-export interface PricePoint {
+interface PricePoint {
   /** Unix timestamp en secondes. */
   t: number;
   /** Prix (probabilité implicite 0-1). */
   p: number;
 }
 
-export interface MarketHistoryResult {
+interface MarketHistoryResult {
   history: PricePoint[];
   oppositeHistory: PricePoint[] | null;
 }

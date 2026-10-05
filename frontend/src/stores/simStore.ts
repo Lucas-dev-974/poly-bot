@@ -14,7 +14,7 @@ export const [simResolvedPositions, setSimResolvedPositions] = createSignal<Simu
 // La liste affichée vient de /api/sim/resolved (DB complète, sans les plafonds
 // slice(0, 200) ni MAX_RESOLVED_IN_MEMORY) ; total/totalPages viennent du
 // COUNT SQL côté backend.
-export interface SimResolvedPaging {
+interface SimResolvedPaging {
   page: number;
   pageSize: number;
   total: number;
@@ -56,7 +56,7 @@ export const [simResolvedPaging, setSimResolvedPaging] = createSignal<SimResolve
 export const [simResolvedPagedActive, setSimResolvedPagedActive] = createSignal(false);
 
 /** Applique une réponse paginée /api/sim/resolved : liste + métadonnées. */
-export function applySimResolvedPage(res: SimResolvedPagedResponse): void {
+function applySimResolvedPage(res: SimResolvedPagedResponse): void {
   setSimResolvedPositions(res.positions);
   setSimResolvedPagedActive(true);
   setSimResolvedPaging({
@@ -144,7 +144,7 @@ export function upsertSimOpen(position: SimulatedPosition): void {
   });
 }
 
-export function removeSimOpen(position: SimulatedPosition): void {
+function removeSimOpen(position: SimulatedPosition): void {
   // Les variantes vendues (:sold-xxx) partagent le préfixe d'id de l'origine.
   setSimOpenPositions((prev) =>
     prev.filter((p) => p.id !== position.id && !p.id.startsWith(`${position.id}:sold-`)),

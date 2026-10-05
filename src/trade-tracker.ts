@@ -84,7 +84,7 @@ export interface PostedOrderContext {
   strategyId?: StrategyId;
 }
 
-export type PostedOrderEntry = PostedOrderContext & {
+type PostedOrderEntry = PostedOrderContext & {
   cost: number;
   orderId?: string;
 };

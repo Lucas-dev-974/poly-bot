@@ -1,6 +1,6 @@
 /** Shared Edge-lead chart preset (editor + backend). No Node/config imports. */
 
-export type EdgeLeadChartRulePreset = {
+type EdgeLeadChartRulePreset = {
   id: string;
   startSec: number;
   endSec: number;

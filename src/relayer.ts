@@ -122,7 +122,7 @@ const NEGRISK_REDEEM_ABI = [
 // Relayer wrapper
 // ---------------------------------------------------------------------------
 
-export interface RedeemResult {
+interface RedeemResult {
   txHash: string;
   transactionId: string;
 }

@@ -109,7 +109,7 @@ const PERSISTED_EVENT_TYPES = new Set([
   "error",
 ]);
 
-export class EventBus {
+class EventBus {
   private readonly listeners = new Set<Listener>();
   private readonly history: BotEvent[] = [];
   private eventRepo: EventRepository | null = null;

@@ -15,11 +15,6 @@ export function windowSecondsFromSlug(slug: string): number | null {
   return duration > 0 && Number.isFinite(duration) ? duration : null;
 }
 
-/** Tag Gamma correspondant à une durée de fenêtre en secondes (ex. 900 → "15M"). */
-export function gammaTagFromSeconds(durationSec: number): string {
-  return `${durationSec / 60}M`;
-}
-
 export function parseWindowStart(slug: string): number | null {
   const match = slug.match(/-(\d{10})$/);
   return match ? Number(match[1]) : null;
@@ -94,7 +89,7 @@ export function l1Spread(
   return Number.isFinite(spread) ? spread : null;
 }
 
-export function parseOptionalNumber(value: unknown): number | null {
+function parseOptionalNumber(value: unknown): number | null {
   if (value === null || value === undefined || value === "") return null;
   const n = typeof value === "number" ? value : Number(value);
   return Number.isFinite(n) ? n : null;
@@ -134,7 +129,7 @@ export function withSeriesVolume24hr(
   return fallback == null ? market : { ...market, volume24hr: fallback };
 }
 
-export interface RankedBookLevel {
+interface RankedBookLevel {
   price: number;
   size: number | null;
 }

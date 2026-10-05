@@ -15,7 +15,7 @@ const LS_KEY = "bot-notify-enabled";
 
 export type NotifyPref = "granted" | "denied" | "unsupported" | "default";
 
-export function notificationsSupported(): boolean {
+function notificationsSupported(): boolean {
   return typeof window !== "undefined" && "Notification" in window;
 }
 

@@ -19,7 +19,7 @@ export class LedgerRepository {
   }
 }
 
-export interface BalanceSnapshotRow {
+interface BalanceSnapshotRow {
   availableCollateral: number;
   positionsValue: number;
   totalValue: number;
@@ -145,7 +145,7 @@ export class BotStateRepository {
 }
 
 
-export interface RedeemRow {
+interface RedeemRow {
   ts: number;
   conditionId: string;
   outcomeIndex: number;
@@ -217,7 +217,7 @@ export class RedeemRepository {
   }
 }
 
-export interface WithdrawalRow {
+interface WithdrawalRow {
   ts: number;
   to: string;
   amount: number;

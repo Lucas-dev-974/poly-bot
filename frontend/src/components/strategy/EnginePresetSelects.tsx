@@ -5,7 +5,7 @@ import {
   type StrategyId,
 } from "../../config/strategyPresets";
 
-export type CustomEngineOption = { id: string; name: string };
+type CustomEngineOption = { id: string; name: string };
 
 /** Built-in + optional custom engine <select> options (shared Backtest / Settings / Sim). */
 export function EngineSelect(props: {

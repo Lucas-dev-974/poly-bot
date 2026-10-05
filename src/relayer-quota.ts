@@ -80,15 +80,6 @@ export function getRelayerQuota(): RelayerQuotaState {
 }
 
 /**
- * Seconds remaining until the quota resets, or 0 if not exhausted / unknown.
- */
-export function getQuotaResetSeconds(): number {
-  if (!state.exhausted || state.resetAt <= 0) return 0;
-  const remaining = Math.max(0, Math.ceil((state.resetAt - Date.now()) / 1000));
-  return remaining;
-}
-
-/**
  * Whether the relayer quota is currently blocked and should NOT be hit.
  *
  * Returns true when:

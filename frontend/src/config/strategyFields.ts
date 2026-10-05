@@ -27,7 +27,7 @@ export interface ParamFieldDef {
   options?: Array<{ value: string; label: string }>;
 }
 
-export interface ParamSectionDef {
+interface ParamSectionDef {
   title: string;
   fields: ParamFieldDef[];
 }
@@ -727,7 +727,7 @@ export function paramSectionsFor(strategyId: StrategyId): ParamSectionDef[] {
 }
 
 /** Libellés courts pour le titre du panneau (les labels complets sont verbeux). */
-export const STRATEGY_SHORT_LABELS: Record<NativeStrategyId, string> = {
+const STRATEGY_SHORT_LABELS: Record<NativeStrategyId, string> = {
   arb: "Arbitrage 1:1 + lock",
   barbell: "Barbell (ratio cheap/hedge)",
   "edge-lead": "Edge-lead",

@@ -6,9 +6,9 @@ import {
 } from "./runtime-settings.js";
 import { parseStrategyId, type StrategyId } from "./strategy/ids.js";
 
-export const STRATEGY_PRESETS_DIR = join(process.cwd(), "config/presets");
+const STRATEGY_PRESETS_DIR = join(process.cwd(), "config/presets");
 
-export interface StrategyPreset {
+interface StrategyPreset {
   id: string;
   strategyId: StrategyId;
   name: string;

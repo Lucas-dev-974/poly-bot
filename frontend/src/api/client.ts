@@ -1,7 +1,7 @@
 import type { BotConfig, BotEvent, BotFillsResponse, BacktestPositionRow, BacktestProgress, BacktestResult, BacktestRunRequestSummary, BacktestRunSummary, BacktestSeriesPoint, BacktestWindowMeta, CompletenessRequest, EngineStatsRow, LocalBookSnapshotResponse, LocalMarketSnapshotResponse, ManualBuyResult, MarketHistoryResponse, MarketRuleRow, MarketRulesResponse, MarketTradesResponse, OrderView, RelayerQuotaState, SimulatedPosition, StrategyId, ToggleMarketRuleResponse, WalletQuote, WalletTradesResponse, WithdrawalRow, WithdrawResponse, FavBandWhipsawStatus } from "../types";
 
 /** Réponse GET /api/sim/state (hydratation de la page Simulation). */
-export interface SimStateResponse {
+interface SimStateResponse {
   ok: boolean;
   state: SimEngineState;
   effectiveConfig: BotConfig;
@@ -85,36 +85,36 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   return (await res.json()) as T;
 }
 
-export interface StateResponse {
+interface StateResponse {
   config: BotConfig;
   events: BotEvent[];
 }
 
-export interface PositionsResponse {
+interface PositionsResponse {
   positions: SimulatedPosition[];
 }
 
-export interface OrdersResponse {
+interface OrdersResponse {
   orders: OrderView[];
 }
 
-export interface RedeemRequest {
+interface RedeemRequest {
   conditionId: string;
   outcomeIndex: number;
   negRisk: boolean;
 }
 
-export interface RedeemResponse {
+interface RedeemResponse {
   ok: boolean;
   txHash?: string;
   error?: string;
 }
 
-export interface ClosePositionRequest {
+interface ClosePositionRequest {
   positionId: string;
 }
 
-export interface ClosePositionResponse {
+interface ClosePositionResponse {
   ok: boolean;
   fillPrice?: number;
   soldSize?: number;
@@ -122,7 +122,7 @@ export interface ClosePositionResponse {
   error?: string;
 }
 
-export interface ConfigResponse {
+interface ConfigResponse {
   config: BotConfig;
   editableKeys: string[];
   leadsWithEdge?: boolean;
@@ -137,36 +137,32 @@ export interface StrategyEngineSummary {
   version?: number;
 }
 
-export interface StrategyListResponse {
+interface StrategyListResponse {
   engines: StrategyEngineSummary[];
   activeId: string;
   active: unknown;
 }
 
-export interface StrategyGraphResponse {
+interface StrategyGraphResponse {
   ok?: boolean;
   graph: import("../strategy-editor/graph-types").StrategyGraph;
   errors?: string[];
   error?: string;
 }
 
-export interface RelayerQuotaResponse {
-  quota: RelayerQuotaState;
-}
-
-export interface UpdateConfigResponse {
+interface UpdateConfigResponse {
   ok: boolean;
   config?: BotConfig;
   error?: string;
 }
 
-export interface BotControlResponse {
+interface BotControlResponse {
   ok: boolean;
   enabled?: boolean;
   error?: string;
 }
 
-export interface StrategyStatusResponse {
+interface StrategyStatusResponse {
   status: FavBandWhipsawStatus | null;
 }
 

@@ -32,7 +32,7 @@ import type {
  *
  * State machine (§5): IDLE → ARMED → ENTERING → OPEN → EXITING → FLAT (+ HALTED).
  */
-export type RepricingPhase =
+type RepricingPhase =
   | "IDLE"
   | "ARMED"
   | "ENTERING"
@@ -41,7 +41,7 @@ export type RepricingPhase =
   | "FLAT"
   | "HALTED";
 
-export type RepricingExitReason =
+type RepricingExitReason =
   | "tp_abs"
   | "tp_rel"
   | "stop_abs"

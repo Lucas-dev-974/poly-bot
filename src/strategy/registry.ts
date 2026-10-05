@@ -32,7 +32,7 @@ const STRATEGIES: Record<NativeStrategyId, () => TradingStrategy> = {
   "probability-repricing": () => new ProbabilityRepricingStrategy(),
 };
 
-export type StrategyRepos = Pick<Repositories, "strategyGraphs">;
+type StrategyRepos = Pick<Repositories, "strategyGraphs">;
 
 export function leadsWithEdgeFor(
   id: StrategyId,

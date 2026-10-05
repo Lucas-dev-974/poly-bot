@@ -2,7 +2,7 @@ import type { BotConfig } from "../config.js";
 import { log } from "../logger.js";
 import type { Trader } from "../trader.js";
 
-export type BalanceGuardDeps = {
+type BalanceGuardDeps = {
   config: BotConfig; // shared mutable reference — do not copy
   trader: Trader;
 };

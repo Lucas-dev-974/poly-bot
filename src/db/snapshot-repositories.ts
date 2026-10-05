@@ -1,7 +1,7 @@
 import type { PositionKind } from "../types.js";
 import type { Database } from "./database.js";
 
-export interface MarketSnapshotRow {
+interface MarketSnapshotRow {
   ts: number;
   eventSlug: string;
   eventTitle: string;
@@ -225,7 +225,7 @@ export class BookSnapshotRepository {
   }
 }
 
-export interface OpportunitySnapshotRow {
+interface OpportunitySnapshotRow {
   ts: number;
   eventSlug: string;
   kind: PositionKind;
@@ -263,7 +263,7 @@ export class OpportunitySnapshotRepository {
   }
 }
 
-export interface MarketResolutionRow {
+interface MarketResolutionRow {
   eventSlug: string;
   winnerOutcomeIndex: number;
   source: string;

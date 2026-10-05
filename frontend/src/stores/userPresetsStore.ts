@@ -11,7 +11,7 @@ const [userPresets, setUserPresetsRaw] = createSignal<UserPreset[]>(loadUserPres
 export { userPresets };
 
 /** Hydrate le signal depuis localStorage (re-scan explicite, ex. import manuel). */
-export function reloadUserPresets(): void {
+function reloadUserPresets(): void {
   setUserPresetsRaw(loadUserPresets());
 }
 

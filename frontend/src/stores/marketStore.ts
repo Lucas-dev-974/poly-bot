@@ -10,7 +10,7 @@ export const [markets, setMarkets] = createStore<Record<string, MarketView>>({})
  * Les books/bids sont lus live depuis markets (évite copies stale via reconcile).
  * Record + createStore pour tracking Solid (pas de Map).
  */
-export type TokenMarketRef = { slug: string };
+type TokenMarketRef = { slug: string };
 export const [tokenIndex, setTokenIndex] = createStore<Record<string, TokenMarketRef>>({});
 
 
@@ -118,16 +118,10 @@ export function marketList(now = Date.now()): MarketView[] {
 }
 
 /** Lookup O(1) index + lecture live du book dans markets (anti-stale). */
-export function bookForToken(tokenId: string): TokenBook | undefined {
+function bookForToken(tokenId: string): TokenBook | undefined {
   const slug = tokenIndex[tokenId]?.slug;
   if (!slug) return undefined;
   return markets[slug]?.books.find((b) => b.tokenId === tokenId);
-}
-
-/** Lookup O(1) : marché (MarketView) pour un tokenId. */
-export function marketForToken(tokenId: string): MarketView | undefined {
-  const ref = tokenIndex[tokenId];
-  return ref ? markets[ref.slug] : undefined;
 }
 
 /** Bid live O(1) — utilisé par SimulationPage (unrealized PnL / resting). */

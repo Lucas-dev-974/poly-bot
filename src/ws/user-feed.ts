@@ -11,7 +11,7 @@ export interface WsOrderStatus {
   sizeMatched: number;
 }
 
-export interface UserFeedOptions {
+interface UserFeedOptions {
   wsUserHost: string;
   apiKey?: string;
   apiSecret?: string;

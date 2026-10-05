@@ -47,16 +47,3 @@ export function startSse(): void {
   es.onmessage = onMessage;
   es.onerror = onError;
 }
-
-/** Close the shared connection (tests / full teardown). */
-export function stopSse(): void {
-  if (!es) return;
-  es.close();
-  es = null;
-  wasConnected = false;
-  loggedDisconnect = false;
-}
-
-export function isSseStarted(): boolean {
-  return es !== null;
-}

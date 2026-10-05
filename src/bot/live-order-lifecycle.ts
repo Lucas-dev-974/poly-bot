@@ -8,7 +8,7 @@ import type { PositionKind, SimulatedPosition } from "../types.js";
 import { shouldCancelOrphanIndependentHedges } from "../strategy/hedge-post.js";
 import { confirmedFillSize } from "../utils/order-status.js";
 
-export type LiveOrderLifecycleDeps = {
+type LiveOrderLifecycleDeps = {
   config: BotConfig; // shared mutable reference, do not copy
   trader: Trader;
   tracker: TradeTracker;

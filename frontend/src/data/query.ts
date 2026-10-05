@@ -17,7 +17,7 @@
  * - Invalidation explicite par préfixe de clé (ex. config mise à jour →
  *   `invalidate("series:")`).
  */
-export interface QueryEntry<T> {
+interface QueryEntry<T> {
   value: T;
   fetchedAt: number;
 }
@@ -28,7 +28,7 @@ const DEFAULT_MAX_ENTRIES = 100;
 const store = new Map<string, QueryEntry<unknown>>();
 const inflight = new Map<string, Promise<unknown>>();
 
-export interface QueryOptions {
+interface QueryOptions {
   /** Durée de fraîcheur de l'entrée (défaut 5 min). */
   ttlMs?: number;
   /** Taille max du cache (défaut 100 entrées). */

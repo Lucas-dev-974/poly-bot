@@ -8,7 +8,7 @@ import type { FavBandWhipsawStatus } from "../types";
  * l'horloge locale entre deux events. `null` = moteur sim ≠ fav-band (ou
  * statut non encore reçu) → le panneau Simulation masque l'entry.
  */
-export interface SimWhipsawSnapshot {
+interface SimWhipsawSnapshot {
   status: FavBandWhipsawStatus | null;
   receivedAt: number;
 }

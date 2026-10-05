@@ -42,7 +42,3 @@ export function markOrderCancelled(tokenId: string, orderId?: string): void {
     ),
   );
 }
-
-export function clearOrders(): void {
-  setOrders([]);
-}

@@ -203,11 +203,6 @@ export interface GraphContext {
   nowMs: number | null;
 }
 
-export interface PairWindow {
-  windowStart: number;
-  windowEnd: number;
-}
-
 export function inferEdgeKind(edge: GraphEdge): "data" | "control" {
   if (edge.kind) return edge.kind;
   return edge.port === "then" || edge.port === "else" ? "control" : "data";

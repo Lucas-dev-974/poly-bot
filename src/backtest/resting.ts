@@ -3,7 +3,7 @@ import type { TokenBook, TradeOpportunity, UpDownEvent } from "../types.js";
 import { buyFillAgainstBook, type CrossFill } from "./broker.js";
 import { round2 } from "./ledger.js";
 
-export interface RestingGtc {
+interface RestingGtc {
   key: string;
   opportunity: TradeOpportunity;
   context: PostedOrderContext;

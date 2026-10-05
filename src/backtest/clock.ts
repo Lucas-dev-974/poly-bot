@@ -1,4 +1,4 @@
-export function nowSec(nowMs: number): number {
+function nowSec(nowMs: number): number {
   return nowMs / 1000;
 }
 

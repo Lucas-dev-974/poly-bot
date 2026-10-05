@@ -19,7 +19,7 @@ function nextId(): string {
   return `toast-${++seq}`;
 }
 
-export function pushToast(
+function pushToast(
   kind: ToastKind,
   message: string,
   opts?: { group?: string; replaceGroup?: boolean },

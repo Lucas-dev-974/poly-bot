@@ -13,7 +13,7 @@ import type { BotConfig } from "../config.js";
  * 5 ticks). Les claims/fills DB survivent.
  */
 
-export interface EdgeConfirmState {
+interface EdgeConfirmState {
   /** BestAsk échantillonnés (dans l'ordre chronologique). */
   samples: number[];
   /** Outcome du token edge confirmé (sticky). */

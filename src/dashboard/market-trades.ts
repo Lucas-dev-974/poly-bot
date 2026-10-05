@@ -1,6 +1,6 @@
 import type { BotConfig } from "../config.js";
 
-export interface TradePoint {
+interface TradePoint {
   /** Unix timestamp en secondes. */
   timestamp: number;
   price: number;
@@ -11,7 +11,7 @@ export interface TradePoint {
 }
 
 /** Fill Data API du wallet, avec identifiants de marché pour le matching chart. */
-export interface WalletTrade extends TradePoint {
+interface WalletTrade extends TradePoint {
   conditionId: string;
   slug: string;
   eventSlug: string;

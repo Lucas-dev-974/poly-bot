@@ -1,8 +1,8 @@
 ﻿import { copyFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { Database } from "../src/db/database.ts";
-import { createRepositories } from "../src/db/index.ts";
-import { listBacktestWindows, booksFromRows } from "../src/backtest/windows.ts";
+import { Database } from "../../../src/db/database.ts";
+import { createRepositories } from "../../../src/db/index.ts";
+import { listBacktestWindows, booksFromRows } from "../../../src/backtest/windows.ts";
 
 const srcDb = join("data", "bot-live.db");
 const dstDb = join("data", "bot-asklock-probe.db");

@@ -4,7 +4,7 @@
  */
 import "dotenv/config";
 import { DatabaseSync } from "node:sqlite";
-import { loadConfig } from "../src/config.js";
+import { loadConfig } from "../../../src/config.js";
 
 const FETCH_TIMEOUT_MS = 10_000;
 const ACTIVE_PAGE_SIZE = 500;

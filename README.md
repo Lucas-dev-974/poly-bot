@@ -90,7 +90,7 @@ Si le hedge échoue malgré tout → **Policy A** (FOK SELL du cheap non couvert
 ### Backtest
 
 ```bash
-npx tsx scripts/arb-audit-backtest.mts ask-lock
+npx tsx scripts/research/backtests/arb-audit-backtest.mts ask-lock
 ```
 
 ### Fichiers clés
@@ -252,7 +252,7 @@ Capital simulé 500 $, preset par défaut : **PnL ≈ +290 $ (+58 %)**, 239 fill
 - `src/strategy/ids.ts` / `registry.ts` — `strategyId: dip-revert`
 - `config/presets/dip-revert.json` — preset UI / backtest
 - `tests/dip-revert.test.ts` — unit tests
-- `scripts/backtest-dip-revert.mts` — backtest univers audité
+- `scripts/research/backtests/backtest-dip-revert.mts` — backtest univers audité
 
 ## Architecture
 

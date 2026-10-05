@@ -6,8 +6,8 @@
  *   - trous max entre ticks <= 1 minute (60 000 ms)
  *
  * Usage :
- *   npx tsx scripts/audit-data-coverage.mts [dbPath] [minTicks] [maxGapMs]
- *   ex. npx tsx scripts/audit-data-coverage.mts data/bot-live.db 801 60000
+ *   npx tsx scripts/research/audit/audit-data-coverage.mts [dbPath] [minTicks] [maxGapMs]
+ *   ex. npx tsx scripts/research/audit/audit-data-coverage.mts data/bot-live.db 801 60000
  *
  * Sortie : JSON détaillé dans audits/backtest/coverage/audit-data-coverage-<ts>.json
  * + résumé console. Ne modifie pas la base source (copie de travail via VACUUM INTO).
@@ -15,15 +15,15 @@
 import { existsSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { Database } from "../src/db/database.ts";
-import { createRepositories } from "../src/db/index.ts";
-import { listBacktestWindows } from "../src/backtest/windows.ts";
+import { Database } from "../../../src/db/database.ts";
+import { createRepositories } from "../../../src/db/index.ts";
+import { listBacktestWindows } from "../../../src/backtest/windows.ts";
 import {
   EXPECTED_TICKS,
   isCompleteFromStats,
   type CompletenessCriteria,
-} from "../src/backtest/completeness.ts";
-import type { BacktestWindowMeta } from "../src/backtest/types.ts";
+} from "../../../src/backtest/completeness.ts";
+import type { BacktestWindowMeta } from "../../../src/backtest/types.ts";
 
 function parseArgs(argv: string[]) {
   const defaultDb = join("data", "bot-live.db");

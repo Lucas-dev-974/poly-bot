@@ -14,15 +14,22 @@ Offline digs, grids, and probes. **Not** production entrypoints — run from the
 | `dip-revert-research/` | dip-revert: standalone sim (`dip-sim.mts`), official-runner recheck (`recheck-official.mts`), TP wiring checks (`verify-tp.mts`) |
 | `mean-rev-probes/` | Mean-reversion / scalp probes that produced dip-revert (momentum exploration, dip-confirmed, scalp measures) |
 | `compare/` | Cross-strategy / long-universe compares |
+| `probes/` | CLOB / market probes (`probe-ask-lock.mts`, `probe-markets.mts`) |
+| `backtests/` | Official-runner backtests (arb presets, dip-revert, new strats) |
+| `audit/` | Data-coverage audit and live trade/position diagnostics |
 
 One-shot patchers (`_patch-*`, `fix-*`, `wire-*`) were deleted after being
 applied — the changes they made live in `src/` now.
 
 ## Keep at `scripts/` root (tracked)
 
-Production / reusable tools: `check-quota.ts`, `redeem-all.ts`,
-`compare-positions.ts`, `diagnose-size.ts`, `verify-audit.ts`, `probe-*.mts`,
-`arb-audit-backtest.mts`, `audit-data-coverage.mts`, `backtest-dip-revert.mts`.
+Ops tools only: `check-quota.ts`, `redeem-all.ts`.
+
+Reusable one-offs live under `scripts/research/`:
+
+- `probes/` - `probe-ask-lock.mts`, `probe-markets.mts`
+- `backtests/` - `arb-audit-backtest.mts`, `backtest-dip-revert.mts`, `backtest-dip-revert-axes.mts`, `backtest-new-strats.mts`
+- `audit/` - `audit-data-coverage.mts`, `verify-audit.ts`, `diagnose-size.ts`, `compare-positions.ts`
 
 ## How to run
 

@@ -44,7 +44,7 @@ Scripts : `scripts/research/ml-feasibility/` (probe-dataset, probe-universe)
 
 ---
 
-Scripts : `scripts/arb-audit-backtest.mts`
+Scripts : `scripts/research/backtests/arb-audit-backtest.mts`
 
 | Fichier | Config | Résultat |
 |---|---|---|
@@ -61,7 +61,7 @@ ne se forment pas (uncover ~100 %) ou les locks cassés détruisent le PnL.
 
 ## 📁 ask-lock/ — arb dual-FOK (ask-lock)
 
-Scripts : `scripts/arb-audit-backtest.mts` (preset ask-lock),
+Scripts : `scripts/research/backtests/arb-audit-backtest.mts` (preset ask-lock),
 `scripts/research/ask-lock/ask-lock-param-grid.mts`
 
 | Fichier | Contenu |
@@ -117,7 +117,7 @@ switch inverse est confirmé destructeur (gardé OFF).
 
 ## 📁 dip-revert/ — moteur dip-revert (favori chuté + rebond)
 
-Scripts : `scripts/backtest-dip-revert.mts`,
+Scripts : `scripts/research/backtests/backtest-dip-revert.mts`,
 `scripts/research/dip-revert-research/{dip-sim,recheck-official,verify-tp}.mts`
 
 | Fichier | Contenu |
@@ -279,7 +279,7 @@ Implémentation en moteurs natifs = wiring complet (cf. skill `new-strategy-wiri
 
 ## 📁 coverage/ — univers de données partagé
 
-Script : `scripts/audit-data-coverage.mts`
+Script : `scripts/research/audit/audit-data-coverage.mts`
 
 | Fichier | Contenu |
 |---|---|
@@ -290,20 +290,20 @@ ce rapport fait foi pour savoir quelles fenêtres sont exploitables.
 
 ---
 
-## Scripts réutilisables (root `scripts/`)
+## Scripts réutilisables (`scripts/` + `scripts/research/`)
 
 | Script | Rôle |
 |---|---|
-| `arb-audit-backtest.mts` | Backtest arb générique par preset + overrides (écrit dans `arb/`) |
-| `backtest-dip-revert.mts` | Backtest dip-revert base/loose/tight + fav-band ref (écrit dans `dip-revert/`) |
-| `audit-data-coverage.mts` | Audit de couverture des données (écrit dans `coverage/`) |
-| `audit-data-coverage.mts` + `verify-audit.ts` | Vérification d'un audit |
-| `compare-positions.ts`, `diagnose-size.ts` | Outils de diagnostic trades/positions |
+| `scripts/research/backtests/arb-audit-backtest.mts` | Backtest arb générique par preset + overrides (écrit dans `arb/`) |
+| `scripts/research/backtests/backtest-dip-revert.mts` | Backtest dip-revert base/loose/tight + fav-band ref (écrit dans `dip-revert/`) |
+| `scripts/research/audit/audit-data-coverage.mts` | Audit de couverture des données (écrit dans `coverage/`) |
+| `scripts/research/audit/audit-data-coverage.mts` + `scripts/research/audit/verify-audit.ts` | Vérification d'un audit |
+| `scripts/research/audit/compare-positions.ts`, `scripts/research/audit/diagnose-size.ts` | Outils de diagnostic trades/positions |
 | `check-quota.ts`, `redeem-all.ts` | Ops live (quota relayer, redeem) |
-| `probe-ask-lock.mts`, `probe-markets.mts` | Probes CLOB / marchés |
+| `scripts/research/probes/probe-ask-lock.mts`, `scripts/research/probes/probe-markets.mts` | Probes CLOB / marchés |
 | `scripts/research/dip-revert-research/verify-tp.mts` | Garde de régression du wiring take-profit dip-revert |
 | `scripts/research/dip-revert-research/live-positions.mts` | Positions LIVE dip-revert : winrate, PnL, streaks (lit bot-live.db) |
-| `scripts/backtest-dip-revert-axes.mts` | Validation runner officiel des axes d'entrée dip-revert (écrit dans `dip-revert/`) |
+| `scripts/research/backtests/backtest-dip-revert-axes.mts` | Validation runner officiel des axes d'entrée dip-revert (écrit dans `dip-revert/`) |
 | `scripts/research/dip-revert-research/dip-hedge-sim.mts` | Hedge jambe inverse dip-revert : post/free/stop/parité (écrit dans `dip-revert/`) |
 | `scripts/research/research-new-strats/final-sim.mts` | Sim finale des 3 nouvelles stratégies + split-half (écrit dans `research-new-strats/`) |
 | `scripts/research/research-new-strats/write-report.mts` | Rapport assemblé des 3 nouvelles stratégies (JSON+MD dans `research-new-strats/`) |

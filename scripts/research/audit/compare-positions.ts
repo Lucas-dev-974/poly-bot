@@ -7,11 +7,11 @@
  * On somme donc les tailles locales avant de comparer avec Polymarket
  * (qui agrège tout en une seule position par conditionId:outcomeIndex).
  *
- * Usage: npx tsx scripts/compare-positions.ts
+ * Usage: npx tsx scripts/research/audit/compare-positions.ts
  */
 import "dotenv/config";
 import { DatabaseSync } from "node:sqlite";
-import { loadConfig } from "../src/config.js";
+import { loadConfig } from "../../../src/config.js";
 
 const FETCH_TIMEOUT_MS = 10_000;
 const ACTIVE_PAGE_SIZE = 500;

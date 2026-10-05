@@ -3,23 +3,23 @@
  * (src/backtest/runner.ts) — validation du wiring implémenté.
  * READ-ONLY sur data/bot-live.db (VACUUM INTO work copy, supprimée à la fin).
  *
- *   npx tsx scripts/backtest-new-strats.mts [minTicks] [maxGapMs]
+ *   npx tsx scripts/research/backtests/backtest-new-strats.mts [minTicks] [maxGapMs]
  *
  * Écrit dans audits/backtest/<antiflip-revert|flip-confirm|early-conviction>/.
  */
 import { existsSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { Database } from "../src/db/database.ts";
-import { createRepositories } from "../src/db/index.ts";
-import { runBacktest } from "../src/backtest/runner.ts";
-import { listBacktestWindows } from "../src/backtest/windows.ts";
-import { testConfig } from "../tests/helpers.ts";
-import { sanitizePatch } from "../src/runtime-settings.ts";
-import { validateConfigCoherence } from "../src/config.ts";
-import { leadsWithEdgeFor } from "../src/strategy/registry.ts";
-import type { CompletenessCriteria } from "../src/backtest/completeness.ts";
-import type { StrategyId } from "../src/strategy/ids.ts";
+import { Database } from "../../../src/db/database.ts";
+import { createRepositories } from "../../../src/db/index.ts";
+import { runBacktest } from "../../../src/backtest/runner.ts";
+import { listBacktestWindows } from "../../../src/backtest/windows.ts";
+import { testConfig } from "../../../tests/helpers.ts";
+import { sanitizePatch } from "../../../src/runtime-settings.ts";
+import { validateConfigCoherence } from "../../../src/config.ts";
+import { leadsWithEdgeFor } from "../../../src/strategy/registry.ts";
+import type { CompletenessCriteria } from "../../../src/backtest/completeness.ts";
+import type { StrategyId } from "../../../src/strategy/ids.ts";
 
 const criteria: CompletenessCriteria = {
   minTicks: Number(process.argv[2] ?? 801),

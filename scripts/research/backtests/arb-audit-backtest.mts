@@ -1,14 +1,14 @@
 import { copyFileSync, existsSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { Database } from "../src/db/database.ts";
-import { createRepositories } from "../src/db/index.ts";
-import { runBacktest } from "../src/backtest/runner.ts";
-import { listBacktestWindows } from "../src/backtest/windows.ts";
-import { listStrategyPresets } from "../src/strategy-presets.ts";
-import { testConfig } from "../tests/helpers.ts";
-import { sanitizePatch } from "../src/runtime-settings.ts";
-import { validateConfigCoherence } from "../src/config.ts";
+import { Database } from "../../../src/db/database.ts";
+import { createRepositories } from "../../../src/db/index.ts";
+import { runBacktest } from "../../../src/backtest/runner.ts";
+import { listBacktestWindows } from "../../../src/backtest/windows.ts";
+import { listStrategyPresets } from "../../../src/strategy-presets.ts";
+import { testConfig } from "../../../tests/helpers.ts";
+import { sanitizePatch } from "../../../src/runtime-settings.ts";
+import { validateConfigCoherence } from "../../../src/config.ts";
 
 const presetId = process.argv[2] ?? "coverage-max";
 const cheapBuyMaxOverride = process.argv[3] ? Number(process.argv[3]) : null;

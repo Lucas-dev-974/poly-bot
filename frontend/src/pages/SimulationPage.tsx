@@ -555,6 +555,7 @@ export function SimulationPage(): JSX.Element {
           <Show when={simConfigState()} fallback={<span class="sim-muted">chargement…</span>}>
             {(c) => (
               <span class={`sim-badge ${c().enabled ? "on" : "off"}`}>
+                <span class="sim-badge-dot" aria-hidden="true" />
                 {c().enabled ? "EN COURS" : "À L'ARRÊT"}
               </span>
             )}
@@ -562,7 +563,7 @@ export function SimulationPage(): JSX.Element {
         </div>
         <div class="sim-header-actions">
           <button
-            class="btn btn-primary"
+            class={simConfigState()?.enabled ? "btn" : "btn btn-primary"}
             onClick={() => void toggleEngine()}
             disabled={sending()}
           >
@@ -970,10 +971,10 @@ export function SimulationPage(): JSX.Element {
                   <th>Outcome</th>
                   <th>Kind</th>
                   <th>Moteur</th>
-                  <th>Fill</th>
-                  <th>Size</th>
-                  <th>Coût</th>
-                  <th>P&L en cours</th>
+                  <th class="num">Fill</th>
+                  <th class="num">Size</th>
+                  <th class="num">Coût</th>
+                  <th class="num">P&L en cours</th>
                   <th>Fin de fenêtre</th>
                   <th>Type</th>
                 </tr>
@@ -986,10 +987,10 @@ export function SimulationPage(): JSX.Element {
                       <td>{p.outcome}</td>
                       <td>{p.kind}</td>
                       <td>{p.strategyId ?? "—"}</td>
-                      <td>{fmtPrice(p.fillPrice)}</td>
-                      <td>{fmtShares(p.size)}</td>
-                      <td>{fmtUsd(p.cost)}</td>
-                      <td class={pnlClass(unrealizedPnl(p) ?? 0)}>
+                      <td class="num">{fmtPrice(p.fillPrice)}</td>
+                      <td class="num">{fmtShares(p.size)}</td>
+                      <td class="num">{fmtUsd(p.cost)}</td>
+                      <td class={`num ${pnlClass(unrealizedPnl(p) ?? 0)}`}>
                         <Show when={unrealizedPnl(p) != null} fallback="—">
                           {fmtUsd(unrealizedPnl(p)!)}
                           <Show when={p.cost > 0}>
@@ -1025,9 +1026,9 @@ export function SimulationPage(): JSX.Element {
                   <th>Marché</th>
                   <th>Outcome</th>
                   <th>Kind</th>
-                  <th>Limite</th>
-                  <th>Taille</th>
-                  <th>Coût</th>
+                  <th class="num">Limite</th>
+                  <th class="num">Taille</th>
+                  <th class="num">Coût</th>
                   <th>Fin de fenêtre</th>
                 </tr>
               </thead>
@@ -1038,9 +1039,9 @@ export function SimulationPage(): JSX.Element {
                       <td>{marketTitleForToken(o.tokenId)}</td>
                       <td>{o.outcome}</td>
                       <td>{o.kind}</td>
-                      <td>{fmtPrice(o.limitPrice)}</td>
-                      <td>{fmtShares(o.size)}</td>
-                      <td>{fmtUsd(o.cost)}</td>
+                      <td class="num">{fmtPrice(o.limitPrice)}</td>
+                      <td class="num">{fmtShares(o.size)}</td>
+                      <td class="num">{fmtUsd(o.cost)}</td>
                       <td class={countdownClass(o.windowEnd, now())}>
                         {countdown(o.windowEnd, now())}
                       </td>
@@ -1140,11 +1141,11 @@ export function SimulationPage(): JSX.Element {
                       <td>{t.outcome}</td>
                       <td>{t.kind}</td>
                       <td class={t.side === "BUY" ? "ok" : "err"}>{t.side}</td>
-                      <td>{fmtPrice(t.limitPrice)}</td>
-                      <td>{t.fillPrice != null ? fmtPrice(t.fillPrice) : "—"}</td>
-                      <td>{fmtShares(t.size)}</td>
+                      <td class="num">{fmtPrice(t.limitPrice)}</td>
+                      <td class="num">{t.fillPrice != null ? fmtPrice(t.fillPrice) : "—"}</td>
+                      <td class="num">{fmtShares(t.size)}</td>
                       <td>{t.orderType ?? "—"}</td>
-                      <td class={pnlClass(t.pnl ?? 0)}>
+                      <td class={`num ${pnlClass(t.pnl ?? 0)}`}>
                         {t.pnl != null ? fmtUsd(t.pnl) : "—"}
                       </td>
                       <td>
@@ -1188,10 +1189,10 @@ export function SimulationPage(): JSX.Element {
                   <th>Outcome</th>
                   <th>Kind</th>
                   <th>Moteur</th>
-                  <th>Fill</th>
-                  <th>Vente</th>
-                  <th>Size</th>
-                  <th>P&L</th>
+                  <th class="num">Fill</th>
+                  <th class="num">Vente</th>
+                  <th class="num">Size</th>
+                  <th class="num">P&L</th>
                   <th>Résolu</th>
                   <th>Status</th>
                   <th>Graph</th>
@@ -1210,10 +1211,10 @@ export function SimulationPage(): JSX.Element {
                       <td>{p.outcome}</td>
                       <td>{p.kind}</td>
                       <td>{p.strategyId ?? "—"}</td>
-                      <td>{fmtPrice(p.fillPrice)}</td>
-                      <td>{p.sellPrice != null ? fmtPrice(p.sellPrice) : "—"}</td>
-                      <td>{fmtShares(p.size)}</td>
-                      <td class={pnlClass(p.pnl ?? 0)}>{fmtUsd(p.pnl ?? 0)}</td>
+                      <td class="num">{fmtPrice(p.fillPrice)}</td>
+                      <td class="num">{p.sellPrice != null ? fmtPrice(p.sellPrice) : "—"}</td>
+                      <td class="num">{fmtShares(p.size)}</td>
+                      <td class={`num ${pnlClass(p.pnl ?? 0)}`}>{fmtUsd(p.pnl ?? 0)}</td>
                       <td>{timeStr(p.resolvedAt ?? p.windowEnd * 1000)}</td>
                       <td>{p.status}</td>
                       <td>

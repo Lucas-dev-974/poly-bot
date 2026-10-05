@@ -106,9 +106,9 @@ export function SimWhipsawStatus(): JSX.Element {
             <div class={`whipsaw-badge ${badgeClass()}`}>
               <span class="dot" />
               <span class="label">
-                {badgeClass() === "active" && "⏸️ Pause active"}
-                {badgeClass() === "ready" && "✅ Prêt"}
-                {badgeClass() === "disabled" && "⭕ Désactivé"}
+                {badgeClass() === "active" && "Pause active"}
+                {badgeClass() === "ready" && "Prêt"}
+                {badgeClass() === "disabled" && "Désactivé"}
               </span>
             </div>
 
@@ -141,7 +141,7 @@ export function SimWhipsawStatus(): JSX.Element {
                       onClick={() => void handleReset()}
                       disabled={resetting()}
                     >
-                      {resetting() ? "⏳ Réinitialisation..." : "🔄 Réinitialiser la pause"}
+                      {resetting() ? "Réinitialisation…" : "Réinitialiser la pause"}
                     </button>
                   </div>
                 </Show>

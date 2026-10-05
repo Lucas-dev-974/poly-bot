@@ -1,12 +1,16 @@
-/* Simulation live (paper trading) — page /simulation */
+/* Simulation live (paper trading) — page /simulation
+   Design : tokens globaux (variables.css) uniquement — pas de couleur
+   hardcodée. Échelle cohérente : radius 12 (cartes) / 8 (contrôles) /
+   6 (chips) / 999 (pills) ; espacements multiples de 4. */
 
-/* Header */
+/* ─── Header ─────────────────────────────────────────────────────────── */
+
 .sim-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .sim-header-left {
@@ -22,7 +26,9 @@
 
 .sim-header h1 {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
 }
 
 .sim-header-actions {
@@ -30,60 +36,100 @@
   gap: 8px;
 }
 
+/* Badge d'état du moteur : pill avec point de vie (pulse quand actif). */
 .sim-badge {
-  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px;
   border-radius: 999px;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.6px;
+}
+
+.sim-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
 }
 
 .sim-badge.on {
-  background: rgba(46, 204, 113, 0.15);
-  color: var(--green, #2ecc71);
+  background: rgba(46, 204, 113, 0.12);
+  color: var(--green);
   border: 1px solid rgba(46, 204, 113, 0.35);
 }
 
+.sim-badge.on .sim-badge-dot {
+  animation: sim-badge-pulse 2s ease-in-out infinite;
+}
+
 .sim-badge.off {
-  background: rgba(139, 147, 163, 0.12);
-  color: var(--muted, #8b93a3);
+  background: rgba(139, 147, 163, 0.1);
+  color: var(--muted);
   border: 1px solid rgba(139, 147, 163, 0.3);
 }
 
-/* Cartes KPI */
+@keyframes sim-badge-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sim-badge.on .sim-badge-dot {
+    animation: none;
+  }
+}
+
+/* ─── Cartes KPI ─────────────────────────────────────────────────────── */
+
 .sim-kpis {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .sim-kpi {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   padding: 14px 16px;
-  background: var(--panel, #171a21);
-  border: 1px solid var(--border, #262b36);
-  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.15s ease;
+}
+
+.sim-kpi:hover {
+  border-color: #3a4150;
 }
 
 .sim-kpi-label {
-  font-size: 11px;
-  color: var(--muted, #8b93a3);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
 }
 
 .sim-kpi-value {
   font-size: 22px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 .sim-kpi-capital .sim-kpi-value {
-  font-size: 26px;
-  color: var(--accent, #4f8cff);
+  font-size: 24px;
+  color: var(--accent);
 }
 
 /* KPI Capital total éditable : la valeur est un bouton stylé en texte
@@ -104,16 +150,16 @@
 .sim-kpi-capital-btn:hover,
 .sim-kpi-capital-btn:focus-visible {
   border-bottom-color: currentColor;
-  filter: brightness(1.25);
+  filter: brightness(1.2);
   outline: none;
 }
 
 .sim-kpi-capital-edit {
   font-family: inherit;
   font-variant-numeric: tabular-nums;
-  background: var(--bg, #0f1115);
-  border: 1px solid var(--accent, #4f8cff);
-  border-radius: 6px;
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
   padding: 0 8px;
   align-self: flex-start;
   min-width: 150px;
@@ -121,16 +167,21 @@
 
 .sim-kpi-capital-edit:focus {
   outline: none;
-  border-color: var(--accent, #4f8cff);
+  border-color: var(--accent);
 }
 
-/* Indice « (cliquer pour modifier) » discret dans le label du KPI. */
+/* Indice « (cliquer pour modifier) » : discret, plein au survol de la carte. */
 .sim-kpi-editable-hint {
   font-size: 9px;
   text-transform: none;
   letter-spacing: 0;
-  color: var(--muted, #8b93a3);
-  opacity: 0.75;
+  color: var(--muted);
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.sim-kpi-capital:hover .sim-kpi-editable-hint {
+  opacity: 1;
 }
 
 /* Ligne de valeur du KPI P&L réalisé : réalisé à gauche, latent à droite. */
@@ -143,27 +194,34 @@
 
 .sim-kpi-latent {
   font-size: 12px;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
   white-space: nowrap;
 }
 
-.sim-kpi-latent.pos { color: var(--success, #3fb950); }
-.sim-kpi-latent.neg { color: var(--danger, #f85149); }
+.sim-kpi-latent.pos {
+  color: var(--green);
+}
+
+.sim-kpi-latent.neg {
+  color: var(--red);
+}
 
 .sim-kpi-sub {
   font-size: 11px;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
-/* ── Panneau de configuration 5m ─────────────────────────────────────── */
+/* ─── Panneau Paramètres (form config stratégie active) ─────────────── */
 
 .sim-5m-config-panel {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   padding: 12px 16px;
-  background: var(--panel, #171a21);
-  border: 1px solid var(--border, #262b36);
-  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
 }
 
 .sim-5m-cp-header {
@@ -177,7 +235,7 @@
 .sim-5m-cp-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--fg, #e6e9ef);
+  color: var(--text);
 }
 
 .sim-5m-cp-actions {
@@ -196,28 +254,63 @@
   flex-direction: column;
   gap: 4px;
   font-size: 11px;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
 }
 
-.sim-5m-field input {
+.sim-5m-field input,
+.sim-5m-field select {
   padding: 6px 8px;
   font-size: 12px;
-  color: var(--fg, #e6e9ef);
-  background: var(--bg, #0d0f14);
-  border: 1px solid var(--border, #262b36);
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 6px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.sim-5m-field input.input-error {
-  border-color: var(--red, #e5484d);
+.sim-5m-field select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b93a3' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 26px;
 }
 
-/* Checkbox de paramètre : alignée dans la grille, accent visible. */
+.sim-5m-field select option {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.sim-5m-field input:focus,
+.sim-5m-field select:focus,
+.sim-5m-preset-save input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
+}
+
+.sim-5m-field input.input-error,
+.sim-5m-field select.input-error {
+  border-color: var(--red);
+}
+
+/* Checkbox de paramètre : réinitialise l'héritage de .sim-5m-field input
+   (spécificité supérieure ici grâce au type) — pas de padding/bordure/fond. */
+.sim-5m-field input[type="checkbox"].sim-5m-check {
+  padding: 0;
+  border: none;
+  background: none;
+  transition: none;
+}
+
 .sim-5m-check {
   width: 16px;
   height: 16px;
   margin: 2px 0;
-  accent-color: var(--accent, #3b82f6);
+  accent-color: var(--accent);
   cursor: pointer;
 }
 
@@ -227,14 +320,14 @@
 }
 
 .field-error {
-  color: var(--red, #e5484d);
+  color: var(--red);
   font-size: 10px;
 }
 
 .sim-5m-cp-presets {
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 1px solid var(--border, #262b36);
+  border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -245,30 +338,29 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
 }
 
-/* ── Affichage adaptatif par stratégie ── */
-
+/* Sections internes du panneau Paramètres. */
 .sim-5m-cp-section {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-top: 12px;
   padding-top: 10px;
-  border-top: 1px dashed var(--border, #262b36);
+  border-top: 1px dashed var(--border);
 }
 
-/* Champ actif de la stratégie : légère mise en évidence */
+/* Champ actif de la stratégie : légère mise en évidence. */
 .sim-5m-field-active {
-  color: var(--fg, #e6e9ef);
+  color: var(--text);
 }
 
 .sim-5m-field-active input {
-  border-color: var(--accent, #3b82f6);
+  border-color: rgba(79, 140, 255, 0.45);
 }
 
-/* Champ inactif : estompé pour signaler « ne participe pas à cette stratégie » */
+/* Champ inactif : estompé pour signaler « ne participe pas à cette stratégie ». */
 .sim-5m-field-inactive {
   opacity: 0.55;
 }
@@ -278,7 +370,6 @@
   padding: 4px 8px;
   font-size: 11px;
 }
-
 
 .sim-5m-preset-save {
   display: flex;
@@ -291,9 +382,10 @@
   max-width: 260px;
   padding: 6px 8px;
   font-size: 12px;
-  color: var(--fg, #e6e9ef);
-  background: var(--bg, #0d0f14);
-  border: 1px solid var(--border, #262b36);
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 6px;
 }
 
@@ -308,14 +400,19 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 4px 8px;
-  border: 1px solid var(--border, #262b36);
+  padding: 5px 8px;
+  border: 1px solid var(--border);
   border-radius: 6px;
+  transition: border-color 0.15s ease;
+}
+
+.sim-5m-preset-item:hover {
+  border-color: #3a4150;
 }
 
 .sim-5m-preset-name {
   font-size: 12px;
-  color: var(--fg, #e6e9ef);
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -328,19 +425,20 @@
 }
 
 .btn-danger {
-  color: var(--red, #e5484d);
+  color: var(--red);
 }
 
-/* Barre de configuration : groupes Stratégie | Capital + actions */
+/* ─── Barre de configuration : Stratégie | Capital + actions ────────── */
+
 .sim-control-bar {
   display: flex;
   align-items: stretch;
   gap: 16px;
   padding: 12px 16px;
-  margin-bottom: 16px;
-  background: var(--panel, #171a21);
-  border: 1px solid var(--border, #262b36);
-  border-radius: 10px;
+  margin-bottom: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
 }
 
 .sim-cb-group {
@@ -353,9 +451,9 @@
 .sim-cb-title {
   font-size: 11px;
   font-weight: 600;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
 }
 
 .sim-cb-fields {
@@ -366,19 +464,19 @@
 .sim-cb-hint {
   margin: 0;
   font-size: 11px;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
   font-style: italic;
   max-width: 420px;
 }
 
 .sim-cb-hint.warn {
-  color: var(--amber, #f1c40f);
+  color: var(--amber);
   font-style: normal;
 }
 
 .sim-cb-divider {
   width: 1px;
-  background: var(--border, #262b36);
+  background: var(--border);
   align-self: stretch;
 }
 
@@ -398,16 +496,16 @@
   flex-direction: column;
   gap: 4px;
   font-size: 11px;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
 }
 
 .sim-field select,
 .sim-field input {
   min-width: 130px;
   padding: 7px 10px;
-  background: var(--bg, #0f1115);
-  color: var(--text, #e6e8ee);
-  border: 1px solid var(--border, #262b36);
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 12.5px;
   font-family: inherit;
@@ -419,13 +517,13 @@
 .sim-field select:focus,
 .sim-field input:focus {
   outline: none;
-  border-color: var(--accent, #4f8cff);
+  border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
 }
 
 .sim-field select:hover,
 .sim-field input:hover:not(:focus) {
-  border-color: var(--accent, #4f8cff);
+  border-color: var(--accent);
 }
 
 /* Champ avec unité suffixe (ex. pUSD) affichée à droite. */
@@ -446,12 +544,12 @@
   transform: translateY(-50%);
   font-size: 11px;
   font-weight: 600;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
   pointer-events: none;
   letter-spacing: 0.3px;
 }
 
-/* Chevron custom sur les selects (appearance none + SVG inline) */
+/* Chevron custom sur les selects (appearance none + SVG inline). */
 .sim-field select {
   cursor: pointer;
   appearance: none;
@@ -463,11 +561,11 @@
 }
 
 .sim-field select option {
-  background: var(--panel, #171a21);
-  color: var(--text, #e6e8ee);
+  background: var(--panel);
+  color: var(--text);
 }
 
-/* Masque les spinners du champ number (cohérence visuelle) */
+/* Masque les spinners du champ number (cohérence visuelle). */
 .sim-field input[type="number"] {
   appearance: textfield;
   -moz-appearance: textfield;
@@ -479,38 +577,67 @@
   margin: 0;
 }
 
-.sim-field input::placeholder {
-  color: var(--muted, #8b93a3);
+.sim-field input::placeholder,
+.sim-5m-field input::placeholder,
+.sim-5m-preset-save input::placeholder {
+  color: var(--muted);
 }
 
-/* Ordres en attente */
+/* ─── Variantes de boutons propre à la page ──────────────────────────── */
+
+/* Action secondaire discrète (Réinitialiser, Charger, Annuler…). */
+.btn.btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.btn.btn-ghost:hover:not(:disabled) {
+  border-color: #3a4150;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Action destructive secondaire : contour rouge, jamais de fond plein. */
+.btn.danger {
+  background: transparent;
+  border-color: rgba(231, 76, 60, 0.45);
+  color: var(--red);
+}
+
+.btn.danger:hover:not(:disabled) {
+  background: rgba(231, 76, 60, 0.1);
+  border-color: var(--red);
+}
+
+/* ─── Sections de listes ─────────────────────────────────────────────── */
+
+/* Ordres en attente (GTC papier non remplis). */
 .sim-resting-row {
   opacity: 0.65;
   font-style: italic;
 }
 
-/* Espace au-dessus du panneau Marché actif. */
 .sim-active-markets {
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
-/* Panneau filtre whipsaw (paper) : aligné entre la config et la grille. */
 .sim-whipsaw {
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
-/* Espace au-dessus de la section historique (positions résolues | journal). */
 .sim-history {
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
-/* Onglets historique */
+/* ─── Onglets historique ─────────────────────────────────────────────── */
+
 .sim-tabs {
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 8px 12px 0;
-  border-bottom: 1px solid var(--border, #262b36);
+  border-bottom: 1px solid var(--border);
 }
 
 .sim-tab {
@@ -518,20 +645,22 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
   cursor: pointer;
   font-size: 13px;
+  font-weight: 500;
   padding: 8px 12px;
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .sim-tab:hover {
-  color: var(--text, #e6e8ee);
+  color: var(--text);
 }
 
 .sim-tab.active {
-  color: var(--accent, #4f8cff);
-  border-bottom: 2px solid var(--accent, #4f8cff);
+  color: var(--accent);
+  font-weight: 600;
+  border-bottom: 2px solid var(--accent);
 }
 
 .sim-tab-toggle {
@@ -540,16 +669,17 @@
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
   cursor: pointer;
   padding-bottom: 8px;
 }
 
 .sim-tab-toggle input {
-  accent-color: var(--accent, #4f8cff);
+  accent-color: var(--accent);
 }
 
-/* Tables */
+/* ─── Tables ─────────────────────────────────────────────────────────── */
+
 .sim-table {
   width: 100%;
   border-collapse: collapse;
@@ -560,34 +690,93 @@
 .sim-table td {
   text-align: left;
   padding: 6px 8px;
-  border-bottom: 1px solid var(--border, #262b36);
+  border-bottom: 1px solid var(--border);
 }
 
 .sim-table th {
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
   font-weight: 600;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 
-/* Countdown urgence (miroir ActiveMarkets) */
+/* Colonnes numériques : alignées à droite, chiffres tabulaires. */
+.sim-table th.num,
+.sim-table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Zébrage ultra-subtil + survol de ligne (lisibilité des longues listes).
+   Niveau `tr` (pas `td`) : les fonds de cellule — ex. teinte d'urgence des
+   countdowns am-countdown--hot/warm — restent peints par-dessus. */
+.sim-table tbody tr:nth-child(even):not([aria-hidden]) {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.sim-table tbody tr:not([aria-hidden]):hover {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+/* Le compteur de positions ouvertes est déjà dans le titre ; les cellules de
+   marché (titre) gardent la priorité visuelle : texte normal, ellipsis. */
+.sim-table td:first-child {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Header collant des tables scrollables (historique long). */
+.sim-table-scroll {
+  scrollbar-width: thin;
+}
+
+.sim-table-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.sim-table-scroll::-webkit-scrollbar-thumb {
+  background: #2a303c;
+  border-radius: 999px;
+}
+
+.sim-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #3a4150;
+}
+
+.sim-table-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--panel);
+  box-shadow: inset 0 -1px 0 var(--border);
+}
+
+/* ─── Couleurs d'état (miroir components.css) ──────────────────────────
+
+   Redondance volontaire : la page Sim est un chunk lazy ; garder les règles
+   ici garantit son indépendance du CSS global (components.css définit les
+   mêmes couleurs pour .am-countdown--hot/warm). */
+
 .am-countdown--hot {
-  color: var(--red, #e74c3c);
+  color: var(--red);
   font-weight: 600;
 }
 
 .am-countdown--warm {
-  color: var(--amber, #f1c40f);
+  color: var(--amber);
   font-weight: 500;
 }
 
 .pnl-pos {
-  color: var(--green, #2ecc71);
+  color: var(--green);
 }
 
 .pnl-neg {
-  color: var(--red, #e74c3c);
+  color: var(--red);
 }
 
 /* Pourcentage de P&L affiché à côté du montant (positions ouvertes). */
@@ -599,11 +788,12 @@
 
 .sim-muted {
   font-size: 12px;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
   font-style: italic;
 }
 
-/* Responsive : KPI 2x2 puis empilées ; barre de config empilée. */
+/* ─── Responsive ─────────────────────────────────────────────────────── */
+
 @media (max-width: 1100px) {
   .sim-kpis {
     grid-template-columns: repeat(2, 1fr);
@@ -643,10 +833,10 @@
   }
 }
 
-/* ===== Sections pliables (page Simulation) ===== */
+/* ─── Sections pliables (CollapsibleSection — utilisée par cette page) ─ */
 
 .collapsible-section {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 /* Conteneurs internes : les blocs sim-* gardent leur propre carte (fond,
@@ -657,16 +847,16 @@
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  background: var(--panel, #171a21);
-  border: 1px solid var(--border, #262b36);
-  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
   cursor: pointer;
   user-select: none;
   transition: border-color 0.15s ease;
 }
 
 .collapsible-header:hover {
-  border-color: var(--accent, #4f8cff);
+  border-color: #3a4150;
 }
 
 .collapsible-title {
@@ -674,12 +864,12 @@
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: var(--muted, #8b93a3);
+  color: var(--muted);
   flex: 1;
 }
 
 .collapsible-header:hover .collapsible-title {
-  color: var(--text, #e6e8ee);
+  color: var(--text);
 }
 
 /* Actions à droite du header (non cliquables pour le pliage). */
@@ -693,7 +883,7 @@
 /* Chevron de pliage : pivot 90° quand ouvert. */
 .collapse-chevron {
   display: inline-block;
-  color: var(--accent, #4f8cff);
+  color: var(--accent);
   font-size: 11px;
   transition: transform 0.15s ease;
   flex-shrink: 0;
@@ -708,12 +898,12 @@
   margin-top: 8px;
 }
 
-/* Variante boxed : la section EST la carte (ex. historique à onglets qui
-   conserve le look .panel de son ancien wrapper). Header collé en haut. */
+/* Variante boxed : la section EST la carte (historique à onglets). Header
+   collé en haut. */
 .collapsible-section.boxed {
-  border: 1px solid var(--border, #262b36);
-  border-radius: 10px;
-  background: var(--panel, #171a21);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
   padding: 16px;
 }
 
@@ -721,17 +911,17 @@
   padding: 0 0 10px;
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--border, #262b36);
+  border-bottom: 1px solid var(--border);
   border-radius: 0;
   margin-bottom: 12px;
 }
 
 .collapsible-section.boxed .collapsible-header:hover {
-  border-color: var(--border, #262b36);
+  border-color: var(--border);
 }
 
 .collapsible-section.boxed .collapsible-header:hover .collapsible-title {
-  color: var(--text, #e6e8ee);
+  color: var(--text);
 }
 
 .collapsible-section.boxed .collapsible-body {
@@ -749,7 +939,7 @@
 }
 
 .panel-collapsible > h2:hover {
-  color: var(--text, #e6e8ee);
+  color: var(--text);
 }
 
 /* Header du panneau Paramètres (plié) : le titre redevient cliquable —
@@ -760,9 +950,9 @@
 }
 
 .sim-5m-config-panel .sim-5m-cp-header:hover .sim-5m-cp-title {
-  color: var(--text, #e6e8ee);
+  color: var(--text);
 }
 
-/* Sections internes du panneau Paramètres pliables aussi ? Non : le corps
-   entier bascule d'un coup — le pliage par sous-section est couvert par les
-   "Filtres inactifs" déjà repliables et par la section elle-même. */
+/* Sections internes du panneau Paramètres : le corps entier bascule d'un
+   coup (le pliage par sous-section est couvert par les « Filtres inactifs »
+   et par la section elle-même). */

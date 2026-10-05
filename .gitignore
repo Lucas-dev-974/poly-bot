@@ -4,3 +4,27 @@ dist/
 /data/
 audits/**/data/
 *.log
+
+# build outputs
+frontend/dist/
+*.tsbuildinfo
+
+# local SQLite files anywhere
+*.db
+*.db-wal
+*.db-shm
+
+# env variants (keep the example tracked)
+.env.*
+!.env.example
+
+# python
+__pycache__/
+*.pyc
+
+# agent tooling
+.kilo/
+
+# OS
+Thumbs.db
+.DS_Store

@@ -1,0 +1,5256 @@
+{
+ "meta": {
+  "generatedAt": "2026-10-05 (Europe/Paris)",
+  "timezone": "Europe/Paris (CEST, UTC+2)",
+  "db": "data/bot-live.db (read-only)",
+  "primary": "sim_positions WHERE strategyId='fav-band' AND orderType='FOK' AND fillReason='marketable' AND eventSlug LIKE 'btc-updown-15m%'",
+  "excluded": "42 btc-updown-5m entries (sensitivity_sim_all), 1 GTC resting cheap leg @0.10",
+  "secondary": "backtest_positions runId=259af8b2-1bd0-4285-ab42-fb5b6fb00ee0, fillPrice 0.70-0.85",
+  "winDefinition": "pnl > 0 (else loss); timestamp = createdAt (entry)",
+  "streakDefinition": "maximal run of consecutive wins in chronological order; sim gaps not used to break runs",
+  "tests": "exact binomial vs baseline, Wilson CI95, Benjamini-Hochberg per table, label permutation B=5000 for max/min statistics",
+  "sizingChange": "2026-10-01: ~5 shares (~3.7 USDC) -> 15 USDC per order",
+  "report": "RAPPORT-streaks-fenetres-fav-band-2026-10-05.md"
+ },
+ "primary_sim_15m": {
+  "name": "sim_positions fav-band, btc-updown-15m, FOK entries",
+  "n": 497,
+  "wins": 350,
+  "losses": 147,
+  "baselineWR": 70.42,
+  "baselineCI95": [
+   66.3,
+   74.3
+  ],
+  "period": {
+   "first": "2026-09-26 08:03 CEST",
+   "last": "2026-10-05 12:33 CEST",
+   "distinctDays": 10
+  },
+  "pnl": -73.26,
+  "runsTest": {
+   "runs": 185,
+   "expected": 208.0,
+   "z": -2.48,
+   "p_two_sided": 0.013
+  },
+  "winStreaks": {
+   "count_len_ge2": 67,
+   "count_len_ge3": 53,
+   "count_len_ge5": 26,
+   "meanWinRunLen": 3.76,
+   "expectedMeanWinRunLenIID": 3.38,
+   "lengthDistribution": {
+    "1": 26,
+    "2": 14,
+    "3": 13,
+    "4": 14,
+    "5": 5,
+    "6": 6,
+    "7": 5,
+    "8": 3,
+    "9": 3,
+    "10": 2,
+    "17": 2
+   },
+   "longest": [
+    {
+     "len": 17,
+     "start": "2026-09-27 16:03",
+     "end": "2026-09-27 21:09",
+     "startWeekday": "Dim",
+     "spanHours": 5.1,
+     "pnl": 23.65,
+     "hoursCovered": [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+     ]
+    },
+    {
+     "len": 17,
+     "start": "2026-09-29 06:33",
+     "end": "2026-09-29 13:49",
+     "startWeekday": "Mar",
+     "spanHours": 7.3,
+     "pnl": 24.7,
+     "hoursCovered": [
+      6,
+      7,
+      9,
+      10,
+      11,
+      12,
+      13
+     ]
+    },
+    {
+     "len": 10,
+     "start": "2026-09-28 19:48",
+     "end": "2026-09-28 22:19",
+     "startWeekday": "Lun",
+     "spanHours": 2.5,
+     "pnl": 14.6,
+     "hoursCovered": [
+      19,
+      20,
+      21,
+      22
+     ]
+    },
+    {
+     "len": 10,
+     "start": "2026-10-02 08:50",
+     "end": "2026-10-02 11:22",
+     "startWeekday": "Ven",
+     "spanHours": 2.5,
+     "pnl": 63.86,
+     "hoursCovered": [
+      8,
+      9,
+      10,
+      11
+     ]
+    },
+    {
+     "len": 9,
+     "start": "2026-09-26 15:22",
+     "end": "2026-09-26 17:20",
+     "startWeekday": "Sam",
+     "spanHours": 2.0,
+     "pnl": 13.6,
+     "hoursCovered": [
+      15,
+      16,
+      17
+     ]
+    },
+    {
+     "len": 9,
+     "start": "2026-10-03 17:20",
+     "end": "2026-10-03 19:18",
+     "startWeekday": "Sam",
+     "spanHours": 2.0,
+     "pnl": 57.19,
+     "hoursCovered": [
+      17,
+      18,
+      19
+     ]
+    },
+    {
+     "len": 9,
+     "start": "2026-10-05 10:34",
+     "end": "2026-10-05 12:33",
+     "startWeekday": "Lun",
+     "spanHours": 2.0,
+     "pnl": 50.75,
+     "hoursCovered": [
+      10,
+      11,
+      12
+     ]
+    },
+    {
+     "len": 8,
+     "start": "2026-10-01 22:34",
+     "end": "2026-10-02 00:33",
+     "startWeekday": "Jeu",
+     "spanHours": 2.0,
+     "pnl": 54.22,
+     "hoursCovered": [
+      0,
+      22,
+      23
+     ]
+    },
+    {
+     "len": 8,
+     "start": "2026-10-04 14:21",
+     "end": "2026-10-04 16:18",
+     "startWeekday": "Dim",
+     "spanHours": 1.9,
+     "pnl": 52.66,
+     "hoursCovered": [
+      14,
+      15,
+      16
+     ]
+    },
+    {
+     "len": 8,
+     "start": "2026-10-04 22:18",
+     "end": "2026-10-05 00:03",
+     "startWeekday": "Dim",
+     "spanHours": 1.8,
+     "pnl": 47.93,
+     "hoursCovered": [
+      0,
+      22,
+      23
+     ]
+    }
+   ]
+  },
+  "lossStreaks": {
+   "longest": [
+    {
+     "len": 4,
+     "start": "2026-09-29 02:06",
+     "end": "2026-09-29 04:19"
+    },
+    {
+     "len": 4,
+     "start": "2026-09-29 15:03",
+     "end": "2026-09-29 18:03"
+    },
+    {
+     "len": 4,
+     "start": "2026-09-30 02:03",
+     "end": "2026-09-30 04:48"
+    },
+    {
+     "len": 4,
+     "start": "2026-10-04 02:20",
+     "end": "2026-10-04 03:10"
+    },
+    {
+     "len": 3,
+     "start": "2026-09-27 21:19",
+     "end": "2026-09-27 21:50"
+    }
+   ],
+   "meanLossRunLen": 1.6,
+   "expectedIID": 1.42
+  },
+  "byHour": [
+   {
+    "bin": "00h-01h",
+    "n": 24,
+    "wins": 15,
+    "wr": 62.5,
+    "ci95": [
+     42.7,
+     78.8
+    ],
+    "liftPP": -7.9,
+    "p_binom": 0.3793,
+    "pnl": -66.42,
+    "fracTradesInWinStreak2": 0.583,
+    "fracTradesInWinStreak4": 0.333,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.25,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 7,
+    "q_bh": 0.8516
+   },
+   {
+    "bin": "01h-02h",
+    "n": 19,
+    "wins": 15,
+    "wr": 78.9,
+    "ci95": [
+     56.7,
+     91.5
+    ],
+    "liftPP": 8.5,
+    "p_binom": 0.6155,
+    "pnl": 16.53,
+    "fracTradesInWinStreak2": 0.684,
+    "fracTradesInWinStreak4": 0.158,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 2.11,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 6,
+    "q_bh": 0.8689
+   },
+   {
+    "bin": "02h-03h",
+    "n": 18,
+    "wins": 5,
+    "wr": 27.8,
+    "ci95": [
+     12.5,
+     50.9
+    ],
+    "liftPP": -42.6,
+    "p_binom": 0.0002,
+    "pnl": -73.47,
+    "fracTradesInWinStreak2": 0.278,
+    "fracTradesInWinStreak4": 0.167,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 1.11,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 6,
+    "q_bh": 0.0048
+   },
+   {
+    "bin": "03h-04h",
+    "n": 17,
+    "wins": 14,
+    "wr": 82.4,
+    "ci95": [
+     59.0,
+     93.8
+    ],
+    "liftPP": 11.9,
+    "p_binom": 0.4257,
+    "pnl": 38.51,
+    "fracTradesInWinStreak2": 0.824,
+    "fracTradesInWinStreak4": 0.647,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 1.18,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 5,
+    "q_bh": 0.8516
+   },
+   {
+    "bin": "04h-05h",
+    "n": 18,
+    "wins": 11,
+    "wr": 61.1,
+    "ci95": [
+     38.6,
+     79.7
+    ],
+    "liftPP": -9.3,
+    "p_binom": 0.4391,
+    "pnl": -22.79,
+    "fracTradesInWinStreak2": 0.611,
+    "fracTradesInWinStreak4": 0.611,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 2.22,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 7,
+    "q_bh": 0.8516
+   },
+   {
+    "bin": "05h-06h",
+    "n": 19,
+    "wins": 13,
+    "wr": 68.4,
+    "ci95": [
+     46.0,
+     84.6
+    ],
+    "liftPP": -2.0,
+    "p_binom": 0.8058,
+    "pnl": 0.29,
+    "fracTradesInWinStreak2": 0.579,
+    "fracTradesInWinStreak4": 0.368,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 1.05,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 5,
+    "q_bh": 0.967
+   },
+   {
+    "bin": "06h-07h",
+    "n": 21,
+    "wins": 11,
+    "wr": 52.4,
+    "ci95": [
+     32.4,
+     71.7
+    ],
+    "liftPP": -18.0,
+    "p_binom": 0.0916,
+    "pnl": -71.26,
+    "fracTradesInWinStreak2": 0.429,
+    "fracTradesInWinStreak4": 0.333,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 2.38,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 7,
+    "q_bh": 0.5496
+   },
+   {
+    "bin": "07h-08h",
+    "n": 20,
+    "wins": 18,
+    "wr": 90.0,
+    "ci95": [
+     69.9,
+     97.2
+    ],
+    "liftPP": 19.6,
+    "p_binom": 0.0824,
+    "pnl": 44.94,
+    "fracTradesInWinStreak2": 0.8,
+    "fracTradesInWinStreak4": 0.8,
+    "winStreaksStarted": 1,
+    "winStreaksStartedPer10Trades": 0.5,
+    "longestStreakStartedHere": 6,
+    "distinctDays": 6,
+    "q_bh": 0.5496
+   },
+   {
+    "bin": "08h-09h",
+    "n": 20,
+    "wins": 12,
+    "wr": 60.0,
+    "ci95": [
+     38.7,
+     78.1
+    ],
+    "liftPP": -10.4,
+    "p_binom": 0.3296,
+    "pnl": -39.57,
+    "fracTradesInWinStreak2": 0.45,
+    "fracTradesInWinStreak4": 0.25,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 2.0,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 6,
+    "q_bh": 0.8516
+   },
+   {
+    "bin": "09h-10h",
+    "n": 26,
+    "wins": 21,
+    "wr": 80.8,
+    "ci95": [
+     62.1,
+     91.5
+    ],
+    "liftPP": 10.3,
+    "p_binom": 0.2897,
+    "pnl": 22.25,
+    "fracTradesInWinStreak2": 0.769,
+    "fracTradesInWinStreak4": 0.654,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.92,
+    "longestStreakStartedHere": 6,
+    "distinctDays": 8,
+    "q_bh": 0.8516
+   },
+   {
+    "bin": "10h-11h",
+    "n": 23,
+    "wins": 18,
+    "wr": 78.3,
+    "ci95": [
+     58.1,
+     90.3
+    ],
+    "liftPP": 7.8,
+    "p_binom": 0.499,
+    "pnl": -1.13,
+    "fracTradesInWinStreak2": 0.739,
+    "fracTradesInWinStreak4": 0.652,
+    "winStreaksStarted": 1,
+    "winStreaksStartedPer10Trades": 0.43,
+    "longestStreakStartedHere": 9,
+    "distinctDays": 8,
+    "q_bh": 0.8554
+   },
+   {
+    "bin": "11h-12h",
+    "n": 21,
+    "wins": 15,
+    "wr": 71.4,
+    "ci95": [
+     50.0,
+     86.2
+    ],
+    "liftPP": 1.0,
+    "p_binom": 1.0,
+    "pnl": 8.0,
+    "fracTradesInWinStreak2": 0.667,
+    "fracTradesInWinStreak4": 0.667,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.95,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "12h-13h",
+    "n": 24,
+    "wins": 17,
+    "wr": 70.8,
+    "ci95": [
+     50.8,
+     85.1
+    ],
+    "liftPP": 0.4,
+    "p_binom": 1.0,
+    "pnl": 1.88,
+    "fracTradesInWinStreak2": 0.625,
+    "fracTradesInWinStreak4": 0.625,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.83,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "13h-14h",
+    "n": 19,
+    "wins": 15,
+    "wr": 78.9,
+    "ci95": [
+     56.7,
+     91.5
+    ],
+    "liftPP": 8.5,
+    "p_binom": 0.6155,
+    "pnl": 12.3,
+    "fracTradesInWinStreak2": 0.737,
+    "fracTradesInWinStreak4": 0.632,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 1.05,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 5,
+    "q_bh": 0.8689
+   },
+   {
+    "bin": "14h-15h",
+    "n": 17,
+    "wins": 11,
+    "wr": 64.7,
+    "ci95": [
+     41.3,
+     82.7
+    ],
+    "liftPP": -5.7,
+    "p_binom": 0.6008,
+    "pnl": -3.07,
+    "fracTradesInWinStreak2": 0.412,
+    "fracTradesInWinStreak4": 0.294,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.76,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 6,
+    "q_bh": 0.8689
+   },
+   {
+    "bin": "15h-16h",
+    "n": 26,
+    "wins": 17,
+    "wr": 65.4,
+    "ci95": [
+     46.2,
+     80.6
+    ],
+    "liftPP": -5.0,
+    "p_binom": 0.6675,
+    "pnl": 28.21,
+    "fracTradesInWinStreak2": 0.615,
+    "fracTradesInWinStreak4": 0.5,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.15,
+    "longestStreakStartedHere": 9,
+    "distinctDays": 8,
+    "q_bh": 0.89
+   },
+   {
+    "bin": "16h-17h",
+    "n": 20,
+    "wins": 14,
+    "wr": 70.0,
+    "ci95": [
+     48.1,
+     85.5
+    ],
+    "liftPP": -0.4,
+    "p_binom": 1.0,
+    "pnl": -35.62,
+    "fracTradesInWinStreak2": 0.65,
+    "fracTradesInWinStreak4": 0.55,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 1.0,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 6,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "17h-18h",
+    "n": 21,
+    "wins": 17,
+    "wr": 81.0,
+    "ci95": [
+     60.0,
+     92.3
+    ],
+    "liftPP": 10.5,
+    "p_binom": 0.3479,
+    "pnl": 13.04,
+    "fracTradesInWinStreak2": 0.81,
+    "fracTradesInWinStreak4": 0.571,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.43,
+    "longestStreakStartedHere": 9,
+    "distinctDays": 6,
+    "q_bh": 0.8516
+   },
+   {
+    "bin": "18h-19h",
+    "n": 19,
+    "wins": 12,
+    "wr": 63.2,
+    "ci95": [
+     41.0,
+     80.9
+    ],
+    "liftPP": -7.3,
+    "p_binom": 0.4613,
+    "pnl": -7.16,
+    "fracTradesInWinStreak2": 0.632,
+    "fracTradesInWinStreak4": 0.632,
+    "winStreaksStarted": 1,
+    "winStreaksStartedPer10Trades": 0.53,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 7,
+    "q_bh": 0.8516
+   },
+   {
+    "bin": "19h-20h",
+    "n": 19,
+    "wins": 14,
+    "wr": 73.7,
+    "ci95": [
+     51.2,
+     88.2
+    ],
+    "liftPP": 3.3,
+    "p_binom": 1.0,
+    "pnl": -25.29,
+    "fracTradesInWinStreak2": 0.737,
+    "fracTradesInWinStreak4": 0.526,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 2.11,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 5,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "20h-21h",
+    "n": 21,
+    "wins": 18,
+    "wr": 85.7,
+    "ci95": [
+     65.4,
+     95.0
+    ],
+    "liftPP": 15.3,
+    "p_binom": 0.1541,
+    "pnl": 18.89,
+    "fracTradesInWinStreak2": 0.762,
+    "fracTradesInWinStreak4": 0.667,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.95,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 6,
+    "q_bh": 0.6164
+   },
+   {
+    "bin": "21h-22h",
+    "n": 25,
+    "wins": 14,
+    "wr": 56.0,
+    "ci95": [
+     37.1,
+     73.3
+    ],
+    "liftPP": -14.4,
+    "p_binom": 0.1263,
+    "pnl": -27.84,
+    "fracTradesInWinStreak2": 0.56,
+    "fracTradesInWinStreak4": 0.24,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.2,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 7,
+    "q_bh": 0.6062
+   },
+   {
+    "bin": "22h-23h",
+    "n": 19,
+    "wins": 13,
+    "wr": 68.4,
+    "ci95": [
+     46.0,
+     84.6
+    ],
+    "liftPP": -2.0,
+    "p_binom": 0.8058,
+    "pnl": 4.35,
+    "fracTradesInWinStreak2": 0.684,
+    "fracTradesInWinStreak4": 0.632,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 2.11,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 5,
+    "q_bh": 0.967
+   },
+   {
+    "bin": "23h-00h",
+    "n": 21,
+    "wins": 20,
+    "wr": 95.2,
+    "ci95": [
+     77.3,
+     99.2
+    ],
+    "liftPP": 24.8,
+    "p_binom": 0.0083,
+    "pnl": 91.17,
+    "fracTradesInWinStreak2": 0.952,
+    "fracTradesInWinStreak4": 0.857,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.43,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 6,
+    "q_bh": 0.0996
+   }
+  ],
+  "by2h": [
+   {
+    "bin": "00h-02h",
+    "n": 43,
+    "wins": 30,
+    "wr": 69.8,
+    "ci95": [
+     54.9,
+     81.4
+    ],
+    "liftPP": -0.7,
+    "p_binom": 1.0,
+    "pnl": -49.89,
+    "fracTradesInWinStreak2": 0.628,
+    "fracTradesInWinStreak4": 0.256,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 1.63,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "02h-04h",
+    "n": 35,
+    "wins": 19,
+    "wr": 54.3,
+    "ci95": [
+     38.2,
+     69.5
+    ],
+    "liftPP": -16.1,
+    "p_binom": 0.0421,
+    "pnl": -34.96,
+    "fracTradesInWinStreak2": 0.543,
+    "fracTradesInWinStreak4": 0.4,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 1.14,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 7,
+    "q_bh": 0.5052
+   },
+   {
+    "bin": "04h-06h",
+    "n": 37,
+    "wins": 24,
+    "wr": 64.9,
+    "ci95": [
+     48.8,
+     78.2
+    ],
+    "liftPP": -5.6,
+    "p_binom": 0.473,
+    "pnl": -22.5,
+    "fracTradesInWinStreak2": 0.595,
+    "fracTradesInWinStreak4": 0.486,
+    "winStreaksStarted": 6,
+    "winStreaksStartedPer10Trades": 1.62,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "06h-08h",
+    "n": 41,
+    "wins": 29,
+    "wr": 70.7,
+    "ci95": [
+     55.5,
+     82.4
+    ],
+    "liftPP": 0.3,
+    "p_binom": 1.0,
+    "pnl": -26.32,
+    "fracTradesInWinStreak2": 0.61,
+    "fracTradesInWinStreak4": 0.561,
+    "winStreaksStarted": 6,
+    "winStreaksStartedPer10Trades": 1.46,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "08h-10h",
+    "n": 46,
+    "wins": 33,
+    "wr": 71.7,
+    "ci95": [
+     57.5,
+     82.7
+    ],
+    "liftPP": 1.3,
+    "p_binom": 1.0,
+    "pnl": -17.32,
+    "fracTradesInWinStreak2": 0.63,
+    "fracTradesInWinStreak4": 0.478,
+    "winStreaksStarted": 9,
+    "winStreaksStartedPer10Trades": 1.96,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "10h-12h",
+    "n": 44,
+    "wins": 33,
+    "wr": 75.0,
+    "ci95": [
+     60.6,
+     85.4
+    ],
+    "liftPP": 4.6,
+    "p_binom": 0.6208,
+    "pnl": 6.87,
+    "fracTradesInWinStreak2": 0.705,
+    "fracTradesInWinStreak4": 0.659,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 0.68,
+    "longestStreakStartedHere": 9,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "12h-14h",
+    "n": 43,
+    "wins": 32,
+    "wr": 74.4,
+    "ci95": [
+     59.8,
+     85.1
+    ],
+    "liftPP": 4.0,
+    "p_binom": 0.6205,
+    "pnl": 14.18,
+    "fracTradesInWinStreak2": 0.674,
+    "fracTradesInWinStreak4": 0.628,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 0.93,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "14h-16h",
+    "n": 43,
+    "wins": 28,
+    "wr": 65.1,
+    "ci95": [
+     50.2,
+     77.6
+    ],
+    "liftPP": -5.3,
+    "p_binom": 0.5038,
+    "pnl": 25.14,
+    "fracTradesInWinStreak2": 0.535,
+    "fracTradesInWinStreak4": 0.419,
+    "winStreaksStarted": 6,
+    "winStreaksStartedPer10Trades": 1.4,
+    "longestStreakStartedHere": 9,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "16h-18h",
+    "n": 41,
+    "wins": 31,
+    "wr": 75.6,
+    "ci95": [
+     60.7,
+     86.2
+    ],
+    "liftPP": 5.2,
+    "p_binom": 0.6078,
+    "pnl": -22.58,
+    "fracTradesInWinStreak2": 0.732,
+    "fracTradesInWinStreak4": 0.561,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.22,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 6,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "18h-20h",
+    "n": 38,
+    "wins": 26,
+    "wr": 68.4,
+    "ci95": [
+     52.5,
+     80.9
+    ],
+    "liftPP": -2.0,
+    "p_binom": 0.859,
+    "pnl": -32.45,
+    "fracTradesInWinStreak2": 0.684,
+    "fracTradesInWinStreak4": 0.579,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.32,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "20h-22h",
+    "n": 46,
+    "wins": 32,
+    "wr": 69.6,
+    "ci95": [
+     55.2,
+     80.9
+    ],
+    "liftPP": -0.9,
+    "p_binom": 0.8728,
+    "pnl": -8.95,
+    "fracTradesInWinStreak2": 0.652,
+    "fracTradesInWinStreak4": 0.435,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.09,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "22h-00h",
+    "n": 40,
+    "wins": 33,
+    "wr": 82.5,
+    "ci95": [
+     68.0,
+     91.3
+    ],
+    "liftPP": 12.1,
+    "p_binom": 0.118,
+    "pnl": 95.52,
+    "fracTradesInWinStreak2": 0.825,
+    "fracTradesInWinStreak4": 0.75,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 1.75,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 6,
+    "q_bh": 0.708
+   }
+  ],
+  "by3h": [
+   {
+    "bin": "00h-03h",
+    "n": 61,
+    "wins": 35,
+    "wr": 57.4,
+    "ci95": [
+     44.9,
+     69.0
+    ],
+    "liftPP": -13.0,
+    "p_binom": 0.0343,
+    "pnl": -123.36,
+    "fracTradesInWinStreak2": 0.525,
+    "fracTradesInWinStreak4": 0.23,
+    "winStreaksStarted": 9,
+    "winStreaksStartedPer10Trades": 1.48,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 7,
+    "q_bh": 0.2744
+   },
+   {
+    "bin": "03h-06h",
+    "n": 54,
+    "wins": 38,
+    "wr": 70.4,
+    "ci95": [
+     57.2,
+     80.9
+    ],
+    "liftPP": -0.1,
+    "p_binom": 1.0,
+    "pnl": 16.01,
+    "fracTradesInWinStreak2": 0.667,
+    "fracTradesInWinStreak4": 0.537,
+    "winStreaksStarted": 8,
+    "winStreaksStartedPer10Trades": 1.48,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "06h-09h",
+    "n": 61,
+    "wins": 41,
+    "wr": 67.2,
+    "ci95": [
+     54.7,
+     77.7
+    ],
+    "liftPP": -3.2,
+    "p_binom": 0.5766,
+    "pnl": -65.89,
+    "fracTradesInWinStreak2": 0.557,
+    "fracTradesInWinStreak4": 0.459,
+    "winStreaksStarted": 10,
+    "winStreaksStartedPer10Trades": 1.64,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "09h-12h",
+    "n": 70,
+    "wins": 54,
+    "wr": 77.1,
+    "ci95": [
+     66.0,
+     85.4
+    ],
+    "liftPP": 6.7,
+    "p_binom": 0.2405,
+    "pnl": 29.12,
+    "fracTradesInWinStreak2": 0.729,
+    "fracTradesInWinStreak4": 0.657,
+    "winStreaksStarted": 8,
+    "winStreaksStartedPer10Trades": 1.14,
+    "longestStreakStartedHere": 9,
+    "distinctDays": 8,
+    "q_bh": 0.962
+   },
+   {
+    "bin": "12h-15h",
+    "n": 60,
+    "wins": 43,
+    "wr": 71.7,
+    "ci95": [
+     59.2,
+     81.5
+    ],
+    "liftPP": 1.2,
+    "p_binom": 0.8885,
+    "pnl": 11.11,
+    "fracTradesInWinStreak2": 0.6,
+    "fracTradesInWinStreak4": 0.533,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 1.17,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "15h-18h",
+    "n": 67,
+    "wins": 48,
+    "wr": 71.6,
+    "ci95": [
+     59.9,
+     81.0
+    ],
+    "liftPP": 1.2,
+    "p_binom": 0.8941,
+    "pnl": 5.63,
+    "fracTradesInWinStreak2": 0.687,
+    "fracTradesInWinStreak4": 0.537,
+    "winStreaksStarted": 8,
+    "winStreaksStartedPer10Trades": 1.19,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 9,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "18h-21h",
+    "n": 59,
+    "wins": 44,
+    "wr": 74.6,
+    "ci95": [
+     62.2,
+     83.9
+    ],
+    "liftPP": 4.2,
+    "p_binom": 0.5691,
+    "pnl": -13.56,
+    "fracTradesInWinStreak2": 0.712,
+    "fracTradesInWinStreak4": 0.61,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 1.19,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "21h-00h",
+    "n": 65,
+    "wins": 47,
+    "wr": 72.3,
+    "ci95": [
+     60.4,
+     81.7
+    ],
+    "liftPP": 1.9,
+    "p_binom": 0.7876,
+    "pnl": 67.68,
+    "fracTradesInWinStreak2": 0.723,
+    "fracTradesInWinStreak4": 0.554,
+    "winStreaksStarted": 10,
+    "winStreaksStartedPer10Trades": 1.54,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   }
+  ],
+  "byWeekday": [
+   {
+    "bin": "Lun",
+    "n": 115,
+    "wins": 82,
+    "wr": 71.3,
+    "ci95": [
+     62.5,
+     78.8
+    ],
+    "liftPP": 0.9,
+    "p_binom": 0.9187,
+    "pnl": -36.86,
+    "fracTradesInWinStreak2": 0.643,
+    "fracTradesInWinStreak4": 0.513,
+    "winStreaksStarted": 16,
+    "winStreaksStartedPer10Trades": 1.39,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 2,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Mar",
+    "n": 47,
+    "wins": 33,
+    "wr": 70.2,
+    "ci95": [
+     56.0,
+     81.3
+    ],
+    "liftPP": -0.2,
+    "p_binom": 1.0,
+    "pnl": -0.25,
+    "fracTradesInWinStreak2": 0.702,
+    "fracTradesInWinStreak4": 0.574,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.06,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 1,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Mer",
+    "n": 24,
+    "wins": 17,
+    "wr": 70.8,
+    "ci95": [
+     50.8,
+     85.1
+    ],
+    "liftPP": 0.4,
+    "p_binom": 1.0,
+    "pnl": -2.25,
+    "fracTradesInWinStreak2": 0.708,
+    "fracTradesInWinStreak4": 0.583,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 1.67,
+    "longestStreakStartedHere": 6,
+    "distinctDays": 1,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Jeu",
+    "n": 22,
+    "wins": 16,
+    "wr": 72.7,
+    "ci95": [
+     51.8,
+     86.8
+    ],
+    "liftPP": 2.3,
+    "p_binom": 1.0,
+    "pnl": 18.1,
+    "fracTradesInWinStreak2": 0.727,
+    "fracTradesInWinStreak4": 0.5,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.36,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 1,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Ven",
+    "n": 75,
+    "wins": 53,
+    "wr": 70.7,
+    "ci95": [
+     59.6,
+     79.8
+    ],
+    "liftPP": 0.2,
+    "p_binom": 1.0,
+    "pnl": 6.85,
+    "fracTradesInWinStreak2": 0.64,
+    "fracTradesInWinStreak4": 0.467,
+    "winStreaksStarted": 11,
+    "winStreaksStartedPer10Trades": 1.47,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 1,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Sam",
+    "n": 107,
+    "wins": 75,
+    "wr": 70.1,
+    "ci95": [
+     60.8,
+     77.9
+    ],
+    "liftPP": -0.3,
+    "p_binom": 0.916,
+    "pnl": -3.88,
+    "fracTradesInWinStreak2": 0.636,
+    "fracTradesInWinStreak4": 0.505,
+    "winStreaksStarted": 16,
+    "winStreaksStartedPer10Trades": 1.5,
+    "longestStreakStartedHere": 9,
+    "distinctDays": 2,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Dim",
+    "n": 107,
+    "wins": 74,
+    "wr": 69.2,
+    "ci95": [
+     59.9,
+     77.1
+    ],
+    "liftPP": -1.3,
+    "p_binom": 0.7518,
+    "pnl": -54.97,
+    "fracTradesInWinStreak2": 0.636,
+    "fracTradesInWinStreak4": 0.533,
+    "winStreaksStarted": 12,
+    "winStreaksStartedPer10Trades": 1.12,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 2,
+    "q_bh": 1.0
+   }
+  ],
+  "rolling3h": [
+   {
+    "window": "00h-03h",
+    "n": 61,
+    "wins": 35,
+    "wr": 57.4,
+    "ci95": [
+     44.9,
+     69.0
+    ],
+    "liftPP": -13.0,
+    "p_binom": 0.0343,
+    "fracTradesInWinStreak2": 0.525,
+    "pnl": -123.36,
+    "distinctDays": 7
+   },
+   {
+    "window": "01h-04h",
+    "n": 54,
+    "wins": 34,
+    "wr": 63.0,
+    "ci95": [
+     49.6,
+     74.6
+    ],
+    "liftPP": -7.5,
+    "p_binom": 0.2347,
+    "fracTradesInWinStreak2": 0.593,
+    "pnl": -18.43,
+    "distinctDays": 7
+   },
+   {
+    "window": "02h-05h",
+    "n": 53,
+    "wins": 30,
+    "wr": 56.6,
+    "ci95": [
+     43.3,
+     69.0
+    ],
+    "liftPP": -13.8,
+    "p_binom": 0.0344,
+    "fracTradesInWinStreak2": 0.566,
+    "pnl": -57.75,
+    "distinctDays": 7
+   },
+   {
+    "window": "03h-06h",
+    "n": 54,
+    "wins": 38,
+    "wr": 70.4,
+    "ci95": [
+     57.2,
+     80.9
+    ],
+    "liftPP": -0.1,
+    "p_binom": 1.0,
+    "fracTradesInWinStreak2": 0.667,
+    "pnl": 16.01,
+    "distinctDays": 7
+   },
+   {
+    "window": "04h-07h",
+    "n": 58,
+    "wins": 35,
+    "wr": 60.3,
+    "ci95": [
+     47.5,
+     71.9
+    ],
+    "liftPP": -10.1,
+    "p_binom": 0.1124,
+    "fracTradesInWinStreak2": 0.534,
+    "pnl": -93.76,
+    "distinctDays": 7
+   },
+   {
+    "window": "05h-08h",
+    "n": 60,
+    "wins": 42,
+    "wr": 70.0,
+    "ci95": [
+     57.5,
+     80.1
+    ],
+    "liftPP": -0.4,
+    "p_binom": 1.0,
+    "fracTradesInWinStreak2": 0.6,
+    "pnl": -26.03,
+    "distinctDays": 7
+   },
+   {
+    "window": "06h-09h",
+    "n": 61,
+    "wins": 41,
+    "wr": 67.2,
+    "ci95": [
+     54.7,
+     77.7
+    ],
+    "liftPP": -3.2,
+    "p_binom": 0.5766,
+    "fracTradesInWinStreak2": 0.557,
+    "pnl": -65.89,
+    "distinctDays": 8
+   },
+   {
+    "window": "07h-10h",
+    "n": 66,
+    "wins": 51,
+    "wr": 77.3,
+    "ci95": [
+     65.8,
+     85.7
+    ],
+    "liftPP": 6.9,
+    "p_binom": 0.2802,
+    "fracTradesInWinStreak2": 0.682,
+    "pnl": 27.62,
+    "distinctDays": 8
+   },
+   {
+    "window": "08h-11h",
+    "n": 69,
+    "wins": 51,
+    "wr": 73.9,
+    "ci95": [
+     62.5,
+     82.8
+    ],
+    "liftPP": 3.5,
+    "p_binom": 0.5988,
+    "fracTradesInWinStreak2": 0.667,
+    "pnl": -18.45,
+    "distinctDays": 8
+   },
+   {
+    "window": "09h-12h",
+    "n": 70,
+    "wins": 54,
+    "wr": 77.1,
+    "ci95": [
+     66.0,
+     85.4
+    ],
+    "liftPP": 6.7,
+    "p_binom": 0.2405,
+    "fracTradesInWinStreak2": 0.729,
+    "pnl": 29.12,
+    "distinctDays": 8
+   },
+   {
+    "window": "10h-13h",
+    "n": 68,
+    "wins": 50,
+    "wr": 73.5,
+    "ci95": [
+     62.0,
+     82.6
+    ],
+    "liftPP": 3.1,
+    "p_binom": 0.6903,
+    "fracTradesInWinStreak2": 0.676,
+    "pnl": 8.75,
+    "distinctDays": 9
+   },
+   {
+    "window": "11h-14h",
+    "n": 64,
+    "wins": 47,
+    "wr": 73.4,
+    "ci95": [
+     61.5,
+     82.7
+    ],
+    "liftPP": 3.0,
+    "p_binom": 0.682,
+    "fracTradesInWinStreak2": 0.672,
+    "pnl": 22.18,
+    "distinctDays": 9
+   },
+   {
+    "window": "12h-15h",
+    "n": 60,
+    "wins": 43,
+    "wr": 71.7,
+    "ci95": [
+     59.2,
+     81.5
+    ],
+    "liftPP": 1.2,
+    "p_binom": 0.8885,
+    "fracTradesInWinStreak2": 0.6,
+    "pnl": 11.11,
+    "distinctDays": 8
+   },
+   {
+    "window": "13h-16h",
+    "n": 62,
+    "wins": 43,
+    "wr": 69.4,
+    "ci95": [
+     57.0,
+     79.4
+    ],
+    "liftPP": -1.1,
+    "p_binom": 0.8894,
+    "fracTradesInWinStreak2": 0.597,
+    "pnl": 37.44,
+    "distinctDays": 8
+   },
+   {
+    "window": "14h-17h",
+    "n": 63,
+    "wins": 42,
+    "wr": 66.7,
+    "ci95": [
+     54.4,
+     77.1
+    ],
+    "liftPP": -3.8,
+    "p_binom": 0.4934,
+    "fracTradesInWinStreak2": 0.571,
+    "pnl": -10.48,
+    "distinctDays": 9
+   },
+   {
+    "window": "15h-18h",
+    "n": 67,
+    "wins": 48,
+    "wr": 71.6,
+    "ci95": [
+     59.9,
+     81.0
+    ],
+    "liftPP": 1.2,
+    "p_binom": 0.8941,
+    "fracTradesInWinStreak2": 0.687,
+    "pnl": 5.63,
+    "distinctDays": 9
+   },
+   {
+    "window": "16h-19h",
+    "n": 60,
+    "wins": 43,
+    "wr": 71.7,
+    "ci95": [
+     59.2,
+     81.5
+    ],
+    "liftPP": 1.2,
+    "p_binom": 0.8885,
+    "fracTradesInWinStreak2": 0.7,
+    "pnl": -29.74,
+    "distinctDays": 8
+   },
+   {
+    "window": "17h-20h",
+    "n": 59,
+    "wins": 43,
+    "wr": 72.9,
+    "ci95": [
+     60.4,
+     82.6
+    ],
+    "liftPP": 2.5,
+    "p_binom": 0.776,
+    "fracTradesInWinStreak2": 0.729,
+    "pnl": -19.41,
+    "distinctDays": 8
+   },
+   {
+    "window": "18h-21h",
+    "n": 59,
+    "wins": 44,
+    "wr": 74.6,
+    "ci95": [
+     62.2,
+     83.9
+    ],
+    "liftPP": 4.2,
+    "p_binom": 0.5691,
+    "fracTradesInWinStreak2": 0.712,
+    "pnl": -13.56,
+    "distinctDays": 7
+   },
+   {
+    "window": "19h-22h",
+    "n": 65,
+    "wins": 46,
+    "wr": 70.8,
+    "ci95": [
+     58.8,
+     80.4
+    ],
+    "liftPP": 0.3,
+    "p_binom": 1.0,
+    "fracTradesInWinStreak2": 0.677,
+    "pnl": -34.24,
+    "distinctDays": 7
+   },
+   {
+    "window": "20h-23h",
+    "n": 65,
+    "wins": 45,
+    "wr": 69.2,
+    "ci95": [
+     57.2,
+     79.1
+    ],
+    "liftPP": -1.2,
+    "p_binom": 0.8919,
+    "fracTradesInWinStreak2": 0.662,
+    "pnl": -4.6,
+    "distinctDays": 7
+   },
+   {
+    "window": "21h-00h",
+    "n": 65,
+    "wins": 47,
+    "wr": 72.3,
+    "ci95": [
+     60.4,
+     81.7
+    ],
+    "liftPP": 1.9,
+    "p_binom": 0.7876,
+    "fracTradesInWinStreak2": 0.723,
+    "pnl": 67.68,
+    "distinctDays": 7
+   },
+   {
+    "window": "22h-01h",
+    "n": 64,
+    "wins": 48,
+    "wr": 75.0,
+    "ci95": [
+     63.2,
+     84.0
+    ],
+    "liftPP": 4.6,
+    "p_binom": 0.4943,
+    "fracTradesInWinStreak2": 0.734,
+    "pnl": 29.1,
+    "distinctDays": 8
+   },
+   {
+    "window": "23h-02h",
+    "n": 64,
+    "wins": 50,
+    "wr": 78.1,
+    "ci95": [
+     66.6,
+     86.5
+    ],
+    "liftPP": 7.7,
+    "p_binom": 0.2174,
+    "fracTradesInWinStreak2": 0.734,
+    "pnl": 41.28,
+    "distinctDays": 8
+   }
+  ],
+  "permutation": {
+   "B": 5000,
+   "observed": {
+    "maxWR_roll3h": 78.1,
+    "maxFracInStreak_roll3h": 0.734,
+    "maxWR_hour": 95.2,
+    "longestWinStreak": 17
+   },
+   "p_global": {
+    "maxWR_roll3h": 0.8128,
+    "maxFracInStreak_roll3h": 0.9048,
+    "maxWR_hour": 0.0492,
+    "longestWinStreak": 0.2908
+   },
+   "null_p95": {
+    "maxWR_roll3h": 84.9,
+    "maxWR_hour": 95.0,
+    "longestWinStreak": 22.0
+   }
+  },
+  "perDayTopWindows": {
+   "23h-02h": [
+    {
+     "day": "2026-09-28",
+     "n": 7,
+     "wins": 7
+    },
+    {
+     "day": "2026-09-29",
+     "n": 8,
+     "wins": 7
+    },
+    {
+     "day": "2026-09-30",
+     "n": 7,
+     "wins": 6
+    },
+    {
+     "day": "2026-10-01",
+     "n": 4,
+     "wins": 4
+    },
+    {
+     "day": "2026-10-02",
+     "n": 10,
+     "wins": 8
+    },
+    {
+     "day": "2026-10-03",
+     "n": 8,
+     "wins": 4
+    },
+    {
+     "day": "2026-10-04",
+     "n": 12,
+     "wins": 9
+    },
+    {
+     "day": "2026-10-05",
+     "n": 8,
+     "wins": 5
+    }
+   ],
+   "07h-10h": [
+    {
+     "day": "2026-09-26",
+     "n": 8,
+     "wins": 6
+    },
+    {
+     "day": "2026-09-28",
+     "n": 9,
+     "wins": 8
+    },
+    {
+     "day": "2026-09-29",
+     "n": 7,
+     "wins": 7
+    },
+    {
+     "day": "2026-09-30",
+     "n": 4,
+     "wins": 3
+    },
+    {
+     "day": "2026-10-02",
+     "n": 12,
+     "wins": 10
+    },
+    {
+     "day": "2026-10-03",
+     "n": 12,
+     "wins": 8
+    },
+    {
+     "day": "2026-10-04",
+     "n": 3,
+     "wins": 3
+    },
+    {
+     "day": "2026-10-05",
+     "n": 11,
+     "wins": 6
+    }
+   ],
+   "09h-12h": [
+    {
+     "day": "2026-09-26",
+     "n": 7,
+     "wins": 5
+    },
+    {
+     "day": "2026-09-28",
+     "n": 9,
+     "wins": 7
+    },
+    {
+     "day": "2026-09-29",
+     "n": 6,
+     "wins": 6
+    },
+    {
+     "day": "2026-09-30",
+     "n": 5,
+     "wins": 5
+    },
+    {
+     "day": "2026-10-02",
+     "n": 10,
+     "wins": 9
+    },
+    {
+     "day": "2026-10-03",
+     "n": 12,
+     "wins": 8
+    },
+    {
+     "day": "2026-10-04",
+     "n": 10,
+     "wins": 6
+    },
+    {
+     "day": "2026-10-05",
+     "n": 11,
+     "wins": 8
+    }
+   ],
+   "22h-01h": [
+    {
+     "day": "2026-09-28",
+     "n": 10,
+     "wins": 8
+    },
+    {
+     "day": "2026-09-29",
+     "n": 4,
+     "wins": 4
+    },
+    {
+     "day": "2026-09-30",
+     "n": 4,
+     "wins": 3
+    },
+    {
+     "day": "2026-10-01",
+     "n": 7,
+     "wins": 6
+    },
+    {
+     "day": "2026-10-02",
+     "n": 11,
+     "wins": 8
+    },
+    {
+     "day": "2026-10-03",
+     "n": 12,
+     "wins": 8
+    },
+    {
+     "day": "2026-10-04",
+     "n": 12,
+     "wins": 9
+    },
+    {
+     "day": "2026-10-05",
+     "n": 4,
+     "wins": 2
+    }
+   ]
+  },
+  "splitStability3h": {
+   "cut": "2026-10-01 00:00 Paris (sizing 5 sh -> 15 USDC)",
+   "bins": [
+    {
+     "bin": "00h-03h",
+     "n_before": 25,
+     "wr_before": 60.0,
+     "n_after": 36,
+     "wr_after": 55.6
+    },
+    {
+     "bin": "03h-06h",
+     "n_before": 14,
+     "wr_before": 57.1,
+     "n_after": 40,
+     "wr_after": 75.0
+    },
+    {
+     "bin": "06h-09h",
+     "n_before": 24,
+     "wr_before": 75.0,
+     "n_after": 37,
+     "wr_after": 62.2
+    },
+    {
+     "bin": "09h-12h",
+     "n_before": 27,
+     "wr_before": 85.2,
+     "n_after": 43,
+     "wr_after": 72.1
+    },
+    {
+     "bin": "12h-15h",
+     "n_before": 32,
+     "wr_before": 71.9,
+     "n_after": 28,
+     "wr_after": 71.4
+    },
+    {
+     "bin": "15h-18h",
+     "n_before": 27,
+     "wr_before": 70.4,
+     "n_after": 40,
+     "wr_after": 72.5
+    },
+    {
+     "bin": "18h-21h",
+     "n_before": 27,
+     "wr_before": 88.9,
+     "n_after": 32,
+     "wr_after": 62.5
+    },
+    {
+     "bin": "21h-24h",
+     "n_before": 19,
+     "wr_before": 57.9,
+     "n_after": 46,
+     "wr_after": 78.3
+    }
+   ],
+   "spearman": -0.5,
+   "spearman_p": 0.207
+  }
+ },
+ "sensitivity_sim_all": {
+  "name": "sim_positions fav-band, 15m+5m, FOK entries",
+  "n": 539,
+  "wins": 382,
+  "losses": 157,
+  "baselineWR": 70.87,
+  "baselineCI95": [
+   66.9,
+   74.5
+  ],
+  "period": {
+   "first": "2026-09-26 07:58 CEST",
+   "last": "2026-10-05 12:33 CEST",
+   "distinctDays": 10
+  },
+  "pnl": -63.26,
+  "runsTest": {
+   "runs": 194,
+   "expected": 223.5,
+   "z": -3.09,
+   "p_two_sided": 0.002
+  },
+  "winStreaks": {
+   "count_len_ge2": 73,
+   "count_len_ge3": 56,
+   "count_len_ge5": 29,
+   "meanWinRunLen": 3.94,
+   "expectedMeanWinRunLenIID": 3.43,
+   "lengthDistribution": {
+    "1": 24,
+    "2": 17,
+    "3": 13,
+    "4": 14,
+    "5": 6,
+    "6": 6,
+    "7": 6,
+    "8": 4,
+    "9": 2,
+    "10": 2,
+    "15": 1,
+    "17": 1,
+    "19": 1
+   },
+   "longest": [
+    {
+     "len": 19,
+     "start": "2026-09-27 17:06",
+     "end": "2026-09-27 21:09",
+     "startWeekday": "Dim",
+     "spanHours": 4.1,
+     "pnl": 27.1,
+     "hoursCovered": [
+      17,
+      18,
+      19,
+      20,
+      21
+     ]
+    },
+    {
+     "len": 17,
+     "start": "2026-09-29 06:33",
+     "end": "2026-09-29 13:49",
+     "startWeekday": "Mar",
+     "spanHours": 7.3,
+     "pnl": 24.7,
+     "hoursCovered": [
+      6,
+      7,
+      9,
+      10,
+      11,
+      12,
+      13
+     ]
+    },
+    {
+     "len": 15,
+     "start": "2026-09-26 15:18",
+     "end": "2026-09-26 17:38",
+     "startWeekday": "Sam",
+     "spanHours": 2.3,
+     "pnl": 22.4,
+     "hoursCovered": [
+      15,
+      16,
+      17
+     ]
+    },
+    {
+     "len": 10,
+     "start": "2026-09-28 19:48",
+     "end": "2026-09-28 22:19",
+     "startWeekday": "Lun",
+     "spanHours": 2.5,
+     "pnl": 14.6,
+     "hoursCovered": [
+      19,
+      20,
+      21,
+      22
+     ]
+    },
+    {
+     "len": 10,
+     "start": "2026-10-02 08:50",
+     "end": "2026-10-02 11:22",
+     "startWeekday": "Ven",
+     "spanHours": 2.5,
+     "pnl": 63.86,
+     "hoursCovered": [
+      8,
+      9,
+      10,
+      11
+     ]
+    },
+    {
+     "len": 9,
+     "start": "2026-10-03 17:20",
+     "end": "2026-10-03 19:18",
+     "startWeekday": "Sam",
+     "spanHours": 2.0,
+     "pnl": 57.19,
+     "hoursCovered": [
+      17,
+      18,
+      19
+     ]
+    },
+    {
+     "len": 9,
+     "start": "2026-10-05 10:34",
+     "end": "2026-10-05 12:33",
+     "startWeekday": "Lun",
+     "spanHours": 2.0,
+     "pnl": 50.75,
+     "hoursCovered": [
+      10,
+      11,
+      12
+     ]
+    },
+    {
+     "len": 8,
+     "start": "2026-09-28 00:18",
+     "end": "2026-09-28 01:58",
+     "startWeekday": "Lun",
+     "spanHours": 1.7,
+     "pnl": 10.95,
+     "hoursCovered": [
+      0,
+      1
+     ]
+    },
+    {
+     "len": 8,
+     "start": "2026-10-01 22:34",
+     "end": "2026-10-02 00:33",
+     "startWeekday": "Jeu",
+     "spanHours": 2.0,
+     "pnl": 54.22,
+     "hoursCovered": [
+      0,
+      22,
+      23
+     ]
+    },
+    {
+     "len": 8,
+     "start": "2026-10-04 14:21",
+     "end": "2026-10-04 16:18",
+     "startWeekday": "Dim",
+     "spanHours": 1.9,
+     "pnl": 52.66,
+     "hoursCovered": [
+      14,
+      15,
+      16
+     ]
+    }
+   ]
+  },
+  "lossStreaks": {
+   "longest": [
+    {
+     "len": 5,
+     "start": "2026-09-28 15:33",
+     "end": "2026-09-28 19:03"
+    },
+    {
+     "len": 4,
+     "start": "2026-09-29 02:06",
+     "end": "2026-09-29 04:19"
+    },
+    {
+     "len": 4,
+     "start": "2026-09-29 15:03",
+     "end": "2026-09-29 18:03"
+    },
+    {
+     "len": 4,
+     "start": "2026-09-30 02:03",
+     "end": "2026-09-30 04:48"
+    },
+    {
+     "len": 4,
+     "start": "2026-10-04 02:20",
+     "end": "2026-10-04 03:10"
+    }
+   ],
+   "meanLossRunLen": 1.62,
+   "expectedIID": 1.41
+  },
+  "byHour": [
+   {
+    "bin": "00h-01h",
+    "n": 25,
+    "wins": 16,
+    "wr": 64.0,
+    "ci95": [
+     44.5,
+     79.8
+    ],
+    "liftPP": -6.9,
+    "p_binom": 0.5091,
+    "pnl": -65.02,
+    "fracTradesInWinStreak2": 0.6,
+    "fracTradesInWinStreak4": 0.44,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.2,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 7,
+    "q_bh": 0.8146
+   },
+   {
+    "bin": "01h-02h",
+    "n": 23,
+    "wins": 19,
+    "wr": 82.6,
+    "ci95": [
+     62.9,
+     93.0
+    ],
+    "liftPP": 11.7,
+    "p_binom": 0.258,
+    "pnl": 21.83,
+    "fracTradesInWinStreak2": 0.739,
+    "fracTradesInWinStreak4": 0.348,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 1.74,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 6,
+    "q_bh": 0.6192
+   },
+   {
+    "bin": "02h-03h",
+    "n": 20,
+    "wins": 7,
+    "wr": 35.0,
+    "ci95": [
+     18.1,
+     56.7
+    ],
+    "liftPP": -35.9,
+    "p_binom": 0.0009,
+    "pnl": -70.47,
+    "fracTradesInWinStreak2": 0.35,
+    "fracTradesInWinStreak4": 0.15,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.5,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 6,
+    "q_bh": 0.0216
+   },
+   {
+    "bin": "03h-04h",
+    "n": 20,
+    "wins": 17,
+    "wr": 85.0,
+    "ci95": [
+     64.0,
+     94.8
+    ],
+    "liftPP": 14.1,
+    "p_binom": 0.2202,
+    "pnl": 42.56,
+    "fracTradesInWinStreak2": 0.85,
+    "fracTradesInWinStreak4": 0.85,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 1.0,
+    "longestStreakStartedHere": 6,
+    "distinctDays": 5,
+    "q_bh": 0.6192
+   },
+   {
+    "bin": "04h-05h",
+    "n": 18,
+    "wins": 11,
+    "wr": 61.1,
+    "ci95": [
+     38.6,
+     79.7
+    ],
+    "liftPP": -9.8,
+    "p_binom": 0.4358,
+    "pnl": -22.79,
+    "fracTradesInWinStreak2": 0.611,
+    "fracTradesInWinStreak4": 0.611,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 2.22,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 7,
+    "q_bh": 0.8146
+   },
+   {
+    "bin": "05h-06h",
+    "n": 20,
+    "wins": 14,
+    "wr": 70.0,
+    "ci95": [
+     48.1,
+     85.5
+    ],
+    "liftPP": -0.9,
+    "p_binom": 1.0,
+    "pnl": 1.59,
+    "fracTradesInWinStreak2": 0.6,
+    "fracTradesInWinStreak4": 0.4,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 1.0,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 5,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "06h-07h",
+    "n": 21,
+    "wins": 11,
+    "wr": 52.4,
+    "ci95": [
+     32.4,
+     71.7
+    ],
+    "liftPP": -18.5,
+    "p_binom": 0.089,
+    "pnl": -71.26,
+    "fracTradesInWinStreak2": 0.429,
+    "fracTradesInWinStreak4": 0.333,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 2.38,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 7,
+    "q_bh": 0.5866
+   },
+   {
+    "bin": "07h-08h",
+    "n": 21,
+    "wins": 18,
+    "wr": 85.7,
+    "ci95": [
+     65.4,
+     95.0
+    ],
+    "liftPP": 14.8,
+    "p_binom": 0.1559,
+    "pnl": 41.19,
+    "fracTradesInWinStreak2": 0.762,
+    "fracTradesInWinStreak4": 0.667,
+    "winStreaksStarted": 1,
+    "winStreaksStartedPer10Trades": 0.48,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 7,
+    "q_bh": 0.6192
+   },
+   {
+    "bin": "08h-09h",
+    "n": 22,
+    "wins": 13,
+    "wr": 59.1,
+    "ci95": [
+     38.7,
+     76.7
+    ],
+    "liftPP": -11.8,
+    "p_binom": 0.2426,
+    "pnl": -41.82,
+    "fracTradesInWinStreak2": 0.455,
+    "fracTradesInWinStreak4": 0.227,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 2.27,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 6,
+    "q_bh": 0.6192
+   },
+   {
+    "bin": "09h-10h",
+    "n": 28,
+    "wins": 23,
+    "wr": 82.1,
+    "ci95": [
+     64.4,
+     92.1
+    ],
+    "liftPP": 11.3,
+    "p_binom": 0.218,
+    "pnl": 25.0,
+    "fracTradesInWinStreak2": 0.786,
+    "fracTradesInWinStreak4": 0.679,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.79,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 8,
+    "q_bh": 0.6192
+   },
+   {
+    "bin": "10h-11h",
+    "n": 23,
+    "wins": 18,
+    "wr": 78.3,
+    "ci95": [
+     58.1,
+     90.3
+    ],
+    "liftPP": 7.4,
+    "p_binom": 0.501,
+    "pnl": -1.13,
+    "fracTradesInWinStreak2": 0.739,
+    "fracTradesInWinStreak4": 0.652,
+    "winStreaksStarted": 1,
+    "winStreaksStartedPer10Trades": 0.43,
+    "longestStreakStartedHere": 9,
+    "distinctDays": 8,
+    "q_bh": 0.8146
+   },
+   {
+    "bin": "11h-12h",
+    "n": 24,
+    "wins": 18,
+    "wr": 75.0,
+    "ci95": [
+     55.1,
+     88.0
+    ],
+    "liftPP": 4.1,
+    "p_binom": 0.8232,
+    "pnl": 12.7,
+    "fracTradesInWinStreak2": 0.708,
+    "fracTradesInWinStreak4": 0.708,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.83,
+    "longestStreakStartedHere": 6,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "12h-13h",
+    "n": 27,
+    "wins": 18,
+    "wr": 66.7,
+    "ci95": [
+     47.8,
+     81.4
+    ],
+    "liftPP": -4.2,
+    "p_binom": 0.6726,
+    "pnl": -3.47,
+    "fracTradesInWinStreak2": 0.63,
+    "fracTradesInWinStreak4": 0.556,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.11,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 8,
+    "q_bh": 0.9496
+   },
+   {
+    "bin": "13h-14h",
+    "n": 22,
+    "wins": 16,
+    "wr": 72.7,
+    "ci95": [
+     51.8,
+     86.8
+    ],
+    "liftPP": 1.9,
+    "p_binom": 1.0,
+    "pnl": 6.35,
+    "fracTradesInWinStreak2": 0.682,
+    "fracTradesInWinStreak4": 0.591,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.91,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 6,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "14h-15h",
+    "n": 18,
+    "wins": 11,
+    "wr": 61.1,
+    "ci95": [
+     38.6,
+     79.7
+    ],
+    "liftPP": -9.8,
+    "p_binom": 0.4358,
+    "pnl": -6.87,
+    "fracTradesInWinStreak2": 0.444,
+    "fracTradesInWinStreak4": 0.278,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 2.78,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 6,
+    "q_bh": 0.8146
+   },
+   {
+    "bin": "15h-16h",
+    "n": 32,
+    "wins": 22,
+    "wr": 68.8,
+    "ci95": [
+     51.4,
+     82.0
+    ],
+    "liftPP": -2.1,
+    "p_binom": 0.846,
+    "pnl": 32.51,
+    "fracTradesInWinStreak2": 0.656,
+    "fracTradesInWinStreak4": 0.531,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 0.94,
+    "longestStreakStartedHere": 15,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "16h-17h",
+    "n": 23,
+    "wins": 17,
+    "wr": 73.9,
+    "ci95": [
+     53.5,
+     87.5
+    ],
+    "liftPP": 3.0,
+    "p_binom": 1.0,
+    "pnl": -31.17,
+    "fracTradesInWinStreak2": 0.696,
+    "fracTradesInWinStreak4": 0.478,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.87,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 6,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "17h-18h",
+    "n": 23,
+    "wins": 18,
+    "wr": 78.3,
+    "ci95": [
+     58.1,
+     90.3
+    ],
+    "liftPP": 7.4,
+    "p_binom": 0.501,
+    "pnl": 10.74,
+    "fracTradesInWinStreak2": 0.783,
+    "fracTradesInWinStreak4": 0.565,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 1.74,
+    "longestStreakStartedHere": 19,
+    "distinctDays": 6,
+    "q_bh": 0.8146
+   },
+   {
+    "bin": "18h-19h",
+    "n": 20,
+    "wins": 13,
+    "wr": 65.0,
+    "ci95": [
+     43.3,
+     81.9
+    ],
+    "liftPP": -5.9,
+    "p_binom": 0.6232,
+    "pnl": -5.56,
+    "fracTradesInWinStreak2": 0.65,
+    "fracTradesInWinStreak4": 0.65,
+    "winStreaksStarted": 1,
+    "winStreaksStartedPer10Trades": 0.5,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 7,
+    "q_bh": 0.9348
+   },
+   {
+    "bin": "19h-20h",
+    "n": 21,
+    "wins": 15,
+    "wr": 71.4,
+    "ci95": [
+     50.0,
+     86.2
+    ],
+    "liftPP": 0.6,
+    "p_binom": 1.0,
+    "pnl": -27.69,
+    "fracTradesInWinStreak2": 0.714,
+    "fracTradesInWinStreak4": 0.524,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 1.9,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 5,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "20h-21h",
+    "n": 23,
+    "wins": 20,
+    "wr": 87.0,
+    "ci95": [
+     67.9,
+     95.5
+    ],
+    "liftPP": 16.1,
+    "p_binom": 0.1088,
+    "pnl": 21.84,
+    "fracTradesInWinStreak2": 0.783,
+    "fracTradesInWinStreak4": 0.696,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.87,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 6,
+    "q_bh": 0.5866
+   },
+   {
+    "bin": "21h-22h",
+    "n": 25,
+    "wins": 14,
+    "wr": 56.0,
+    "ci95": [
+     37.1,
+     73.3
+    ],
+    "liftPP": -14.9,
+    "p_binom": 0.1222,
+    "pnl": -27.84,
+    "fracTradesInWinStreak2": 0.56,
+    "fracTradesInWinStreak4": 0.24,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.2,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 7,
+    "q_bh": 0.5866
+   },
+   {
+    "bin": "22h-23h",
+    "n": 19,
+    "wins": 13,
+    "wr": 68.4,
+    "ci95": [
+     46.0,
+     84.6
+    ],
+    "liftPP": -2.5,
+    "p_binom": 0.8033,
+    "pnl": 4.35,
+    "fracTradesInWinStreak2": 0.684,
+    "fracTradesInWinStreak4": 0.632,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 2.11,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 5,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "23h-00h",
+    "n": 21,
+    "wins": 20,
+    "wr": 95.2,
+    "ci95": [
+     77.3,
+     99.2
+    ],
+    "liftPP": 24.4,
+    "p_binom": 0.0137,
+    "pnl": 91.17,
+    "fracTradesInWinStreak2": 0.952,
+    "fracTradesInWinStreak4": 0.857,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.43,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 6,
+    "q_bh": 0.1644
+   }
+  ],
+  "by2h": [
+   {
+    "bin": "00h-02h",
+    "n": 48,
+    "wins": 35,
+    "wr": 72.9,
+    "ci95": [
+     59.0,
+     83.4
+    ],
+    "liftPP": 2.0,
+    "p_binom": 0.8742,
+    "pnl": -43.19,
+    "fracTradesInWinStreak2": 0.667,
+    "fracTradesInWinStreak4": 0.396,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 1.46,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "02h-04h",
+    "n": 40,
+    "wins": 24,
+    "wr": 60.0,
+    "ci95": [
+     44.6,
+     73.7
+    ],
+    "liftPP": -10.9,
+    "p_binom": 0.1622,
+    "pnl": -27.91,
+    "fracTradesInWinStreak2": 0.6,
+    "fracTradesInWinStreak4": 0.5,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.25,
+    "longestStreakStartedHere": 6,
+    "distinctDays": 7,
+    "q_bh": 0.9732
+   },
+   {
+    "bin": "04h-06h",
+    "n": 38,
+    "wins": 25,
+    "wr": 65.8,
+    "ci95": [
+     49.9,
+     78.8
+    ],
+    "liftPP": -5.1,
+    "p_binom": 0.4791,
+    "pnl": -21.2,
+    "fracTradesInWinStreak2": 0.605,
+    "fracTradesInWinStreak4": 0.5,
+    "winStreaksStarted": 6,
+    "winStreaksStartedPer10Trades": 1.58,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "06h-08h",
+    "n": 42,
+    "wins": 29,
+    "wr": 69.0,
+    "ci95": [
+     54.0,
+     80.9
+    ],
+    "liftPP": -1.8,
+    "p_binom": 0.8652,
+    "pnl": -30.07,
+    "fracTradesInWinStreak2": 0.595,
+    "fracTradesInWinStreak4": 0.5,
+    "winStreaksStarted": 6,
+    "winStreaksStartedPer10Trades": 1.43,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "08h-10h",
+    "n": 50,
+    "wins": 36,
+    "wr": 72.0,
+    "ci95": [
+     58.3,
+     82.5
+    ],
+    "liftPP": 1.1,
+    "p_binom": 1.0,
+    "pnl": -16.82,
+    "fracTradesInWinStreak2": 0.64,
+    "fracTradesInWinStreak4": 0.48,
+    "winStreaksStarted": 10,
+    "winStreaksStartedPer10Trades": 2.0,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "10h-12h",
+    "n": 47,
+    "wins": 36,
+    "wr": 76.6,
+    "ci95": [
+     62.8,
+     86.4
+    ],
+    "liftPP": 5.7,
+    "p_binom": 0.4271,
+    "pnl": 11.57,
+    "fracTradesInWinStreak2": 0.723,
+    "fracTradesInWinStreak4": 0.681,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 0.64,
+    "longestStreakStartedHere": 9,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "12h-14h",
+    "n": 49,
+    "wins": 34,
+    "wr": 69.4,
+    "ci95": [
+     55.5,
+     80.5
+    ],
+    "liftPP": -1.5,
+    "p_binom": 0.8751,
+    "pnl": 2.88,
+    "fracTradesInWinStreak2": 0.653,
+    "fracTradesInWinStreak4": 0.571,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.02,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "14h-16h",
+    "n": 50,
+    "wins": 33,
+    "wr": 66.0,
+    "ci95": [
+     52.2,
+     77.6
+    ],
+    "liftPP": -4.9,
+    "p_binom": 0.4395,
+    "pnl": 25.64,
+    "fracTradesInWinStreak2": 0.58,
+    "fracTradesInWinStreak4": 0.44,
+    "winStreaksStarted": 8,
+    "winStreaksStartedPer10Trades": 1.6,
+    "longestStreakStartedHere": 15,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "16h-18h",
+    "n": 46,
+    "wins": 35,
+    "wr": 76.1,
+    "ci95": [
+     62.1,
+     86.1
+    ],
+    "liftPP": 5.2,
+    "p_binom": 0.5179,
+    "pnl": -20.43,
+    "fracTradesInWinStreak2": 0.739,
+    "fracTradesInWinStreak4": 0.522,
+    "winStreaksStarted": 6,
+    "winStreaksStartedPer10Trades": 1.3,
+    "longestStreakStartedHere": 19,
+    "distinctDays": 6,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "18h-20h",
+    "n": 41,
+    "wins": 28,
+    "wr": 68.3,
+    "ci95": [
+     53.0,
+     80.4
+    ],
+    "liftPP": -2.6,
+    "p_binom": 0.7319,
+    "pnl": -33.25,
+    "fracTradesInWinStreak2": 0.683,
+    "fracTradesInWinStreak4": 0.585,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.22,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "20h-22h",
+    "n": 48,
+    "wins": 34,
+    "wr": 70.8,
+    "ci95": [
+     56.8,
+     81.8
+    ],
+    "liftPP": -0.0,
+    "p_binom": 1.0,
+    "pnl": -6.0,
+    "fracTradesInWinStreak2": 0.667,
+    "fracTradesInWinStreak4": 0.458,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.04,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "22h-00h",
+    "n": 40,
+    "wins": 33,
+    "wr": 82.5,
+    "ci95": [
+     68.0,
+     91.3
+    ],
+    "liftPP": 11.6,
+    "p_binom": 0.1187,
+    "pnl": 95.52,
+    "fracTradesInWinStreak2": 0.825,
+    "fracTradesInWinStreak4": 0.75,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 1.75,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 6,
+    "q_bh": 0.9732
+   }
+  ],
+  "by3h": [
+   {
+    "bin": "00h-03h",
+    "n": 68,
+    "wins": 42,
+    "wr": 61.8,
+    "ci95": [
+     49.9,
+     72.4
+    ],
+    "liftPP": -9.1,
+    "p_binom": 0.109,
+    "pnl": -113.66,
+    "fracTradesInWinStreak2": 0.574,
+    "fracTradesInWinStreak4": 0.324,
+    "winStreaksStarted": 10,
+    "winStreaksStartedPer10Trades": 1.47,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 7,
+    "q_bh": 0.6476
+   },
+   {
+    "bin": "03h-06h",
+    "n": 58,
+    "wins": 42,
+    "wr": 72.4,
+    "ci95": [
+     59.8,
+     82.2
+    ],
+    "liftPP": 1.5,
+    "p_binom": 0.8856,
+    "pnl": 21.36,
+    "fracTradesInWinStreak2": 0.69,
+    "fracTradesInWinStreak4": 0.621,
+    "winStreaksStarted": 8,
+    "winStreaksStartedPer10Trades": 1.38,
+    "longestStreakStartedHere": 6,
+    "distinctDays": 7,
+    "q_bh": 0.8918
+   },
+   {
+    "bin": "06h-09h",
+    "n": 64,
+    "wins": 42,
+    "wr": 65.6,
+    "ci95": [
+     53.4,
+     76.1
+    ],
+    "liftPP": -5.2,
+    "p_binom": 0.3395,
+    "pnl": -71.89,
+    "fracTradesInWinStreak2": 0.547,
+    "fracTradesInWinStreak4": 0.406,
+    "winStreaksStarted": 11,
+    "winStreaksStartedPer10Trades": 1.72,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 8,
+    "q_bh": 0.8918
+   },
+   {
+    "bin": "09h-12h",
+    "n": 75,
+    "wins": 59,
+    "wr": 78.7,
+    "ci95": [
+     68.1,
+     86.4
+    ],
+    "liftPP": 7.8,
+    "p_binom": 0.1619,
+    "pnl": 36.57,
+    "fracTradesInWinStreak2": 0.747,
+    "fracTradesInWinStreak4": 0.68,
+    "winStreaksStarted": 8,
+    "winStreaksStartedPer10Trades": 1.07,
+    "longestStreakStartedHere": 9,
+    "distinctDays": 8,
+    "q_bh": 0.6476
+   },
+   {
+    "bin": "12h-15h",
+    "n": 67,
+    "wins": 45,
+    "wr": 67.2,
+    "ci95": [
+     55.3,
+     77.2
+    ],
+    "liftPP": -3.7,
+    "p_binom": 0.503,
+    "pnl": -3.99,
+    "fracTradesInWinStreak2": 0.597,
+    "fracTradesInWinStreak4": 0.493,
+    "winStreaksStarted": 10,
+    "winStreaksStartedPer10Trades": 1.49,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 8,
+    "q_bh": 0.8918
+   },
+   {
+    "bin": "15h-18h",
+    "n": 78,
+    "wins": 57,
+    "wr": 73.1,
+    "ci95": [
+     62.3,
+     81.7
+    ],
+    "liftPP": 2.2,
+    "p_binom": 0.7105,
+    "pnl": 12.08,
+    "fracTradesInWinStreak2": 0.705,
+    "fracTradesInWinStreak4": 0.526,
+    "winStreaksStarted": 9,
+    "winStreaksStartedPer10Trades": 1.15,
+    "longestStreakStartedHere": 19,
+    "distinctDays": 9,
+    "q_bh": 0.8918
+   },
+   {
+    "bin": "18h-21h",
+    "n": 64,
+    "wins": 48,
+    "wr": 75.0,
+    "ci95": [
+     63.2,
+     84.0
+    ],
+    "liftPP": 4.1,
+    "p_binom": 0.5821,
+    "pnl": -11.41,
+    "fracTradesInWinStreak2": 0.719,
+    "fracTradesInWinStreak4": 0.625,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 1.09,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 7,
+    "q_bh": 0.8918
+   },
+   {
+    "bin": "21h-00h",
+    "n": 65,
+    "wins": 47,
+    "wr": 72.3,
+    "ci95": [
+     60.4,
+     81.7
+    ],
+    "liftPP": 1.4,
+    "p_binom": 0.8918,
+    "pnl": 67.68,
+    "fracTradesInWinStreak2": 0.723,
+    "fracTradesInWinStreak4": 0.554,
+    "winStreaksStarted": 10,
+    "winStreaksStartedPer10Trades": 1.54,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 7,
+    "q_bh": 0.8918
+   }
+  ],
+  "byWeekday": [
+   {
+    "bin": "Lun",
+    "n": 135,
+    "wins": 98,
+    "wr": 72.6,
+    "ci95": [
+     64.5,
+     79.4
+    ],
+    "liftPP": 1.7,
+    "p_binom": 0.7055,
+    "pnl": -28.91,
+    "fracTradesInWinStreak2": 0.667,
+    "fracTradesInWinStreak4": 0.57,
+    "winStreaksStarted": 19,
+    "winStreaksStartedPer10Trades": 1.41,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 2,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Mar",
+    "n": 47,
+    "wins": 33,
+    "wr": 70.2,
+    "ci95": [
+     56.0,
+     81.3
+    ],
+    "liftPP": -0.7,
+    "p_binom": 0.874,
+    "pnl": -0.25,
+    "fracTradesInWinStreak2": 0.702,
+    "fracTradesInWinStreak4": 0.574,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.06,
+    "longestStreakStartedHere": 17,
+    "distinctDays": 1,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Mer",
+    "n": 24,
+    "wins": 17,
+    "wr": 70.8,
+    "ci95": [
+     50.8,
+     85.1
+    ],
+    "liftPP": -0.0,
+    "p_binom": 1.0,
+    "pnl": -2.25,
+    "fracTradesInWinStreak2": 0.708,
+    "fracTradesInWinStreak4": 0.583,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 1.67,
+    "longestStreakStartedHere": 6,
+    "distinctDays": 1,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Jeu",
+    "n": 22,
+    "wins": 16,
+    "wr": 72.7,
+    "ci95": [
+     51.8,
+     86.8
+    ],
+    "liftPP": 1.9,
+    "p_binom": 1.0,
+    "pnl": 18.1,
+    "fracTradesInWinStreak2": 0.727,
+    "fracTradesInWinStreak4": 0.5,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.36,
+    "longestStreakStartedHere": 8,
+    "distinctDays": 1,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Ven",
+    "n": 75,
+    "wins": 53,
+    "wr": 70.7,
+    "ci95": [
+     59.6,
+     79.8
+    ],
+    "liftPP": -0.2,
+    "p_binom": 1.0,
+    "pnl": 6.85,
+    "fracTradesInWinStreak2": 0.64,
+    "fracTradesInWinStreak4": 0.467,
+    "winStreaksStarted": 11,
+    "winStreaksStartedPer10Trades": 1.47,
+    "longestStreakStartedHere": 10,
+    "distinctDays": 1,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Sam",
+    "n": 121,
+    "wins": 86,
+    "wr": 71.1,
+    "ci95": [
+     62.4,
+     78.4
+    ],
+    "liftPP": 0.2,
+    "p_binom": 1.0,
+    "pnl": 1.02,
+    "fracTradesInWinStreak2": 0.669,
+    "fracTradesInWinStreak4": 0.512,
+    "winStreaksStarted": 18,
+    "winStreaksStartedPer10Trades": 1.49,
+    "longestStreakStartedHere": 15,
+    "distinctDays": 2,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Dim",
+    "n": 115,
+    "wins": 79,
+    "wr": 68.7,
+    "ci95": [
+     59.7,
+     76.5
+    ],
+    "liftPP": -2.2,
+    "p_binom": 0.6086,
+    "pnl": -57.82,
+    "fracTradesInWinStreak2": 0.635,
+    "fracTradesInWinStreak4": 0.513,
+    "winStreaksStarted": 13,
+    "winStreaksStartedPer10Trades": 1.13,
+    "longestStreakStartedHere": 19,
+    "distinctDays": 2,
+    "q_bh": 1.0
+   }
+  ],
+  "rolling3h": [
+   {
+    "window": "00h-03h",
+    "n": 68,
+    "wins": 42,
+    "wr": 61.8,
+    "ci95": [
+     49.9,
+     72.4
+    ],
+    "liftPP": -9.1,
+    "p_binom": 0.109,
+    "fracTradesInWinStreak2": 0.574,
+    "pnl": -113.66,
+    "distinctDays": 7
+   },
+   {
+    "window": "01h-04h",
+    "n": 63,
+    "wins": 43,
+    "wr": 68.3,
+    "ci95": [
+     56.0,
+     78.4
+    ],
+    "liftPP": -2.6,
+    "p_binom": 0.6777,
+    "fracTradesInWinStreak2": 0.651,
+    "pnl": -6.08,
+    "distinctDays": 7
+   },
+   {
+    "window": "02h-05h",
+    "n": 58,
+    "wins": 35,
+    "wr": 60.3,
+    "ci95": [
+     47.5,
+     71.9
+    ],
+    "liftPP": -10.5,
+    "p_binom": 0.0835,
+    "fracTradesInWinStreak2": 0.603,
+    "pnl": -50.7,
+    "distinctDays": 7
+   },
+   {
+    "window": "03h-06h",
+    "n": 58,
+    "wins": 42,
+    "wr": 72.4,
+    "ci95": [
+     59.8,
+     82.2
+    ],
+    "liftPP": 1.5,
+    "p_binom": 0.8856,
+    "fracTradesInWinStreak2": 0.69,
+    "pnl": 21.36,
+    "distinctDays": 7
+   },
+   {
+    "window": "04h-07h",
+    "n": 59,
+    "wins": 36,
+    "wr": 61.0,
+    "ci95": [
+     48.3,
+     72.4
+    ],
+    "liftPP": -9.9,
+    "p_binom": 0.114,
+    "fracTradesInWinStreak2": 0.542,
+    "pnl": -92.46,
+    "distinctDays": 7
+   },
+   {
+    "window": "05h-08h",
+    "n": 62,
+    "wins": 43,
+    "wr": 69.4,
+    "ci95": [
+     57.0,
+     79.4
+    ],
+    "liftPP": -1.5,
+    "p_binom": 0.7809,
+    "fracTradesInWinStreak2": 0.597,
+    "pnl": -28.48,
+    "distinctDays": 8
+   },
+   {
+    "window": "06h-09h",
+    "n": 64,
+    "wins": 42,
+    "wr": 65.6,
+    "ci95": [
+     53.4,
+     76.1
+    ],
+    "liftPP": -5.2,
+    "p_binom": 0.3395,
+    "fracTradesInWinStreak2": 0.547,
+    "pnl": -71.89,
+    "distinctDays": 8
+   },
+   {
+    "window": "07h-10h",
+    "n": 71,
+    "wins": 54,
+    "wr": 76.1,
+    "ci95": [
+     65.0,
+     84.5
+    ],
+    "liftPP": 5.2,
+    "p_binom": 0.3638,
+    "fracTradesInWinStreak2": 0.676,
+    "pnl": 24.37,
+    "distinctDays": 8
+   },
+   {
+    "window": "08h-11h",
+    "n": 73,
+    "wins": 54,
+    "wr": 74.0,
+    "ci95": [
+     62.9,
+     82.7
+    ],
+    "liftPP": 3.1,
+    "p_binom": 0.6085,
+    "fracTradesInWinStreak2": 0.671,
+    "pnl": -17.95,
+    "distinctDays": 8
+   },
+   {
+    "window": "09h-12h",
+    "n": 75,
+    "wins": 59,
+    "wr": 78.7,
+    "ci95": [
+     68.1,
+     86.4
+    ],
+    "liftPP": 7.8,
+    "p_binom": 0.1619,
+    "fracTradesInWinStreak2": 0.747,
+    "pnl": 36.57,
+    "distinctDays": 8
+   },
+   {
+    "window": "10h-13h",
+    "n": 74,
+    "wins": 54,
+    "wr": 73.0,
+    "ci95": [
+     61.9,
+     81.8
+    ],
+    "liftPP": 2.1,
+    "p_binom": 0.7982,
+    "fracTradesInWinStreak2": 0.689,
+    "pnl": 8.1,
+    "distinctDays": 9
+   },
+   {
+    "window": "11h-14h",
+    "n": 73,
+    "wins": 52,
+    "wr": 71.2,
+    "ci95": [
+     60.0,
+     80.3
+    ],
+    "liftPP": 0.4,
+    "p_binom": 1.0,
+    "fracTradesInWinStreak2": 0.671,
+    "pnl": 15.58,
+    "distinctDays": 9
+   },
+   {
+    "window": "12h-15h",
+    "n": 67,
+    "wins": 45,
+    "wr": 67.2,
+    "ci95": [
+     55.3,
+     77.2
+    ],
+    "liftPP": -3.7,
+    "p_binom": 0.503,
+    "fracTradesInWinStreak2": 0.597,
+    "pnl": -3.99,
+    "distinctDays": 8
+   },
+   {
+    "window": "13h-16h",
+    "n": 72,
+    "wins": 49,
+    "wr": 68.1,
+    "ci95": [
+     56.6,
+     77.7
+    ],
+    "liftPP": -2.8,
+    "p_binom": 0.6048,
+    "fracTradesInWinStreak2": 0.611,
+    "pnl": 31.99,
+    "distinctDays": 8
+   },
+   {
+    "window": "14h-17h",
+    "n": 73,
+    "wins": 50,
+    "wr": 68.5,
+    "ci95": [
+     57.1,
+     78.0
+    ],
+    "liftPP": -2.4,
+    "p_binom": 0.6992,
+    "fracTradesInWinStreak2": 0.616,
+    "pnl": -5.53,
+    "distinctDays": 9
+   },
+   {
+    "window": "15h-18h",
+    "n": 78,
+    "wins": 57,
+    "wr": 73.1,
+    "ci95": [
+     62.3,
+     81.7
+    ],
+    "liftPP": 2.2,
+    "p_binom": 0.7105,
+    "fracTradesInWinStreak2": 0.705,
+    "pnl": 12.08,
+    "distinctDays": 9
+   },
+   {
+    "window": "16h-19h",
+    "n": 66,
+    "wins": 48,
+    "wr": 72.7,
+    "ci95": [
+     61.0,
+     82.0
+    ],
+    "liftPP": 1.9,
+    "p_binom": 0.7882,
+    "fracTradesInWinStreak2": 0.712,
+    "pnl": -25.99,
+    "distinctDays": 8
+   },
+   {
+    "window": "17h-20h",
+    "n": 64,
+    "wins": 46,
+    "wr": 71.9,
+    "ci95": [
+     59.9,
+     81.4
+    ],
+    "liftPP": 1.0,
+    "p_binom": 1.0,
+    "fracTradesInWinStreak2": 0.719,
+    "pnl": -22.51,
+    "distinctDays": 8
+   },
+   {
+    "window": "18h-21h",
+    "n": 64,
+    "wins": 48,
+    "wr": 75.0,
+    "ci95": [
+     63.2,
+     84.0
+    ],
+    "liftPP": 4.1,
+    "p_binom": 0.5821,
+    "fracTradesInWinStreak2": 0.719,
+    "pnl": -11.41,
+    "distinctDays": 7
+   },
+   {
+    "window": "19h-22h",
+    "n": 69,
+    "wins": 49,
+    "wr": 71.0,
+    "ci95": [
+     59.4,
+     80.4
+    ],
+    "liftPP": 0.1,
+    "p_binom": 1.0,
+    "fracTradesInWinStreak2": 0.681,
+    "pnl": -33.69,
+    "distinctDays": 7
+   },
+   {
+    "window": "20h-23h",
+    "n": 67,
+    "wins": 47,
+    "wr": 70.1,
+    "ci95": [
+     58.3,
+     79.8
+    ],
+    "liftPP": -0.7,
+    "p_binom": 0.8934,
+    "fracTradesInWinStreak2": 0.672,
+    "pnl": -1.65,
+    "distinctDays": 7
+   },
+   {
+    "window": "21h-00h",
+    "n": 65,
+    "wins": 47,
+    "wr": 72.3,
+    "ci95": [
+     60.4,
+     81.7
+    ],
+    "liftPP": 1.4,
+    "p_binom": 0.8918,
+    "fracTradesInWinStreak2": 0.723,
+    "pnl": 67.68,
+    "distinctDays": 7
+   },
+   {
+    "window": "22h-01h",
+    "n": 65,
+    "wins": 49,
+    "wr": 75.4,
+    "ci95": [
+     63.7,
+     84.2
+    ],
+    "liftPP": 4.5,
+    "p_binom": 0.4957,
+    "fracTradesInWinStreak2": 0.738,
+    "pnl": 30.5,
+    "distinctDays": 8
+   },
+   {
+    "window": "23h-02h",
+    "n": 69,
+    "wins": 55,
+    "wr": 79.7,
+    "ci95": [
+     68.8,
+     87.5
+    ],
+    "liftPP": 8.8,
+    "p_binom": 0.1131,
+    "fracTradesInWinStreak2": 0.754,
+    "pnl": 47.98,
+    "distinctDays": 8
+   }
+  ]
+ },
+ "secondary_backtest_259af8b2": {
+  "name": "backtest_positions run 259af8b2 (preset fav-band ask 0.70-0.85, exit enabled), fav legs fill 0.70-0.85",
+  "n": 512,
+  "wins": 212,
+  "losses": 300,
+  "baselineWR": 41.41,
+  "baselineCI95": [
+   37.2,
+   45.7
+  ],
+  "period": {
+   "first": "2026-09-08 08:19 CEST",
+   "last": "2026-09-20 08:03 CEST",
+   "distinctDays": 13
+  },
+  "pnl": 55.25,
+  "runsTest": {
+   "runs": 252,
+   "expected": 249.4,
+   "z": 0.23,
+   "p_two_sided": 0.8153
+  },
+  "winStreaks": {
+   "count_len_ge2": 52,
+   "count_len_ge3": 21,
+   "count_len_ge5": 2,
+   "meanWinRunLen": 1.68,
+   "expectedMeanWinRunLenIID": 1.71,
+   "lengthDistribution": {
+    "1": 74,
+    "2": 31,
+    "3": 12,
+    "4": 7,
+    "5": 1,
+    "7": 1
+   },
+   "longest": [
+    {
+     "len": 7,
+     "start": "2026-09-09 04:39",
+     "end": "2026-09-09 06:56",
+     "startWeekday": "Mer",
+     "spanHours": 2.3,
+     "pnl": 9.55,
+     "hoursCovered": [
+      4,
+      5,
+      6
+     ]
+    },
+    {
+     "len": 5,
+     "start": "2026-09-13 15:18",
+     "end": "2026-09-13 16:18",
+     "startWeekday": "Dim",
+     "spanHours": 1.0,
+     "pnl": 6.05,
+     "hoursCovered": [
+      15,
+      16
+     ]
+    },
+    {
+     "len": 4,
+     "start": "2026-09-09 11:03",
+     "end": "2026-09-09 11:48",
+     "startWeekday": "Mer",
+     "spanHours": 0.8,
+     "pnl": 5.25,
+     "hoursCovered": [
+      11
+     ]
+    },
+    {
+     "len": 4,
+     "start": "2026-09-11 07:37",
+     "end": "2026-09-11 08:18",
+     "startWeekday": "Ven",
+     "spanHours": 0.7,
+     "pnl": 4.85,
+     "hoursCovered": [
+      7,
+      8
+     ]
+    },
+    {
+     "len": 4,
+     "start": "2026-09-13 07:03",
+     "end": "2026-09-13 07:49",
+     "startWeekday": "Dim",
+     "spanHours": 0.8,
+     "pnl": 5.85,
+     "hoursCovered": [
+      7
+     ]
+    },
+    {
+     "len": 4,
+     "start": "2026-09-13 23:20",
+     "end": "2026-09-14 00:18",
+     "startWeekday": "Dim",
+     "spanHours": 1.0,
+     "pnl": 5.25,
+     "hoursCovered": [
+      0,
+      23
+     ]
+    },
+    {
+     "len": 4,
+     "start": "2026-09-15 09:18",
+     "end": "2026-09-15 10:04",
+     "startWeekday": "Mar",
+     "spanHours": 0.8,
+     "pnl": 5.2,
+     "hoursCovered": [
+      9,
+      10
+     ]
+    },
+    {
+     "len": 4,
+     "start": "2026-09-16 06:50",
+     "end": "2026-09-16 07:36",
+     "startWeekday": "Mer",
+     "spanHours": 0.8,
+     "pnl": 5.15,
+     "hoursCovered": [
+      6,
+      7
+     ]
+    },
+    {
+     "len": 4,
+     "start": "2026-09-18 00:18",
+     "end": "2026-09-18 01:03",
+     "startWeekday": "Ven",
+     "spanHours": 0.7,
+     "pnl": 4.9,
+     "hoursCovered": [
+      0,
+      1
+     ]
+    },
+    {
+     "len": 3,
+     "start": "2026-09-09 23:48",
+     "end": "2026-09-10 00:19",
+     "startWeekday": "Mer",
+     "spanHours": 0.5,
+     "pnl": 3.9,
+     "hoursCovered": [
+      0,
+      23
+     ]
+    }
+   ]
+  },
+  "lossStreaks": {
+   "longest": [
+    {
+     "len": 13,
+     "start": "2026-09-18 06:19",
+     "end": "2026-09-19 01:33"
+    },
+    {
+     "len": 8,
+     "start": "2026-09-10 14:48",
+     "end": "2026-09-10 21:39"
+    },
+    {
+     "len": 8,
+     "start": "2026-09-14 00:34",
+     "end": "2026-09-14 12:03"
+    },
+    {
+     "len": 7,
+     "start": "2026-09-08 14:33",
+     "end": "2026-09-08 23:21"
+    },
+    {
+     "len": 6,
+     "start": "2026-09-09 13:04",
+     "end": "2026-09-09 17:49"
+    }
+   ],
+   "meanLossRunLen": 2.38,
+   "expectedIID": 2.42
+  },
+  "byHour": [
+   {
+    "bin": "00h-01h",
+    "n": 22,
+    "wins": 9,
+    "wr": 40.9,
+    "ci95": [
+     23.3,
+     61.3
+    ],
+    "liftPP": -0.5,
+    "p_binom": 1.0,
+    "pnl": 1.85,
+    "fracTradesInWinStreak2": 0.318,
+    "fracTradesInWinStreak4": 0.182,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.91,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 6,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "01h-02h",
+    "n": 18,
+    "wins": 9,
+    "wr": 50.0,
+    "ci95": [
+     29.0,
+     71.0
+    ],
+    "liftPP": 8.6,
+    "p_binom": 0.4808,
+    "pnl": 1.95,
+    "fracTradesInWinStreak2": 0.333,
+    "fracTradesInWinStreak4": 0.056,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 1.11,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "02h-03h",
+    "n": 20,
+    "wins": 4,
+    "wr": 20.0,
+    "ci95": [
+     8.1,
+     41.6
+    ],
+    "liftPP": -21.4,
+    "p_binom": 0.0677,
+    "pnl": -4.6,
+    "fracTradesInWinStreak2": 0.0,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 0,
+    "winStreaksStartedPer10Trades": 0.0,
+    "longestStreakStartedHere": 0,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "03h-04h",
+    "n": 14,
+    "wins": 4,
+    "wr": 28.6,
+    "ci95": [
+     11.7,
+     54.6
+    ],
+    "liftPP": -12.8,
+    "p_binom": 0.4216,
+    "pnl": -1.95,
+    "fracTradesInWinStreak2": 0.143,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 1,
+    "winStreaksStartedPer10Trades": 0.71,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 5,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "04h-05h",
+    "n": 20,
+    "wins": 10,
+    "wr": 50.0,
+    "ci95": [
+     29.9,
+     70.1
+    ],
+    "liftPP": 8.6,
+    "p_binom": 0.4986,
+    "pnl": 7.85,
+    "fracTradesInWinStreak2": 0.15,
+    "fracTradesInWinStreak4": 0.1,
+    "winStreaksStarted": 1,
+    "winStreaksStartedPer10Trades": 0.5,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "05h-06h",
+    "n": 37,
+    "wins": 18,
+    "wr": 48.6,
+    "ci95": [
+     33.4,
+     64.1
+    ],
+    "liftPP": 7.2,
+    "p_binom": 0.4059,
+    "pnl": 14.0,
+    "fracTradesInWinStreak2": 0.351,
+    "fracTradesInWinStreak4": 0.081,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.35,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 11,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "06h-07h",
+    "n": 29,
+    "wins": 15,
+    "wr": 51.7,
+    "ci95": [
+     34.4,
+     68.6
+    ],
+    "liftPP": 10.3,
+    "p_binom": 0.2645,
+    "pnl": 5.4,
+    "fracTradesInWinStreak2": 0.448,
+    "fracTradesInWinStreak4": 0.103,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.72,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 9,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "07h-08h",
+    "n": 29,
+    "wins": 14,
+    "wr": 48.3,
+    "ci95": [
+     31.4,
+     65.6
+    ],
+    "liftPP": 6.9,
+    "p_binom": 0.4573,
+    "pnl": 8.35,
+    "fracTradesInWinStreak2": 0.483,
+    "fracTradesInWinStreak4": 0.31,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.03,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 9,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "08h-09h",
+    "n": 25,
+    "wins": 11,
+    "wr": 44.0,
+    "ci95": [
+     26.7,
+     62.9
+    ],
+    "liftPP": 2.6,
+    "p_binom": 0.8405,
+    "pnl": 5.45,
+    "fracTradesInWinStreak2": 0.32,
+    "fracTradesInWinStreak4": 0.08,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 1.6,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 9,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "09h-10h",
+    "n": 24,
+    "wins": 11,
+    "wr": 45.8,
+    "ci95": [
+     27.9,
+     64.9
+    ],
+    "liftPP": 4.4,
+    "p_binom": 0.6826,
+    "pnl": 3.3,
+    "fracTradesInWinStreak2": 0.292,
+    "fracTradesInWinStreak4": 0.125,
+    "winStreaksStarted": 1,
+    "winStreaksStartedPer10Trades": 0.42,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "10h-11h",
+    "n": 21,
+    "wins": 7,
+    "wr": 33.3,
+    "ci95": [
+     17.2,
+     54.6
+    ],
+    "liftPP": -8.1,
+    "p_binom": 0.5131,
+    "pnl": -4.3,
+    "fracTradesInWinStreak2": 0.238,
+    "fracTradesInWinStreak4": 0.048,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.95,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "11h-12h",
+    "n": 13,
+    "wins": 4,
+    "wr": 30.8,
+    "ci95": [
+     12.7,
+     57.6
+    ],
+    "liftPP": -10.6,
+    "p_binom": 0.5773,
+    "pnl": -2.4,
+    "fracTradesInWinStreak2": 0.308,
+    "fracTradesInWinStreak4": 0.308,
+    "winStreaksStarted": 1,
+    "winStreaksStartedPer10Trades": 0.77,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 6,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "12h-13h",
+    "n": 16,
+    "wins": 5,
+    "wr": 31.2,
+    "ci95": [
+     14.2,
+     55.6
+    ],
+    "liftPP": -10.2,
+    "p_binom": 0.4587,
+    "pnl": -3.3,
+    "fracTradesInWinStreak2": 0.0,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 0,
+    "winStreaksStartedPer10Trades": 0.0,
+    "longestStreakStartedHere": 0,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "13h-14h",
+    "n": 17,
+    "wins": 6,
+    "wr": 35.3,
+    "ci95": [
+     17.3,
+     58.7
+    ],
+    "liftPP": -6.1,
+    "p_binom": 0.8064,
+    "pnl": -0.1,
+    "fracTradesInWinStreak2": 0.176,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 1.18,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "14h-15h",
+    "n": 26,
+    "wins": 10,
+    "wr": 38.5,
+    "ci95": [
+     22.4,
+     57.5
+    ],
+    "liftPP": -2.9,
+    "p_binom": 0.8439,
+    "pnl": 3.55,
+    "fracTradesInWinStreak2": 0.154,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.77,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 7,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "15h-16h",
+    "n": 19,
+    "wins": 5,
+    "wr": 26.3,
+    "ci95": [
+     11.8,
+     48.8
+    ],
+    "liftPP": -15.1,
+    "p_binom": 0.245,
+    "pnl": -0.5,
+    "fracTradesInWinStreak2": 0.211,
+    "fracTradesInWinStreak4": 0.158,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 1.05,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 8,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "16h-17h",
+    "n": 10,
+    "wins": 6,
+    "wr": 60.0,
+    "ci95": [
+     31.3,
+     83.2
+    ],
+    "liftPP": 18.6,
+    "p_binom": 0.3364,
+    "pnl": 2.4,
+    "fracTradesInWinStreak2": 0.4,
+    "fracTradesInWinStreak4": 0.2,
+    "winStreaksStarted": 0,
+    "winStreaksStartedPer10Trades": 0.0,
+    "longestStreakStartedHere": 0,
+    "distinctDays": 4,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "17h-18h",
+    "n": 27,
+    "wins": 10,
+    "wr": 37.0,
+    "ci95": [
+     21.5,
+     55.8
+    ],
+    "liftPP": -4.4,
+    "p_binom": 0.7002,
+    "pnl": -0.55,
+    "fracTradesInWinStreak2": 0.222,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.74,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 11,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "18h-19h",
+    "n": 19,
+    "wins": 8,
+    "wr": 42.1,
+    "ci95": [
+     23.1,
+     63.7
+    ],
+    "liftPP": 0.7,
+    "p_binom": 1.0,
+    "pnl": 3.9,
+    "fracTradesInWinStreak2": 0.368,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 2.11,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 5,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "19h-20h",
+    "n": 16,
+    "wins": 9,
+    "wr": 56.2,
+    "ci95": [
+     33.2,
+     76.9
+    ],
+    "liftPP": 14.8,
+    "p_binom": 0.3101,
+    "pnl": 7.3,
+    "fracTradesInWinStreak2": 0.375,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.88,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 10,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "20h-21h",
+    "n": 22,
+    "wins": 10,
+    "wr": 45.5,
+    "ci95": [
+     26.9,
+     65.3
+    ],
+    "liftPP": 4.0,
+    "p_binom": 0.8292,
+    "pnl": 0.25,
+    "fracTradesInWinStreak2": 0.364,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.36,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 5,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "21h-22h",
+    "n": 23,
+    "wins": 8,
+    "wr": 34.8,
+    "ci95": [
+     18.8,
+     55.1
+    ],
+    "liftPP": -6.6,
+    "p_binom": 0.673,
+    "pnl": 0.4,
+    "fracTradesInWinStreak2": 0.304,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 1.74,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 9,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "22h-23h",
+    "n": 17,
+    "wins": 7,
+    "wr": 41.2,
+    "ci95": [
+     21.6,
+     64.0
+    ],
+    "liftPP": -0.2,
+    "p_binom": 1.0,
+    "pnl": 2.4,
+    "fracTradesInWinStreak2": 0.059,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 0,
+    "winStreaksStartedPer10Trades": 0.0,
+    "longestStreakStartedHere": 0,
+    "distinctDays": 6,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "23h-00h",
+    "n": 28,
+    "wins": 12,
+    "wr": 42.9,
+    "ci95": [
+     26.5,
+     60.9
+    ],
+    "liftPP": 1.5,
+    "p_binom": 1.0,
+    "pnl": 4.6,
+    "fracTradesInWinStreak2": 0.214,
+    "fracTradesInWinStreak4": 0.107,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 1.07,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 10,
+    "q_bh": 1.0
+   }
+  ],
+  "by2h": [
+   {
+    "bin": "00h-02h",
+    "n": 40,
+    "wins": 18,
+    "wr": 45.0,
+    "ci95": [
+     30.7,
+     60.2
+    ],
+    "liftPP": 3.6,
+    "p_binom": 0.6347,
+    "pnl": 3.8,
+    "fracTradesInWinStreak2": 0.325,
+    "fracTradesInWinStreak4": 0.125,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 1.0,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 10,
+    "q_bh": 0.886
+   },
+   {
+    "bin": "02h-04h",
+    "n": 34,
+    "wins": 8,
+    "wr": 23.5,
+    "ci95": [
+     12.4,
+     40.0
+    ],
+    "liftPP": -17.9,
+    "p_binom": 0.0367,
+    "pnl": -6.55,
+    "fracTradesInWinStreak2": 0.059,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 1,
+    "winStreaksStartedPer10Trades": 0.29,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 10,
+    "q_bh": 0.4404
+   },
+   {
+    "bin": "04h-06h",
+    "n": 57,
+    "wins": 28,
+    "wr": 49.1,
+    "ci95": [
+     36.6,
+     61.7
+    ],
+    "liftPP": 7.7,
+    "p_binom": 0.2819,
+    "pnl": 21.85,
+    "fracTradesInWinStreak2": 0.281,
+    "fracTradesInWinStreak4": 0.088,
+    "winStreaksStarted": 6,
+    "winStreaksStartedPer10Trades": 1.05,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 12,
+    "q_bh": 0.679
+   },
+   {
+    "bin": "06h-08h",
+    "n": 58,
+    "wins": 29,
+    "wr": 50.0,
+    "ci95": [
+     37.5,
+     62.5
+    ],
+    "liftPP": 8.6,
+    "p_binom": 0.1856,
+    "pnl": 13.75,
+    "fracTradesInWinStreak2": 0.466,
+    "fracTradesInWinStreak4": 0.207,
+    "winStreaksStarted": 8,
+    "winStreaksStartedPer10Trades": 1.38,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 11,
+    "q_bh": 0.679
+   },
+   {
+    "bin": "08h-10h",
+    "n": 49,
+    "wins": 22,
+    "wr": 44.9,
+    "ci95": [
+     31.9,
+     58.7
+    ],
+    "liftPP": 3.5,
+    "p_binom": 0.6645,
+    "pnl": 8.75,
+    "fracTradesInWinStreak2": 0.306,
+    "fracTradesInWinStreak4": 0.102,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 1.02,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 11,
+    "q_bh": 0.886
+   },
+   {
+    "bin": "10h-12h",
+    "n": 34,
+    "wins": 11,
+    "wr": 32.4,
+    "ci95": [
+     19.1,
+     49.2
+    ],
+    "liftPP": -9.1,
+    "p_binom": 0.3026,
+    "pnl": -6.7,
+    "fracTradesInWinStreak2": 0.265,
+    "fracTradesInWinStreak4": 0.147,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 0.88,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 9,
+    "q_bh": 0.679
+   },
+   {
+    "bin": "12h-14h",
+    "n": 33,
+    "wins": 11,
+    "wr": 33.3,
+    "ci95": [
+     19.8,
+     50.4
+    ],
+    "liftPP": -8.1,
+    "p_binom": 0.3818,
+    "pnl": -3.4,
+    "fracTradesInWinStreak2": 0.091,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.61,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 11,
+    "q_bh": 0.679
+   },
+   {
+    "bin": "14h-16h",
+    "n": 45,
+    "wins": 15,
+    "wr": 33.3,
+    "ci95": [
+     21.4,
+     47.9
+    ],
+    "liftPP": -8.1,
+    "p_binom": 0.2932,
+    "pnl": 3.05,
+    "fracTradesInWinStreak2": 0.178,
+    "fracTradesInWinStreak4": 0.067,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 0.89,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 10,
+    "q_bh": 0.679
+   },
+   {
+    "bin": "16h-18h",
+    "n": 37,
+    "wins": 16,
+    "wr": 43.2,
+    "ci95": [
+     28.7,
+     59.1
+    ],
+    "liftPP": 1.8,
+    "p_binom": 0.8681,
+    "pnl": 1.85,
+    "fracTradesInWinStreak2": 0.27,
+    "fracTradesInWinStreak4": 0.054,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.54,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 11,
+    "q_bh": 0.9611
+   },
+   {
+    "bin": "18h-20h",
+    "n": 35,
+    "wins": 17,
+    "wr": 48.6,
+    "ci95": [
+     33.0,
+     64.4
+    ],
+    "liftPP": 7.2,
+    "p_binom": 0.3961,
+    "pnl": 11.2,
+    "fracTradesInWinStreak2": 0.371,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 2.0,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 11,
+    "q_bh": 0.679
+   },
+   {
+    "bin": "20h-22h",
+    "n": 45,
+    "wins": 18,
+    "wr": 40.0,
+    "ci95": [
+     27.0,
+     54.5
+    ],
+    "liftPP": -1.4,
+    "p_binom": 0.881,
+    "pnl": 0.65,
+    "fracTradesInWinStreak2": 0.333,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 1.56,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 10,
+    "q_bh": 0.9611
+   },
+   {
+    "bin": "22h-00h",
+    "n": 45,
+    "wins": 19,
+    "wr": 42.2,
+    "ci95": [
+     29.0,
+     56.7
+    ],
+    "liftPP": 0.8,
+    "p_binom": 1.0,
+    "pnl": 7.0,
+    "fracTradesInWinStreak2": 0.156,
+    "fracTradesInWinStreak4": 0.067,
+    "winStreaksStarted": 3,
+    "winStreaksStartedPer10Trades": 0.67,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 10,
+    "q_bh": 1.0
+   }
+  ],
+  "by3h": [
+   {
+    "bin": "00h-03h",
+    "n": 60,
+    "wins": 22,
+    "wr": 36.7,
+    "ci95": [
+     25.6,
+     49.3
+    ],
+    "liftPP": -4.7,
+    "p_binom": 0.5133,
+    "pnl": -0.8,
+    "fracTradesInWinStreak2": 0.217,
+    "fracTradesInWinStreak4": 0.083,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 0.67,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 10,
+    "q_bh": 0.7864
+   },
+   {
+    "bin": "03h-06h",
+    "n": 71,
+    "wins": 32,
+    "wr": 45.1,
+    "ci95": [
+     34.0,
+     56.6
+    ],
+    "liftPP": 3.7,
+    "p_binom": 0.5484,
+    "pnl": 19.9,
+    "fracTradesInWinStreak2": 0.254,
+    "fracTradesInWinStreak4": 0.07,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 0.99,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 12,
+    "q_bh": 0.7864
+   },
+   {
+    "bin": "06h-09h",
+    "n": 83,
+    "wins": 40,
+    "wr": 48.2,
+    "ci95": [
+     37.8,
+     58.8
+    ],
+    "liftPP": 6.8,
+    "p_binom": 0.2212,
+    "pnl": 19.2,
+    "fracTradesInWinStreak2": 0.422,
+    "fracTradesInWinStreak4": 0.169,
+    "winStreaksStarted": 12,
+    "winStreaksStartedPer10Trades": 1.45,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 13,
+    "q_bh": 0.7864
+   },
+   {
+    "bin": "09h-12h",
+    "n": 58,
+    "wins": 22,
+    "wr": 37.9,
+    "ci95": [
+     26.6,
+     50.8
+    ],
+    "liftPP": -3.5,
+    "p_binom": 0.6896,
+    "pnl": -3.4,
+    "fracTradesInWinStreak2": 0.276,
+    "fracTradesInWinStreak4": 0.138,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 0.69,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 12,
+    "q_bh": 0.7881
+   },
+   {
+    "bin": "12h-15h",
+    "n": 59,
+    "wins": 21,
+    "wr": 35.6,
+    "ci95": [
+     24.6,
+     48.3
+    ],
+    "liftPP": -5.8,
+    "p_binom": 0.4283,
+    "pnl": 0.15,
+    "fracTradesInWinStreak2": 0.119,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 0.68,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 11,
+    "q_bh": 0.7864
+   },
+   {
+    "bin": "15h-18h",
+    "n": 56,
+    "wins": 21,
+    "wr": 37.5,
+    "ci95": [
+     26.0,
+     50.6
+    ],
+    "liftPP": -3.9,
+    "p_binom": 0.5898,
+    "pnl": 1.35,
+    "fracTradesInWinStreak2": 0.25,
+    "fracTradesInWinStreak4": 0.089,
+    "winStreaksStarted": 4,
+    "winStreaksStartedPer10Trades": 0.71,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 11,
+    "q_bh": 0.7864
+   },
+   {
+    "bin": "18h-21h",
+    "n": 57,
+    "wins": 27,
+    "wr": 47.4,
+    "ci95": [
+     35.0,
+     60.1
+    ],
+    "liftPP": 6.0,
+    "p_binom": 0.42,
+    "pnl": 11.45,
+    "fracTradesInWinStreak2": 0.368,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 10,
+    "winStreaksStartedPer10Trades": 1.75,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 11,
+    "q_bh": 0.7864
+   },
+   {
+    "bin": "21h-00h",
+    "n": 68,
+    "wins": 27,
+    "wr": 39.7,
+    "ci95": [
+     28.9,
+     51.6
+    ],
+    "liftPP": -1.7,
+    "p_binom": 0.8068,
+    "pnl": 7.4,
+    "fracTradesInWinStreak2": 0.206,
+    "fracTradesInWinStreak4": 0.044,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 1.03,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 10,
+    "q_bh": 0.8068
+   }
+  ],
+  "byWeekday": [
+   {
+    "bin": "Lun",
+    "n": 29,
+    "wins": 8,
+    "wr": 27.6,
+    "ci95": [
+     14.7,
+     45.7
+    ],
+    "liftPP": -13.8,
+    "p_binom": 0.1859,
+    "pnl": -2.85,
+    "fracTradesInWinStreak2": 0.172,
+    "fracTradesInWinStreak4": 0.034,
+    "winStreaksStarted": 2,
+    "winStreaksStartedPer10Trades": 0.69,
+    "longestStreakStartedHere": 2,
+    "distinctDays": 1,
+    "q_bh": 0.6507
+   },
+   {
+    "bin": "Mar",
+    "n": 72,
+    "wins": 28,
+    "wr": 38.9,
+    "ci95": [
+     28.5,
+     50.4
+    ],
+    "liftPP": -2.5,
+    "p_binom": 0.7205,
+    "pnl": 2.5,
+    "fracTradesInWinStreak2": 0.25,
+    "fracTradesInWinStreak4": 0.056,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 0.97,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 2,
+    "q_bh": 0.8406
+   },
+   {
+    "bin": "Mer",
+    "n": 110,
+    "wins": 45,
+    "wr": 40.9,
+    "ci95": [
+     32.2,
+     50.3
+    ],
+    "liftPP": -0.5,
+    "p_binom": 1.0,
+    "pnl": 20.3,
+    "fracTradesInWinStreak2": 0.255,
+    "fracTradesInWinStreak4": 0.136,
+    "winStreaksStarted": 10,
+    "winStreaksStartedPer10Trades": 0.91,
+    "longestStreakStartedHere": 7,
+    "distinctDays": 2,
+    "q_bh": 1.0
+   },
+   {
+    "bin": "Jeu",
+    "n": 83,
+    "wins": 31,
+    "wr": 37.3,
+    "ci95": [
+     27.7,
+     48.1
+    ],
+    "liftPP": -4.1,
+    "p_binom": 0.5044,
+    "pnl": 7.65,
+    "fracTradesInWinStreak2": 0.205,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 7,
+    "winStreaksStartedPer10Trades": 0.84,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 2,
+    "q_bh": 0.8406
+   },
+   {
+    "bin": "Ven",
+    "n": 66,
+    "wins": 25,
+    "wr": 37.9,
+    "ci95": [
+     27.1,
+     49.9
+    ],
+    "liftPP": -3.5,
+    "p_binom": 0.6182,
+    "pnl": 5.55,
+    "fracTradesInWinStreak2": 0.242,
+    "fracTradesInWinStreak4": 0.121,
+    "winStreaksStarted": 5,
+    "winStreaksStartedPer10Trades": 0.76,
+    "longestStreakStartedHere": 4,
+    "distinctDays": 2,
+    "q_bh": 0.8406
+   },
+   {
+    "bin": "Sam",
+    "n": 70,
+    "wins": 31,
+    "wr": 44.3,
+    "ci95": [
+     33.2,
+     55.9
+    ],
+    "liftPP": 2.9,
+    "p_binom": 0.6294,
+    "pnl": -1.9,
+    "fracTradesInWinStreak2": 0.3,
+    "fracTradesInWinStreak4": 0.0,
+    "winStreaksStarted": 9,
+    "winStreaksStartedPer10Trades": 1.29,
+    "longestStreakStartedHere": 3,
+    "distinctDays": 2,
+    "q_bh": 0.8406
+   },
+   {
+    "bin": "Dim",
+    "n": 82,
+    "wins": 44,
+    "wr": 53.7,
+    "ci95": [
+     42.9,
+     64.0
+    ],
+    "liftPP": 12.3,
+    "p_binom": 0.0325,
+    "pnl": 24.0,
+    "fracTradesInWinStreak2": 0.402,
+    "fracTradesInWinStreak4": 0.146,
+    "winStreaksStarted": 12,
+    "winStreaksStartedPer10Trades": 1.46,
+    "longestStreakStartedHere": 5,
+    "distinctDays": 2,
+    "q_bh": 0.2275
+   }
+  ],
+  "rolling3h": [
+   {
+    "window": "00h-03h",
+    "n": 60,
+    "wins": 22,
+    "wr": 36.7,
+    "ci95": [
+     25.6,
+     49.3
+    ],
+    "liftPP": -4.7,
+    "p_binom": 0.5133,
+    "fracTradesInWinStreak2": 0.217,
+    "pnl": -0.8,
+    "distinctDays": 10
+   },
+   {
+    "window": "01h-04h",
+    "n": 52,
+    "wins": 17,
+    "wr": 32.7,
+    "ci95": [
+     21.5,
+     46.2
+    ],
+    "liftPP": -8.7,
+    "p_binom": 0.2598,
+    "fracTradesInWinStreak2": 0.154,
+    "pnl": -4.6,
+    "distinctDays": 10
+   },
+   {
+    "window": "02h-05h",
+    "n": 54,
+    "wins": 18,
+    "wr": 33.3,
+    "ci95": [
+     22.2,
+     46.6
+    ],
+    "liftPP": -8.1,
+    "p_binom": 0.2695,
+    "fracTradesInWinStreak2": 0.093,
+    "pnl": 1.3,
+    "distinctDays": 10
+   },
+   {
+    "window": "03h-06h",
+    "n": 71,
+    "wins": 32,
+    "wr": 45.1,
+    "ci95": [
+     34.0,
+     56.6
+    ],
+    "liftPP": 3.7,
+    "p_binom": 0.5484,
+    "fracTradesInWinStreak2": 0.254,
+    "pnl": 19.9,
+    "distinctDays": 12
+   },
+   {
+    "window": "04h-07h",
+    "n": 86,
+    "wins": 43,
+    "wr": 50.0,
+    "ci95": [
+     39.7,
+     60.3
+    ],
+    "liftPP": 8.6,
+    "p_binom": 0.1249,
+    "fracTradesInWinStreak2": 0.337,
+    "pnl": 27.25,
+    "distinctDays": 12
+   },
+   {
+    "window": "05h-08h",
+    "n": 95,
+    "wins": 47,
+    "wr": 49.5,
+    "ci95": [
+     39.6,
+     59.4
+    ],
+    "liftPP": 8.1,
+    "p_binom": 0.1185,
+    "fracTradesInWinStreak2": 0.421,
+    "pnl": 27.75,
+    "distinctDays": 12
+   },
+   {
+    "window": "06h-09h",
+    "n": 83,
+    "wins": 40,
+    "wr": 48.2,
+    "ci95": [
+     37.8,
+     58.8
+    ],
+    "liftPP": 6.8,
+    "p_binom": 0.2212,
+    "fracTradesInWinStreak2": 0.422,
+    "pnl": 19.2,
+    "distinctDays": 13
+   },
+   {
+    "window": "07h-10h",
+    "n": 78,
+    "wins": 36,
+    "wr": 46.2,
+    "ci95": [
+     35.5,
+     57.1
+    ],
+    "liftPP": 4.7,
+    "p_binom": 0.4218,
+    "fracTradesInWinStreak2": 0.372,
+    "pnl": 17.1,
+    "distinctDays": 13
+   },
+   {
+    "window": "08h-11h",
+    "n": 70,
+    "wins": 29,
+    "wr": 41.4,
+    "ci95": [
+     30.6,
+     53.1
+    ],
+    "liftPP": 0.0,
+    "p_binom": 1.0,
+    "fracTradesInWinStreak2": 0.286,
+    "pnl": 4.45,
+    "distinctDays": 13
+   },
+   {
+    "window": "09h-12h",
+    "n": 58,
+    "wins": 22,
+    "wr": 37.9,
+    "ci95": [
+     26.6,
+     50.8
+    ],
+    "liftPP": -3.5,
+    "p_binom": 0.6896,
+    "fracTradesInWinStreak2": 0.276,
+    "pnl": -3.4,
+    "distinctDays": 12
+   },
+   {
+    "window": "10h-13h",
+    "n": 50,
+    "wins": 16,
+    "wr": 32.0,
+    "ci95": [
+     20.8,
+     45.8
+    ],
+    "liftPP": -9.4,
+    "p_binom": 0.1978,
+    "fracTradesInWinStreak2": 0.18,
+    "pnl": -10.0,
+    "distinctDays": 11
+   },
+   {
+    "window": "11h-14h",
+    "n": 46,
+    "wins": 15,
+    "wr": 32.6,
+    "ci95": [
+     20.9,
+     47.0
+    ],
+    "liftPP": -8.8,
+    "p_binom": 0.2359,
+    "fracTradesInWinStreak2": 0.152,
+    "pnl": -5.8,
+    "distinctDays": 11
+   },
+   {
+    "window": "12h-15h",
+    "n": 59,
+    "wins": 21,
+    "wr": 35.6,
+    "ci95": [
+     24.6,
+     48.3
+    ],
+    "liftPP": -5.8,
+    "p_binom": 0.4283,
+    "fracTradesInWinStreak2": 0.119,
+    "pnl": 0.15,
+    "distinctDays": 11
+   },
+   {
+    "window": "13h-16h",
+    "n": 62,
+    "wins": 21,
+    "wr": 33.9,
+    "ci95": [
+     23.3,
+     46.3
+    ],
+    "liftPP": -7.5,
+    "p_binom": 0.2479,
+    "fracTradesInWinStreak2": 0.177,
+    "pnl": 2.95,
+    "distinctDays": 11
+   },
+   {
+    "window": "14h-17h",
+    "n": 55,
+    "wins": 21,
+    "wr": 38.2,
+    "ci95": [
+     26.5,
+     51.4
+    ],
+    "liftPP": -3.2,
+    "p_binom": 0.6827,
+    "fracTradesInWinStreak2": 0.218,
+    "pnl": 5.45,
+    "distinctDays": 10
+   },
+   {
+    "window": "15h-18h",
+    "n": 56,
+    "wins": 21,
+    "wr": 37.5,
+    "ci95": [
+     26.0,
+     50.6
+    ],
+    "liftPP": -3.9,
+    "p_binom": 0.5898,
+    "fracTradesInWinStreak2": 0.25,
+    "pnl": 1.35,
+    "distinctDays": 11
+   },
+   {
+    "window": "16h-19h",
+    "n": 56,
+    "wins": 24,
+    "wr": 42.9,
+    "ci95": [
+     30.8,
+     55.9
+    ],
+    "liftPP": 1.5,
+    "p_binom": 0.8923,
+    "fracTradesInWinStreak2": 0.304,
+    "pnl": 5.75,
+    "distinctDays": 11
+   },
+   {
+    "window": "17h-20h",
+    "n": 62,
+    "wins": 27,
+    "wr": 43.5,
+    "ci95": [
+     31.9,
+     55.9
+    ],
+    "liftPP": 2.1,
+    "p_binom": 0.7968,
+    "fracTradesInWinStreak2": 0.306,
+    "pnl": 10.65,
+    "distinctDays": 11
+   },
+   {
+    "window": "18h-21h",
+    "n": 57,
+    "wins": 27,
+    "wr": 47.4,
+    "ci95": [
+     35.0,
+     60.1
+    ],
+    "liftPP": 6.0,
+    "p_binom": 0.42,
+    "fracTradesInWinStreak2": 0.368,
+    "pnl": 11.45,
+    "distinctDays": 11
+   },
+   {
+    "window": "19h-22h",
+    "n": 61,
+    "wins": 27,
+    "wr": 44.3,
+    "ci95": [
+     32.5,
+     56.7
+    ],
+    "liftPP": 2.9,
+    "p_binom": 0.6972,
+    "fracTradesInWinStreak2": 0.344,
+    "pnl": 7.95,
+    "distinctDays": 11
+   },
+   {
+    "window": "20h-23h",
+    "n": 62,
+    "wins": 25,
+    "wr": 40.3,
+    "ci95": [
+     29.0,
+     52.7
+    ],
+    "liftPP": -1.1,
+    "p_binom": 0.8981,
+    "fracTradesInWinStreak2": 0.258,
+    "pnl": 3.05,
+    "distinctDays": 10
+   },
+   {
+    "window": "21h-00h",
+    "n": 68,
+    "wins": 27,
+    "wr": 39.7,
+    "ci95": [
+     28.9,
+     51.6
+    ],
+    "liftPP": -1.7,
+    "p_binom": 0.8068,
+    "fracTradesInWinStreak2": 0.206,
+    "pnl": 7.4,
+    "distinctDays": 10
+   },
+   {
+    "window": "22h-01h",
+    "n": 67,
+    "wins": 28,
+    "wr": 41.8,
+    "ci95": [
+     30.7,
+     53.7
+    ],
+    "liftPP": 0.4,
+    "p_binom": 1.0,
+    "fracTradesInWinStreak2": 0.209,
+    "pnl": 8.85,
+    "distinctDays": 11
+   },
+   {
+    "window": "23h-02h",
+    "n": 68,
+    "wins": 30,
+    "wr": 44.1,
+    "ci95": [
+     32.9,
+     55.9
+    ],
+    "liftPP": 2.7,
+    "p_binom": 0.7122,
+    "fracTradesInWinStreak2": 0.279,
+    "pnl": 8.4,
+    "distinctDays": 12
+   }
+  ],
+  "permutation": {
+   "B": 5000,
+   "observed": {
+    "maxWR_roll3h": 50.0,
+    "maxFracInStreak_roll3h": 0.422,
+    "maxWR_hour": 60.0,
+    "longestWinStreak": 7
+   },
+   "p_global": {
+    "maxWR_roll3h": 0.8542,
+    "maxFracInStreak_roll3h": 0.3542,
+    "maxWR_hour": 0.768,
+    "longestWinStreak": 0.4644
+   },
+   "null_p95": {
+    "maxWR_roll3h": 58.2,
+    "maxWR_hour": 75.0,
+    "longestWinStreak": 9.0
+   }
+  }
+ },
+ "focus": {
+  "02h": {
+   "sim_perDay": [
+    {
+     "day": "2026-09-28",
+     "n": 2,
+     "wins": 0
+    },
+    {
+     "day": "2026-09-29",
+     "n": 3,
+     "wins": 0
+    },
+    {
+     "day": "2026-09-30",
+     "n": 3,
+     "wins": 0
+    },
+    {
+     "day": "2026-10-02",
+     "n": 2,
+     "wins": 2
+    },
+    {
+     "day": "2026-10-04",
+     "n": 4,
+     "wins": 1
+    },
+    {
+     "day": "2026-10-05",
+     "n": 4,
+     "wins": 2
+    }
+   ],
+   "backtest_perDay": [
+    {
+     "day": "2026-09-09",
+     "n": 2,
+     "wins": 0
+    },
+    {
+     "day": "2026-09-10",
+     "n": 3,
+     "wins": 0
+    },
+    {
+     "day": "2026-09-11",
+     "n": 1,
+     "wins": 0
+    },
+    {
+     "day": "2026-09-15",
+     "n": 3,
+     "wins": 0
+    },
+    {
+     "day": "2026-09-16",
+     "n": 2,
+     "wins": 0
+    },
+    {
+     "day": "2026-09-17",
+     "n": 4,
+     "wins": 2
+    },
+    {
+     "day": "2026-09-18",
+     "n": 5,
+     "wins": 2
+    }
+   ]
+  },
+  "23h": {
+   "sim_perDay": [
+    {
+     "day": "2026-09-28",
+     "n": 4,
+     "wins": 4
+    },
+    {
+     "day": "2026-09-29",
+     "n": 1,
+     "wins": 1
+    },
+    {
+     "day": "2026-10-01",
+     "n": 4,
+     "wins": 4
+    },
+    {
+     "day": "2026-10-02",
+     "n": 4,
+     "wins": 4
+    },
+    {
+     "day": "2026-10-03",
+     "n": 4,
+     "wins": 3
+    },
+    {
+     "day": "2026-10-04",
+     "n": 4,
+     "wins": 4
+    }
+   ],
+   "backtest_perDay": [
+    {
+     "day": "2026-09-08",
+     "n": 1,
+     "wins": 0
+    },
+    {
+     "day": "2026-09-09",
+     "n": 4,
+     "wins": 2
+    },
+    {
+     "day": "2026-09-10",
+     "n": 2,
+     "wins": 1
+    },
+    {
+     "day": "2026-09-13",
+     "n": 4,
+     "wins": 3
+    },
+    {
+     "day": "2026-09-14",
+     "n": 5,
+     "wins": 2
+    },
+    {
+     "day": "2026-09-15",
+     "n": 4,
+     "wins": 2
+    },
+    {
+     "day": "2026-09-16",
+     "n": 1,
+     "wins": 0
+    },
+    {
+     "day": "2026-09-17",
+     "n": 3,
+     "wins": 2
+    },
+    {
+     "day": "2026-09-18",
+     "n": 1,
+     "wins": 0
+    },
+    {
+     "day": "2026-09-19",
+     "n": 3,
+     "wins": 0
+    }
+   ]
+  },
+  "perm_minHourWR_primary": {
+   "observed": 27.8,
+   "p_global": 0.0008,
+   "null_p05": 41.2
+  },
+  "replication_02h_backtest": {
+   "n": 20,
+   "wins": 4,
+   "wr": 20.0,
+   "baseline": 41.4,
+   "p_one_sided_lower": 0.0391
+  },
+  "replication_23h_backtest": {
+   "n": 28,
+   "wins": 12,
+   "wr": 42.9,
+   "baseline": 41.4,
+   "p_one_sided_greater": 0.5099
+  }
+ }
+}

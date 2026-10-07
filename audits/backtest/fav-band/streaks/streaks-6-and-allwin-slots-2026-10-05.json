@@ -1,0 +1,6425 @@
+{
+  "meta": {
+    "source": "series-sim-15m.csv (sim_positions fav-band btc-updown-15m FOK marketable)",
+    "n": 497,
+    "baselineWR": 70.4,
+    "tz": "Europe/Paris (CEST UTC+2)",
+    "winDef": "pnl > 0",
+    "generated": "2026-10-05",
+    "focus": "streaks length ≥6 / exactly 6; 100% WR créneaux & calendar days"
+  },
+  "streaks": {
+    "count_ge6": 21,
+    "count_eq6": 6,
+    "count_gt6": 15,
+    "lengthDistribution_ge6": {
+      "6": 6,
+      "7": 5,
+      "8": 3,
+      "9": 3,
+      "10": 2,
+      "17": 2
+    },
+    "all_ge6": [
+      {
+        "len": 9,
+        "start": "2026-09-26 15:22",
+        "end": "2026-09-26 17:20",
+        "date_start": "2026-09-26",
+        "date_end": "2026-09-26",
+        "weekday": "Sam",
+        "startHour": 15,
+        "endHour": 17,
+        "hoursCovered": [
+          15,
+          16,
+          17
+        ],
+        "n_trades": 9,
+        "wins": 9,
+        "pnl": 13.6,
+        "crossesMidnight": false
+      },
+      {
+        "len": 17,
+        "start": "2026-09-27 16:03",
+        "end": "2026-09-27 21:09",
+        "date_start": "2026-09-27",
+        "date_end": "2026-09-27",
+        "weekday": "Dim",
+        "startHour": 16,
+        "endHour": 21,
+        "hoursCovered": [
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ],
+        "n_trades": 17,
+        "wins": 17,
+        "pnl": 23.65,
+        "crossesMidnight": false
+      },
+      {
+        "len": 6,
+        "start": "2026-09-28 07:05",
+        "end": "2026-09-28 08:48",
+        "date_start": "2026-09-28",
+        "date_end": "2026-09-28",
+        "weekday": "Lun",
+        "startHour": 7,
+        "endHour": 8,
+        "hoursCovered": [
+          7,
+          8
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 8.65,
+        "crossesMidnight": false
+      },
+      {
+        "len": 6,
+        "start": "2026-09-28 09:39",
+        "end": "2026-09-28 10:48",
+        "date_start": "2026-09-28",
+        "date_end": "2026-09-28",
+        "weekday": "Lun",
+        "startHour": 9,
+        "endHour": 10,
+        "hoursCovered": [
+          9,
+          10
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 8.2,
+        "crossesMidnight": false
+      },
+      {
+        "len": 7,
+        "start": "2026-09-28 13:04",
+        "end": "2026-09-28 15:25",
+        "date_start": "2026-09-28",
+        "date_end": "2026-09-28",
+        "weekday": "Lun",
+        "startHour": 13,
+        "endHour": 15,
+        "hoursCovered": [
+          13,
+          14,
+          15
+        ],
+        "n_trades": 7,
+        "wins": 7,
+        "pnl": 10.85,
+        "crossesMidnight": false
+      },
+      {
+        "len": 10,
+        "start": "2026-09-28 19:48",
+        "end": "2026-09-28 22:19",
+        "date_start": "2026-09-28",
+        "date_end": "2026-09-28",
+        "weekday": "Lun",
+        "startHour": 19,
+        "endHour": 22,
+        "hoursCovered": [
+          19,
+          20,
+          21,
+          22
+        ],
+        "n_trades": 10,
+        "wins": 10,
+        "pnl": 14.6,
+        "crossesMidnight": false
+      },
+      {
+        "len": 7,
+        "start": "2026-09-28 23:03",
+        "end": "2026-09-29 00:49",
+        "date_start": "2026-09-28",
+        "date_end": "2026-09-29",
+        "weekday": "Lun",
+        "startHour": 23,
+        "endHour": 0,
+        "hoursCovered": [
+          0,
+          23
+        ],
+        "n_trades": 7,
+        "wins": 7,
+        "pnl": 10.5,
+        "crossesMidnight": true
+      },
+      {
+        "len": 17,
+        "start": "2026-09-29 06:33",
+        "end": "2026-09-29 13:49",
+        "date_start": "2026-09-29",
+        "date_end": "2026-09-29",
+        "weekday": "Mar",
+        "startHour": 6,
+        "endHour": 13,
+        "hoursCovered": [
+          6,
+          7,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "n_trades": 17,
+        "wins": 17,
+        "pnl": 24.7,
+        "crossesMidnight": false
+      },
+      {
+        "len": 7,
+        "start": "2026-09-29 19:05",
+        "end": "2026-09-29 20:48",
+        "date_start": "2026-09-29",
+        "date_end": "2026-09-29",
+        "weekday": "Mar",
+        "startHour": 19,
+        "endHour": 20,
+        "hoursCovered": [
+          19,
+          20
+        ],
+        "n_trades": 7,
+        "wins": 7,
+        "pnl": 10.5,
+        "crossesMidnight": false
+      },
+      {
+        "len": 6,
+        "start": "2026-09-30 09:04",
+        "end": "2026-09-30 15:21",
+        "date_start": "2026-09-30",
+        "date_end": "2026-09-30",
+        "weekday": "Mer",
+        "startHour": 9,
+        "endHour": 15,
+        "hoursCovered": [
+          9,
+          10,
+          11,
+          15
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 13.27,
+        "crossesMidnight": false
+      },
+      {
+        "len": 8,
+        "start": "2026-10-01 22:34",
+        "end": "2026-10-02 00:33",
+        "date_start": "2026-10-01",
+        "date_end": "2026-10-02",
+        "weekday": "Jeu",
+        "startHour": 22,
+        "endHour": 0,
+        "hoursCovered": [
+          0,
+          22,
+          23
+        ],
+        "n_trades": 8,
+        "wins": 8,
+        "pnl": 54.22,
+        "crossesMidnight": true
+      },
+      {
+        "len": 6,
+        "start": "2026-10-02 06:33",
+        "end": "2026-10-02 07:48",
+        "date_start": "2026-10-02",
+        "date_end": "2026-10-02",
+        "weekday": "Ven",
+        "startHour": 6,
+        "endHour": 7,
+        "hoursCovered": [
+          6,
+          7
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 38.35,
+        "crossesMidnight": false
+      },
+      {
+        "len": 10,
+        "start": "2026-10-02 08:50",
+        "end": "2026-10-02 11:22",
+        "date_start": "2026-10-02",
+        "date_end": "2026-10-02",
+        "weekday": "Ven",
+        "startHour": 8,
+        "endHour": 11,
+        "hoursCovered": [
+          8,
+          9,
+          10,
+          11
+        ],
+        "n_trades": 10,
+        "wins": 10,
+        "pnl": 63.86,
+        "crossesMidnight": false
+      },
+      {
+        "len": 6,
+        "start": "2026-10-03 06:33",
+        "end": "2026-10-03 07:48",
+        "date_start": "2026-10-03",
+        "date_end": "2026-10-03",
+        "weekday": "Sam",
+        "startHour": 6,
+        "endHour": 7,
+        "hoursCovered": [
+          6,
+          7
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 34.66,
+        "crossesMidnight": false
+      },
+      {
+        "len": 7,
+        "start": "2026-10-03 14:48",
+        "end": "2026-10-03 16:33",
+        "date_start": "2026-10-03",
+        "date_end": "2026-10-03",
+        "weekday": "Sam",
+        "startHour": 14,
+        "endHour": 16,
+        "hoursCovered": [
+          14,
+          15,
+          16
+        ],
+        "n_trades": 7,
+        "wins": 7,
+        "pnl": 42.13,
+        "crossesMidnight": false
+      },
+      {
+        "len": 9,
+        "start": "2026-10-03 17:20",
+        "end": "2026-10-03 19:18",
+        "date_start": "2026-10-03",
+        "date_end": "2026-10-03",
+        "weekday": "Sam",
+        "startHour": 17,
+        "endHour": 19,
+        "hoursCovered": [
+          17,
+          18,
+          19
+        ],
+        "n_trades": 9,
+        "wins": 9,
+        "pnl": 57.19,
+        "crossesMidnight": false
+      },
+      {
+        "len": 6,
+        "start": "2026-10-03 22:05",
+        "end": "2026-10-03 23:19",
+        "date_start": "2026-10-03",
+        "date_end": "2026-10-03",
+        "weekday": "Sam",
+        "startHour": 22,
+        "endHour": 23,
+        "hoursCovered": [
+          22,
+          23
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 39.87,
+        "crossesMidnight": false
+      },
+      {
+        "len": 7,
+        "start": "2026-10-04 12:04",
+        "end": "2026-10-04 13:50",
+        "date_start": "2026-10-04",
+        "date_end": "2026-10-04",
+        "weekday": "Dim",
+        "startHour": 12,
+        "endHour": 13,
+        "hoursCovered": [
+          12,
+          13
+        ],
+        "n_trades": 7,
+        "wins": 7,
+        "pnl": 48.1,
+        "crossesMidnight": false
+      },
+      {
+        "len": 8,
+        "start": "2026-10-04 14:21",
+        "end": "2026-10-04 16:18",
+        "date_start": "2026-10-04",
+        "date_end": "2026-10-04",
+        "weekday": "Dim",
+        "startHour": 14,
+        "endHour": 16,
+        "hoursCovered": [
+          14,
+          15,
+          16
+        ],
+        "n_trades": 8,
+        "wins": 8,
+        "pnl": 52.66,
+        "crossesMidnight": false
+      },
+      {
+        "len": 8,
+        "start": "2026-10-04 22:18",
+        "end": "2026-10-05 00:03",
+        "date_start": "2026-10-04",
+        "date_end": "2026-10-05",
+        "weekday": "Dim",
+        "startHour": 22,
+        "endHour": 0,
+        "hoursCovered": [
+          0,
+          22,
+          23
+        ],
+        "n_trades": 8,
+        "wins": 8,
+        "pnl": 47.93,
+        "crossesMidnight": true
+      },
+      {
+        "len": 9,
+        "start": "2026-10-05 10:34",
+        "end": "2026-10-05 12:33",
+        "date_start": "2026-10-05",
+        "date_end": "2026-10-05",
+        "weekday": "Lun",
+        "startHour": 10,
+        "endHour": 12,
+        "hoursCovered": [
+          10,
+          11,
+          12
+        ],
+        "n_trades": 9,
+        "wins": 9,
+        "pnl": 50.75,
+        "crossesMidnight": false
+      }
+    ],
+    "exactly6": [
+      {
+        "len": 6,
+        "start": "2026-09-28 07:05",
+        "end": "2026-09-28 08:48",
+        "date_start": "2026-09-28",
+        "date_end": "2026-09-28",
+        "weekday": "Lun",
+        "startHour": 7,
+        "endHour": 8,
+        "hoursCovered": [
+          7,
+          8
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 8.65,
+        "crossesMidnight": false
+      },
+      {
+        "len": 6,
+        "start": "2026-09-28 09:39",
+        "end": "2026-09-28 10:48",
+        "date_start": "2026-09-28",
+        "date_end": "2026-09-28",
+        "weekday": "Lun",
+        "startHour": 9,
+        "endHour": 10,
+        "hoursCovered": [
+          9,
+          10
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 8.2,
+        "crossesMidnight": false
+      },
+      {
+        "len": 6,
+        "start": "2026-09-30 09:04",
+        "end": "2026-09-30 15:21",
+        "date_start": "2026-09-30",
+        "date_end": "2026-09-30",
+        "weekday": "Mer",
+        "startHour": 9,
+        "endHour": 15,
+        "hoursCovered": [
+          9,
+          10,
+          11,
+          15
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 13.27,
+        "crossesMidnight": false
+      },
+      {
+        "len": 6,
+        "start": "2026-10-02 06:33",
+        "end": "2026-10-02 07:48",
+        "date_start": "2026-10-02",
+        "date_end": "2026-10-02",
+        "weekday": "Ven",
+        "startHour": 6,
+        "endHour": 7,
+        "hoursCovered": [
+          6,
+          7
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 38.35,
+        "crossesMidnight": false
+      },
+      {
+        "len": 6,
+        "start": "2026-10-03 06:33",
+        "end": "2026-10-03 07:48",
+        "date_start": "2026-10-03",
+        "date_end": "2026-10-03",
+        "weekday": "Sam",
+        "startHour": 6,
+        "endHour": 7,
+        "hoursCovered": [
+          6,
+          7
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 34.66,
+        "crossesMidnight": false
+      },
+      {
+        "len": 6,
+        "start": "2026-10-03 22:05",
+        "end": "2026-10-03 23:19",
+        "date_start": "2026-10-03",
+        "date_end": "2026-10-03",
+        "weekday": "Sam",
+        "startHour": 22,
+        "endHour": 23,
+        "hoursCovered": [
+          22,
+          23
+        ],
+        "n_trades": 6,
+        "wins": 6,
+        "pnl": 39.87,
+        "crossesMidnight": false
+      }
+    ]
+  },
+  "allWinSlots": {
+    "note": "allWins = every trade in bin is a win. Aggregate hour/2h/3h rarely hit 100% given n~17-40. Day-level and day×hour are the practical flags.",
+    "hours_100_any_n": [],
+    "hours_100_n_ge5": [],
+    "hours_nearPerfect_wr_ge90_n_ge5": [
+      {
+        "bin": "07h-08h",
+        "kind": "1h",
+        "n": 20,
+        "wins": 18,
+        "losses": 2,
+        "wr": 90.0,
+        "pnl": 44.94,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": true,
+        "flag100": false
+      },
+      {
+        "bin": "23h-00h",
+        "kind": "1h",
+        "n": 21,
+        "wins": 20,
+        "losses": 1,
+        "wr": 95.2,
+        "pnl": 91.17,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": true,
+        "flag100": false
+      }
+    ],
+    "bins2h_100_n_ge5": [],
+    "bins2h_near": [],
+    "bins3h_aligned_100_n_ge5": [],
+    "bins3h_aligned_near": [],
+    "bins3h_rolling_100_n_ge5": [],
+    "bins3h_rolling_near": [],
+    "calendarDays_100": [],
+    "calendarDays_near": [],
+    "dayHour_100_n_ge2": [
+      {
+        "bin": "2026-09-26 09h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.85,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-26"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-26",
+        "hour": 9,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-09-26 16h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.75,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-26"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-26",
+        "hour": 16,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-09-26 17h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 3.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-26"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-26",
+        "hour": 17,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-09-27 16h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 2.5,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-27",
+        "hour": 16,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-27 17h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.7,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-27",
+        "hour": 17,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-27 18h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.2,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-27",
+        "hour": 18,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-27 19h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.1,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-27",
+        "hour": 19,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-27 20h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.95,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-27",
+        "hour": 20,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-28 00h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 2.85,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 0,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 07h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 2.8,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 7,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 08h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.85,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 8,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 10h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.4,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 10,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 13h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.9,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 13,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 14h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 3.3,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 14,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 20h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 6.0,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 20,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 21h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 21,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 23h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.8,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 23,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-29 00h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.7,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 0,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 07h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.7,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 7,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 09h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.15,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 9,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 11h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 3.1,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 11,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 12h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.5,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 12,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 13h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.55,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 13,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 19h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 6.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 19,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 20h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 20,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-30 01h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.85,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-30"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-30",
+        "hour": 1,
+        "weekday": "Mer"
+      },
+      {
+        "bin": "2026-09-30 06h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 3.0,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-30"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-30",
+        "hour": 6,
+        "weekday": "Mer"
+      },
+      {
+        "bin": "2026-09-30 07h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 2.7,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-30"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-30",
+        "hour": 7,
+        "weekday": "Mer"
+      },
+      {
+        "bin": "2026-09-30 10h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 3.9,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-30"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-30",
+        "hour": 10,
+        "weekday": "Mer"
+      },
+      {
+        "bin": "2026-10-01 17h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 12.52,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-01"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-01",
+        "hour": 17,
+        "weekday": "Jeu"
+      },
+      {
+        "bin": "2026-10-01 23h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 25.31,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-01"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-01",
+        "hour": 23,
+        "weekday": "Jeu"
+      },
+      {
+        "bin": "2026-10-02 02h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 12.55,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "hour": 2,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-02 03h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 11.54,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "hour": 3,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-02 07h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 26.11,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "hour": 7,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-02 09h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 25.29,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "hour": 9,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-02 10h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 18.61,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "hour": 10,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-02 20h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 14.45,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "hour": 20,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-02 23h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 27.96,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "hour": 23,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-03 04h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 21.48,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 4,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-03 07h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 23.49,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 7,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-03 11h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 24.37,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 11,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-03 15h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 24.76,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 15,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-03 16h",
+        "kind": "day-hour",
+        "n": 2,
+        "wins": 2,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 10.31,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 16,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-03 18h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 27.62,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 18,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-03 22h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 27.63,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 22,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-04 09h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 19.13,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 9,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-04 12h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 21.52,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 12,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-04 13h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 26.58,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 13,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-04 15h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 23.76,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 15,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-04 18h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 20.36,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 18,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-04 23h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 28.91,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 23,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-05 03h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 15.61,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-05"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-05",
+        "hour": 3,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-10-05 11h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 25.26,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-05"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-05",
+        "hour": 11,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-10-05 12h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 17.51,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-05"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-05",
+        "hour": 12,
+        "weekday": "Lun"
+      }
+    ],
+    "dayHour_100_n_ge3": [
+      {
+        "bin": "2026-09-26 09h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.85,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-26"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-26",
+        "hour": 9,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-09-26 16h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.75,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-26"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-26",
+        "hour": 16,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-09-27 17h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.7,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-27",
+        "hour": 17,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-27 18h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.2,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-27",
+        "hour": 18,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-27 19h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.1,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-27",
+        "hour": 19,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-27 20h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.95,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-27",
+        "hour": 20,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-28 08h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.85,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 8,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 10h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.4,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 10,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 13h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.9,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 13,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 20h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 6.0,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 20,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 21h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 21,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 23h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.8,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "hour": 23,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-29 00h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.7,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 0,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 07h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.7,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 7,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 09h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.15,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 9,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 12h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.5,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 12,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 13h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.55,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 13,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 19h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 6.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 19,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 20h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "hour": 20,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-30 01h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.85,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-30"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-30",
+        "hour": 1,
+        "weekday": "Mer"
+      },
+      {
+        "bin": "2026-09-30 10h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 3.9,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-30"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-30",
+        "hour": 10,
+        "weekday": "Mer"
+      },
+      {
+        "bin": "2026-10-01 17h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 12.52,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-01"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-01",
+        "hour": 17,
+        "weekday": "Jeu"
+      },
+      {
+        "bin": "2026-10-01 23h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 25.31,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-01"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-01",
+        "hour": 23,
+        "weekday": "Jeu"
+      },
+      {
+        "bin": "2026-10-02 07h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 26.11,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "hour": 7,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-02 09h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 25.29,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "hour": 9,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-02 10h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 18.61,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "hour": 10,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-02 23h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 27.96,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "hour": 23,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-03 04h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 21.48,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 4,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-03 07h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 23.49,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 7,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-03 11h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 24.37,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 11,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-03 15h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 24.76,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 15,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-03 18h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 27.62,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 18,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-03 22h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 27.63,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-03",
+        "hour": 22,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-04 09h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 19.13,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 9,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-04 12h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 21.52,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 12,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-04 13h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 26.58,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 13,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-04 15h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 23.76,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 15,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-04 18h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 20.36,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 18,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-04 23h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 28.91,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "hour": 23,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-05 03h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 15.61,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-05"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-05",
+        "hour": 3,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-10-05 11h",
+        "kind": "day-hour",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 25.26,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-05"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-05",
+        "hour": 11,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-10-05 12h",
+        "kind": "day-hour",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 17.51,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-05"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-05",
+        "hour": 12,
+        "weekday": "Lun"
+      }
+    ],
+    "day2h_100_n_ge3": [
+      {
+        "bin": "2026-09-26 16h-18h",
+        "kind": "day-2h",
+        "n": 6,
+        "wins": 6,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 9.0,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-26"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-26",
+        "startHour": 16,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-09-27 16h-18h",
+        "kind": "day-2h",
+        "n": 6,
+        "wins": 6,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 8.2,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-27",
+        "startHour": 16,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-27 18h-20h",
+        "kind": "day-2h",
+        "n": 6,
+        "wins": 6,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 8.3,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-27",
+        "startHour": 18,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-28 00h-02h",
+        "kind": "day-2h",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-28",
+        "startHour": 0,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-28 20h-22h",
+        "kind": "day-2h",
+        "n": 7,
+        "wins": 7,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 10.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-28",
+        "startHour": 20,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-29 06h-08h",
+        "kind": "day-2h",
+        "n": 5,
+        "wins": 5,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 7.05,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-29",
+        "startHour": 6,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 08h-10h",
+        "kind": "day-2h",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.15,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "startHour": 8,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 10h-12h",
+        "kind": "day-2h",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 4.45,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-29",
+        "startHour": 10,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 12h-14h",
+        "kind": "day-2h",
+        "n": 6,
+        "wins": 6,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 9.05,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-29",
+        "startHour": 12,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-30 06h-08h",
+        "kind": "day-2h",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.7,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-30"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-30",
+        "startHour": 6,
+        "weekday": "Mer"
+      },
+      {
+        "bin": "2026-09-30 10h-12h",
+        "kind": "day-2h",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 5.5,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-30"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-09-30",
+        "startHour": 10,
+        "weekday": "Mer"
+      },
+      {
+        "bin": "2026-10-02 02h-04h",
+        "kind": "day-2h",
+        "n": 4,
+        "wins": 4,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 24.09,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-02",
+        "startHour": 2,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-03 14h-16h",
+        "kind": "day-2h",
+        "n": 5,
+        "wins": 5,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 31.82,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-10-03",
+        "startHour": 14,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-04 08h-10h",
+        "kind": "day-2h",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 19.13,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-04",
+        "startHour": 8,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-04 12h-14h",
+        "kind": "day-2h",
+        "n": 7,
+        "wins": 7,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 48.1,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-10-04",
+        "startHour": 12,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-05 12h-14h",
+        "kind": "day-2h",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 17.51,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-05"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-05",
+        "startHour": 12,
+        "weekday": "Lun"
+      }
+    ],
+    "day3h_100_n_ge3": [
+      {
+        "bin": "2026-09-27 18h-21h",
+        "kind": "day-3h",
+        "n": 10,
+        "wins": 10,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 14.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-27",
+        "startHour": 18,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-29 06h-09h",
+        "kind": "day-3h",
+        "n": 5,
+        "wins": 5,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 7.05,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-29",
+        "startHour": 6,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 09h-12h",
+        "kind": "day-3h",
+        "n": 6,
+        "wins": 6,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 8.6,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-29",
+        "startHour": 9,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-30 09h-12h",
+        "kind": "day-3h",
+        "n": 5,
+        "wins": 5,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 7.15,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-30"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-30",
+        "startHour": 9,
+        "weekday": "Mer"
+      },
+      {
+        "bin": "2026-10-05 12h-15h",
+        "kind": "day-3h",
+        "n": 3,
+        "wins": 3,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 17.51,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-05"
+        ],
+        "allWins": true,
+        "nearPerfect": false,
+        "flag100": true,
+        "date": "2026-10-05",
+        "startHour": 12,
+        "weekday": "Lun"
+      }
+    ],
+    "day2h_near": [
+      {
+        "bin": "2026-09-26 16h-18h",
+        "kind": "day-2h",
+        "n": 6,
+        "wins": 6,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 9.0,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-26"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-26",
+        "startHour": 16,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-09-27 16h-18h",
+        "kind": "day-2h",
+        "n": 6,
+        "wins": 6,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 8.2,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-27",
+        "startHour": 16,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-27 18h-20h",
+        "kind": "day-2h",
+        "n": 6,
+        "wins": 6,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 8.3,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-27",
+        "startHour": 18,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-28 20h-22h",
+        "kind": "day-2h",
+        "n": 7,
+        "wins": 7,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 10.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-28",
+        "startHour": 20,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-29 06h-08h",
+        "kind": "day-2h",
+        "n": 5,
+        "wins": 5,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 7.05,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-29",
+        "startHour": 6,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 12h-14h",
+        "kind": "day-2h",
+        "n": 6,
+        "wins": 6,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 9.05,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-29",
+        "startHour": 12,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-10-03 14h-16h",
+        "kind": "day-2h",
+        "n": 5,
+        "wins": 5,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 31.82,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-10-03",
+        "startHour": 14,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-04 12h-14h",
+        "kind": "day-2h",
+        "n": 7,
+        "wins": 7,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 48.1,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-10-04",
+        "startHour": 12,
+        "weekday": "Dim"
+      }
+    ],
+    "day3h_near": [
+      {
+        "bin": "2026-09-26 15h-18h",
+        "kind": "day-3h",
+        "n": 10,
+        "wins": 9,
+        "losses": 1,
+        "wr": 90.0,
+        "pnl": 9.8,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-26"
+        ],
+        "allWins": false,
+        "nearPerfect": true,
+        "flag100": false,
+        "date": "2026-09-26",
+        "startHour": 15,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-09-27 18h-21h",
+        "kind": "day-3h",
+        "n": 10,
+        "wins": 10,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 14.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-27",
+        "startHour": 18,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-28 12h-15h",
+        "kind": "day-3h",
+        "n": 10,
+        "wins": 9,
+        "losses": 1,
+        "wr": 90.0,
+        "pnl": 9.85,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": false,
+        "nearPerfect": true,
+        "flag100": false,
+        "date": "2026-09-28",
+        "startHour": 12,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-29 06h-09h",
+        "kind": "day-3h",
+        "n": 5,
+        "wins": 5,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 7.05,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-29",
+        "startHour": 6,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-29 09h-12h",
+        "kind": "day-3h",
+        "n": 6,
+        "wins": 6,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 8.6,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-29",
+        "startHour": 9,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-30 09h-12h",
+        "kind": "day-3h",
+        "n": 5,
+        "wins": 5,
+        "losses": 0,
+        "wr": 100.0,
+        "pnl": 7.15,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-30"
+        ],
+        "allWins": true,
+        "nearPerfect": true,
+        "flag100": true,
+        "date": "2026-09-30",
+        "startHour": 9,
+        "weekday": "Mer"
+      },
+      {
+        "bin": "2026-10-02 09h-12h",
+        "kind": "day-3h",
+        "n": 10,
+        "wins": 9,
+        "losses": 1,
+        "wr": 90.0,
+        "pnl": 42.12,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": false,
+        "nearPerfect": true,
+        "flag100": false,
+        "date": "2026-10-02",
+        "startHour": 9,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-03 15h-18h",
+        "kind": "day-3h",
+        "n": 10,
+        "wins": 9,
+        "losses": 1,
+        "wr": 90.0,
+        "pnl": 39.34,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": false,
+        "nearPerfect": true,
+        "flag100": false,
+        "date": "2026-10-03",
+        "startHour": 15,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-04 12h-15h",
+        "kind": "day-3h",
+        "n": 10,
+        "wins": 9,
+        "losses": 1,
+        "wr": 90.0,
+        "pnl": 47.88,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": true,
+        "flag100": false,
+        "date": "2026-10-04",
+        "startHour": 12,
+        "weekday": "Dim"
+      }
+    ]
+  },
+  "tables": {
+    "byHour": [
+      {
+        "bin": "00h-01h",
+        "kind": "1h",
+        "n": 24,
+        "wins": 15,
+        "losses": 9,
+        "wr": 62.5,
+        "pnl": -66.42,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "01h-02h",
+        "kind": "1h",
+        "n": 19,
+        "wins": 15,
+        "losses": 4,
+        "wr": 78.9,
+        "pnl": 16.53,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "02h-03h",
+        "kind": "1h",
+        "n": 18,
+        "wins": 5,
+        "losses": 13,
+        "wr": 27.8,
+        "pnl": -73.47,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "03h-04h",
+        "kind": "1h",
+        "n": 17,
+        "wins": 14,
+        "losses": 3,
+        "wr": 82.4,
+        "pnl": 38.51,
+        "distinctDays": 5,
+        "days": [
+          "2026-09-28",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "04h-05h",
+        "kind": "1h",
+        "n": 18,
+        "wins": 11,
+        "losses": 7,
+        "wr": 61.1,
+        "pnl": -22.79,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "05h-06h",
+        "kind": "1h",
+        "n": 19,
+        "wins": 13,
+        "losses": 6,
+        "wr": 68.4,
+        "pnl": 0.29,
+        "distinctDays": 5,
+        "days": [
+          "2026-09-28",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "06h-07h",
+        "kind": "1h",
+        "n": 21,
+        "wins": 11,
+        "losses": 10,
+        "wr": 52.4,
+        "pnl": -71.26,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "07h-08h",
+        "kind": "1h",
+        "n": 20,
+        "wins": 18,
+        "losses": 2,
+        "wr": 90.0,
+        "pnl": 44.94,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": true,
+        "flag100": false
+      },
+      {
+        "bin": "08h-09h",
+        "kind": "1h",
+        "n": 20,
+        "wins": 12,
+        "losses": 8,
+        "wr": 60.0,
+        "pnl": -39.57,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "09h-10h",
+        "kind": "1h",
+        "n": 26,
+        "wins": 21,
+        "losses": 5,
+        "wr": 80.8,
+        "pnl": 22.25,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "10h-11h",
+        "kind": "1h",
+        "n": 23,
+        "wins": 18,
+        "losses": 5,
+        "wr": 78.3,
+        "pnl": -1.13,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "11h-12h",
+        "kind": "1h",
+        "n": 21,
+        "wins": 15,
+        "losses": 6,
+        "wr": 71.4,
+        "pnl": 8.0,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "12h-13h",
+        "kind": "1h",
+        "n": 24,
+        "wins": 17,
+        "losses": 7,
+        "wr": 70.8,
+        "pnl": 1.88,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "13h-14h",
+        "kind": "1h",
+        "n": 19,
+        "wins": 15,
+        "losses": 4,
+        "wr": 78.9,
+        "pnl": 12.3,
+        "distinctDays": 5,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-02",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "14h-15h",
+        "kind": "1h",
+        "n": 17,
+        "wins": 11,
+        "losses": 6,
+        "wr": 64.7,
+        "pnl": -3.07,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "15h-16h",
+        "kind": "1h",
+        "n": 26,
+        "wins": 17,
+        "losses": 9,
+        "wr": 65.4,
+        "pnl": 28.21,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "16h-17h",
+        "kind": "1h",
+        "n": 20,
+        "wins": 14,
+        "losses": 6,
+        "wr": 70.0,
+        "pnl": -35.62,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "17h-18h",
+        "kind": "1h",
+        "n": 21,
+        "wins": 17,
+        "losses": 4,
+        "wr": 81.0,
+        "pnl": 13.04,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "18h-19h",
+        "kind": "1h",
+        "n": 19,
+        "wins": 12,
+        "losses": 7,
+        "wr": 63.2,
+        "pnl": -7.16,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "19h-20h",
+        "kind": "1h",
+        "n": 19,
+        "wins": 14,
+        "losses": 5,
+        "wr": 73.7,
+        "pnl": -25.29,
+        "distinctDays": 5,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "20h-21h",
+        "kind": "1h",
+        "n": 21,
+        "wins": 18,
+        "losses": 3,
+        "wr": 85.7,
+        "pnl": 18.89,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "21h-22h",
+        "kind": "1h",
+        "n": 25,
+        "wins": 14,
+        "losses": 11,
+        "wr": 56.0,
+        "pnl": -27.84,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "22h-23h",
+        "kind": "1h",
+        "n": 19,
+        "wins": 13,
+        "losses": 6,
+        "wr": 68.4,
+        "pnl": 4.35,
+        "distinctDays": 5,
+        "days": [
+          "2026-09-28",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "23h-00h",
+        "kind": "1h",
+        "n": 21,
+        "wins": 20,
+        "losses": 1,
+        "wr": 95.2,
+        "pnl": 91.17,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": true,
+        "flag100": false
+      }
+    ],
+    "by2h": [
+      {
+        "bin": "00h-02h",
+        "kind": "2h",
+        "n": 43,
+        "wins": 30,
+        "losses": 13,
+        "wr": 69.8,
+        "pnl": -49.89,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "02h-04h",
+        "kind": "2h",
+        "n": 35,
+        "wins": 19,
+        "losses": 16,
+        "wr": 54.3,
+        "pnl": -34.96,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "04h-06h",
+        "kind": "2h",
+        "n": 37,
+        "wins": 24,
+        "losses": 13,
+        "wr": 64.9,
+        "pnl": -22.5,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "06h-08h",
+        "kind": "2h",
+        "n": 41,
+        "wins": 29,
+        "losses": 12,
+        "wr": 70.7,
+        "pnl": -26.32,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "08h-10h",
+        "kind": "2h",
+        "n": 46,
+        "wins": 33,
+        "losses": 13,
+        "wr": 71.7,
+        "pnl": -17.32,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "10h-12h",
+        "kind": "2h",
+        "n": 44,
+        "wins": 33,
+        "losses": 11,
+        "wr": 75.0,
+        "pnl": 6.87,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "12h-14h",
+        "kind": "2h",
+        "n": 43,
+        "wins": 32,
+        "losses": 11,
+        "wr": 74.4,
+        "pnl": 14.18,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "14h-16h",
+        "kind": "2h",
+        "n": 43,
+        "wins": 28,
+        "losses": 15,
+        "wr": 65.1,
+        "pnl": 25.14,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "16h-18h",
+        "kind": "2h",
+        "n": 41,
+        "wins": 31,
+        "losses": 10,
+        "wr": 75.6,
+        "pnl": -22.58,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "18h-20h",
+        "kind": "2h",
+        "n": 38,
+        "wins": 26,
+        "losses": 12,
+        "wr": 68.4,
+        "pnl": -32.45,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "20h-22h",
+        "kind": "2h",
+        "n": 46,
+        "wins": 32,
+        "losses": 14,
+        "wr": 69.6,
+        "pnl": -8.95,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "22h-00h",
+        "kind": "2h",
+        "n": 40,
+        "wins": 33,
+        "losses": 7,
+        "wr": 82.5,
+        "pnl": 95.52,
+        "distinctDays": 6,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      }
+    ],
+    "by3h_aligned": [
+      {
+        "bin": "00h-03h",
+        "kind": "3h-aligned",
+        "n": 61,
+        "wins": 35,
+        "losses": 26,
+        "wr": 57.4,
+        "pnl": -123.36,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "03h-06h",
+        "kind": "3h-aligned",
+        "n": 54,
+        "wins": 38,
+        "losses": 16,
+        "wr": 70.4,
+        "pnl": 16.01,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "06h-09h",
+        "kind": "3h-aligned",
+        "n": 61,
+        "wins": 41,
+        "losses": 20,
+        "wr": 67.2,
+        "pnl": -65.89,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "09h-12h",
+        "kind": "3h-aligned",
+        "n": 70,
+        "wins": 54,
+        "losses": 16,
+        "wr": 77.1,
+        "pnl": 29.12,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "12h-15h",
+        "kind": "3h-aligned",
+        "n": 60,
+        "wins": 43,
+        "losses": 17,
+        "wr": 71.7,
+        "pnl": 11.11,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "15h-18h",
+        "kind": "3h-aligned",
+        "n": 67,
+        "wins": 48,
+        "losses": 19,
+        "wr": 71.6,
+        "pnl": 5.63,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "18h-21h",
+        "kind": "3h-aligned",
+        "n": 59,
+        "wins": 44,
+        "losses": 15,
+        "wr": 74.6,
+        "pnl": -13.56,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "21h-00h",
+        "kind": "3h-aligned",
+        "n": 65,
+        "wins": 47,
+        "losses": 18,
+        "wr": 72.3,
+        "pnl": 67.68,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      }
+    ],
+    "by3h_rolling": [
+      {
+        "bin": "00h-03h",
+        "kind": "3h-rolling",
+        "n": 61,
+        "wins": 35,
+        "losses": 26,
+        "wr": 57.4,
+        "pnl": -123.36,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "01h-04h",
+        "kind": "3h-rolling",
+        "n": 54,
+        "wins": 34,
+        "losses": 20,
+        "wr": 63.0,
+        "pnl": -18.43,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "02h-05h",
+        "kind": "3h-rolling",
+        "n": 53,
+        "wins": 30,
+        "losses": 23,
+        "wr": 56.6,
+        "pnl": -57.75,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "03h-06h",
+        "kind": "3h-rolling",
+        "n": 54,
+        "wins": 38,
+        "losses": 16,
+        "wr": 70.4,
+        "pnl": 16.01,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "04h-07h",
+        "kind": "3h-rolling",
+        "n": 58,
+        "wins": 35,
+        "losses": 23,
+        "wr": 60.3,
+        "pnl": -93.76,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "05h-08h",
+        "kind": "3h-rolling",
+        "n": 60,
+        "wins": 42,
+        "losses": 18,
+        "wr": 70.0,
+        "pnl": -26.03,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "06h-09h",
+        "kind": "3h-rolling",
+        "n": 61,
+        "wins": 41,
+        "losses": 20,
+        "wr": 67.2,
+        "pnl": -65.89,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "07h-10h",
+        "kind": "3h-rolling",
+        "n": 66,
+        "wins": 51,
+        "losses": 15,
+        "wr": 77.3,
+        "pnl": 27.62,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "08h-11h",
+        "kind": "3h-rolling",
+        "n": 69,
+        "wins": 51,
+        "losses": 18,
+        "wr": 73.9,
+        "pnl": -18.45,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "09h-12h",
+        "kind": "3h-rolling",
+        "n": 70,
+        "wins": 54,
+        "losses": 16,
+        "wr": 77.1,
+        "pnl": 29.12,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "10h-13h",
+        "kind": "3h-rolling",
+        "n": 68,
+        "wins": 50,
+        "losses": 18,
+        "wr": 73.5,
+        "pnl": 8.75,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "11h-14h",
+        "kind": "3h-rolling",
+        "n": 64,
+        "wins": 47,
+        "losses": 17,
+        "wr": 73.4,
+        "pnl": 22.18,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "12h-15h",
+        "kind": "3h-rolling",
+        "n": 60,
+        "wins": 43,
+        "losses": 17,
+        "wr": 71.7,
+        "pnl": 11.11,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "13h-16h",
+        "kind": "3h-rolling",
+        "n": 62,
+        "wins": 43,
+        "losses": 19,
+        "wr": 69.4,
+        "pnl": 37.44,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "14h-17h",
+        "kind": "3h-rolling",
+        "n": 63,
+        "wins": 42,
+        "losses": 21,
+        "wr": 66.7,
+        "pnl": -10.48,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "15h-18h",
+        "kind": "3h-rolling",
+        "n": 67,
+        "wins": 48,
+        "losses": 19,
+        "wr": 71.6,
+        "pnl": 5.63,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "16h-19h",
+        "kind": "3h-rolling",
+        "n": 60,
+        "wins": 43,
+        "losses": 17,
+        "wr": 71.7,
+        "pnl": -29.74,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "17h-20h",
+        "kind": "3h-rolling",
+        "n": 59,
+        "wins": 43,
+        "losses": 16,
+        "wr": 72.9,
+        "pnl": -19.41,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "18h-21h",
+        "kind": "3h-rolling",
+        "n": 59,
+        "wins": 44,
+        "losses": 15,
+        "wr": 74.6,
+        "pnl": -13.56,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "19h-22h",
+        "kind": "3h-rolling",
+        "n": 65,
+        "wins": 46,
+        "losses": 19,
+        "wr": 70.8,
+        "pnl": -34.24,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "20h-23h",
+        "kind": "3h-rolling",
+        "n": 65,
+        "wins": 45,
+        "losses": 20,
+        "wr": 69.2,
+        "pnl": -4.6,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "21h-00h",
+        "kind": "3h-rolling",
+        "n": 65,
+        "wins": 47,
+        "losses": 18,
+        "wr": 72.3,
+        "pnl": 67.68,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "22h-01h",
+        "kind": "3h-rolling",
+        "n": 64,
+        "wins": 48,
+        "losses": 16,
+        "wr": 75.0,
+        "pnl": 29.1,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "23h-02h",
+        "kind": "3h-rolling",
+        "n": 64,
+        "wins": 50,
+        "losses": 14,
+        "wr": 78.1,
+        "pnl": 41.28,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      }
+    ],
+    "by4h_rolling": [
+      {
+        "bin": "00h-04h",
+        "kind": "4h-rolling",
+        "n": 78,
+        "wins": 49,
+        "losses": 29,
+        "wr": 62.8,
+        "pnl": -84.85,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "01h-05h",
+        "kind": "4h-rolling",
+        "n": 72,
+        "wins": 45,
+        "losses": 27,
+        "wr": 62.5,
+        "pnl": -41.22,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "02h-06h",
+        "kind": "4h-rolling",
+        "n": 72,
+        "wins": 43,
+        "losses": 29,
+        "wr": 59.7,
+        "pnl": -57.46,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "03h-07h",
+        "kind": "4h-rolling",
+        "n": 75,
+        "wins": 49,
+        "losses": 26,
+        "wr": 65.3,
+        "pnl": -55.25,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "04h-08h",
+        "kind": "4h-rolling",
+        "n": 78,
+        "wins": 53,
+        "losses": 25,
+        "wr": 67.9,
+        "pnl": -48.82,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "05h-09h",
+        "kind": "4h-rolling",
+        "n": 80,
+        "wins": 54,
+        "losses": 26,
+        "wr": 67.5,
+        "pnl": -65.6,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "06h-10h",
+        "kind": "4h-rolling",
+        "n": 87,
+        "wins": 62,
+        "losses": 25,
+        "wr": 71.3,
+        "pnl": -43.64,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "07h-11h",
+        "kind": "4h-rolling",
+        "n": 89,
+        "wins": 69,
+        "losses": 20,
+        "wr": 77.5,
+        "pnl": 26.49,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "08h-12h",
+        "kind": "4h-rolling",
+        "n": 90,
+        "wins": 66,
+        "losses": 24,
+        "wr": 73.3,
+        "pnl": -10.45,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "09h-13h",
+        "kind": "4h-rolling",
+        "n": 94,
+        "wins": 71,
+        "losses": 23,
+        "wr": 75.5,
+        "pnl": 31.0,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "10h-14h",
+        "kind": "4h-rolling",
+        "n": 87,
+        "wins": 65,
+        "losses": 22,
+        "wr": 74.7,
+        "pnl": 21.05,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "11h-15h",
+        "kind": "4h-rolling",
+        "n": 81,
+        "wins": 58,
+        "losses": 23,
+        "wr": 71.6,
+        "pnl": 19.11,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "12h-16h",
+        "kind": "4h-rolling",
+        "n": 86,
+        "wins": 60,
+        "losses": 26,
+        "wr": 69.8,
+        "pnl": 39.32,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "13h-17h",
+        "kind": "4h-rolling",
+        "n": 82,
+        "wins": 57,
+        "losses": 25,
+        "wr": 69.5,
+        "pnl": 1.82,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "14h-18h",
+        "kind": "4h-rolling",
+        "n": 84,
+        "wins": 59,
+        "losses": 25,
+        "wr": 70.2,
+        "pnl": 2.56,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "15h-19h",
+        "kind": "4h-rolling",
+        "n": 86,
+        "wins": 60,
+        "losses": 26,
+        "wr": 69.8,
+        "pnl": -1.53,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "16h-20h",
+        "kind": "4h-rolling",
+        "n": 79,
+        "wins": 57,
+        "losses": 22,
+        "wr": 72.2,
+        "pnl": -55.03,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "17h-21h",
+        "kind": "4h-rolling",
+        "n": 80,
+        "wins": 61,
+        "losses": 19,
+        "wr": 76.2,
+        "pnl": -0.52,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "18h-22h",
+        "kind": "4h-rolling",
+        "n": 84,
+        "wins": 58,
+        "losses": 26,
+        "wr": 69.0,
+        "pnl": -41.4,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "19h-23h",
+        "kind": "4h-rolling",
+        "n": 84,
+        "wins": 59,
+        "losses": 25,
+        "wr": 70.2,
+        "pnl": -29.89,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "20h-00h",
+        "kind": "4h-rolling",
+        "n": 86,
+        "wins": 65,
+        "losses": 21,
+        "wr": 75.6,
+        "pnl": 86.57,
+        "distinctDays": 7,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "21h-01h",
+        "kind": "4h-rolling",
+        "n": 89,
+        "wins": 62,
+        "losses": 27,
+        "wr": 69.7,
+        "pnl": 1.26,
+        "distinctDays": 9,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "22h-02h",
+        "kind": "4h-rolling",
+        "n": 83,
+        "wins": 63,
+        "losses": 20,
+        "wr": 75.9,
+        "pnl": 45.63,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      },
+      {
+        "bin": "23h-03h",
+        "kind": "4h-rolling",
+        "n": 82,
+        "wins": 55,
+        "losses": 27,
+        "wr": 67.1,
+        "pnl": -32.19,
+        "distinctDays": 8,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false
+      }
+    ],
+    "byDay": [
+      {
+        "bin": "2026-09-26",
+        "kind": "calendar-day",
+        "n": 32,
+        "wins": 22,
+        "losses": 10,
+        "wr": 68.8,
+        "pnl": -2.75,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-26"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-09-27",
+        "kind": "calendar-day",
+        "n": 23,
+        "wins": 18,
+        "losses": 5,
+        "wr": 78.3,
+        "pnl": 7.45,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-27"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-09-28",
+        "kind": "calendar-day",
+        "n": 69,
+        "wins": 51,
+        "losses": 18,
+        "wr": 73.9,
+        "pnl": 9.3,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-28"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false,
+        "weekday": "Lun"
+      },
+      {
+        "bin": "2026-09-29",
+        "kind": "calendar-day",
+        "n": 47,
+        "wins": 33,
+        "losses": 14,
+        "wr": 70.2,
+        "pnl": -0.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-29"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false,
+        "weekday": "Mar"
+      },
+      {
+        "bin": "2026-09-30",
+        "kind": "calendar-day",
+        "n": 24,
+        "wins": 17,
+        "losses": 7,
+        "wr": 70.8,
+        "pnl": -2.25,
+        "distinctDays": 1,
+        "days": [
+          "2026-09-30"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false,
+        "weekday": "Mer"
+      },
+      {
+        "bin": "2026-10-01",
+        "kind": "calendar-day",
+        "n": 22,
+        "wins": 16,
+        "losses": 6,
+        "wr": 72.7,
+        "pnl": 18.1,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-01"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false,
+        "weekday": "Jeu"
+      },
+      {
+        "bin": "2026-10-02",
+        "kind": "calendar-day",
+        "n": 75,
+        "wins": 53,
+        "losses": 22,
+        "wr": 70.7,
+        "pnl": 6.85,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-02"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false,
+        "weekday": "Ven"
+      },
+      {
+        "bin": "2026-10-03",
+        "kind": "calendar-day",
+        "n": 75,
+        "wins": 53,
+        "losses": 22,
+        "wr": 70.7,
+        "pnl": -1.13,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-03"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false,
+        "weekday": "Sam"
+      },
+      {
+        "bin": "2026-10-04",
+        "kind": "calendar-day",
+        "n": 84,
+        "wins": 56,
+        "losses": 28,
+        "wr": 66.7,
+        "pnl": -62.42,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-04"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false,
+        "weekday": "Dim"
+      },
+      {
+        "bin": "2026-10-05",
+        "kind": "calendar-day",
+        "n": 46,
+        "wins": 31,
+        "losses": 15,
+        "wr": 67.4,
+        "pnl": -46.16,
+        "distinctDays": 1,
+        "days": [
+          "2026-10-05"
+        ],
+        "allWins": false,
+        "nearPerfect": false,
+        "flag100": false,
+        "weekday": "Lun"
+      }
+    ]
+  },
+  "recurrence6": {
+    "byStartHour_ge6": [
+      {
+        "startHour": 6,
+        "n_streaks_ge6": 3,
+        "n_streaks_eq6": 2,
+        "distinctDays": 3,
+        "dates": [
+          "2026-09-29",
+          "2026-10-02",
+          "2026-10-03"
+        ],
+        "lengths": [
+          17,
+          6,
+          6
+        ],
+        "starts": [
+          "2026-09-29 06:33",
+          "2026-10-02 06:33",
+          "2026-10-03 06:33"
+        ],
+        "recurs": true
+      },
+      {
+        "startHour": 7,
+        "n_streaks_ge6": 1,
+        "n_streaks_eq6": 1,
+        "distinctDays": 1,
+        "dates": [
+          "2026-09-28"
+        ],
+        "lengths": [
+          6
+        ],
+        "starts": [
+          "2026-09-28 07:05"
+        ],
+        "recurs": false
+      },
+      {
+        "startHour": 8,
+        "n_streaks_ge6": 1,
+        "n_streaks_eq6": 0,
+        "distinctDays": 1,
+        "dates": [
+          "2026-10-02"
+        ],
+        "lengths": [
+          10
+        ],
+        "starts": [
+          "2026-10-02 08:50"
+        ],
+        "recurs": false
+      },
+      {
+        "startHour": 9,
+        "n_streaks_ge6": 2,
+        "n_streaks_eq6": 2,
+        "distinctDays": 2,
+        "dates": [
+          "2026-09-28",
+          "2026-09-30"
+        ],
+        "lengths": [
+          6,
+          6
+        ],
+        "starts": [
+          "2026-09-28 09:39",
+          "2026-09-30 09:04"
+        ],
+        "recurs": true
+      },
+      {
+        "startHour": 10,
+        "n_streaks_ge6": 1,
+        "n_streaks_eq6": 0,
+        "distinctDays": 1,
+        "dates": [
+          "2026-10-05"
+        ],
+        "lengths": [
+          9
+        ],
+        "starts": [
+          "2026-10-05 10:34"
+        ],
+        "recurs": false
+      },
+      {
+        "startHour": 12,
+        "n_streaks_ge6": 1,
+        "n_streaks_eq6": 0,
+        "distinctDays": 1,
+        "dates": [
+          "2026-10-04"
+        ],
+        "lengths": [
+          7
+        ],
+        "starts": [
+          "2026-10-04 12:04"
+        ],
+        "recurs": false
+      },
+      {
+        "startHour": 13,
+        "n_streaks_ge6": 1,
+        "n_streaks_eq6": 0,
+        "distinctDays": 1,
+        "dates": [
+          "2026-09-28"
+        ],
+        "lengths": [
+          7
+        ],
+        "starts": [
+          "2026-09-28 13:04"
+        ],
+        "recurs": false
+      },
+      {
+        "startHour": 14,
+        "n_streaks_ge6": 2,
+        "n_streaks_eq6": 0,
+        "distinctDays": 2,
+        "dates": [
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "lengths": [
+          7,
+          8
+        ],
+        "starts": [
+          "2026-10-03 14:48",
+          "2026-10-04 14:21"
+        ],
+        "recurs": true
+      },
+      {
+        "startHour": 15,
+        "n_streaks_ge6": 1,
+        "n_streaks_eq6": 0,
+        "distinctDays": 1,
+        "dates": [
+          "2026-09-26"
+        ],
+        "lengths": [
+          9
+        ],
+        "starts": [
+          "2026-09-26 15:22"
+        ],
+        "recurs": false
+      },
+      {
+        "startHour": 16,
+        "n_streaks_ge6": 1,
+        "n_streaks_eq6": 0,
+        "distinctDays": 1,
+        "dates": [
+          "2026-09-27"
+        ],
+        "lengths": [
+          17
+        ],
+        "starts": [
+          "2026-09-27 16:03"
+        ],
+        "recurs": false
+      },
+      {
+        "startHour": 17,
+        "n_streaks_ge6": 1,
+        "n_streaks_eq6": 0,
+        "distinctDays": 1,
+        "dates": [
+          "2026-10-03"
+        ],
+        "lengths": [
+          9
+        ],
+        "starts": [
+          "2026-10-03 17:20"
+        ],
+        "recurs": false
+      },
+      {
+        "startHour": 19,
+        "n_streaks_ge6": 2,
+        "n_streaks_eq6": 0,
+        "distinctDays": 2,
+        "dates": [
+          "2026-09-28",
+          "2026-09-29"
+        ],
+        "lengths": [
+          10,
+          7
+        ],
+        "starts": [
+          "2026-09-28 19:48",
+          "2026-09-29 19:05"
+        ],
+        "recurs": true
+      },
+      {
+        "startHour": 22,
+        "n_streaks_ge6": 3,
+        "n_streaks_eq6": 1,
+        "distinctDays": 3,
+        "dates": [
+          "2026-10-01",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "lengths": [
+          8,
+          6,
+          8
+        ],
+        "starts": [
+          "2026-10-01 22:34",
+          "2026-10-03 22:05",
+          "2026-10-04 22:18"
+        ],
+        "recurs": true
+      },
+      {
+        "startHour": 23,
+        "n_streaks_ge6": 1,
+        "n_streaks_eq6": 0,
+        "distinctDays": 1,
+        "dates": [
+          "2026-09-28"
+        ],
+        "lengths": [
+          7
+        ],
+        "starts": [
+          "2026-09-28 23:03"
+        ],
+        "recurs": false
+      }
+    ],
+    "byStartHour_eq6": [
+      {
+        "startHour": 6,
+        "n": 2,
+        "distinctDays": 2,
+        "dates": [
+          "2026-10-02",
+          "2026-10-03"
+        ],
+        "starts": [
+          "2026-10-02 06:33",
+          "2026-10-03 06:33"
+        ],
+        "recurs": true
+      },
+      {
+        "startHour": 7,
+        "n": 1,
+        "distinctDays": 1,
+        "dates": [
+          "2026-09-28"
+        ],
+        "starts": [
+          "2026-09-28 07:05"
+        ],
+        "recurs": false
+      },
+      {
+        "startHour": 9,
+        "n": 2,
+        "distinctDays": 2,
+        "dates": [
+          "2026-09-28",
+          "2026-09-30"
+        ],
+        "starts": [
+          "2026-09-28 09:39",
+          "2026-09-30 09:04"
+        ],
+        "recurs": true
+      },
+      {
+        "startHour": 22,
+        "n": 1,
+        "distinctDays": 1,
+        "dates": [
+          "2026-10-03"
+        ],
+        "starts": [
+          "2026-10-03 22:05"
+        ],
+        "recurs": false
+      }
+    ],
+    "hourCoverage_ge6": [
+      {
+        "hour": 0,
+        "n_streaks_covering": 3,
+        "distinctDaysWithTradeInGe6Streak": 3,
+        "days": [
+          "2026-09-29",
+          "2026-10-02",
+          "2026-10-05"
+        ],
+        "n_trades_in_ge6": 6,
+        "recurs": true
+      },
+      {
+        "hour": 1,
+        "n_streaks_covering": 0,
+        "distinctDaysWithTradeInGe6Streak": 0,
+        "days": [],
+        "n_trades_in_ge6": 0,
+        "recurs": false
+      },
+      {
+        "hour": 2,
+        "n_streaks_covering": 0,
+        "distinctDaysWithTradeInGe6Streak": 0,
+        "days": [],
+        "n_trades_in_ge6": 0,
+        "recurs": false
+      },
+      {
+        "hour": 3,
+        "n_streaks_covering": 0,
+        "distinctDaysWithTradeInGe6Streak": 0,
+        "days": [],
+        "n_trades_in_ge6": 0,
+        "recurs": false
+      },
+      {
+        "hour": 4,
+        "n_streaks_covering": 0,
+        "distinctDaysWithTradeInGe6Streak": 0,
+        "days": [],
+        "n_trades_in_ge6": 0,
+        "recurs": false
+      },
+      {
+        "hour": 5,
+        "n_streaks_covering": 0,
+        "distinctDaysWithTradeInGe6Streak": 0,
+        "days": [],
+        "n_trades_in_ge6": 0,
+        "recurs": false
+      },
+      {
+        "hour": 6,
+        "n_streaks_covering": 3,
+        "distinctDaysWithTradeInGe6Streak": 3,
+        "days": [
+          "2026-09-29",
+          "2026-10-02",
+          "2026-10-03"
+        ],
+        "n_trades_in_ge6": 5,
+        "recurs": true
+      },
+      {
+        "hour": 7,
+        "n_streaks_covering": 4,
+        "distinctDaysWithTradeInGe6Streak": 4,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-02",
+          "2026-10-03"
+        ],
+        "n_trades_in_ge6": 14,
+        "recurs": true
+      },
+      {
+        "hour": 8,
+        "n_streaks_covering": 2,
+        "distinctDaysWithTradeInGe6Streak": 2,
+        "days": [
+          "2026-09-28",
+          "2026-10-02"
+        ],
+        "n_trades_in_ge6": 5,
+        "recurs": true
+      },
+      {
+        "hour": 9,
+        "n_streaks_covering": 4,
+        "distinctDaysWithTradeInGe6Streak": 4,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02"
+        ],
+        "n_trades_in_ge6": 10,
+        "recurs": true
+      },
+      {
+        "hour": 10,
+        "n_streaks_covering": 5,
+        "distinctDaysWithTradeInGe6Streak": 5,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-05"
+        ],
+        "n_trades_in_ge6": 13,
+        "recurs": true
+      },
+      {
+        "hour": 11,
+        "n_streaks_covering": 4,
+        "distinctDaysWithTradeInGe6Streak": 4,
+        "days": [
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-02",
+          "2026-10-05"
+        ],
+        "n_trades_in_ge6": 9,
+        "recurs": true
+      },
+      {
+        "hour": 12,
+        "n_streaks_covering": 3,
+        "distinctDaysWithTradeInGe6Streak": 3,
+        "days": [
+          "2026-09-29",
+          "2026-10-04",
+          "2026-10-05"
+        ],
+        "n_trades_in_ge6": 9,
+        "recurs": true
+      },
+      {
+        "hour": 13,
+        "n_streaks_covering": 3,
+        "distinctDaysWithTradeInGe6Streak": 3,
+        "days": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-04"
+        ],
+        "n_trades_in_ge6": 11,
+        "recurs": true
+      },
+      {
+        "hour": 14,
+        "n_streaks_covering": 3,
+        "distinctDaysWithTradeInGe6Streak": 3,
+        "days": [
+          "2026-09-28",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "n_trades_in_ge6": 5,
+        "recurs": true
+      },
+      {
+        "hour": 15,
+        "n_streaks_covering": 5,
+        "distinctDaysWithTradeInGe6Streak": 5,
+        "days": [
+          "2026-09-26",
+          "2026-09-28",
+          "2026-09-30",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "n_trades_in_ge6": 13,
+        "recurs": true
+      },
+      {
+        "hour": 16,
+        "n_streaks_covering": 4,
+        "distinctDaysWithTradeInGe6Streak": 4,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "n_trades_in_ge6": 10,
+        "recurs": true
+      },
+      {
+        "hour": 17,
+        "n_streaks_covering": 3,
+        "distinctDaysWithTradeInGe6Streak": 3,
+        "days": [
+          "2026-09-26",
+          "2026-09-27",
+          "2026-10-03"
+        ],
+        "n_trades_in_ge6": 9,
+        "recurs": true
+      },
+      {
+        "hour": 18,
+        "n_streaks_covering": 2,
+        "distinctDaysWithTradeInGe6Streak": 2,
+        "days": [
+          "2026-09-27",
+          "2026-10-03"
+        ],
+        "n_trades_in_ge6": 7,
+        "recurs": true
+      },
+      {
+        "hour": 19,
+        "n_streaks_covering": 4,
+        "distinctDaysWithTradeInGe6Streak": 4,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29",
+          "2026-10-03"
+        ],
+        "n_trades_in_ge6": 10,
+        "recurs": true
+      },
+      {
+        "hour": 20,
+        "n_streaks_covering": 3,
+        "distinctDaysWithTradeInGe6Streak": 3,
+        "days": [
+          "2026-09-27",
+          "2026-09-28",
+          "2026-09-29"
+        ],
+        "n_trades_in_ge6": 11,
+        "recurs": true
+      },
+      {
+        "hour": 21,
+        "n_streaks_covering": 2,
+        "distinctDaysWithTradeInGe6Streak": 2,
+        "days": [
+          "2026-09-27",
+          "2026-09-28"
+        ],
+        "n_trades_in_ge6": 4,
+        "recurs": true
+      },
+      {
+        "hour": 22,
+        "n_streaks_covering": 4,
+        "distinctDaysWithTradeInGe6Streak": 4,
+        "days": [
+          "2026-09-28",
+          "2026-10-01",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "n_trades_in_ge6": 11,
+        "recurs": true
+      },
+      {
+        "hour": 23,
+        "n_streaks_covering": 4,
+        "distinctDaysWithTradeInGe6Streak": 4,
+        "days": [
+          "2026-09-28",
+          "2026-10-01",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "n_trades_in_ge6": 14,
+        "recurs": true
+      }
+    ],
+    "eq6_crossDay_hourOverlap": [
+      {
+        "a": "2026-10-02 06:33",
+        "b": "2026-10-03 06:33",
+        "hoursA": [
+          6,
+          7
+        ],
+        "hoursB": [
+          6,
+          7
+        ],
+        "intersection": [
+          6,
+          7
+        ],
+        "jaccard": 1.0,
+        "sameStartHour": true
+      },
+      {
+        "a": "2026-09-28 09:39",
+        "b": "2026-09-30 09:04",
+        "hoursA": [
+          9,
+          10
+        ],
+        "hoursB": [
+          9,
+          10,
+          11,
+          15
+        ],
+        "intersection": [
+          9,
+          10
+        ],
+        "jaccard": 0.5,
+        "sameStartHour": true
+      },
+      {
+        "a": "2026-09-28 07:05",
+        "b": "2026-10-02 06:33",
+        "hoursA": [
+          7,
+          8
+        ],
+        "hoursB": [
+          6,
+          7
+        ],
+        "intersection": [
+          7
+        ],
+        "jaccard": 0.33,
+        "sameStartHour": false
+      },
+      {
+        "a": "2026-09-28 07:05",
+        "b": "2026-10-03 06:33",
+        "hoursA": [
+          7,
+          8
+        ],
+        "hoursB": [
+          6,
+          7
+        ],
+        "intersection": [
+          7
+        ],
+        "jaccard": 0.33,
+        "sameStartHour": false
+      }
+    ],
+    "summary": {
+      "startHours_with_ge6_on_multiple_days": [
+        {
+          "startHour": 6,
+          "n_streaks_ge6": 3,
+          "n_streaks_eq6": 2,
+          "distinctDays": 3,
+          "dates": [
+            "2026-09-29",
+            "2026-10-02",
+            "2026-10-03"
+          ],
+          "lengths": [
+            17,
+            6,
+            6
+          ],
+          "starts": [
+            "2026-09-29 06:33",
+            "2026-10-02 06:33",
+            "2026-10-03 06:33"
+          ],
+          "recurs": true
+        },
+        {
+          "startHour": 9,
+          "n_streaks_ge6": 2,
+          "n_streaks_eq6": 2,
+          "distinctDays": 2,
+          "dates": [
+            "2026-09-28",
+            "2026-09-30"
+          ],
+          "lengths": [
+            6,
+            6
+          ],
+          "starts": [
+            "2026-09-28 09:39",
+            "2026-09-30 09:04"
+          ],
+          "recurs": true
+        },
+        {
+          "startHour": 14,
+          "n_streaks_ge6": 2,
+          "n_streaks_eq6": 0,
+          "distinctDays": 2,
+          "dates": [
+            "2026-10-03",
+            "2026-10-04"
+          ],
+          "lengths": [
+            7,
+            8
+          ],
+          "starts": [
+            "2026-10-03 14:48",
+            "2026-10-04 14:21"
+          ],
+          "recurs": true
+        },
+        {
+          "startHour": 19,
+          "n_streaks_ge6": 2,
+          "n_streaks_eq6": 0,
+          "distinctDays": 2,
+          "dates": [
+            "2026-09-28",
+            "2026-09-29"
+          ],
+          "lengths": [
+            10,
+            7
+          ],
+          "starts": [
+            "2026-09-28 19:48",
+            "2026-09-29 19:05"
+          ],
+          "recurs": true
+        },
+        {
+          "startHour": 22,
+          "n_streaks_ge6": 3,
+          "n_streaks_eq6": 1,
+          "distinctDays": 3,
+          "dates": [
+            "2026-10-01",
+            "2026-10-03",
+            "2026-10-04"
+          ],
+          "lengths": [
+            8,
+            6,
+            8
+          ],
+          "starts": [
+            "2026-10-01 22:34",
+            "2026-10-03 22:05",
+            "2026-10-04 22:18"
+          ],
+          "recurs": true
+        }
+      ],
+      "startHours_with_eq6_on_multiple_days": [
+        {
+          "startHour": 6,
+          "n": 2,
+          "distinctDays": 2,
+          "dates": [
+            "2026-10-02",
+            "2026-10-03"
+          ],
+          "starts": [
+            "2026-10-02 06:33",
+            "2026-10-03 06:33"
+          ],
+          "recurs": true
+        },
+        {
+          "startHour": 9,
+          "n": 2,
+          "distinctDays": 2,
+          "dates": [
+            "2026-09-28",
+            "2026-09-30"
+          ],
+          "starts": [
+            "2026-09-28 09:39",
+            "2026-09-30 09:04"
+          ],
+          "recurs": true
+        }
+      ],
+      "hours_covered_by_ge6_on_multiple_days": [
+        {
+          "hour": 0,
+          "n_streaks_covering": 3,
+          "distinctDaysWithTradeInGe6Streak": 3,
+          "days": [
+            "2026-09-29",
+            "2026-10-02",
+            "2026-10-05"
+          ],
+          "n_trades_in_ge6": 6,
+          "recurs": true
+        },
+        {
+          "hour": 6,
+          "n_streaks_covering": 3,
+          "distinctDaysWithTradeInGe6Streak": 3,
+          "days": [
+            "2026-09-29",
+            "2026-10-02",
+            "2026-10-03"
+          ],
+          "n_trades_in_ge6": 5,
+          "recurs": true
+        },
+        {
+          "hour": 7,
+          "n_streaks_covering": 4,
+          "distinctDaysWithTradeInGe6Streak": 4,
+          "days": [
+            "2026-09-28",
+            "2026-09-29",
+            "2026-10-02",
+            "2026-10-03"
+          ],
+          "n_trades_in_ge6": 14,
+          "recurs": true
+        },
+        {
+          "hour": 8,
+          "n_streaks_covering": 2,
+          "distinctDaysWithTradeInGe6Streak": 2,
+          "days": [
+            "2026-09-28",
+            "2026-10-02"
+          ],
+          "n_trades_in_ge6": 5,
+          "recurs": true
+        },
+        {
+          "hour": 9,
+          "n_streaks_covering": 4,
+          "distinctDaysWithTradeInGe6Streak": 4,
+          "days": [
+            "2026-09-28",
+            "2026-09-29",
+            "2026-09-30",
+            "2026-10-02"
+          ],
+          "n_trades_in_ge6": 10,
+          "recurs": true
+        },
+        {
+          "hour": 10,
+          "n_streaks_covering": 5,
+          "distinctDaysWithTradeInGe6Streak": 5,
+          "days": [
+            "2026-09-28",
+            "2026-09-29",
+            "2026-09-30",
+            "2026-10-02",
+            "2026-10-05"
+          ],
+          "n_trades_in_ge6": 13,
+          "recurs": true
+        },
+        {
+          "hour": 11,
+          "n_streaks_covering": 4,
+          "distinctDaysWithTradeInGe6Streak": 4,
+          "days": [
+            "2026-09-29",
+            "2026-09-30",
+            "2026-10-02",
+            "2026-10-05"
+          ],
+          "n_trades_in_ge6": 9,
+          "recurs": true
+        },
+        {
+          "hour": 12,
+          "n_streaks_covering": 3,
+          "distinctDaysWithTradeInGe6Streak": 3,
+          "days": [
+            "2026-09-29",
+            "2026-10-04",
+            "2026-10-05"
+          ],
+          "n_trades_in_ge6": 9,
+          "recurs": true
+        },
+        {
+          "hour": 13,
+          "n_streaks_covering": 3,
+          "distinctDaysWithTradeInGe6Streak": 3,
+          "days": [
+            "2026-09-28",
+            "2026-09-29",
+            "2026-10-04"
+          ],
+          "n_trades_in_ge6": 11,
+          "recurs": true
+        },
+        {
+          "hour": 14,
+          "n_streaks_covering": 3,
+          "distinctDaysWithTradeInGe6Streak": 3,
+          "days": [
+            "2026-09-28",
+            "2026-10-03",
+            "2026-10-04"
+          ],
+          "n_trades_in_ge6": 5,
+          "recurs": true
+        },
+        {
+          "hour": 15,
+          "n_streaks_covering": 5,
+          "distinctDaysWithTradeInGe6Streak": 5,
+          "days": [
+            "2026-09-26",
+            "2026-09-28",
+            "2026-09-30",
+            "2026-10-03",
+            "2026-10-04"
+          ],
+          "n_trades_in_ge6": 13,
+          "recurs": true
+        },
+        {
+          "hour": 16,
+          "n_streaks_covering": 4,
+          "distinctDaysWithTradeInGe6Streak": 4,
+          "days": [
+            "2026-09-26",
+            "2026-09-27",
+            "2026-10-03",
+            "2026-10-04"
+          ],
+          "n_trades_in_ge6": 10,
+          "recurs": true
+        },
+        {
+          "hour": 17,
+          "n_streaks_covering": 3,
+          "distinctDaysWithTradeInGe6Streak": 3,
+          "days": [
+            "2026-09-26",
+            "2026-09-27",
+            "2026-10-03"
+          ],
+          "n_trades_in_ge6": 9,
+          "recurs": true
+        },
+        {
+          "hour": 18,
+          "n_streaks_covering": 2,
+          "distinctDaysWithTradeInGe6Streak": 2,
+          "days": [
+            "2026-09-27",
+            "2026-10-03"
+          ],
+          "n_trades_in_ge6": 7,
+          "recurs": true
+        },
+        {
+          "hour": 19,
+          "n_streaks_covering": 4,
+          "distinctDaysWithTradeInGe6Streak": 4,
+          "days": [
+            "2026-09-27",
+            "2026-09-28",
+            "2026-09-29",
+            "2026-10-03"
+          ],
+          "n_trades_in_ge6": 10,
+          "recurs": true
+        },
+        {
+          "hour": 20,
+          "n_streaks_covering": 3,
+          "distinctDaysWithTradeInGe6Streak": 3,
+          "days": [
+            "2026-09-27",
+            "2026-09-28",
+            "2026-09-29"
+          ],
+          "n_trades_in_ge6": 11,
+          "recurs": true
+        },
+        {
+          "hour": 21,
+          "n_streaks_covering": 2,
+          "distinctDaysWithTradeInGe6Streak": 2,
+          "days": [
+            "2026-09-27",
+            "2026-09-28"
+          ],
+          "n_trades_in_ge6": 4,
+          "recurs": true
+        },
+        {
+          "hour": 22,
+          "n_streaks_covering": 4,
+          "distinctDaysWithTradeInGe6Streak": 4,
+          "days": [
+            "2026-09-28",
+            "2026-10-01",
+            "2026-10-03",
+            "2026-10-04"
+          ],
+          "n_trades_in_ge6": 11,
+          "recurs": true
+        },
+        {
+          "hour": 23,
+          "n_streaks_covering": 4,
+          "distinctDaysWithTradeInGe6Streak": 4,
+          "days": [
+            "2026-09-28",
+            "2026-10-01",
+            "2026-10-03",
+            "2026-10-04"
+          ],
+          "n_trades_in_ge6": 14,
+          "recurs": true
+        }
+      ]
+    }
+  }
+}

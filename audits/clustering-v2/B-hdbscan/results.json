@@ -1,0 +1,1492 @@
+{
+  "split": {
+    "n_total": 677,
+    "n_train": 474,
+    "n_holdout": 203,
+    "train_start": "2026-09-08 06:45:00+00:00",
+    "train_end": "2026-09-18 16:00:00+00:00",
+    "holdout_start": "2026-09-18 16:15:00+00:00",
+    "holdout_end": "2026-10-05 07:15:00+00:00",
+    "baseline_up_train": 0.5042194092827004,
+    "baseline_up_holdout": 0.5221674876847291
+  },
+  "fee_note": "FEE=0 (pas de modèle hold-to-resolution générique; repricingFeesRoundtrip=0.002 ignoré)",
+  "B1": {
+    "name": "B1_full",
+    "descriptive": true,
+    "tradable": false,
+    "t_end": 899,
+    "n_train": 474,
+    "n_holdout": 203,
+    "baseline_up_train": 0.5042194092827004,
+    "baseline_up_holdout": 0.5221674876847291,
+    "baseline_fav_train": 1.0,
+    "baseline_fav_holdout": 0.9950738916256158,
+    "configs": [
+      {
+        "min_cluster_size": 10,
+        "min_samples": 5,
+        "n_clusters": 2,
+        "noise_share_train": 0.10759493670886076,
+        "noise_share_holdout": 1.0,
+        "profiles_train": {
+          "0": {
+            "vol_mid": 0.181766845864996,
+            "fav_flips": 8.66824644549763,
+            "max_fav_ask": 0.9924265402843602,
+            "min_fav_ask": 0.5121800947867297,
+            "slope_mid": -0.0006707124411862689,
+            "time_fav_ask_ge_70": 0.5987888362295944,
+            "mean_spread_up": 0.009826076882569751,
+            "end_spread_up": 0.008246445497630324,
+            "mean_spread_down": 0.009812022116903617,
+            "end_spread_down": 0.008180094786729855,
+            "mean_ask_sum": 1.0098252238020011,
+            "end_ask_sum": 1.0082748815165876,
+            "mean_depth_imb": -0.11391913111401437,
+            "end_depth_imb": -1.933649289099526,
+            "range_mid": 0.652521327014218,
+            "mid_up_t": 0.012928909952606631,
+            "n": 211
+          },
+          "1": {
+            "vol_mid": 0.1824810497994697,
+            "fav_flips": 8.014150943396226,
+            "max_fav_ask": 0.9925377358490566,
+            "min_fav_ask": 0.5115566037735848,
+            "slope_mid": 0.0009722917660566216,
+            "time_fav_ask_ge_70": 0.6096016771488469,
+            "mean_spread_up": 0.009798066037735831,
+            "end_spread_up": 0.008070754716981132,
+            "mean_spread_down": 0.009794386792452805,
+            "end_spread_down": 0.008042452830188673,
+            "mean_ask_sum": 1.009782966457023,
+            "end_ask_sum": 1.0079009433962263,
+            "mean_depth_imb": 0.17422921757822948,
+            "end_depth_imb": 1.9481132075471699,
+            "range_mid": 0.6544858490566038,
+            "mid_up_t": 0.9879646226415093,
+            "n": 212
+          }
+        },
+        "targets": {
+          "up_won": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 211,
+                "k": 0,
+                "wr": 0.0,
+                "wilson_lo": 0.0,
+                "wilson_hi": 0.017881080759033628,
+                "pvalue": 5.082634102764295e-65,
+                "direction": "below",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "down",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 211,
+                "wr": 1.0,
+                "avg_entry": 0.9913175355450238,
+                "pnl": 7.460032317034112,
+                "avg_pnl": 0.03535560339826593,
+                "be_wr": 0.9913175355450238,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 212,
+                "k": 212,
+                "wr": 1.0,
+                "wilson_lo": 0.9822017627741826,
+                "wilson_hi": 1.0,
+                "pvalue": 9.274895900263781e-64,
+                "direction": "above",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "up",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 212,
+                "wr": 1.0,
+                "avg_entry": 0.9919999999999999,
+                "pnl": 6.8728077264084195,
+                "avg_pnl": 0.03241890436985104,
+                "be_wr": 0.9919999999999999,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ],
+          "fav_wins": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 211,
+                "k": 211,
+                "wr": 1.0,
+                "wilson_lo": 0.9821189192409663,
+                "wilson_hi": 1.0,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 211,
+                "wr": 1.0,
+                "avg_entry": 0.9913175355450238,
+                "pnl": 7.460032317034112,
+                "avg_pnl": 0.03535560339826593,
+                "be_wr": 0.9913175355450238,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 212,
+                "k": 212,
+                "wr": 1.0,
+                "wilson_lo": 0.9822017627741826,
+                "wilson_hi": 1.0,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 212,
+                "wr": 1.0,
+                "avg_entry": 0.9919999999999999,
+                "pnl": 6.8728077264084195,
+                "avg_pnl": 0.03241890436985104,
+                "be_wr": 0.9919999999999999,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "min_cluster_size": 10,
+        "min_samples": 10,
+        "n_clusters": 2,
+        "noise_share_train": 0.16877637130801687,
+        "noise_share_holdout": 1.0,
+        "profiles_train": {
+          "0": {
+            "vol_mid": 0.18294210703748565,
+            "fav_flips": 8.601036269430052,
+            "max_fav_ask": 0.9926373056994819,
+            "min_fav_ask": 0.5107253886010361,
+            "slope_mid": -0.00047476299547801815,
+            "time_fav_ask_ge_70": 0.5959470351180196,
+            "mean_spread_up": 0.009824352331606194,
+            "end_spread_up": 0.008326424870466313,
+            "mean_spread_down": 0.009805405872193421,
+            "end_spread_down": 0.008202072538860102,
+            "mean_ask_sum": 1.0098215141047782,
+            "end_ask_sum": 1.008305699481865,
+            "mean_depth_imb": -0.13297759334125825,
+            "end_depth_imb": -1.927461139896373,
+            "range_mid": 0.6516658031088083,
+            "mid_up_t": 0.012655440414507769,
+            "n": 193
+          },
+          "1": {
+            "vol_mid": 0.18231408360311577,
+            "fav_flips": 7.6318407960199,
+            "max_fav_ask": 0.9928407960199007,
+            "min_fav_ask": 0.511641791044776,
+            "slope_mid": 0.0008248632497418564,
+            "time_fav_ask_ge_70": 0.6173687119955776,
+            "mean_spread_up": 0.009786976229961289,
+            "end_spread_up": 0.008064676616915421,
+            "mean_spread_down": 0.00978378109452734,
+            "end_spread_down": 0.00803482587064676,
+            "mean_ask_sum": 1.0097727307904918,
+            "end_ask_sum": 1.0078855721393034,
+            "mean_depth_imb": 0.16909039309168258,
+            "end_depth_imb": 1.945273631840796,
+            "range_mid": 0.6490174129353234,
+            "mid_up_t": 0.9882910447761194,
+            "n": 201
+          }
+        },
+        "targets": {
+          "up_won": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 193,
+                "k": 0,
+                "wr": 0.0,
+                "wilson_lo": 0.0,
+                "wilson_hi": 0.019516199827678698,
+                "pvalue": 1.551949106968511e-59,
+                "direction": "below",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "down",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 193,
+                "wr": 1.0,
+                "avg_entry": 0.9914870466321244,
+                "pnl": 6.687508637062248,
+                "avg_pnl": 0.034650303818975374,
+                "be_wr": 0.9914870466321244,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 201,
+                "k": 201,
+                "wr": 1.0,
+                "wilson_lo": 0.9812459969068782,
+                "wilson_hi": 0.9999999999999998,
+                "pvalue": 1.7413834668743332e-60,
+                "direction": "above",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "up",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 201,
+                "wr": 1.0,
+                "avg_entry": 0.9923233830845771,
+                "pnl": 6.244686165297164,
+                "avg_pnl": 0.031068090374612757,
+                "be_wr": 0.9923233830845771,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ],
+          "fav_wins": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 193,
+                "k": 193,
+                "wr": 1.0,
+                "wilson_lo": 0.9804838001723211,
+                "wilson_hi": 0.9999999999999998,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 193,
+                "wr": 1.0,
+                "avg_entry": 0.9914870466321244,
+                "pnl": 6.687508637062248,
+                "avg_pnl": 0.034650303818975374,
+                "be_wr": 0.9914870466321244,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 201,
+                "k": 201,
+                "wr": 1.0,
+                "wilson_lo": 0.9812459969068782,
+                "wilson_hi": 0.9999999999999998,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 201,
+                "wr": 1.0,
+                "avg_entry": 0.9923233830845771,
+                "pnl": 6.244686165297164,
+                "avg_pnl": 0.031068090374612757,
+                "be_wr": 0.9923233830845771,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "min_cluster_size": 20,
+        "min_samples": 5,
+        "n_clusters": 2,
+        "noise_share_train": 0.10759493670886076,
+        "noise_share_holdout": 1.0,
+        "profiles_train": {
+          "0": {
+            "vol_mid": 0.181766845864996,
+            "fav_flips": 8.66824644549763,
+            "max_fav_ask": 0.9924265402843602,
+            "min_fav_ask": 0.5121800947867297,
+            "slope_mid": -0.0006707124411862689,
+            "time_fav_ask_ge_70": 0.5987888362295944,
+            "mean_spread_up": 0.009826076882569751,
+            "end_spread_up": 0.008246445497630324,
+            "mean_spread_down": 0.009812022116903617,
+            "end_spread_down": 0.008180094786729855,
+            "mean_ask_sum": 1.0098252238020011,
+            "end_ask_sum": 1.0082748815165876,
+            "mean_depth_imb": -0.11391913111401437,
+            "end_depth_imb": -1.933649289099526,
+            "range_mid": 0.652521327014218,
+            "mid_up_t": 0.012928909952606631,
+            "n": 211
+          },
+          "1": {
+            "vol_mid": 0.1824810497994697,
+            "fav_flips": 8.014150943396226,
+            "max_fav_ask": 0.9925377358490566,
+            "min_fav_ask": 0.5115566037735848,
+            "slope_mid": 0.0009722917660566216,
+            "time_fav_ask_ge_70": 0.6096016771488469,
+            "mean_spread_up": 0.009798066037735831,
+            "end_spread_up": 0.008070754716981132,
+            "mean_spread_down": 0.009794386792452805,
+            "end_spread_down": 0.008042452830188673,
+            "mean_ask_sum": 1.009782966457023,
+            "end_ask_sum": 1.0079009433962263,
+            "mean_depth_imb": 0.17422921757822948,
+            "end_depth_imb": 1.9481132075471699,
+            "range_mid": 0.6544858490566038,
+            "mid_up_t": 0.9879646226415093,
+            "n": 212
+          }
+        },
+        "targets": {
+          "up_won": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 211,
+                "k": 0,
+                "wr": 0.0,
+                "wilson_lo": 0.0,
+                "wilson_hi": 0.017881080759033628,
+                "pvalue": 5.082634102764295e-65,
+                "direction": "below",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "down",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 211,
+                "wr": 1.0,
+                "avg_entry": 0.9913175355450238,
+                "pnl": 7.460032317034112,
+                "avg_pnl": 0.03535560339826593,
+                "be_wr": 0.9913175355450238,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 212,
+                "k": 212,
+                "wr": 1.0,
+                "wilson_lo": 0.9822017627741826,
+                "wilson_hi": 1.0,
+                "pvalue": 9.274895900263781e-64,
+                "direction": "above",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "up",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 212,
+                "wr": 1.0,
+                "avg_entry": 0.9919999999999999,
+                "pnl": 6.8728077264084195,
+                "avg_pnl": 0.03241890436985104,
+                "be_wr": 0.9919999999999999,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ],
+          "fav_wins": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 211,
+                "k": 211,
+                "wr": 1.0,
+                "wilson_lo": 0.9821189192409663,
+                "wilson_hi": 1.0,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 211,
+                "wr": 1.0,
+                "avg_entry": 0.9913175355450238,
+                "pnl": 7.460032317034112,
+                "avg_pnl": 0.03535560339826593,
+                "be_wr": 0.9913175355450238,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 212,
+                "k": 212,
+                "wr": 1.0,
+                "wilson_lo": 0.9822017627741826,
+                "wilson_hi": 1.0,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 212,
+                "wr": 1.0,
+                "avg_entry": 0.9919999999999999,
+                "pnl": 6.8728077264084195,
+                "avg_pnl": 0.03241890436985104,
+                "be_wr": 0.9919999999999999,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "min_cluster_size": 20,
+        "min_samples": 10,
+        "n_clusters": 2,
+        "noise_share_train": 0.16877637130801687,
+        "noise_share_holdout": 1.0,
+        "profiles_train": {
+          "0": {
+            "vol_mid": 0.18294210703748565,
+            "fav_flips": 8.601036269430052,
+            "max_fav_ask": 0.9926373056994819,
+            "min_fav_ask": 0.5107253886010361,
+            "slope_mid": -0.00047476299547801815,
+            "time_fav_ask_ge_70": 0.5959470351180196,
+            "mean_spread_up": 0.009824352331606194,
+            "end_spread_up": 0.008326424870466313,
+            "mean_spread_down": 0.009805405872193421,
+            "end_spread_down": 0.008202072538860102,
+            "mean_ask_sum": 1.0098215141047782,
+            "end_ask_sum": 1.008305699481865,
+            "mean_depth_imb": -0.13297759334125825,
+            "end_depth_imb": -1.927461139896373,
+            "range_mid": 0.6516658031088083,
+            "mid_up_t": 0.012655440414507769,
+            "n": 193
+          },
+          "1": {
+            "vol_mid": 0.18231408360311577,
+            "fav_flips": 7.6318407960199,
+            "max_fav_ask": 0.9928407960199007,
+            "min_fav_ask": 0.511641791044776,
+            "slope_mid": 0.0008248632497418564,
+            "time_fav_ask_ge_70": 0.6173687119955776,
+            "mean_spread_up": 0.009786976229961289,
+            "end_spread_up": 0.008064676616915421,
+            "mean_spread_down": 0.00978378109452734,
+            "end_spread_down": 0.00803482587064676,
+            "mean_ask_sum": 1.0097727307904918,
+            "end_ask_sum": 1.0078855721393034,
+            "mean_depth_imb": 0.16909039309168258,
+            "end_depth_imb": 1.945273631840796,
+            "range_mid": 0.6490174129353234,
+            "mid_up_t": 0.9882910447761194,
+            "n": 201
+          }
+        },
+        "targets": {
+          "up_won": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 193,
+                "k": 0,
+                "wr": 0.0,
+                "wilson_lo": 0.0,
+                "wilson_hi": 0.019516199827678698,
+                "pvalue": 1.551949106968511e-59,
+                "direction": "below",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "down",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 193,
+                "wr": 1.0,
+                "avg_entry": 0.9914870466321244,
+                "pnl": 6.687508637062248,
+                "avg_pnl": 0.034650303818975374,
+                "be_wr": 0.9914870466321244,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 201,
+                "k": 201,
+                "wr": 1.0,
+                "wilson_lo": 0.9812459969068782,
+                "wilson_hi": 0.9999999999999998,
+                "pvalue": 1.7413834668743332e-60,
+                "direction": "above",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "up",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 201,
+                "wr": 1.0,
+                "avg_entry": 0.9923233830845771,
+                "pnl": 6.244686165297164,
+                "avg_pnl": 0.031068090374612757,
+                "be_wr": 0.9923233830845771,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ],
+          "fav_wins": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 193,
+                "k": 193,
+                "wr": 1.0,
+                "wilson_lo": 0.9804838001723211,
+                "wilson_hi": 0.9999999999999998,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 193,
+                "wr": 1.0,
+                "avg_entry": 0.9914870466321244,
+                "pnl": 6.687508637062248,
+                "avg_pnl": 0.034650303818975374,
+                "be_wr": 0.9914870466321244,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 201,
+                "k": 201,
+                "wr": 1.0,
+                "wilson_lo": 0.9812459969068782,
+                "wilson_hi": 0.9999999999999998,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 201,
+                "wr": 1.0,
+                "avg_entry": 0.9923233830845771,
+                "pnl": 6.244686165297164,
+                "avg_pnl": 0.031068090374612757,
+                "be_wr": 0.9923233830845771,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "min_cluster_size": 40,
+        "min_samples": 5,
+        "n_clusters": 2,
+        "noise_share_train": 0.10759493670886076,
+        "noise_share_holdout": 1.0,
+        "profiles_train": {
+          "0": {
+            "vol_mid": 0.181766845864996,
+            "fav_flips": 8.66824644549763,
+            "max_fav_ask": 0.9924265402843602,
+            "min_fav_ask": 0.5121800947867297,
+            "slope_mid": -0.0006707124411862689,
+            "time_fav_ask_ge_70": 0.5987888362295944,
+            "mean_spread_up": 0.009826076882569751,
+            "end_spread_up": 0.008246445497630324,
+            "mean_spread_down": 0.009812022116903617,
+            "end_spread_down": 0.008180094786729855,
+            "mean_ask_sum": 1.0098252238020011,
+            "end_ask_sum": 1.0082748815165876,
+            "mean_depth_imb": -0.11391913111401437,
+            "end_depth_imb": -1.933649289099526,
+            "range_mid": 0.652521327014218,
+            "mid_up_t": 0.012928909952606631,
+            "n": 211
+          },
+          "1": {
+            "vol_mid": 0.1824810497994697,
+            "fav_flips": 8.014150943396226,
+            "max_fav_ask": 0.9925377358490566,
+            "min_fav_ask": 0.5115566037735848,
+            "slope_mid": 0.0009722917660566216,
+            "time_fav_ask_ge_70": 0.6096016771488469,
+            "mean_spread_up": 0.009798066037735831,
+            "end_spread_up": 0.008070754716981132,
+            "mean_spread_down": 0.009794386792452805,
+            "end_spread_down": 0.008042452830188673,
+            "mean_ask_sum": 1.009782966457023,
+            "end_ask_sum": 1.0079009433962263,
+            "mean_depth_imb": 0.17422921757822948,
+            "end_depth_imb": 1.9481132075471699,
+            "range_mid": 0.6544858490566038,
+            "mid_up_t": 0.9879646226415093,
+            "n": 212
+          }
+        },
+        "targets": {
+          "up_won": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 211,
+                "k": 0,
+                "wr": 0.0,
+                "wilson_lo": 0.0,
+                "wilson_hi": 0.017881080759033628,
+                "pvalue": 5.082634102764295e-65,
+                "direction": "below",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "down",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 211,
+                "wr": 1.0,
+                "avg_entry": 0.9913175355450238,
+                "pnl": 7.460032317034112,
+                "avg_pnl": 0.03535560339826593,
+                "be_wr": 0.9913175355450238,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 212,
+                "k": 212,
+                "wr": 1.0,
+                "wilson_lo": 0.9822017627741826,
+                "wilson_hi": 1.0,
+                "pvalue": 9.274895900263781e-64,
+                "direction": "above",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "up",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 212,
+                "wr": 1.0,
+                "avg_entry": 0.9919999999999999,
+                "pnl": 6.8728077264084195,
+                "avg_pnl": 0.03241890436985104,
+                "be_wr": 0.9919999999999999,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ],
+          "fav_wins": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 211,
+                "k": 211,
+                "wr": 1.0,
+                "wilson_lo": 0.9821189192409663,
+                "wilson_hi": 1.0,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 211,
+                "wr": 1.0,
+                "avg_entry": 0.9913175355450238,
+                "pnl": 7.460032317034112,
+                "avg_pnl": 0.03535560339826593,
+                "be_wr": 0.9913175355450238,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 212,
+                "k": 212,
+                "wr": 1.0,
+                "wilson_lo": 0.9822017627741826,
+                "wilson_hi": 1.0,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 212,
+                "wr": 1.0,
+                "avg_entry": 0.9919999999999999,
+                "pnl": 6.8728077264084195,
+                "avg_pnl": 0.03241890436985104,
+                "be_wr": 0.9919999999999999,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "min_cluster_size": 40,
+        "min_samples": 10,
+        "n_clusters": 2,
+        "noise_share_train": 0.16877637130801687,
+        "noise_share_holdout": 1.0,
+        "profiles_train": {
+          "0": {
+            "vol_mid": 0.18294210703748565,
+            "fav_flips": 8.601036269430052,
+            "max_fav_ask": 0.9926373056994819,
+            "min_fav_ask": 0.5107253886010361,
+            "slope_mid": -0.00047476299547801815,
+            "time_fav_ask_ge_70": 0.5959470351180196,
+            "mean_spread_up": 0.009824352331606194,
+            "end_spread_up": 0.008326424870466313,
+            "mean_spread_down": 0.009805405872193421,
+            "end_spread_down": 0.008202072538860102,
+            "mean_ask_sum": 1.0098215141047782,
+            "end_ask_sum": 1.008305699481865,
+            "mean_depth_imb": -0.13297759334125825,
+            "end_depth_imb": -1.927461139896373,
+            "range_mid": 0.6516658031088083,
+            "mid_up_t": 0.012655440414507769,
+            "n": 193
+          },
+          "1": {
+            "vol_mid": 0.18231408360311577,
+            "fav_flips": 7.6318407960199,
+            "max_fav_ask": 0.9928407960199007,
+            "min_fav_ask": 0.511641791044776,
+            "slope_mid": 0.0008248632497418564,
+            "time_fav_ask_ge_70": 0.6173687119955776,
+            "mean_spread_up": 0.009786976229961289,
+            "end_spread_up": 0.008064676616915421,
+            "mean_spread_down": 0.00978378109452734,
+            "end_spread_down": 0.00803482587064676,
+            "mean_ask_sum": 1.0097727307904918,
+            "end_ask_sum": 1.0078855721393034,
+            "mean_depth_imb": 0.16909039309168258,
+            "end_depth_imb": 1.945273631840796,
+            "range_mid": 0.6490174129353234,
+            "mid_up_t": 0.9882910447761194,
+            "n": 201
+          }
+        },
+        "targets": {
+          "up_won": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 193,
+                "k": 0,
+                "wr": 0.0,
+                "wilson_lo": 0.0,
+                "wilson_hi": 0.019516199827678698,
+                "pvalue": 1.551949106968511e-59,
+                "direction": "below",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "down",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 193,
+                "wr": 1.0,
+                "avg_entry": 0.9914870466321244,
+                "pnl": 6.687508637062248,
+                "avg_pnl": 0.034650303818975374,
+                "be_wr": 0.9914870466321244,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 201,
+                "k": 201,
+                "wr": 1.0,
+                "wilson_lo": 0.9812459969068782,
+                "wilson_hi": 0.9999999999999998,
+                "pvalue": 1.7413834668743332e-60,
+                "direction": "above",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": null,
+              "side": "up",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 201,
+                "wr": 1.0,
+                "avg_entry": 0.9923233830845771,
+                "pnl": 6.244686165297164,
+                "avg_pnl": 0.031068090374612757,
+                "be_wr": 0.9923233830845771,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ],
+          "fav_wins": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 193,
+                "k": 193,
+                "wr": 1.0,
+                "wilson_lo": 0.9804838001723211,
+                "wilson_hi": 0.9999999999999998,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 193,
+                "wr": 1.0,
+                "avg_entry": 0.9914870466321244,
+                "pnl": 6.687508637062248,
+                "avg_pnl": 0.034650303818975374,
+                "be_wr": 0.9914870466321244,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 201,
+                "k": 201,
+                "wr": 1.0,
+                "wilson_lo": 0.9812459969068782,
+                "wilson_hi": 0.9999999999999998,
+                "pvalue": NaN,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": null,
+              "side": "favorite",
+              "economics_holdout": {},
+              "economics_train": {
+                "n": 201,
+                "wr": 1.0,
+                "avg_entry": 0.9923233830845771,
+                "pnl": 6.244686165297164,
+                "avg_pnl": 0.031068090374612757,
+                "be_wr": 0.9923233830845771,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "variante descriptive (look-ahead) — non tradable"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "B2": {
+    "name": "B2_t300",
+    "descriptive": false,
+    "tradable": true,
+    "t_end": 300,
+    "n_train": 474,
+    "n_holdout": 203,
+    "baseline_up_train": 0.5042194092827004,
+    "baseline_up_holdout": 0.5221674876847291,
+    "baseline_fav_train": 0.6940928270042194,
+    "baseline_fav_holdout": 0.6699507389162561,
+    "configs": [
+      {
+        "min_cluster_size": 10,
+        "min_samples": 5,
+        "n_clusters": 2,
+        "noise_share_train": 0.7932489451476793,
+        "noise_share_holdout": 0.18226600985221675,
+        "profiles_train": {
+          "0": {
+            "vol_mid": 0.07397855772594514,
+            "fav_flips": 4.365853658536586,
+            "max_fav_ask": 0.7240243902439025,
+            "min_fav_ask": 0.5099999999999999,
+            "slope_mid": 0.0007164422366646649,
+            "time_fav_ask_ge_70": 0.14812413904869948,
+            "mean_spread_up": 0.010074548253788168,
+            "end_spread_up": 0.009999999999999983,
+            "mean_spread_down": 0.010076168868000954,
+            "end_spread_down": 0.009999999999999976,
+            "mean_ask_sum": 1.0100830564784056,
+            "end_ask_sum": 1.01,
+            "mean_depth_imb": -0.04965844189196437,
+            "end_depth_imb": -0.024453934610503953,
+            "range_mid": 0.29182926829268285,
+            "mid_up_t": 0.5865853658536585,
+            "n": 82
+          },
+          "1": {
+            "vol_mid": 0.10965355602427213,
+            "fav_flips": 1.375,
+            "max_fav_ask": 0.86625,
+            "min_fav_ask": 0.51,
+            "slope_mid": -0.0007120120172270052,
+            "time_fav_ask_ge_70": 0.5660299003322259,
+            "mean_spread_up": 0.010062292358803964,
+            "end_spread_up": 0.00999999999999995,
+            "mean_spread_down": 0.010045681063122909,
+            "end_spread_down": 0.01,
+            "mean_ask_sum": 1.010045681063123,
+            "end_ask_sum": 1.01,
+            "mean_depth_imb": 0.3009393098097915,
+            "end_depth_imb": 0.9285690044841897,
+            "range_mid": 0.38375000000000004,
+            "mid_up_t": 0.15062499999999998,
+            "n": 16
+          }
+        },
+        "targets": {
+          "up_won": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 82,
+                "k": 46,
+                "wr": 0.5609756097560976,
+                "wilson_lo": 0.45322727057239914,
+                "wilson_hi": 0.6632663642153962,
+                "pvalue": 0.3217078976972146,
+                "direction": "above",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": {
+                "cluster": 0,
+                "n": 141,
+                "k": 82,
+                "wr": 0.5815602836879432,
+                "wilson_lo": 0.49902955087404866,
+                "wilson_hi": 0.6597646077102254,
+                "pvalue": 0.17731139105797045,
+                "direction": "above"
+              },
+              "side": "up",
+              "economics_holdout": {
+                "n": 141,
+                "wr": 0.5815602836879432,
+                "avg_entry": 0.5873049645390072,
+                "pnl": 3.4716710984027195,
+                "avg_pnl": 0.0246217808397356,
+                "be_wr": 0.5873049645390072,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "economics_train": {
+                "n": 82,
+                "wr": 0.5609756097560976,
+                "avg_entry": 0.5915853658536585,
+                "pnl": -28.062313186245994,
+                "avg_pnl": -0.3422233315395853,
+                "be_wr": 0.5915853658536585,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "non significatif sur train (BH)",
+                "train_sig_bh": false,
+                "holdout_n": 141,
+                "holdout_wr": 0.5815602836879432,
+                "avg_entry": 0.5873049645390072
+              },
+              "verdict_global": {
+                "edge": false,
+                "reason": "non significatif sur train (BH)",
+                "train_sig_bh": false,
+                "holdout_n": 141,
+                "holdout_wr": 0.5815602836879432,
+                "avg_entry": 0.5873049645390072
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 16,
+                "k": 2,
+                "wr": 0.125,
+                "wilson_lo": 0.034976749337057134,
+                "wilson_hi": 0.3602333143674828,
+                "pvalue": 0.002175956116302431,
+                "direction": "below",
+                "bh_reject": true,
+                "bh_reject_global": true
+              },
+              "holdout": {
+                "cluster": 1,
+                "n": 25,
+                "k": 8,
+                "wr": 0.32,
+                "wilson_lo": 0.17204987516891146,
+                "wilson_hi": 0.515900862654233,
+                "pvalue": 0.04670466226143462,
+                "direction": "below"
+              },
+              "side": "down",
+              "economics_holdout": {
+                "n": 25,
+                "wr": 0.68,
+                "avg_entry": 0.7887999999999998,
+                "pnl": -14.296220564189044,
+                "avg_pnl": -0.5718488225675618,
+                "be_wr": 0.7887999999999998,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "economics_train": {
+                "n": 16,
+                "wr": 0.875,
+                "avg_entry": 0.854375,
+                "pnl": 1.6899684407492082,
+                "avg_pnl": 0.10562302754682551,
+                "be_wr": 0.854375,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "WR holdout 0.680 <= prix entrée 0.789 (pas d'edge économique)",
+                "train_sig_bh": true,
+                "holdout_n": 25,
+                "holdout_wr": 0.68,
+                "avg_entry": 0.7887999999999998
+              },
+              "verdict_global": {
+                "edge": false,
+                "reason": "WR holdout 0.680 <= prix entrée 0.789 (pas d'edge économique)",
+                "train_sig_bh": true,
+                "holdout_n": 25,
+                "holdout_wr": 0.68,
+                "avg_entry": 0.7887999999999998
+              }
+            }
+          ],
+          "fav_wins": [
+            {
+              "cluster": 0,
+              "train": {
+                "cluster": 0,
+                "n": 82,
+                "k": 56,
+                "wr": 0.6829268292682927,
+                "wilson_lo": 0.5759601026622791,
+                "wilson_hi": 0.7735208017011066,
+                "pvalue": 0.8114587629290939,
+                "direction": "below",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": {
+                "cluster": 0,
+                "n": 141,
+                "k": 92,
+                "wr": 0.6524822695035462,
+                "wilson_lo": 0.5707825541896676,
+                "wilson_hi": 0.7260934814244102,
+                "pvalue": 0.6551331147011964,
+                "direction": "below"
+              },
+              "side": "favorite",
+              "economics_holdout": {
+                "n": 141,
+                "wr": 0.6524822695035462,
+                "avg_entry": 0.6497163120567376,
+                "pnl": 8.901692717786947,
+                "avg_pnl": 0.0631325724665741,
+                "be_wr": 0.6497163120567376,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "economics_train": {
+                "n": 82,
+                "wr": 0.6829268292682927,
+                "avg_entry": 0.6542682926829269,
+                "pnl": 17.654062435682157,
+                "avg_pnl": 0.21529344433758726,
+                "be_wr": 0.6542682926829269,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "non significatif sur train (BH)",
+                "train_sig_bh": false,
+                "holdout_n": 141,
+                "holdout_wr": 0.6524822695035462,
+                "avg_entry": 0.6497163120567376
+              },
+              "verdict_global": {
+                "edge": false,
+                "reason": "non significatif sur train (BH)",
+                "train_sig_bh": false,
+                "holdout_n": 141,
+                "holdout_wr": 0.6524822695035462,
+                "avg_entry": 0.6497163120567376
+              }
+            },
+            {
+              "cluster": 1,
+              "train": {
+                "cluster": 1,
+                "n": 16,
+                "k": 14,
+                "wr": 0.875,
+                "wilson_lo": 0.6397666856325172,
+                "wilson_hi": 0.9650232506629429,
+                "pvalue": 0.17329669177568213,
+                "direction": "above",
+                "bh_reject": false,
+                "bh_reject_global": false
+              },
+              "holdout": {
+                "cluster": 1,
+                "n": 25,
+                "k": 17,
+                "wr": 0.68,
+                "wilson_lo": 0.48409913734576715,
+                "wilson_hi": 0.8279501248310885,
+                "pvalue": 1.0,
+                "direction": "above"
+              },
+              "side": "favorite",
+              "economics_holdout": {
+                "n": 25,
+                "wr": 0.68,
+                "avg_entry": 0.8015999999999999,
+                "pnl": -16.30563971646534,
+                "avg_pnl": -0.6522255886586136,
+                "be_wr": 0.8015999999999999,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "economics_train": {
+                "n": 16,
+                "wr": 0.875,
+                "avg_entry": 0.854375,
+                "pnl": 1.6899684407492082,
+                "avg_pnl": 0.10562302754682551,
+                "be_wr": 0.854375,
+                "stake": 4.0,
+                "fee": 0.0
+              },
+              "verdict": {
+                "edge": false,
+                "reason": "non significatif sur train (BH)",
+                "train_sig_bh": false,
+                "holdout_n": 25,
+                "holdout_wr": 0.68,
+                "avg_entry": 0.8015999999999999
+              },
+              "verdict_global": {
+                "edge": false,
+                "reason": "non significatif sur train (BH)",
+                "train_sig_bh": false,
+                "holdout_n": 25,
+                "holdout_wr": 0.68,
+                "avg_entry": 0.8015999999999999
+              }
+            }
+          ]
+        }
+      },
+      {
+        "min_cluster_size": 10,
+        "min_samples": 10,
+        "n_clusters": 0,
+        "noise_share_train": 1.0,
+        "noise_share_holdout": 1.0,
+        "profiles_train": {},
+        "targets": {
+          "up_won": [],
+          "fav_wins": []
+        }
+      },
+      {
+        "min_cluster_size": 20,
+        "min_samples": 5,
+        "n_clusters": 0,
+        "noise_share_train": 1.0,
+        "noise_share_holdout": 1.0,
+        "profiles_train": {},
+        "targets": {
+          "up_won": [],
+          "fav_wins": []
+        }
+      },
+      {
+        "min_cluster_size": 20,
+        "min_samples": 10,
+        "n_clusters": 0,
+        "noise_share_train": 1.0,
+        "noise_share_holdout": 1.0,
+        "profiles_train": {},
+        "targets": {
+          "up_won": [],
+          "fav_wins": []
+        }
+      },
+      {
+        "min_cluster_size": 40,
+        "min_samples": 5,
+        "n_clusters": 0,
+        "noise_share_train": 1.0,
+        "noise_share_holdout": 1.0,
+        "profiles_train": {},
+        "targets": {
+          "up_won": [],
+          "fav_wins": []
+        }
+      },
+      {
+        "min_cluster_size": 40,
+        "min_samples": 10,
+        "n_clusters": 0,
+        "noise_share_train": 1.0,
+        "noise_share_holdout": 1.0,
+        "profiles_train": {},
+        "targets": {
+          "up_won": [],
+          "fav_wins": []
+        }
+      }
+    ]
+  },
+  "B2_n_tests": 4,
+  "B2_n_bh_sig": 1,
+  "B2_edges": []
+}

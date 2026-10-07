@@ -168,7 +168,9 @@ console.log(JSON.stringify({
 
 mkdirSync(join("audits", "backtest", "open-entry"), { recursive: true });
 const outPath = join("audits", "backtest", "open-entry", `open-entry-wiring-runner-${Date.now()}.json`);
-writeFileSync(outPath, JSON.stringify({ criteria, windows: selected.length, ranked: [row, holdRow], sells: sellRows }, null, 2));
+const perWindow = result.windows.filter((w) => w.pnl !== null).map((w) => ({ slug: w.eventSlug, pnl: w.pnl }));
+const holdPerWindow = holdResult.windows.filter((w) => w.pnl !== null).map((w) => ({ slug: w.eventSlug, pnl: w.pnl }));
+writeFileSync(outPath, JSON.stringify({ criteria, windows: selected.length, ranked: [row, holdRow], sells: sellRows, perWindow, holdPerWindow }, null, 2));
 console.log(JSON.stringify({ phase: "done", outPath }));
 
 try {

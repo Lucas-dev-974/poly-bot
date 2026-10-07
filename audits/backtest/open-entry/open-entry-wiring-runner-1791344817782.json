@@ -1,0 +1,10297 @@
+{
+  "criteria": {
+    "minTicks": 801,
+    "maxGapMs": 60000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 1282,
+  "ranked": [
+    {
+      "label": "open-entry-wired",
+      "ms": 146145,
+      "pnl": 423.45,
+      "fills": 1592,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 34.3,
+      "wins": 330,
+      "losses": 631,
+      "capitalEnd": 923.45
+    },
+    {
+      "label": "open-entry-hold-ref",
+      "ms": 119920,
+      "pnl": 407.91,
+      "fills": 961,
+      "rejects": 0,
+      "unresolved": 0,
+      "winRate": 62.6,
+      "wins": 602,
+      "losses": 359,
+      "capitalEnd": 907.91
+    }
+  ],
+  "sells": {
+    "defend": 631
+  },
+  "perWindow": [
+    {
+      "slug": "btc-updown-15m-1788849000",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1788849900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788850800",
+      "pnl": -5.57
+    },
+    {
+      "slug": "btc-updown-15m-1788851700",
+      "pnl": -5.5
+    },
+    {
+      "slug": "btc-updown-15m-1788852600",
+      "pnl": -5.25
+    },
+    {
+      "slug": "btc-updown-15m-1788853500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788854400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1788856200",
+      "pnl": -5.16
+    },
+    {
+      "slug": "btc-updown-15m-1788857100",
+      "pnl": -3.05
+    },
+    {
+      "slug": "btc-updown-15m-1788858900",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1788862500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788863400",
+      "pnl": -7.37
+    },
+    {
+      "slug": "btc-updown-15m-1788864300",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1788865200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1788866100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788867000",
+      "pnl": -6.33
+    },
+    {
+      "slug": "btc-updown-15m-1788867900",
+      "pnl": -2.54
+    },
+    {
+      "slug": "btc-updown-15m-1788868800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788869700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788870600",
+      "pnl": -7.62
+    },
+    {
+      "slug": "btc-updown-15m-1788871500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788872400",
+      "pnl": -6.61
+    },
+    {
+      "slug": "btc-updown-15m-1788873300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788875100",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1788876000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788876900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788877800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788878700",
+      "pnl": -6
+    },
+    {
+      "slug": "btc-updown-15m-1788880500",
+      "pnl": -4.58
+    },
+    {
+      "slug": "btc-updown-15m-1788881400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788882300",
+      "pnl": -7.74
+    },
+    {
+      "slug": "btc-updown-15m-1788883200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788884100",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1788885000",
+      "pnl": -6.61
+    },
+    {
+      "slug": "btc-updown-15m-1788885900",
+      "pnl": -4.75
+    },
+    {
+      "slug": "btc-updown-15m-1788886800",
+      "pnl": -1.82
+    },
+    {
+      "slug": "btc-updown-15m-1788887700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788888600",
+      "pnl": -2.35
+    },
+    {
+      "slug": "btc-updown-15m-1788889500",
+      "pnl": -3.05
+    },
+    {
+      "slug": "btc-updown-15m-1788890400",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1788891300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788892200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788893100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788894000",
+      "pnl": -2.54
+    },
+    {
+      "slug": "btc-updown-15m-1788894900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788895800",
+      "pnl": -6.89
+    },
+    {
+      "slug": "btc-updown-15m-1788921900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788934500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788935400",
+      "pnl": -2.77
+    },
+    {
+      "slug": "btc-updown-15m-1788936300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788937200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788939900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788940800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788941700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788942600",
+      "pnl": -4.58
+    },
+    {
+      "slug": "btc-updown-15m-1788943500",
+      "pnl": -4.83
+    },
+    {
+      "slug": "btc-updown-15m-1788944400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1788945300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788946200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788947100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788948000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788950700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788951600",
+      "pnl": -6.64
+    },
+    {
+      "slug": "btc-updown-15m-1788952500",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1788953400",
+      "pnl": -3.31
+    },
+    {
+      "slug": "btc-updown-15m-1788954300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788955200",
+      "pnl": -4.58
+    },
+    {
+      "slug": "btc-updown-15m-1788956100",
+      "pnl": -8.36
+    },
+    {
+      "slug": "btc-updown-15m-1788957000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788957900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788958800",
+      "pnl": -3.5
+    },
+    {
+      "slug": "btc-updown-15m-1788959700",
+      "pnl": -3.05
+    },
+    {
+      "slug": "btc-updown-15m-1788960600",
+      "pnl": -4.07
+    },
+    {
+      "slug": "btc-updown-15m-1788961500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788962400",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1788963300",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1788964200",
+      "pnl": -2.21
+    },
+    {
+      "slug": "btc-updown-15m-1788967800",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1788968700",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1788969600",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1788970500",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1788971400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788972300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788973200",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1788974100",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1788975000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788975900",
+      "pnl": -5.81
+    },
+    {
+      "slug": "btc-updown-15m-1788976800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788977700",
+      "pnl": -6.25
+    },
+    {
+      "slug": "btc-updown-15m-1788978600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788980400",
+      "pnl": -5.57
+    },
+    {
+      "slug": "btc-updown-15m-1788981300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788982200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788983100",
+      "pnl": -3.25
+    },
+    {
+      "slug": "btc-updown-15m-1788984000",
+      "pnl": -5.09
+    },
+    {
+      "slug": "btc-updown-15m-1788984900",
+      "pnl": -3
+    },
+    {
+      "slug": "btc-updown-15m-1788985800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788986700",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1788987600",
+      "pnl": -3.96
+    },
+    {
+      "slug": "btc-updown-15m-1788988500",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1788989400",
+      "pnl": -5
+    },
+    {
+      "slug": "btc-updown-15m-1788990300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1788991200",
+      "pnl": -8.64
+    },
+    {
+      "slug": "btc-updown-15m-1788992100",
+      "pnl": -5.85
+    },
+    {
+      "slug": "btc-updown-15m-1788993000",
+      "pnl": -2.54
+    },
+    {
+      "slug": "btc-updown-15m-1788993900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788994800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1788995700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788996600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788997500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788998400",
+      "pnl": -3.75
+    },
+    {
+      "slug": "btc-updown-15m-1788999300",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789000200",
+      "pnl": -1.9
+    },
+    {
+      "slug": "btc-updown-15m-1789001100",
+      "pnl": -6.1
+    },
+    {
+      "slug": "btc-updown-15m-1789002000",
+      "pnl": -5.81
+    },
+    {
+      "slug": "btc-updown-15m-1789002900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789003800",
+      "pnl": -6.61
+    },
+    {
+      "slug": "btc-updown-15m-1789004700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789005600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789006500",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1789007400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789009200",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789010100",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1789012800",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789013700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789014600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789015500",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1789021800",
+      "pnl": -6.5
+    },
+    {
+      "slug": "btc-updown-15m-1789022700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789023600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789024500",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789025400",
+      "pnl": -5.81
+    },
+    {
+      "slug": "btc-updown-15m-1789027200",
+      "pnl": -3.5
+    },
+    {
+      "slug": "btc-updown-15m-1789028100",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1789029000",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789029900",
+      "pnl": -1.97
+    },
+    {
+      "slug": "btc-updown-15m-1789030800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789036200",
+      "pnl": -2.14
+    },
+    {
+      "slug": "btc-updown-15m-1789037100",
+      "pnl": -7.02
+    },
+    {
+      "slug": "btc-updown-15m-1789038000",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789038900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789039800",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1789040700",
+      "pnl": -7.88
+    },
+    {
+      "slug": "btc-updown-15m-1789041600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789042500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789043400",
+      "pnl": -8.72
+    },
+    {
+      "slug": "btc-updown-15m-1789044300",
+      "pnl": -1.97
+    },
+    {
+      "slug": "btc-updown-15m-1789045200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789046100",
+      "pnl": -4.5
+    },
+    {
+      "slug": "btc-updown-15m-1789047000",
+      "pnl": -1.97
+    },
+    {
+      "slug": "btc-updown-15m-1789047900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789048800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789049700",
+      "pnl": -3.05
+    },
+    {
+      "slug": "btc-updown-15m-1789051500",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1789052400",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789054200",
+      "pnl": -8.47
+    },
+    {
+      "slug": "btc-updown-15m-1789055100",
+      "pnl": -4.32
+    },
+    {
+      "slug": "btc-updown-15m-1789056000",
+      "pnl": -9
+    },
+    {
+      "slug": "btc-updown-15m-1789056900",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1789057800",
+      "pnl": -6.64
+    },
+    {
+      "slug": "btc-updown-15m-1789058700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789059600",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1789060500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789061400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789062300",
+      "pnl": -7.02
+    },
+    {
+      "slug": "btc-updown-15m-1789063200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789064100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789065000",
+      "pnl": -3.56
+    },
+    {
+      "slug": "btc-updown-15m-1789065900",
+      "pnl": -5.5
+    },
+    {
+      "slug": "btc-updown-15m-1789066800",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789067700",
+      "pnl": -3.05
+    },
+    {
+      "slug": "btc-updown-15m-1789068600",
+      "pnl": -1.94
+    },
+    {
+      "slug": "btc-updown-15m-1789069500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789070400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789071300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789072200",
+      "pnl": -1.76
+    },
+    {
+      "slug": "btc-updown-15m-1789073100",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789074000",
+      "pnl": -7.13
+    },
+    {
+      "slug": "btc-updown-15m-1789074900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789075800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789076700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789077600",
+      "pnl": -7.87
+    },
+    {
+      "slug": "btc-updown-15m-1789078500",
+      "pnl": -3.64
+    },
+    {
+      "slug": "btc-updown-15m-1789079400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789080300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789081200",
+      "pnl": -5.85
+    },
+    {
+      "slug": "btc-updown-15m-1789082100",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789083000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789083900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789084800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789085700",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1789086600",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789087500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789088400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789089300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789090200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789091100",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789092000",
+      "pnl": -4.83
+    },
+    {
+      "slug": "btc-updown-15m-1789092900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789093800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789094700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789095600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789096500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789097400",
+      "pnl": -2.38
+    },
+    {
+      "slug": "btc-updown-15m-1789098300",
+      "pnl": -3.15
+    },
+    {
+      "slug": "btc-updown-15m-1789099200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789100100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789101000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789105500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789106400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789107300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789108200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789109100",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789110000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789110900",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1789111800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789112700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789113600",
+      "pnl": -6.75
+    },
+    {
+      "slug": "btc-updown-15m-1789114500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789182900",
+      "pnl": -4.12
+    },
+    {
+      "slug": "btc-updown-15m-1789183800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789186500",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789187400",
+      "pnl": -2.75
+    },
+    {
+      "slug": "btc-updown-15m-1789188300",
+      "pnl": -4.83
+    },
+    {
+      "slug": "btc-updown-15m-1789189200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789190100",
+      "pnl": -3.56
+    },
+    {
+      "slug": "btc-updown-15m-1789191000",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1789191900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789195500",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789196400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789204500",
+      "pnl": -3.75
+    },
+    {
+      "slug": "btc-updown-15m-1789205400",
+      "pnl": -3.25
+    },
+    {
+      "slug": "btc-updown-15m-1789271100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789272000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789273800",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1789274700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789275600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789276500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789277400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789278300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789279200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789280100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789281000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789281900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789282800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789283700",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789284600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789285500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789286400",
+      "pnl": -4.52
+    },
+    {
+      "slug": "btc-updown-15m-1789287300",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1789288200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789289100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789290000",
+      "pnl": -4
+    },
+    {
+      "slug": "btc-updown-15m-1789290900",
+      "pnl": -1.79
+    },
+    {
+      "slug": "btc-updown-15m-1789291800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789292700",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789293600",
+      "pnl": -2.18
+    },
+    {
+      "slug": "btc-updown-15m-1789294500",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789295400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789296300",
+      "pnl": -2.54
+    },
+    {
+      "slug": "btc-updown-15m-1789297200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789298100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789299000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789299900",
+      "pnl": -2.61
+    },
+    {
+      "slug": "btc-updown-15m-1789300800",
+      "pnl": -2.21
+    },
+    {
+      "slug": "btc-updown-15m-1789301700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789305300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789306200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789307100",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789308000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789308900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789309800",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789310700",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1789311600",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789312500",
+      "pnl": -4.07
+    },
+    {
+      "slug": "btc-updown-15m-1789313400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789315200",
+      "pnl": -2.54
+    },
+    {
+      "slug": "btc-updown-15m-1789331400",
+      "pnl": -3.5
+    },
+    {
+      "slug": "eth-updown-15m-1789331400",
+      "pnl": -3.87
+    },
+    {
+      "slug": "btc-updown-15m-1789333200",
+      "pnl": -5.09
+    },
+    {
+      "slug": "eth-updown-15m-1789333200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789334100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789335000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789335900",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789336800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789337700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789338600",
+      "pnl": -7.87
+    },
+    {
+      "slug": "btc-updown-15m-1789339500",
+      "pnl": -2.9
+    },
+    {
+      "slug": "btc-updown-15m-1789340400",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1789341300",
+      "pnl": -6.25
+    },
+    {
+      "slug": "btc-updown-15m-1789342200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789343100",
+      "pnl": -3.87
+    },
+    {
+      "slug": "btc-updown-15m-1789344000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789344900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789345800",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789346700",
+      "pnl": -4.5
+    },
+    {
+      "slug": "btc-updown-15m-1789347600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789348500",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1789349400",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1789350300",
+      "pnl": -7.25
+    },
+    {
+      "slug": "btc-updown-15m-1789351200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789352100",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1789353000",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1789353900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789354800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789355700",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1789356600",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789357500",
+      "pnl": -3.5
+    },
+    {
+      "slug": "btc-updown-15m-1789358400",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1789359300",
+      "pnl": -2.18
+    },
+    {
+      "slug": "btc-updown-15m-1789360200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789361100",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1789362000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789362900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789364700",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1789365600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789367400",
+      "pnl": -2.08
+    },
+    {
+      "slug": "btc-updown-15m-1789368300",
+      "pnl": -6.36
+    },
+    {
+      "slug": "btc-updown-15m-1789369200",
+      "pnl": -8.47
+    },
+    {
+      "slug": "btc-updown-15m-1789370100",
+      "pnl": -8.39
+    },
+    {
+      "slug": "btc-updown-15m-1789371000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789371900",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1789372800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789373700",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1789374600",
+      "pnl": -3.75
+    },
+    {
+      "slug": "btc-updown-15m-1789375500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789376400",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1789377300",
+      "pnl": -2.18
+    },
+    {
+      "slug": "btc-updown-15m-1789378200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789379100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789380000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789380900",
+      "pnl": -4.5
+    },
+    {
+      "slug": "btc-updown-15m-1789381800",
+      "pnl": -4.07
+    },
+    {
+      "slug": "btc-updown-15m-1789382700",
+      "pnl": -7.74
+    },
+    {
+      "slug": "btc-updown-15m-1789383600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789384500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789385400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789388100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789393500",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789394400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789395300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789396200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789397100",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789398000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789398900",
+      "pnl": -7.63
+    },
+    {
+      "slug": "btc-updown-15m-1789399800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789400700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789401600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789402500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789403400",
+      "pnl": -4
+    },
+    {
+      "slug": "btc-updown-15m-1789404300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789405200",
+      "pnl": -5.85
+    },
+    {
+      "slug": "btc-updown-15m-1789406100",
+      "pnl": -5.75
+    },
+    {
+      "slug": "btc-updown-15m-1789407000",
+      "pnl": -7.02
+    },
+    {
+      "slug": "btc-updown-15m-1789407900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789408800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789409700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789410600",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1789411500",
+      "pnl": -2.9
+    },
+    {
+      "slug": "btc-updown-15m-1789412400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789413300",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789414200",
+      "pnl": -2.46
+    },
+    {
+      "slug": "btc-updown-15m-1789415100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789416000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789416900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789417800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789418700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789419600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789420500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789421400",
+      "pnl": -6.5
+    },
+    {
+      "slug": "btc-updown-15m-1789422300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789423200",
+      "pnl": -5.5
+    },
+    {
+      "slug": "btc-updown-15m-1789424100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789425000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789425900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789426800",
+      "pnl": -6.1
+    },
+    {
+      "slug": "btc-updown-15m-1789427700",
+      "pnl": -7.85
+    },
+    {
+      "slug": "btc-updown-15m-1789428600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789429500",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789430400",
+      "pnl": -3.2
+    },
+    {
+      "slug": "btc-updown-15m-1789431300",
+      "pnl": -5.81
+    },
+    {
+      "slug": "btc-updown-15m-1789432200",
+      "pnl": -2.9
+    },
+    {
+      "slug": "btc-updown-15m-1789433100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789434000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789434900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789435800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789436700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789437600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789438500",
+      "pnl": -3.56
+    },
+    {
+      "slug": "btc-updown-15m-1789439400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789440300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789441200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789442100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789443000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789443900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789444800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789445700",
+      "pnl": -2.58
+    },
+    {
+      "slug": "btc-updown-15m-1789446600",
+      "pnl": -5.75
+    },
+    {
+      "slug": "btc-updown-15m-1789447500",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789448400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789449300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789450200",
+      "pnl": -4.25
+    },
+    {
+      "slug": "btc-updown-15m-1789451100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789452000",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1789452900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789453800",
+      "pnl": -2.46
+    },
+    {
+      "slug": "btc-updown-15m-1789454700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789455600",
+      "pnl": -7.12
+    },
+    {
+      "slug": "btc-updown-15m-1789456500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789457400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789458300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789459200",
+      "pnl": -7.12
+    },
+    {
+      "slug": "btc-updown-15m-1789460100",
+      "pnl": -7.62
+    },
+    {
+      "slug": "btc-updown-15m-1789461000",
+      "pnl": -3.82
+    },
+    {
+      "slug": "btc-updown-15m-1789461900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789462800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789463700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789464600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789465500",
+      "pnl": -4.83
+    },
+    {
+      "slug": "btc-updown-15m-1789466400",
+      "pnl": -7.12
+    },
+    {
+      "slug": "btc-updown-15m-1789467300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789468200",
+      "pnl": -8.75
+    },
+    {
+      "slug": "btc-updown-15m-1789469100",
+      "pnl": -2.42
+    },
+    {
+      "slug": "btc-updown-15m-1789470000",
+      "pnl": -3.56
+    },
+    {
+      "slug": "btc-updown-15m-1789470900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789471800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789472700",
+      "pnl": -1.97
+    },
+    {
+      "slug": "btc-updown-15m-1789473600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789474500",
+      "pnl": -5.75
+    },
+    {
+      "slug": "btc-updown-15m-1789475400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789476300",
+      "pnl": -10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789477200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789478100",
+      "pnl": -6.36
+    },
+    {
+      "slug": "btc-updown-15m-1789479000",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789479900",
+      "pnl": -7.25
+    },
+    {
+      "slug": "btc-updown-15m-1789480800",
+      "pnl": -7.74
+    },
+    {
+      "slug": "btc-updown-15m-1789481700",
+      "pnl": -6.87
+    },
+    {
+      "slug": "btc-updown-15m-1789482600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789483500",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789484400",
+      "pnl": -6.36
+    },
+    {
+      "slug": "btc-updown-15m-1789485300",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1789486200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789487100",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1789488000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789488900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789489800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789490700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789496100",
+      "pnl": -9.15
+    },
+    {
+      "slug": "btc-updown-15m-1789497000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789497900",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1789498800",
+      "pnl": -6.15
+    },
+    {
+      "slug": "btc-updown-15m-1789499700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789500600",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1789501500",
+      "pnl": -3.31
+    },
+    {
+      "slug": "btc-updown-15m-1789502400",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1789503300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789504200",
+      "pnl": -2.39
+    },
+    {
+      "slug": "btc-updown-15m-1789505100",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789506000",
+      "pnl": -1.94
+    },
+    {
+      "slug": "btc-updown-15m-1789506900",
+      "pnl": -2.17
+    },
+    {
+      "slug": "btc-updown-15m-1789507800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789508700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789509600",
+      "pnl": -2.42
+    },
+    {
+      "slug": "btc-updown-15m-1789510500",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1789511400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789512300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789513200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789514100",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1789515000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789515900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789516800",
+      "pnl": -7.12
+    },
+    {
+      "slug": "btc-updown-15m-1789517700",
+      "pnl": -7.37
+    },
+    {
+      "slug": "btc-updown-15m-1789518600",
+      "pnl": -4.5
+    },
+    {
+      "slug": "btc-updown-15m-1789519500",
+      "pnl": -3.05
+    },
+    {
+      "slug": "btc-updown-15m-1789520400",
+      "pnl": -6.5
+    },
+    {
+      "slug": "btc-updown-15m-1789521300",
+      "pnl": -5.08
+    },
+    {
+      "slug": "btc-updown-15m-1789522200",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789523100",
+      "pnl": -5.25
+    },
+    {
+      "slug": "btc-updown-15m-1789524000",
+      "pnl": -6.36
+    },
+    {
+      "slug": "btc-updown-15m-1789524900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789525800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789526700",
+      "pnl": -2.54
+    },
+    {
+      "slug": "btc-updown-15m-1789527600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789528500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789529400",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789530300",
+      "pnl": -2.95
+    },
+    {
+      "slug": "btc-updown-15m-1789531200",
+      "pnl": -7.63
+    },
+    {
+      "slug": "btc-updown-15m-1789532100",
+      "pnl": -2.21
+    },
+    {
+      "slug": "btc-updown-15m-1789533000",
+      "pnl": -4.92
+    },
+    {
+      "slug": "btc-updown-15m-1789533900",
+      "pnl": -5.85
+    },
+    {
+      "slug": "btc-updown-15m-1789536600",
+      "pnl": -1.97
+    },
+    {
+      "slug": "btc-updown-15m-1789537500",
+      "pnl": -2.7
+    },
+    {
+      "slug": "btc-updown-15m-1789538400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789539300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789540200",
+      "pnl": -2.46
+    },
+    {
+      "slug": "btc-updown-15m-1789541100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789542000",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1789542900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789543800",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1789544700",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1789545600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789546500",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1789547400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789548300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789549200",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1789550100",
+      "pnl": -6.61
+    },
+    {
+      "slug": "btc-updown-15m-1789551000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789551900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789552800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789553700",
+      "pnl": -2.33
+    },
+    {
+      "slug": "btc-updown-15m-1789554600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789555500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789556400",
+      "pnl": -1.54
+    },
+    {
+      "slug": "btc-updown-15m-1789557300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789558200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789559100",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1789560000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789560900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789561800",
+      "pnl": -8
+    },
+    {
+      "slug": "btc-updown-15m-1789562700",
+      "pnl": -8.44
+    },
+    {
+      "slug": "btc-updown-15m-1789565400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789566300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789567200",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1789569000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789569900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789570800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789571700",
+      "pnl": -1.94
+    },
+    {
+      "slug": "btc-updown-15m-1789572600",
+      "pnl": -2.9
+    },
+    {
+      "slug": "btc-updown-15m-1789573500",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789574400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789575300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789576200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789577100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789578000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789578900",
+      "pnl": -3.56
+    },
+    {
+      "slug": "btc-updown-15m-1789579800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789580700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789581600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789582500",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1789583400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789584300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789585200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789586100",
+      "pnl": -7.5
+    },
+    {
+      "slug": "btc-updown-15m-1789587000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789587900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789588800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789594200",
+      "pnl": -3.63
+    },
+    {
+      "slug": "btc-updown-15m-1789595100",
+      "pnl": -2.18
+    },
+    {
+      "slug": "btc-updown-15m-1789596000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789596900",
+      "pnl": -6.87
+    },
+    {
+      "slug": "btc-updown-15m-1789597800",
+      "pnl": -3.15
+    },
+    {
+      "slug": "btc-updown-15m-1789598700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789599600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789600500",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789601400",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789602300",
+      "pnl": -7.62
+    },
+    {
+      "slug": "btc-updown-15m-1789603200",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789604100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789605000",
+      "pnl": -6.15
+    },
+    {
+      "slug": "btc-updown-15m-1789605900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789606800",
+      "pnl": -3.56
+    },
+    {
+      "slug": "btc-updown-15m-1789607700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789608600",
+      "pnl": -2.66
+    },
+    {
+      "slug": "btc-updown-15m-1789609500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789610400",
+      "pnl": -3.05
+    },
+    {
+      "slug": "btc-updown-15m-1789611300",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1789612200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789613100",
+      "pnl": -3.25
+    },
+    {
+      "slug": "eth-updown-15m-1789613100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789614000",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789614000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789614900",
+      "pnl": -2.77
+    },
+    {
+      "slug": "eth-updown-15m-1789614900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789615800",
+      "pnl": -8.39
+    },
+    {
+      "slug": "eth-updown-15m-1789615800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789616700",
+      "pnl": -3.23
+    },
+    {
+      "slug": "eth-updown-15m-1789616700",
+      "pnl": -4.36
+    },
+    {
+      "slug": "btc-updown-15m-1789617600",
+      "pnl": 8.07
+    },
+    {
+      "slug": "eth-updown-15m-1789617600",
+      "pnl": 7.06
+    },
+    {
+      "slug": "btc-updown-15m-1789618500",
+      "pnl": -6.36
+    },
+    {
+      "slug": "eth-updown-15m-1789618500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789619400",
+      "pnl": -2.5
+    },
+    {
+      "slug": "eth-updown-15m-1789619400",
+      "pnl": -5.85
+    },
+    {
+      "slug": "btc-updown-15m-1789620300",
+      "pnl": -9.25
+    },
+    {
+      "slug": "eth-updown-15m-1789620300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789621200",
+      "pnl": 9.19
+    },
+    {
+      "slug": "eth-updown-15m-1789621200",
+      "pnl": -2.23
+    },
+    {
+      "slug": "btc-updown-15m-1789622100",
+      "pnl": -3.31
+    },
+    {
+      "slug": "eth-updown-15m-1789622100",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789623000",
+      "pnl": -2.14
+    },
+    {
+      "slug": "eth-updown-15m-1789623000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789623900",
+      "pnl": -3.05
+    },
+    {
+      "slug": "eth-updown-15m-1789623900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789624800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789624800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789625700",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789625700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789626600",
+      "pnl": 6.74
+    },
+    {
+      "slug": "eth-updown-15m-1789626600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789630200",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789630200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789631100",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789631100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789632900",
+      "pnl": -7.37
+    },
+    {
+      "slug": "eth-updown-15m-1789632900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789633800",
+      "pnl": -3.87
+    },
+    {
+      "slug": "eth-updown-15m-1789633800",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789634700",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789634700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789635600",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789635600",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1789636500",
+      "pnl": -6.8
+    },
+    {
+      "slug": "eth-updown-15m-1789636500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789637400",
+      "pnl": -2.29
+    },
+    {
+      "slug": "eth-updown-15m-1789637400",
+      "pnl": -3
+    },
+    {
+      "slug": "btc-updown-15m-1789639200",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789639200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789640100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789640100",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789641000",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789641000",
+      "pnl": -2.2
+    },
+    {
+      "slug": "btc-updown-15m-1789641900",
+      "pnl": -2.5
+    },
+    {
+      "slug": "eth-updown-15m-1789641900",
+      "pnl": -2.11
+    },
+    {
+      "slug": "btc-updown-15m-1789642800",
+      "pnl": -2.54
+    },
+    {
+      "slug": "eth-updown-15m-1789642800",
+      "pnl": -2.21
+    },
+    {
+      "slug": "btc-updown-15m-1789643700",
+      "pnl": -6.42
+    },
+    {
+      "slug": "eth-updown-15m-1789643700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789644600",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789644600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789645500",
+      "pnl": -2.25
+    },
+    {
+      "slug": "eth-updown-15m-1789645500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789646400",
+      "pnl": -2
+    },
+    {
+      "slug": "eth-updown-15m-1789646400",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789647300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789647300",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1789648200",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789648200",
+      "pnl": -8.95
+    },
+    {
+      "slug": "btc-updown-15m-1789649100",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789649100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789650000",
+      "pnl": -7.12
+    },
+    {
+      "slug": "eth-updown-15m-1789650000",
+      "pnl": -7.62
+    },
+    {
+      "slug": "btc-updown-15m-1789650900",
+      "pnl": -2.54
+    },
+    {
+      "slug": "eth-updown-15m-1789650900",
+      "pnl": -4
+    },
+    {
+      "slug": "btc-updown-15m-1789651800",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789651800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789652700",
+      "pnl": -7.02
+    },
+    {
+      "slug": "eth-updown-15m-1789652700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789653600",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789653600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789654500",
+      "pnl": -2.04
+    },
+    {
+      "slug": "eth-updown-15m-1789654500",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1789655400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789655400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789656300",
+      "pnl": -2
+    },
+    {
+      "slug": "eth-updown-15m-1789656300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789657200",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789657200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789658100",
+      "pnl": -2.46
+    },
+    {
+      "slug": "eth-updown-15m-1789658100",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1789659000",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789659000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789659900",
+      "pnl": -2.04
+    },
+    {
+      "slug": "eth-updown-15m-1789659900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789660800",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789660800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789661700",
+      "pnl": -3
+    },
+    {
+      "slug": "eth-updown-15m-1789661700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789662600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789662600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789663500",
+      "pnl": -6.39
+    },
+    {
+      "slug": "eth-updown-15m-1789663500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789664400",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789664400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789665300",
+      "pnl": -6.8
+    },
+    {
+      "slug": "eth-updown-15m-1789665300",
+      "pnl": -6.87
+    },
+    {
+      "slug": "btc-updown-15m-1789666200",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789666200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789667100",
+      "pnl": 7.06
+    },
+    {
+      "slug": "eth-updown-15m-1789667100",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1789668000",
+      "pnl": -4.83
+    },
+    {
+      "slug": "eth-updown-15m-1789668000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789668900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789668900",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1789669800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789669800",
+      "pnl": -6.61
+    },
+    {
+      "slug": "btc-updown-15m-1789670700",
+      "pnl": -4.52
+    },
+    {
+      "slug": "eth-updown-15m-1789670700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789671600",
+      "pnl": -2.5
+    },
+    {
+      "slug": "eth-updown-15m-1789671600",
+      "pnl": -2.54
+    },
+    {
+      "slug": "btc-updown-15m-1789672500",
+      "pnl": -3.63
+    },
+    {
+      "slug": "eth-updown-15m-1789672500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789673400",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789673400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789674300",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789674300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789675200",
+      "pnl": -3.75
+    },
+    {
+      "slug": "eth-updown-15m-1789675200",
+      "pnl": -7.5
+    },
+    {
+      "slug": "btc-updown-15m-1789676100",
+      "pnl": -4.22
+    },
+    {
+      "slug": "eth-updown-15m-1789676100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789677000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789677000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789677900",
+      "pnl": -3.15
+    },
+    {
+      "slug": "eth-updown-15m-1789677900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789678800",
+      "pnl": -5.75
+    },
+    {
+      "slug": "eth-updown-15m-1789678800",
+      "pnl": -7.12
+    },
+    {
+      "slug": "btc-updown-15m-1789679700",
+      "pnl": 8.43
+    },
+    {
+      "slug": "eth-updown-15m-1789679700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789680600",
+      "pnl": -1.94
+    },
+    {
+      "slug": "eth-updown-15m-1789680600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789681500",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789681500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789682400",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789682400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789683300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789683300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789684200",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789684200",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1789685100",
+      "pnl": -2.85
+    },
+    {
+      "slug": "eth-updown-15m-1789685100",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789686000",
+      "pnl": -7
+    },
+    {
+      "slug": "eth-updown-15m-1789686000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789686900",
+      "pnl": -1.97
+    },
+    {
+      "slug": "eth-updown-15m-1789686900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789687800",
+      "pnl": 7.39
+    },
+    {
+      "slug": "eth-updown-15m-1789687800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789688700",
+      "pnl": -2.61
+    },
+    {
+      "slug": "eth-updown-15m-1789688700",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1789689600",
+      "pnl": -2.31
+    },
+    {
+      "slug": "eth-updown-15m-1789689600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789690500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789690500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789691400",
+      "pnl": 8.07
+    },
+    {
+      "slug": "eth-updown-15m-1789691400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789692300",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789692300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789693200",
+      "pnl": -4.83
+    },
+    {
+      "slug": "eth-updown-15m-1789693200",
+      "pnl": -8.08
+    },
+    {
+      "slug": "btc-updown-15m-1789694100",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789694100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789695000",
+      "pnl": -3.46
+    },
+    {
+      "slug": "eth-updown-15m-1789695000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789695900",
+      "pnl": -3
+    },
+    {
+      "slug": "eth-updown-15m-1789695900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789696800",
+      "pnl": -6.36
+    },
+    {
+      "slug": "eth-updown-15m-1789696800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789697700",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789697700",
+      "pnl": -3
+    },
+    {
+      "slug": "btc-updown-15m-1789698600",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789698600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789699500",
+      "pnl": -2.29
+    },
+    {
+      "slug": "eth-updown-15m-1789699500",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789700400",
+      "pnl": -4.92
+    },
+    {
+      "slug": "eth-updown-15m-1789700400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789701300",
+      "pnl": -2.05
+    },
+    {
+      "slug": "eth-updown-15m-1789701300",
+      "pnl": -2.82
+    },
+    {
+      "slug": "btc-updown-15m-1789702200",
+      "pnl": 9.19
+    },
+    {
+      "slug": "eth-updown-15m-1789702200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789714800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789715700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789716600",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1789717500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789718400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789719300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789720200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789721100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789722000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789722900",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1789723800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789724700",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789725600",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789726500",
+      "pnl": 7.06
+    },
+    {
+      "slug": "btc-updown-15m-1789727400",
+      "pnl": -6.25
+    },
+    {
+      "slug": "btc-updown-15m-1789728300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789729200",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1789730100",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1789731000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789731900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789732800",
+      "pnl": -6.1
+    },
+    {
+      "slug": "btc-updown-15m-1789733700",
+      "pnl": -7.63
+    },
+    {
+      "slug": "btc-updown-15m-1789734600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789735500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789736400",
+      "pnl": -7.12
+    },
+    {
+      "slug": "btc-updown-15m-1789737300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789738200",
+      "pnl": -7.88
+    },
+    {
+      "slug": "btc-updown-15m-1789739100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789740000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789740900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789741800",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789742700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789743600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789744500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789745400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789746300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789747200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789748100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789749000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789749900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789750800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789751700",
+      "pnl": -7.75
+    },
+    {
+      "slug": "btc-updown-15m-1789752600",
+      "pnl": -3
+    },
+    {
+      "slug": "btc-updown-15m-1789753500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789754400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789755300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789756200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789757100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789758000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789758900",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1789759800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789760700",
+      "pnl": -7
+    },
+    {
+      "slug": "btc-updown-15m-1789761600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789762500",
+      "pnl": -1.94
+    },
+    {
+      "slug": "btc-updown-15m-1789763400",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1789764300",
+      "pnl": -7.63
+    },
+    {
+      "slug": "btc-updown-15m-1789765200",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789766100",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789767000",
+      "pnl": -5.25
+    },
+    {
+      "slug": "btc-updown-15m-1789788600",
+      "pnl": -5.75
+    },
+    {
+      "slug": "btc-updown-15m-1789789500",
+      "pnl": -2.66
+    },
+    {
+      "slug": "btc-updown-15m-1789790400",
+      "pnl": -5.41
+    },
+    {
+      "slug": "btc-updown-15m-1789791300",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1789792200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789793100",
+      "pnl": -2.18
+    },
+    {
+      "slug": "btc-updown-15m-1789794000",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1789795800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789796700",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789796700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789797600",
+      "pnl": -6.23
+    },
+    {
+      "slug": "eth-updown-15m-1789797600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789798500",
+      "pnl": -5.5
+    },
+    {
+      "slug": "eth-updown-15m-1789798500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790911800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790912700",
+      "pnl": -6.39
+    },
+    {
+      "slug": "btc-updown-15m-1790913600",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1790914500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790915400",
+      "pnl": -7.5
+    },
+    {
+      "slug": "btc-updown-15m-1790916300",
+      "pnl": -6.1
+    },
+    {
+      "slug": "btc-updown-15m-1790917200",
+      "pnl": -6.75
+    },
+    {
+      "slug": "btc-updown-15m-1790918100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790919000",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1790919900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790920800",
+      "pnl": -6.15
+    },
+    {
+      "slug": "btc-updown-15m-1790921700",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1790922600",
+      "pnl": -5.25
+    },
+    {
+      "slug": "btc-updown-15m-1790923500",
+      "pnl": -3.82
+    },
+    {
+      "slug": "btc-updown-15m-1790924400",
+      "pnl": -3.69
+    },
+    {
+      "slug": "btc-updown-15m-1790927100",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1790928000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790928900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790929800",
+      "pnl": -6
+    },
+    {
+      "slug": "btc-updown-15m-1790930700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790931600",
+      "pnl": -6.87
+    },
+    {
+      "slug": "btc-updown-15m-1790933400",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1790934300",
+      "pnl": -7.16
+    },
+    {
+      "slug": "btc-updown-15m-1790936100",
+      "pnl": -2.21
+    },
+    {
+      "slug": "btc-updown-15m-1790937000",
+      "pnl": -7.87
+    },
+    {
+      "slug": "btc-updown-15m-1790937900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790938800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1790940600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1790942400",
+      "pnl": -1.85
+    },
+    {
+      "slug": "btc-updown-15m-1790943300",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1790944200",
+      "pnl": -2.26
+    },
+    {
+      "slug": "btc-updown-15m-1790945100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790946000",
+      "pnl": -6
+    },
+    {
+      "slug": "btc-updown-15m-1790946900",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1790947800",
+      "pnl": -8.14
+    },
+    {
+      "slug": "btc-updown-15m-1790948700",
+      "pnl": -6.36
+    },
+    {
+      "slug": "btc-updown-15m-1790949600",
+      "pnl": -5.75
+    },
+    {
+      "slug": "btc-updown-15m-1790950500",
+      "pnl": -8.25
+    },
+    {
+      "slug": "btc-updown-15m-1790951400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790952300",
+      "pnl": -1.97
+    },
+    {
+      "slug": "btc-updown-15m-1790953200",
+      "pnl": -6.9
+    },
+    {
+      "slug": "btc-updown-15m-1790954100",
+      "pnl": -6.87
+    },
+    {
+      "slug": "btc-updown-15m-1790955000",
+      "pnl": -4.84
+    },
+    {
+      "slug": "btc-updown-15m-1790955900",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1790956800",
+      "pnl": -2.9
+    },
+    {
+      "slug": "btc-updown-15m-1790957700",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1790958600",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1790959500",
+      "pnl": -3.56
+    },
+    {
+      "slug": "btc-updown-15m-1790960400",
+      "pnl": -2.21
+    },
+    {
+      "slug": "btc-updown-15m-1790961300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790962200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790963100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790964000",
+      "pnl": -6.36
+    },
+    {
+      "slug": "btc-updown-15m-1790964900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790965800",
+      "pnl": -6.25
+    },
+    {
+      "slug": "btc-updown-15m-1790966700",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1790967600",
+      "pnl": -4.25
+    },
+    {
+      "slug": "btc-updown-15m-1790968500",
+      "pnl": -8.95
+    },
+    {
+      "slug": "btc-updown-15m-1790969400",
+      "pnl": -5.5
+    },
+    {
+      "slug": "btc-updown-15m-1790970300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790971200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1790972100",
+      "pnl": -3.75
+    },
+    {
+      "slug": "btc-updown-15m-1790973000",
+      "pnl": -8.71
+    },
+    {
+      "slug": "btc-updown-15m-1790973900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790974800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790975700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790976600",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1790977500",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1790978400",
+      "pnl": -7.28
+    },
+    {
+      "slug": "btc-updown-15m-1790979300",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1790980200",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1790981100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790982000",
+      "pnl": -2.08
+    },
+    {
+      "slug": "btc-updown-15m-1790982900",
+      "pnl": -2.54
+    },
+    {
+      "slug": "btc-updown-15m-1790983800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790984700",
+      "pnl": -4.83
+    },
+    {
+      "slug": "btc-updown-15m-1790985600",
+      "pnl": -2.66
+    },
+    {
+      "slug": "btc-updown-15m-1790986500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790987400",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1790988300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790989200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790990100",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1790991000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790991900",
+      "pnl": -1.88
+    },
+    {
+      "slug": "btc-updown-15m-1790992800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790993700",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1790994600",
+      "pnl": -4.58
+    },
+    {
+      "slug": "btc-updown-15m-1790995500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790996400",
+      "pnl": -3.31
+    },
+    {
+      "slug": "btc-updown-15m-1790997300",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1790998200",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1790999100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791000000",
+      "pnl": -4.83
+    },
+    {
+      "slug": "btc-updown-15m-1791000900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791001800",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1791002700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791003600",
+      "pnl": -2.35
+    },
+    {
+      "slug": "btc-updown-15m-1791004500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791005400",
+      "pnl": -2.66
+    },
+    {
+      "slug": "btc-updown-15m-1791006300",
+      "pnl": -2.73
+    },
+    {
+      "slug": "btc-updown-15m-1791007200",
+      "pnl": -4.04
+    },
+    {
+      "slug": "btc-updown-15m-1791008100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791009000",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791009900",
+      "pnl": 10.86
+    },
+    {
+      "slug": "btc-updown-15m-1791010800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791011700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791012600",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791013500",
+      "pnl": -3.04
+    },
+    {
+      "slug": "btc-updown-15m-1791014400",
+      "pnl": -7.5
+    },
+    {
+      "slug": "btc-updown-15m-1791015300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791016200",
+      "pnl": -2.11
+    },
+    {
+      "slug": "btc-updown-15m-1791017100",
+      "pnl": -9.84
+    },
+    {
+      "slug": "btc-updown-15m-1791018000",
+      "pnl": -6.1
+    },
+    {
+      "slug": "btc-updown-15m-1791018900",
+      "pnl": 6.12
+    },
+    {
+      "slug": "btc-updown-15m-1791019800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791020700",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791021600",
+      "pnl": -7.63
+    },
+    {
+      "slug": "btc-updown-15m-1791022500",
+      "pnl": -3.25
+    },
+    {
+      "slug": "btc-updown-15m-1791023400",
+      "pnl": -4.49
+    },
+    {
+      "slug": "btc-updown-15m-1791024300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791025200",
+      "pnl": -4.43
+    },
+    {
+      "slug": "btc-updown-15m-1791026100",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1791027000",
+      "pnl": -1.92
+    },
+    {
+      "slug": "btc-updown-15m-1791027900",
+      "pnl": -2.73
+    },
+    {
+      "slug": "btc-updown-15m-1791028800",
+      "pnl": -3.15
+    },
+    {
+      "slug": "btc-updown-15m-1791029700",
+      "pnl": -7.88
+    },
+    {
+      "slug": "btc-updown-15m-1791030600",
+      "pnl": -4.83
+    },
+    {
+      "slug": "btc-updown-15m-1791031500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791032400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791033300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791034200",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791035100",
+      "pnl": -5.81
+    },
+    {
+      "slug": "btc-updown-15m-1791036000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791036900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791037800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791038700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791039600",
+      "pnl": -7.37
+    },
+    {
+      "slug": "btc-updown-15m-1791040500",
+      "pnl": -4.85
+    },
+    {
+      "slug": "btc-updown-15m-1791041400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791042300",
+      "pnl": -5.25
+    },
+    {
+      "slug": "btc-updown-15m-1791043200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791044100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791045000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791045900",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1791046800",
+      "pnl": -2.9
+    },
+    {
+      "slug": "btc-updown-15m-1791047700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791048600",
+      "pnl": -2.11
+    },
+    {
+      "slug": "btc-updown-15m-1791049500",
+      "pnl": -8.31
+    },
+    {
+      "slug": "btc-updown-15m-1791050400",
+      "pnl": -3.15
+    },
+    {
+      "slug": "btc-updown-15m-1791051300",
+      "pnl": -7.74
+    },
+    {
+      "slug": "btc-updown-15m-1791052200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791053100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791054000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791054900",
+      "pnl": -6.33
+    },
+    {
+      "slug": "btc-updown-15m-1791055800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791056700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791057600",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791058500",
+      "pnl": -3.31
+    },
+    {
+      "slug": "btc-updown-15m-1791059400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791060300",
+      "pnl": -12.79
+    },
+    {
+      "slug": "btc-updown-15m-1791061200",
+      "pnl": -6.42
+    },
+    {
+      "slug": "btc-updown-15m-1791062100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791063000",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791063900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791064800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791065700",
+      "pnl": -5.32
+    },
+    {
+      "slug": "btc-updown-15m-1791066600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791067500",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1791068400",
+      "pnl": -4.07
+    },
+    {
+      "slug": "btc-updown-15m-1791069300",
+      "pnl": -3.05
+    },
+    {
+      "slug": "btc-updown-15m-1791070200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791071100",
+      "pnl": -2.38
+    },
+    {
+      "slug": "btc-updown-15m-1791072000",
+      "pnl": -3.25
+    },
+    {
+      "slug": "btc-updown-15m-1791072900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791073800",
+      "pnl": -1.76
+    },
+    {
+      "slug": "btc-updown-15m-1791074700",
+      "pnl": -6.59
+    },
+    {
+      "slug": "btc-updown-15m-1791075600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791076500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791077400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791078300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791079200",
+      "pnl": -2.11
+    },
+    {
+      "slug": "btc-updown-15m-1791080100",
+      "pnl": -2.21
+    },
+    {
+      "slug": "btc-updown-15m-1791081000",
+      "pnl": -4.58
+    },
+    {
+      "slug": "btc-updown-15m-1791081900",
+      "pnl": -2.7
+    },
+    {
+      "slug": "btc-updown-15m-1791082800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791083700",
+      "pnl": -4.5
+    },
+    {
+      "slug": "btc-updown-15m-1791084600",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791085500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791086400",
+      "pnl": -1.92
+    },
+    {
+      "slug": "btc-updown-15m-1791087300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791088200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791089100",
+      "pnl": -3.56
+    },
+    {
+      "slug": "btc-updown-15m-1791090000",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1791090900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791091800",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791092700",
+      "pnl": -1.88
+    },
+    {
+      "slug": "btc-updown-15m-1791093600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791094500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791095400",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1791096300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791097200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791098100",
+      "pnl": -2.21
+    },
+    {
+      "slug": "btc-updown-15m-1791099000",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1791099900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791100800",
+      "pnl": -2.61
+    },
+    {
+      "slug": "btc-updown-15m-1791101700",
+      "pnl": -3.56
+    },
+    {
+      "slug": "btc-updown-15m-1791102600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791103500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791104400",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791105300",
+      "pnl": 7.06
+    },
+    {
+      "slug": "btc-updown-15m-1791106200",
+      "pnl": -5.85
+    },
+    {
+      "slug": "btc-updown-15m-1791107100",
+      "pnl": -6.36
+    },
+    {
+      "slug": "btc-updown-15m-1791108000",
+      "pnl": -7.12
+    },
+    {
+      "slug": "btc-updown-15m-1791108900",
+      "pnl": 5.55
+    },
+    {
+      "slug": "btc-updown-15m-1791109800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791110700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791111600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791112500",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791113400",
+      "pnl": -2.85
+    },
+    {
+      "slug": "btc-updown-15m-1791114300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791115200",
+      "pnl": -1.71
+    },
+    {
+      "slug": "btc-updown-15m-1791116100",
+      "pnl": -1.9
+    },
+    {
+      "slug": "btc-updown-15m-1791117000",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1791117900",
+      "pnl": -8.14
+    },
+    {
+      "slug": "btc-updown-15m-1791118800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791119700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791120600",
+      "pnl": -2.31
+    },
+    {
+      "slug": "btc-updown-15m-1791121500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791122400",
+      "pnl": -2.54
+    },
+    {
+      "slug": "btc-updown-15m-1791123300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791124200",
+      "pnl": -3.44
+    },
+    {
+      "slug": "btc-updown-15m-1791125100",
+      "pnl": -3.31
+    },
+    {
+      "slug": "btc-updown-15m-1791126000",
+      "pnl": -1.9
+    },
+    {
+      "slug": "btc-updown-15m-1791126900",
+      "pnl": -2.95
+    },
+    {
+      "slug": "btc-updown-15m-1791127800",
+      "pnl": -2.18
+    },
+    {
+      "slug": "btc-updown-15m-1791128700",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1791129600",
+      "pnl": -2.05
+    },
+    {
+      "slug": "btc-updown-15m-1791130500",
+      "pnl": -4.92
+    },
+    {
+      "slug": "btc-updown-15m-1791131400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791132300",
+      "pnl": -11.31
+    },
+    {
+      "slug": "btc-updown-15m-1791133200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791134100",
+      "pnl": -2.38
+    },
+    {
+      "slug": "btc-updown-15m-1791135000",
+      "pnl": -5.85
+    },
+    {
+      "slug": "btc-updown-15m-1791135900",
+      "pnl": -5.42
+    },
+    {
+      "slug": "btc-updown-15m-1791136800",
+      "pnl": -2.77
+    },
+    {
+      "slug": "btc-updown-15m-1791137700",
+      "pnl": -2.75
+    },
+    {
+      "slug": "btc-updown-15m-1791138600",
+      "pnl": -3.31
+    },
+    {
+      "slug": "btc-updown-15m-1791139500",
+      "pnl": -3.57
+    },
+    {
+      "slug": "btc-updown-15m-1791140400",
+      "pnl": 6.12
+    },
+    {
+      "slug": "btc-updown-15m-1791141300",
+      "pnl": -3.25
+    },
+    {
+      "slug": "btc-updown-15m-1791142200",
+      "pnl": -2.21
+    },
+    {
+      "slug": "btc-updown-15m-1791143100",
+      "pnl": -3.15
+    },
+    {
+      "slug": "btc-updown-15m-1791144000",
+      "pnl": -2.46
+    },
+    {
+      "slug": "btc-updown-15m-1791144900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791145800",
+      "pnl": -10.62
+    },
+    {
+      "slug": "btc-updown-15m-1791146700",
+      "pnl": -9.15
+    },
+    {
+      "slug": "btc-updown-15m-1791147600",
+      "pnl": -7.25
+    },
+    {
+      "slug": "btc-updown-15m-1791148500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791149400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791150300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791151200",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791152100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791153000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791153900",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1791154800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791155700",
+      "pnl": -7.63
+    },
+    {
+      "slug": "btc-updown-15m-1791156600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791157500",
+      "pnl": -5.5
+    },
+    {
+      "slug": "btc-updown-15m-1791158400",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791159300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791160200",
+      "pnl": -3.56
+    },
+    {
+      "slug": "btc-updown-15m-1791161100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791162000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791162900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791163800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791167400",
+      "pnl": -2.54
+    },
+    {
+      "slug": "btc-updown-15m-1791168300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791171000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791171900",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791172800",
+      "pnl": -1.9
+    },
+    {
+      "slug": "btc-updown-15m-1791173700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791174600",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791175500",
+      "pnl": -3.69
+    },
+    {
+      "slug": "btc-updown-15m-1791176400",
+      "pnl": -6.5
+    },
+    {
+      "slug": "btc-updown-15m-1791177300",
+      "pnl": -2.46
+    },
+    {
+      "slug": "btc-updown-15m-1791178200",
+      "pnl": -5.25
+    },
+    {
+      "slug": "btc-updown-15m-1791179100",
+      "pnl": -7
+    },
+    {
+      "slug": "btc-updown-15m-1791180000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791180900",
+      "pnl": -2.21
+    },
+    {
+      "slug": "btc-updown-15m-1791181800",
+      "pnl": -8.09
+    },
+    {
+      "slug": "btc-updown-15m-1791183600",
+      "pnl": -5
+    },
+    {
+      "slug": "btc-updown-15m-1791184500",
+      "pnl": -10.68
+    },
+    {
+      "slug": "btc-updown-15m-1791185400",
+      "pnl": -4.86
+    },
+    {
+      "slug": "btc-updown-15m-1791186300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791187200",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1791188100",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791189000",
+      "pnl": -10.93
+    },
+    {
+      "slug": "btc-updown-15m-1791189900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791190800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791191700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791192600",
+      "pnl": -6
+    },
+    {
+      "slug": "btc-updown-15m-1791193500",
+      "pnl": -7.37
+    },
+    {
+      "slug": "btc-updown-15m-1791194400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791197100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791198000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791198900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791199800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791200700",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1791202500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791203400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791204300",
+      "pnl": -2.46
+    },
+    {
+      "slug": "btc-updown-15m-1791205200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791206100",
+      "pnl": -6.42
+    },
+    {
+      "slug": "btc-updown-15m-1791207000",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791207900",
+      "pnl": -8.61
+    },
+    {
+      "slug": "btc-updown-15m-1791208800",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1791211500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791212400",
+      "pnl": -6.61
+    },
+    {
+      "slug": "btc-updown-15m-1791213300",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1791214200",
+      "pnl": -8.09
+    },
+    {
+      "slug": "btc-updown-15m-1791215100",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1791216000",
+      "pnl": -6.36
+    },
+    {
+      "slug": "btc-updown-15m-1791216900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791217800",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1791218700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791219600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791220500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791221400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791222300",
+      "pnl": -7.62
+    },
+    {
+      "slug": "btc-updown-15m-1791223200",
+      "pnl": -7.5
+    },
+    {
+      "slug": "btc-updown-15m-1791224100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791225000",
+      "pnl": -8.72
+    },
+    {
+      "slug": "btc-updown-15m-1791225900",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1791226800",
+      "pnl": -4.43
+    },
+    {
+      "slug": "btc-updown-15m-1791227700",
+      "pnl": -11.8
+    },
+    {
+      "slug": "btc-updown-15m-1791228600",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1791229500",
+      "pnl": -3.2
+    },
+    {
+      "slug": "btc-updown-15m-1791230400",
+      "pnl": -5.85
+    },
+    {
+      "slug": "btc-updown-15m-1791231300",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791232200",
+      "pnl": -6
+    },
+    {
+      "slug": "btc-updown-15m-1791233100",
+      "pnl": -1.97
+    },
+    {
+      "slug": "btc-updown-15m-1791234000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791234900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791235800",
+      "pnl": -6.36
+    },
+    {
+      "slug": "btc-updown-15m-1791236700",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1791237600",
+      "pnl": -1.9
+    },
+    {
+      "slug": "btc-updown-15m-1791238500",
+      "pnl": -7.63
+    },
+    {
+      "slug": "btc-updown-15m-1791239400",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791240300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791241200",
+      "pnl": -8.75
+    },
+    {
+      "slug": "btc-updown-15m-1791242100",
+      "pnl": -5.5
+    },
+    {
+      "slug": "btc-updown-15m-1791243000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791243900",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791244800",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791245700",
+      "pnl": -7.27
+    },
+    {
+      "slug": "btc-updown-15m-1791246600",
+      "pnl": -6.53
+    },
+    {
+      "slug": "btc-updown-15m-1791255600",
+      "pnl": -2.54
+    },
+    {
+      "slug": "btc-updown-15m-1791256500",
+      "pnl": -9.25
+    },
+    {
+      "slug": "btc-updown-15m-1791257400",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791258300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791259200",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1791260100",
+      "pnl": -2.25
+    },
+    {
+      "slug": "btc-updown-15m-1791261000",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1791261900",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1791262800",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791263700",
+      "pnl": -3.31
+    },
+    {
+      "slug": "btc-updown-15m-1791264600",
+      "pnl": -5.75
+    },
+    {
+      "slug": "btc-updown-15m-1791265500",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791266400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791267300",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1791268200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791269100",
+      "pnl": -1.94
+    },
+    {
+      "slug": "btc-updown-15m-1791270000",
+      "pnl": -7.5
+    },
+    {
+      "slug": "btc-updown-15m-1791270900",
+      "pnl": -4.76
+    },
+    {
+      "slug": "btc-updown-15m-1791271800",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1791272700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791273600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791274500",
+      "pnl": -4.32
+    },
+    {
+      "slug": "btc-updown-15m-1791275400",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1791276300",
+      "pnl": -6.75
+    },
+    {
+      "slug": "btc-updown-15m-1791277200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791278100",
+      "pnl": -1.72
+    },
+    {
+      "slug": "btc-updown-15m-1791279000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791279900",
+      "pnl": -5.66
+    },
+    {
+      "slug": "btc-updown-15m-1791280800",
+      "pnl": -7.37
+    },
+    {
+      "slug": "btc-updown-15m-1791281700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791282600",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1791283500",
+      "pnl": -5.09
+    },
+    {
+      "slug": "btc-updown-15m-1791284400",
+      "pnl": -2.29
+    },
+    {
+      "slug": "btc-updown-15m-1791285300",
+      "pnl": -9.84
+    },
+    {
+      "slug": "btc-updown-15m-1791286200",
+      "pnl": -7.37
+    },
+    {
+      "slug": "btc-updown-15m-1791287100",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1791288000",
+      "pnl": -2.18
+    },
+    {
+      "slug": "btc-updown-15m-1791288900",
+      "pnl": -5.85
+    },
+    {
+      "slug": "btc-updown-15m-1791289800",
+      "pnl": -5.85
+    },
+    {
+      "slug": "btc-updown-15m-1791290700",
+      "pnl": -2.66
+    },
+    {
+      "slug": "btc-updown-15m-1791291600",
+      "pnl": -4.92
+    },
+    {
+      "slug": "btc-updown-15m-1791292500",
+      "pnl": -8.64
+    },
+    {
+      "slug": "btc-updown-15m-1791293400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791294300",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1791295200",
+      "pnl": -3
+    },
+    {
+      "slug": "btc-updown-15m-1791296100",
+      "pnl": -11.95
+    },
+    {
+      "slug": "btc-updown-15m-1791297000",
+      "pnl": -7.12
+    },
+    {
+      "slug": "btc-updown-15m-1791297900",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1791298800",
+      "pnl": -7.13
+    },
+    {
+      "slug": "btc-updown-15m-1791299700",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1791300600",
+      "pnl": -8.61
+    },
+    {
+      "slug": "btc-updown-15m-1791301500",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791302400",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791303300",
+      "pnl": -4.6
+    },
+    {
+      "slug": "btc-updown-15m-1791304200",
+      "pnl": -5.59
+    },
+    {
+      "slug": "btc-updown-15m-1791305100",
+      "pnl": -5.75
+    },
+    {
+      "slug": "btc-updown-15m-1791306000",
+      "pnl": -6
+    },
+    {
+      "slug": "btc-updown-15m-1791306900",
+      "pnl": -6.29
+    },
+    {
+      "slug": "btc-updown-15m-1791307800",
+      "pnl": -2.95
+    },
+    {
+      "slug": "btc-updown-15m-1791310500",
+      "pnl": -5.34
+    },
+    {
+      "slug": "btc-updown-15m-1791311400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791312300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791313200",
+      "pnl": -2.8
+    },
+    {
+      "slug": "btc-updown-15m-1791314100",
+      "pnl": -7.06
+    },
+    {
+      "slug": "btc-updown-15m-1791315000",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1791315900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791316800",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1791317700",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1791318600",
+      "pnl": -2.42
+    },
+    {
+      "slug": "btc-updown-15m-1791319500",
+      "pnl": -3.05
+    },
+    {
+      "slug": "btc-updown-15m-1791320400",
+      "pnl": -7.75
+    },
+    {
+      "slug": "btc-updown-15m-1791321300",
+      "pnl": -2.21
+    },
+    {
+      "slug": "btc-updown-15m-1791322200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791323100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791324000",
+      "pnl": -5.5
+    },
+    {
+      "slug": "btc-updown-15m-1791324900",
+      "pnl": -6.78
+    },
+    {
+      "slug": "btc-updown-15m-1791325800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791326700",
+      "pnl": -3.05
+    },
+    {
+      "slug": "btc-updown-15m-1791327600",
+      "pnl": -3.99
+    },
+    {
+      "slug": "btc-updown-15m-1791328500",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791329400",
+      "pnl": -7.03
+    },
+    {
+      "slug": "btc-updown-15m-1791330300",
+      "pnl": -2.18
+    },
+    {
+      "slug": "btc-updown-15m-1791331200",
+      "pnl": -4.83
+    },
+    {
+      "slug": "btc-updown-15m-1791332100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791333000",
+      "pnl": -6.23
+    },
+    {
+      "slug": "btc-updown-15m-1791333900",
+      "pnl": -2.95
+    },
+    {
+      "slug": "btc-updown-15m-1791334800",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791335700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791336600",
+      "pnl": -8.5
+    },
+    {
+      "slug": "btc-updown-15m-1791337500",
+      "pnl": -2
+    },
+    {
+      "slug": "btc-updown-15m-1791338400",
+      "pnl": 5.27
+    },
+    {
+      "slug": "btc-updown-15m-1791339300",
+      "pnl": -2.04
+    },
+    {
+      "slug": "btc-updown-15m-1791340200",
+      "pnl": -2.5
+    },
+    {
+      "slug": "btc-updown-15m-1791341100",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791342000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791342900",
+      "pnl": 8.81
+    }
+  ],
+  "holdPerWindow": [
+    {
+      "slug": "btc-updown-15m-1788849000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788849900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788850800",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1788851700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788852600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788853500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788854400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1788856200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788857100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788858900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788862500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788863400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788864300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788865200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1788866100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788867000",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1788867900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788868800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788869700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788870600",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1788871500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788872400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788873300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788875100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788876000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788876900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788877800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788878700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788880500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788881400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788882300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788883200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788884100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788885000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788885900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788886800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788887700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788888600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788889500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788890400",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1788891300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788892200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788893100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788894000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788894900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788895800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788921900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788934500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788935400",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1788936300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788937200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788939900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788940800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788941700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788942600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788943500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788944400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1788945300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788946200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788947100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788948000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788950700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788951600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788952500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788953400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788954300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788955200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788956100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788957000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788957900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788958800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788959700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788960600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788961500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788962400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788963300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788964200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788967800",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1788968700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788969600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788970500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788971400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788972300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788973200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788974100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788975000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788975900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788976800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788977700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788978600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788980400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788981300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788982200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788983100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788984000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788984900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788985800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788986700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788987600",
+      "pnl": 7.06
+    },
+    {
+      "slug": "btc-updown-15m-1788988500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788989400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788990300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1788991200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788992100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1788993000",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1788993900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788994800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1788995700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1788996600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1788997500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788998400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1788999300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789000200",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789001100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789002000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789002900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789003800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789004700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789005600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789006500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789007400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789009200",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789010100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789012800",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789013700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789014600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789015500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789021800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789022700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789023600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789024500",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789025400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789027200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789028100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789029000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789029900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789030800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789036200",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1789037100",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789038000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789038900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789039800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789040700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789041600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789042500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789043400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789044300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789045200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789046100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789047000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789047900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789048800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789049700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789051500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789052400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789054200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789055100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789056000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789056900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789057800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789058700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789059600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789060500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789061400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789062300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789063200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789064100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789065000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789065900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789066800",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789067700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789068600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789069500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789070400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789071300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789072200",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1789073100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789074000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789074900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789075800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789076700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789077600",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789078500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789079400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789080300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789081200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789082100",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789083000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789083900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789084800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789085700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789086600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789087500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789088400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789089300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789090200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789091100",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789092000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789092900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789093800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789094700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789095600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789096500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789097400",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1789098300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789099200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789100100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789101000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789105500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789106400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789107300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789108200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789109100",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789110000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789110900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789111800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789112700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789113600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789114500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789182900",
+      "pnl": 6.74
+    },
+    {
+      "slug": "btc-updown-15m-1789183800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789186500",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789187400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789188300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789189200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789190100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789191000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789191900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789195500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789196400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789204500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789205400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789271100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789272000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789273800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789274700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789275600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789276500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789277400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789278300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789279200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789280100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789281000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789281900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789282800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789283700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789284600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789285500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789286400",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1789287300",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1789288200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789289100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789290000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789290900",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1789291800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789292700",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789293600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789294500",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789295400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789296300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789297200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789298100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789299000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789299900",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789300800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789301700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789305300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789306200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789307100",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789308000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789308900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789309800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789310700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789311600",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789312500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789313400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789315200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789331400",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789331400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789333200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789333200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789334100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789335000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789335900",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789336800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789337700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789338600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789339500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789340400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789341300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789342200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789343100",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789344000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789344900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789345800",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789346700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789347600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789348500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789349400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789350300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789351200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789352100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789353000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789353900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789354800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789355700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789356600",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789357500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789358400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789359300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789360200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789361100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789362000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789362900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789364700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789365600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789367400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789368300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789369200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789370100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789371000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789371900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789372800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789373700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789374600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789375500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789376400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789377300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789378200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789379100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789380000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789380900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789381800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789382700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789383600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789384500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789385400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789388100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789393500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789394400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789395300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789396200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789397100",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789398000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789398900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789399800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789400700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789401600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789402500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789403400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789404300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789405200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789406100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789407000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789407900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789408800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789409700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789410600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789411500",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789412400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789413300",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789414200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789415100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789416000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789416900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789417800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789418700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789419600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789420500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789421400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789422300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789423200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789424100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789425000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789425900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789426800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789427700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789428600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789429500",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789430400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789431300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789432200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789433100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789434000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789434900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789435800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789436700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789437600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789438500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789439400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789440300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789441200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789442100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789443000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789443900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789444800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789445700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789446600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789447500",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789448400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789449300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789450200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789451100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789452000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789452900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789453800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789454700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789455600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789456500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789457400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789458300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789459200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789460100",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789461000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789461900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789462800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789463700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789464600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789465500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789466400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789467300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789468200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789469100",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789470000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789470900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789471800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789472700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789473600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789474500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789475400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789476300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789477200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789478100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789479000",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789479900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789480800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789481700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789482600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789483500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789484400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789485300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789486200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789487100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789488000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789488900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789489800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789490700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789496100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789497000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789497900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789498800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789499700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789500600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789501500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789502400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789503300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789504200",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1789505100",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789506000",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789506900",
+      "pnl": 6.74
+    },
+    {
+      "slug": "btc-updown-15m-1789507800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789508700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789509600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789510500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789511400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789512300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789513200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789514100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789515000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789515900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789516800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789517700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789518600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789519500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789520400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789521300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789522200",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789523100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789524000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789524900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789525800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789526700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789527600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789528500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789529400",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789530300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789531200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789532100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789533000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789533900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789536600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789537500",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789538400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789539300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789540200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789541100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789542000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789542900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789543800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789544700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789545600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789546500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789547400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789548300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789549200",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1789550100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789551000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789551900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789552800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789553700",
+      "pnl": 6.12
+    },
+    {
+      "slug": "btc-updown-15m-1789554600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789555500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789556400",
+      "pnl": 4.23
+    },
+    {
+      "slug": "btc-updown-15m-1789557300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789558200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789559100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789560000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789560900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789561800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789562700",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789565400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789566300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789567200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789569000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789569900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789570800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789571700",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789572600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789573500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789574400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789575300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789576200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789577100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789578000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789578900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789579800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789580700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789581600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789582500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789583400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789584300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789585200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789586100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789587000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789587900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789588800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789594200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789595100",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789596000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789596900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789597800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789598700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789599600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789600500",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789601400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789602300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789603200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789604100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789605000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789605900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789606800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789607700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789608600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789609500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789610400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789611300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789612200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789613100",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789613100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789614000",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789614000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789614900",
+      "pnl": 8.07
+    },
+    {
+      "slug": "eth-updown-15m-1789614900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789615800",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789615800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789616700",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789616700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789617600",
+      "pnl": 8.07
+    },
+    {
+      "slug": "eth-updown-15m-1789617600",
+      "pnl": 7.06
+    },
+    {
+      "slug": "btc-updown-15m-1789618500",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789618500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789619400",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789619400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789620300",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789620300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789621200",
+      "pnl": 9.19
+    },
+    {
+      "slug": "eth-updown-15m-1789621200",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1789622100",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789622100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789623000",
+      "pnl": 8.81
+    },
+    {
+      "slug": "eth-updown-15m-1789623000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789623900",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789623900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789624800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789624800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789625700",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789625700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789626600",
+      "pnl": 6.74
+    },
+    {
+      "slug": "eth-updown-15m-1789626600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789630200",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789630200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789631100",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789631100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789632900",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789632900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789633800",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789633800",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1789634700",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789634700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789635600",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789635600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789636500",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789636500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789637400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789637400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789639200",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789639200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789640100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789640100",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789641000",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789641000",
+      "pnl": 7.06
+    },
+    {
+      "slug": "btc-updown-15m-1789641900",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789641900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789642800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789642800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789643700",
+      "pnl": -14.99
+    },
+    {
+      "slug": "eth-updown-15m-1789643700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789644600",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789644600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789645500",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789645500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789646400",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789646400",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789647300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789647300",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1789648200",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789648200",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789649100",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789649100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789650000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789650000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789650900",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789650900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789651800",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789651800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789652700",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789652700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789653600",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789653600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789654500",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789654500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789655400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789655400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789656300",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789656300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789657200",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789657200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789658100",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789658100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789659000",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789659000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789659900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789659900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789660800",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789660800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789661700",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789661700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789662600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789662600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789663500",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789663500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789664400",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789664400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789665300",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789665300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789666200",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789666200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789667100",
+      "pnl": 7.06
+    },
+    {
+      "slug": "eth-updown-15m-1789667100",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1789668000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789668000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789668900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789668900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789669800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789669800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789670700",
+      "pnl": -14.99
+    },
+    {
+      "slug": "eth-updown-15m-1789670700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789671600",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789671600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789672500",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789672500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789673400",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789673400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789674300",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789674300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789675200",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789675200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789676100",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789676100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789677000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789677000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789677900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "eth-updown-15m-1789677900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789678800",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789678800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789679700",
+      "pnl": 8.43
+    },
+    {
+      "slug": "eth-updown-15m-1789679700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789680600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "eth-updown-15m-1789680600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789681500",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789681500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789682400",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789682400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789683300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789683300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789684200",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789684200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789685100",
+      "pnl": 8.81
+    },
+    {
+      "slug": "eth-updown-15m-1789685100",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789686000",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789686000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789686900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "eth-updown-15m-1789686900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789687800",
+      "pnl": 7.39
+    },
+    {
+      "slug": "eth-updown-15m-1789687800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789688700",
+      "pnl": 8.81
+    },
+    {
+      "slug": "eth-updown-15m-1789688700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789689600",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789689600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789690500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "eth-updown-15m-1789690500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789691400",
+      "pnl": 8.07
+    },
+    {
+      "slug": "eth-updown-15m-1789691400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789692300",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789692300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789693200",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789693200",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789694100",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789694100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789695000",
+      "pnl": 8.07
+    },
+    {
+      "slug": "eth-updown-15m-1789695000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789695900",
+      "pnl": 10
+    },
+    {
+      "slug": "eth-updown-15m-1789695900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789696800",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789696800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789697700",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789697700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789698600",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789698600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789699500",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789699500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789700400",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789700400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789701300",
+      "pnl": 7.72
+    },
+    {
+      "slug": "eth-updown-15m-1789701300",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789702200",
+      "pnl": 9.19
+    },
+    {
+      "slug": "eth-updown-15m-1789702200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789714800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789715700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789716600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789717500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789718400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789719300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789720200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789721100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789722000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789722900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789723800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789724700",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1789725600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789726500",
+      "pnl": 7.06
+    },
+    {
+      "slug": "btc-updown-15m-1789727400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789728300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789729200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789730100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789731000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789731900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789732800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789733700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789734600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789735500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789736400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789737300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789738200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789739100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789740000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789740900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789741800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789742700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789743600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789744500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789745400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789746300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789747200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789748100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789749000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789749900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789750800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789751700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789752600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789753500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789754400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789755300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789756200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789757100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789758000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789758900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789759800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789760700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789761600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789762500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789763400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789764300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789765200",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1789766100",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1789767000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789788600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1789789500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789790400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789791300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789792200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1789793100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1789794000",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1789795800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789796700",
+      "pnl": 0
+    },
+    {
+      "slug": "eth-updown-15m-1789796700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1789797600",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789797600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1789798500",
+      "pnl": -15
+    },
+    {
+      "slug": "eth-updown-15m-1789798500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790911800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790912700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1790913600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790914500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790915400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790916300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790917200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790918100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790919000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790919900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790920800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1790921700",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1790922600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790923500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790924400",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1790927100",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1790928000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790928900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790929800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790930700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790931600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790933400",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1790934300",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1790936100",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1790937000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790937900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790938800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1790940600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1790942400",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1790943300",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1790944200",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1790945100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790946000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790946900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790947800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790948700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790949600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790950500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790951400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790952300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790953200",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1790954100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790955000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790955900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790956800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790957700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790958600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790959500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790960400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790961300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790962200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790963100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790964000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790964900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790965800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790966700",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1790967600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790968500",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1790969400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790970300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790971200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1790972100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790973000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790973900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790974800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790975700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790976600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790977500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790978400",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1790979300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790980200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790981100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790982000",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1790982900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790983800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790984700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790985600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1790986500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790987400",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1790988300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1790989200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790990100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790991000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790991900",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1790992800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1790993700",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1790994600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790995500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1790996400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1790997300",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1790998200",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1790999100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791000000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791000900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791001800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791002700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791003600",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1791004500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791005400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791006300",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1791007200",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791008100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791009000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791009900",
+      "pnl": 10.86
+    },
+    {
+      "slug": "btc-updown-15m-1791010800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791011700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791012600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791013500",
+      "pnl": 5.27
+    },
+    {
+      "slug": "btc-updown-15m-1791014400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791015300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791016200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791017100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791018000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791018900",
+      "pnl": 6.12
+    },
+    {
+      "slug": "btc-updown-15m-1791019800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791020700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791021600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791022500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791023400",
+      "pnl": 6.43
+    },
+    {
+      "slug": "btc-updown-15m-1791024300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791025200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791026100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791027000",
+      "pnl": 6.43
+    },
+    {
+      "slug": "btc-updown-15m-1791027900",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1791028800",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791029700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791030600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791031500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791032400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791033300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791034200",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791035100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791036000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791036900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791037800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791038700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791039600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791040500",
+      "pnl": 7.06
+    },
+    {
+      "slug": "btc-updown-15m-1791041400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791042300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791043200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791044100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791045000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791045900",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1791046800",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1791047700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791048600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791049500",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1791050400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791051300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791052200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791053100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791054000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791054900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791055800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791056700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791057600",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791058500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791059400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791060300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791061200",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791062100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791063000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791063900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791064800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791065700",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791066600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791067500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791068400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791069300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791070200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791071100",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791072000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791072900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791073800",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791074700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791075600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791076500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791077400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791078300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791079200",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1791080100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791081000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791081900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791082800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791083700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791084600",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791085500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791086400",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791087300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791088200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791089100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791090000",
+      "pnl": 7.39
+    },
+    {
+      "slug": "btc-updown-15m-1791090900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791091800",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791092700",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1791093600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791094500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791095400",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1791096300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791097200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791098100",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791099000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791099900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791100800",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791101700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791102600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791103500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791104400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791105300",
+      "pnl": 7.06
+    },
+    {
+      "slug": "btc-updown-15m-1791106200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791107100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791108000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791108900",
+      "pnl": 5.55
+    },
+    {
+      "slug": "btc-updown-15m-1791109800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791110700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791111600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791112500",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791113400",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791114300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791115200",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791116100",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791117000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791117900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791118800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791119700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791120600",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1791121500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791122400",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1791123300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791124200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791125100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791126000",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791126900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791127800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791128700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791129600",
+      "pnl": 7.72
+    },
+    {
+      "slug": "btc-updown-15m-1791130500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791131400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791132300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791133200",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791134100",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791135000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791135900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791136800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791137700",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791138600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791139500",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791140400",
+      "pnl": 6.12
+    },
+    {
+      "slug": "btc-updown-15m-1791141300",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791142200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791143100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791144000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791144900",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791145800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791146700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791147600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791148500",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791149400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791150300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791151200",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791152100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791153000",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791153900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791154800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791155700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791156600",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791157500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791158400",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791159300",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791160200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791161100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791162000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791162900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791163800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791167400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791168300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791171000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791171900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791172800",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791173700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791174600",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791175500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791176400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791177300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791178200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791179100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791180000",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791180900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791181800",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791183600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791184500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791185400",
+      "pnl": 6.12
+    },
+    {
+      "slug": "btc-updown-15m-1791186300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791187200",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1791188100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791189000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791189900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791190800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791191700",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791192600",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791193500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791194400",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791197100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791198000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791198900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791199800",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791200700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791202500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791203400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791204300",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791205200",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791206100",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791207000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791207900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791208800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791211500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791212400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791213300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791214200",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791215100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791216000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791216900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791217800",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1791218700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791219600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791220500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791221400",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791222300",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1791223200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791224100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791225000",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791225900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791226800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791227700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791228600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791229500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791230400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791231300",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791232200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791233100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791234000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791234900",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791235800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791236700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791237600",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791238500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791239400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791240300",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791241200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791242100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791243000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791243900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791244800",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791245700",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1791246600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791255600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791256500",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791257400",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791258300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791259200",
+      "pnl": 8.07
+    },
+    {
+      "slug": "btc-updown-15m-1791260100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791261000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791261900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791262800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791263700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791264600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791265500",
+      "pnl": 8.81
+    },
+    {
+      "slug": "btc-updown-15m-1791266400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791267300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791268200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791269100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791270000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791270900",
+      "pnl": -14.99
+    },
+    {
+      "slug": "btc-updown-15m-1791271800",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1791272700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791273600",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791274500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791275400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791276300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791277200",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791278100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791279000",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791279900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791280800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791281700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791282600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791283500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791284400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791285300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791286200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791287100",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791288000",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791288900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791289800",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791290700",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791291600",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791292500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791293400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791294300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791295200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791296100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791297000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791297900",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791298800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791299700",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791300600",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791301500",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791302400",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791303300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791304200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791305100",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791306000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791306900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791307800",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791310500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791311400",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791312300",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791313200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791314100",
+      "pnl": 6.43
+    },
+    {
+      "slug": "btc-updown-15m-1791315000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791315900",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791316800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791317700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791318600",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791319500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791320400",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791321300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791322200",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791323100",
+      "pnl": 0
+    },
+    {
+      "slug": "btc-updown-15m-1791324000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791324900",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791325800",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791326700",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791327600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791328500",
+      "pnl": 10.42
+    },
+    {
+      "slug": "btc-updown-15m-1791329400",
+      "pnl": 8.43
+    },
+    {
+      "slug": "btc-updown-15m-1791330300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791331200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791332100",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791333000",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791333900",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791334800",
+      "pnl": 9.19
+    },
+    {
+      "slug": "btc-updown-15m-1791335700",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791336600",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791337500",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791338400",
+      "pnl": 5.27
+    },
+    {
+      "slug": "btc-updown-15m-1791339300",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791340200",
+      "pnl": -15
+    },
+    {
+      "slug": "btc-updown-15m-1791341100",
+      "pnl": 9.59
+    },
+    {
+      "slug": "btc-updown-15m-1791342000",
+      "pnl": 10
+    },
+    {
+      "slug": "btc-updown-15m-1791342900",
+      "pnl": 8.81
+    }
+  ]
+}

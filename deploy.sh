@@ -38,11 +38,12 @@ cd "$PROJECT_DIR"
 git fetch origin
 git reset --hard origin/master
 
-# 2. Clean up problematic directories that break Docker build context
+# 2. Fix permissions on problematic directories that break Docker build context
 # (Docker reads all files before applying .dockerignore)
 # Do this AFTER git operations since we need .git for fetch/reset
-echo "Cleaning build context..."
-rm -rf .cursor .vscode .hermes .kilo .git 2>/dev/null || true
+# Use chmod instead of rm to preserve .git for future pulls
+echo "Fixing build context permissions..."
+chmod -R a+r .cursor .vscode .hermes .kilo .git 2>/dev/null || true
 
 # 3. Check env file exists
 if [[ ! -f "$ENV_FILE" ]]; then

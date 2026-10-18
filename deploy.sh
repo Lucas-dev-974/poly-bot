@@ -50,19 +50,22 @@ if [[ ! -f "$ENV_FILE" ]]; then
     exit 1
 fi
 
-# 3. Build images
+# Fix permissions on env file (Docker needs to read it)
+chmod 644 "$ENV_FILE" 2>/dev/null || true
+
+# 4. Build images
 echo "Building Docker images..."
 docker compose $COMPOSE_FILES build --pull
 
-# 4. Stop old containers (graceful)
+# 5. Stop old containers (graceful)
 echo "Stopping old containers..."
 docker compose $COMPOSE_FILES down --timeout 30
 
-# 5. Start new containers
+# 6. Start new containers
 echo "Starting new containers..."
 docker compose $COMPOSE_FILES up -d
 
-# 6. Health check
+# 7. Health check
 echo "Waiting for health check..."
 sleep 10
 for i in {1..12}; do
@@ -74,7 +77,7 @@ for i in {1..12}; do
     sleep 5
 done
 
-# 7. Show status
+# 8. Show status
 docker compose $COMPOSE_FILES ps
 
 echo "=== Deploy complete ==="

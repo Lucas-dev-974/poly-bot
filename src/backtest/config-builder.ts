@@ -17,6 +17,8 @@ interface EffectiveConfigRequest {
   presetId?: string;
   useCurrentConfig?: boolean;
   settings?: RuntimeSettingsPatch;
+  /** Skip PRIVATE_KEY requirement (for simulation/paper trading). */
+  allowNoPrivateKey?: boolean;
 }
 
 /**
@@ -59,7 +61,7 @@ export function buildEffectiveConfig(
   }
   const leadsWithEdge = leadsWithEdgeFor(copy.strategyId, repos);
   validateConfigCoherence(copy, { leadsWithEdge });
-  validateTradingConfig(copy, { leadsWithEdge });
+  validateTradingConfig(copy, { leadsWithEdge, allowNoPrivateKey: body.allowNoPrivateKey });
   return copy;
 }
 

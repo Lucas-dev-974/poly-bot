@@ -81,13 +81,14 @@ export class PaperTradingEngine {
       }
     }
     this.effectiveConfig = this.simConfig
-      ? buildEffectiveConfig(this.liveConfig, this.repos, {
-        strategyId: this.simConfig.strategyId,
-        presetId: this.simConfig.presetId,
-        settings: this.simConfig.settings,
-        useCurrentConfig: !this.simConfig.presetId && !this.simConfig.settings,
-      })
-      : this.liveConfig;
+          ? buildEffectiveConfig(this.liveConfig, this.repos, {
+              strategyId: this.simConfig.strategyId,
+              presetId: this.simConfig.presetId,
+              settings: this.simConfig.settings,
+              useCurrentConfig: !this.simConfig.presetId && !this.simConfig.settings,
+              allowNoPrivateKey: true,
+            })
+          : this.liveConfig;
     this.strategy = createStrategy(this.effectiveConfig.strategyId, this.repos);
 
     // Ledger : part du cash persisté (défaut = capital initial).
@@ -172,11 +173,12 @@ export class PaperTradingEngine {
       this.simConfig = { strategyId, presetId: presetId ?? undefined, settings };
       this.presetId = presetId ?? null;
       this.effectiveConfig = buildEffectiveConfig(this.liveConfig, this.repos, {
-        strategyId,
-        presetId: presetId ?? undefined,
-        settings,
-        useCurrentConfig: !presetId && !settings,
-      });
+              strategyId,
+              presetId: presetId ?? undefined,
+              settings,
+              useCurrentConfig: !presetId && !settings,
+              allowNoPrivateKey: true,
+            });
       this.strategy = createStrategy(this.effectiveConfig.strategyId, this.repos);
       this.repos?.simState.set("simConfigJson", JSON.stringify(this.simConfig));
     }

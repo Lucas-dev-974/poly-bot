@@ -58,6 +58,8 @@ export class Trader {
     // Readonly without a key: skip the CLOB client. BalanceTracker falls
     // back to 0 collateral + the public data-api positions.
     if (this.config.readonlyLive && !this.config.privateKey) return;
+    // Simulation mode: skip trading client creation.
+    if (this.config.simulation) return;
     this.client = await createTradingClient(this.config);
   }
 

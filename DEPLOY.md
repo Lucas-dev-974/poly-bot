@@ -22,7 +22,7 @@ Two deployment modes:
 
 ---
 
-## Option A — Docker + Nginx (Recommended)
+## Option A — Docker + Nginx (Recommended, with domain)
 
 ### 1. Server Setup
 
@@ -80,7 +80,7 @@ docker run --rm -it \
 # Make deploy script executable
 chmod +x deploy.sh
 
-# Deploy production
+# Deploy production (with domain + SSL)
 ./deploy.sh prod
 ```
 
@@ -95,6 +95,60 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml logs -f bot
 
 # Dashboard should be at https://your-domain.com
 ```
+
+---
+
+## Option A-bis — Docker only (no domain, direct IP access)
+
+**Use this if you don't have a domain** — exposes dashboard directly on port 3105.
+
+### 1. Server Setup (same)
+
+```bash
+sudo apt update && sudo apt install -y docker.io docker-compose-plugin git curl
+sudo usermod -aG docker $USER
+newgrp docker
+sudo mkdir -p /opt/polymarket-bot
+sudo chown $USER:$USER /opt/polymarket-bot
+cd /opt/polymarket-bot
+```
+
+### 2. Clone & Configure (same)
+
+```bash
+git clone https://github.com/Lucas-dev-974/poly-bot.git .
+cp .env.prod.example .env.prod
+nano .env.prod  # ← REQUIRED: fill PRIVATE_KEY, FUNDER_ADDRESS, READONLY_LIVE=false
+mkdir -p data
+cp bot-settings.example.json data/bot-settings.json
+```
+
+### 3. Deploy (no SSL, no Nginx)
+
+```bash
+chmod +x deploy.sh
+./deploy.sh no-domain
+```
+
+### 4. Verify
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.no-domain.yml ps
+
+# Dashboard at http://YOUR_VPS_IP:3105
+curl -f http://YOUR_VPS_IP:3105/
+```
+
+### 5. Firewall (open port 3105)
+
+```bash
+sudo ufw allow 3105/tcp
+sudo ufw enable
+```
+
+> **Security note**: Without HTTPS, credentials sent to dashboard are in cleartext.
+> For production, use a domain + Option A (Nginx + Let's Encrypt).
+> Or restrict access via SSH tunnel: `ssh -L 3105:localhost:3105 user@vps-ip`
 
 ### 6. Updates
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Deploy script for Polymarket Bot VPS
-# Usage: ./deploy.sh [prod|staging]
+# Usage: ./deploy.sh [prod|staging|no-domain]
 
 set -euo pipefail
 
@@ -8,12 +8,27 @@ ENV="${1:-prod}"
 PROJECT_DIR="/opt/polymarket-bot"
 COMPOSE_FILES="-f docker-compose.yml"
 
-if [[ "$ENV" == "prod" ]]; then
+case "$ENV" in
+  prod)
     COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.prod.yml"
     ENV_FILE=".env.prod"
-else
+    DASHBOARD_URL="https://your-domain.com (proxied via Nginx)"
+    ;;
+  no-domain)
+    COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.no-domain.yml"
+    ENV_FILE=".env.prod"
+    DASHBOARD_URL="http://YOUR_VPS_IP:3105 (direct access)"
+    ;;
+  staging)
+    COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.yml"
     ENV_FILE=".env.staging"
-fi
+    DASHBOARD_URL="http://localhost:3105"
+    ;;
+  *)
+    echo "Usage: $0 [prod|staging|no-domain]"
+    exit 1
+    ;;
+esac
 
 echo "=== Deploying $ENV environment ==="
 
@@ -56,5 +71,5 @@ done
 docker compose $COMPOSE_FILES ps
 
 echo "=== Deploy complete ==="
-echo "Dashboard: https://your-domain.com (proxied via Nginx)"
+echo "Dashboard: $DASHBOARD_URL"
 echo "Logs: docker compose $COMPOSE_FILES logs -f"

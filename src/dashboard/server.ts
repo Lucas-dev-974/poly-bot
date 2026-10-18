@@ -546,8 +546,8 @@ export class DashboardServer {
       res.end("Not found");
     });
 
-    server.listen(this.port, "127.0.0.1", () => {
-      console.log(`[dashboard] listening on http://127.0.0.1:${this.port}`);
+    server.listen(this.port, "0.0.0.0", () => {
+      console.log(`[dashboard] listening on http://0.0.0.0:${this.port}`);
       console.log(`[dashboard] static assets: ${PUBLIC_DIR}`);
     });
 

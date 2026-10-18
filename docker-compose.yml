@@ -16,8 +16,11 @@ services:
     volumes:
       - ./data:/app/data
       - ./config/presets:/app/config/presets:ro
-    ports:
-      - "127.0.0.1:3105:3105"  # Dashboard only on localhost (Nginx proxies)
+    # NOTE: no ports here on purpose. Port mappings live ONLY in variant files
+    # (compose MERGES port lists across -f files; a base mapping can never be
+    # "replaced" reliably across versions). Each variant adds exactly one:
+    #   docker-compose.no-domain.yml → "3105:3105"          (direct IP access)
+    #   docker-compose.prod.yml      → "127.0.0.1:3105:3105" (Nginx proxied)
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3105/"]
       interval: 30s

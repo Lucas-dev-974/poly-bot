@@ -16,11 +16,8 @@ services:
     volumes:
       - ./data:/app/data
       - ./config/presets:/app/config/presets:ro
-    # !override replaces the base file's 127.0.0.1:3105 mapping (compose merges
-    # port lists by default; without override the container binds
-    # 0.0.0.0:3105 + 127.0.0.1:3105 → "address already in use")
-    ports: !override
-      - "3105:3105"  # Direct access on port 3105 (all interfaces)
+    ports:
+      - "3105:3105"  # Direct access on all interfaces (base file has no ports)
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3105/"]
       interval: 30s

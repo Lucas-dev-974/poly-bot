@@ -826,6 +826,7 @@ export class DashboardServer {
       `http://localhost:${this.port}`,
       "http://localhost:5173", // dev Vite
       "http://127.0.0.1:5173",
+      ...(this.config.allowedOrigins ?? []),
     ];
     return allowed.includes(origin);
   }

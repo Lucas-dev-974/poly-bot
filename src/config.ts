@@ -57,6 +57,8 @@ export interface BotConfig {
   pollIntervalMs: number;
   marketSlugPrefixes: string[];
   cheapBuyMin: number;
+  /** Additional allowed origins for dashboard CORS (e.g. VPS public IP). */
+  allowedOrigins?: string[];
   cheapBuyMax: number;
   expensiveBuyMin: number;
   expensiveBuyMax: number;
@@ -755,6 +757,9 @@ export function loadConfig(): BotConfig {
     wsBookMaxAgeMs: envNumber("WS_BOOK_MAX_AGE_MS", 3_000),
     enableDashboard: envBoolean("ENABLE_DASHBOARD", true),
     dashboardPort: envNumber("DASHBOARD_PORT", 3105),
+    allowedOrigins: process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(",").map((s) => s.trim())
+      : undefined,
     dbPath,
     persistenceEnabled: envBoolean("PERSISTENCE_ENABLED", true),
     builderApiKey: process.env.BUILDER_API_KEY,

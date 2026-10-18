@@ -38,13 +38,16 @@ cd "$PROJECT_DIR"
 git fetch origin
 git reset --hard origin/master
 
-# 2. Fix permissions on problematic directories that break Docker build context
-# (Docker reads all files before applying .dockerignore)
+# 2. Verify build context is readable (Docker reads all files before applying .dockerignore)
 # Do this AFTER git operations since we need .git for fetch/reset
-# Use sudo to fix ownership/permissions (files may be owned by root from previous builds)
-echo "Fixing build context permissions..."
-sudo chown -R $(id -u):$(id -g) .cursor .vscode .hermes .kilo .git 2>/dev/null || true
-chmod -R a+r .cursor .vscode .hermes .kilo .git 2>/dev/null || true
+# If files are root-owned from previous builds, fix once manually:
+#   sudo chown -R $(id -u):$(id -g) /home/polymarket-bot
+echo "Verifying build context permissions..."
+if [[ ! -r .git/HEAD ]] || [[ ! -r .env.prod ]] 2>/dev/null; then
+    echo "ERROR: Build context not readable (files owned by root?)."
+    echo "Fix once with: sudo chown -R \$(id -u):\$(id -g) \"$PROJECT_DIR\""
+    exit 1
+fi
 
 # 3. Check env file exists
 if [[ ! -f "$ENV_FILE" ]]; then
@@ -53,8 +56,11 @@ if [[ ! -f "$ENV_FILE" ]]; then
 fi
 
 # Fix permissions on env file (Docker needs to read it)
-sudo chown $(id -u):$(id -g) "$ENV_FILE" 2>/dev/null || true
-chmod 644 "$ENV_FILE" 2>/dev/null || true
+# If not readable, user must fix ownership once manually
+if [[ ! -r "$ENV_FILE" ]]; then
+    echo "ERROR: $ENV_FILE not readable. Fix with: sudo chown \$(id -u):\$(id -g) \"$ENV_FILE\""
+    exit 1
+fi
 
 # 4. Build images
 echo "Building Docker images..."

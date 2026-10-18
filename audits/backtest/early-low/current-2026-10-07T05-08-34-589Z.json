@@ -1,0 +1,604 @@
+{
+  "label": "early-low (preset actuel, hold intégral)",
+  "strategyId": "early-low",
+  "presetPath": "config\\presets\\early-low.json",
+  "criteria": {
+    "minTicks": 500,
+    "maxGapMs": 180000,
+    "maxEdgeGapMs": null
+  },
+  "windows": 2782,
+  "skippedIncomplete": 6170,
+  "ms": 428196,
+  "pnl": 29.81,
+  "capitalStart": 500,
+  "capitalEnd": 529.81,
+  "fills": 62,
+  "rejects": 0,
+  "unresolved": 0,
+  "wins": 10,
+  "losses": 52,
+  "winRate": 16.1,
+  "tradedWindows": 62,
+  "dayRows": [
+    {
+      "day": "2026-09-10",
+      "pnl": -1,
+      "tradedWindows": 1,
+      "wins": 0,
+      "losses": 1
+    },
+    {
+      "day": "2026-09-13",
+      "pnl": -1,
+      "tradedWindows": 1,
+      "wins": 0,
+      "losses": 1
+    },
+    {
+      "day": "2026-09-14",
+      "pnl": 6.09,
+      "tradedWindows": 3,
+      "wins": 1,
+      "losses": 2
+    },
+    {
+      "day": "2026-09-15",
+      "pnl": 8.09,
+      "tradedWindows": 1,
+      "wins": 1,
+      "losses": 0
+    },
+    {
+      "day": "2026-09-16",
+      "pnl": -2,
+      "tradedWindows": 2,
+      "wins": 0,
+      "losses": 2
+    },
+    {
+      "day": "2026-09-18",
+      "pnl": -1,
+      "tradedWindows": 1,
+      "wins": 0,
+      "losses": 1
+    },
+    {
+      "day": "2026-09-19",
+      "pnl": 16.09,
+      "tradedWindows": 3,
+      "wins": 2,
+      "losses": 1
+    },
+    {
+      "day": "2026-09-20",
+      "pnl": -5,
+      "tradedWindows": 5,
+      "wins": 0,
+      "losses": 5
+    },
+    {
+      "day": "2026-09-21",
+      "pnl": -5,
+      "tradedWindows": 5,
+      "wins": 0,
+      "losses": 5
+    },
+    {
+      "day": "2026-09-23",
+      "pnl": 15.18,
+      "tradedWindows": 3,
+      "wins": 2,
+      "losses": 1
+    },
+    {
+      "day": "2026-09-24",
+      "pnl": -3,
+      "tradedWindows": 3,
+      "wins": 0,
+      "losses": 3
+    },
+    {
+      "day": "2026-09-25",
+      "pnl": -2,
+      "tradedWindows": 2,
+      "wins": 0,
+      "losses": 2
+    },
+    {
+      "day": "2026-09-26",
+      "pnl": -1,
+      "tradedWindows": 1,
+      "wins": 0,
+      "losses": 1
+    },
+    {
+      "day": "2026-09-27",
+      "pnl": 3.09,
+      "tradedWindows": 6,
+      "wins": 1,
+      "losses": 5
+    },
+    {
+      "day": "2026-09-28",
+      "pnl": 6.09,
+      "tradedWindows": 3,
+      "wins": 1,
+      "losses": 2
+    },
+    {
+      "day": "2026-09-29",
+      "pnl": -3,
+      "tradedWindows": 3,
+      "wins": 0,
+      "losses": 3
+    },
+    {
+      "day": "2026-09-30",
+      "pnl": -3,
+      "tradedWindows": 3,
+      "wins": 0,
+      "losses": 3
+    },
+    {
+      "day": "2026-10-01",
+      "pnl": -3,
+      "tradedWindows": 3,
+      "wins": 0,
+      "losses": 3
+    },
+    {
+      "day": "2026-10-02",
+      "pnl": 5.09,
+      "tradedWindows": 4,
+      "wins": 1,
+      "losses": 3
+    },
+    {
+      "day": "2026-10-03",
+      "pnl": 6.09,
+      "tradedWindows": 3,
+      "wins": 1,
+      "losses": 2
+    },
+    {
+      "day": "2026-10-04",
+      "pnl": -2,
+      "tradedWindows": 2,
+      "wins": 0,
+      "losses": 2
+    },
+    {
+      "day": "2026-10-05",
+      "pnl": -3,
+      "tradedWindows": 3,
+      "wins": 0,
+      "losses": 3
+    },
+    {
+      "day": "2026-10-07",
+      "pnl": -1,
+      "tradedWindows": 1,
+      "wins": 0,
+      "losses": 1
+    }
+  ],
+  "topWins": [
+    {
+      "eventSlug": "eth-updown-15m-1789802100",
+      "pnl": 9
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789367400",
+      "pnl": 8.09
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789496100",
+      "pnl": 8.09
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789802100",
+      "pnl": 8.09
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790179200",
+      "pnl": 8.09
+    }
+  ],
+  "topLosses": [
+    {
+      "eventSlug": "btc-updown-15m-1791338400",
+      "pnl": -1
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791191700",
+      "pnl": -1
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791189900",
+      "pnl": -1
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791163800",
+      "pnl": -1
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791151200",
+      "pnl": -1
+    }
+  ],
+  "windowResults": [
+    {
+      "eventSlug": "btc-updown-15m-1789058700",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789336800",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789345800",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789367400",
+      "pnl": 8.09,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789419600",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789496100",
+      "pnl": 8.09,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789596000",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789600500",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789739100",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789777800",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789802100",
+      "pnl": 8.09,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1789802100",
+      "pnl": 9,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789916400",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1789916400",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1789932600",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789938000",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1789938000",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1789948800",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1789973100",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1789973100",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1789975800",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790007300",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790179200",
+      "pnl": 8.09,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790179200",
+      "pnl": 8.09,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790203500",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790216100",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790216100",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790233200",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790330400",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790330400",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790382600",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790514000",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790515800",
+      "pnl": 8.09,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790546400",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790546400",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790548200",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790548200",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790555400",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790555400",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790578800",
+      "pnl": 8.09,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790684100",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790704800",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790704800",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790760600",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790766000",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790766000",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790868600",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790868600",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "eth-updown-15m-1790892000",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790910000",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790928900",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790933400",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790944200",
+      "pnl": 8.09,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1790997300",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791000900",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791048600",
+      "pnl": 8.09,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791102600",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791151200",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791163800",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791189900",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791191700",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    },
+    {
+      "eventSlug": "btc-updown-15m-1791338400",
+      "pnl": -1,
+      "tradeCount": 1,
+      "unresolved": false
+    }
+  ]
+}

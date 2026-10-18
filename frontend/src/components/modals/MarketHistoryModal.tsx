@@ -217,8 +217,18 @@ function buildTrades(
   legs: DisplayTrade[],
   sim: DisplayTrade[],
 ): DisplayTrade[] {
-  const out: DisplayTrade[] = [...bot];
-  const covered = new Set(bot.map((t) => t.outcomeIndex));
+  // Dédupliquer les bot fills : un seul par outcomeIndex (le plus ancien)
+  const botByOutcome = new Map<number, DisplayTrade>();
+  for (const t of bot) {
+    const existing = botByOutcome.get(t.outcomeIndex);
+    if (!existing || t.timestamp < existing.timestamp) {
+      botByOutcome.set(t.outcomeIndex, t);
+    }
+  }
+  const botDeduped = [...botByOutcome.values()];
+
+  const out: DisplayTrade[] = [...botDeduped];
+  const covered = new Set(botDeduped.map((t) => t.outcomeIndex));
   const apiMissing = apiTrades.filter((t) => !covered.has(t.outcomeIndex));
   out.push(...apiMissing);
   for (const t of apiMissing) covered.add(t.outcomeIndex);

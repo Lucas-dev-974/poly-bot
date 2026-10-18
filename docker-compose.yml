@@ -1,0 +1,43 @@
+# Polymarket Bot - Production Docker Compose
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: polymarket-bot:latest
+    container_name: polymarket-bot
+    restart: unless-stopped
+    user: "1001:1001"
+    env_file:
+      - .env.prod
+    volumes:
+      - ./data:/app/data
+      - ./config/presets:/app/config/presets:ro
+    ports:
+      - "127.0.0.1:3105:3105"  # Dashboard only on localhost (Nginx proxies)
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3105/"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # Optional: Redis for future scaling (session cache, rate limiting)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: polymarket-redis
+  #   restart: unless-stopped
+  #   volumes:
+  #     - redis-data:/data
+  #   command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+# redis-data:
+  #   driver: local

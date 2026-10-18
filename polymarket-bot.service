@@ -1,0 +1,57 @@
+# Polymarket Bot - Systemd Service (alternative to Docker)
+# Install: sudo cp polymarket-bot.service /etc/systemd/system/
+# Enable: sudo systemctl daemon-reload && sudo systemctl enable --now polymarket-bot
+
+[Unit]
+Description=Polymarket Reverse Arbitrage Bot
+Documentation=https://github.com/Lucas-dev-974/poly-bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=botuser
+Group=botuser
+WorkingDirectory=/opt/polymarket-bot
+
+# Environment
+EnvironmentFile=/opt/polymarket-bot/.env.prod
+Environment=NODE_ENV=production
+
+# Node.js binary (adjust if using nvm/fnm)
+ExecStart=/usr/bin/node dist/index.js
+
+# Restart policy
+Restart=on-failure
+RestartSec=10
+StartLimitInterval=60
+StartLimitBurst=3
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+MemoryMax=2G
+CPUQuota=200%
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/polymarket-bot/data
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=polymarket-bot
+
+[Install]
+WantedBy=multi-user.target

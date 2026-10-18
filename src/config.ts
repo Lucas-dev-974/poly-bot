@@ -1546,7 +1546,7 @@ export function validateConfigCoherence(
 
 export function validateTradingConfig(
   config: BotConfig,
-  opts?: { leadsWithEdge?: boolean },
+  opts?: { leadsWithEdge?: boolean; allowNoPrivateKey?: boolean },
 ): void {
   validateConfigCoherence(config, opts);
 
@@ -1563,7 +1563,7 @@ export function validateTradingConfig(
     return;
   }
 
-  if (!config.privateKey) {
+  if (!config.privateKey && !opts?.allowNoPrivateKey) {
     throw new Error("PRIVATE_KEY is required for live trading");
   }
   if (!config.funderAddress) {

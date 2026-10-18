@@ -33,6 +33,11 @@ esac
 
 echo "=== Deploying $ENV environment ==="
 
+# 0. Clean up problematic directories that break Docker build context
+# (Docker reads all files before applying .dockerignore)
+echo "Cleaning build context..."
+rm -rf .cursor .vscode .hermes .kilo 2>/dev/null || true
+
 # 1. Pull latest code
 cd "$PROJECT_DIR"
 git fetch origin

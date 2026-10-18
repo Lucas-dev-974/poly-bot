@@ -114,6 +114,51 @@ plus bas » est câblée full-stack (config/runtime-settings/stratégie/UI dialo
 preset run) derrière `favBandExitEnabled` (OFF par défaut). Ne l'activer qu'en
 0.05/3 : le seuil fin (2¢/2 pics) sort sur le bruit et détruit le PnL ; le
 switch inverse est confirmé destructeur (gardé OFF).
+**Win-streaks / créneaux récurrents (2026-10-07, sim live)** : 677 pos. paper
+fav-band (26/09→07/10 ET, 480W/195L, WR 71.1 %, PnL −$72.36). 68 runs ≥ 3 wins ;
+**Grille jour×tranche des successions** (`streak-grid-live-sim-1791357096477.md/json`,
+script `scripts/research/fav-band/day-hour-streak-grid.mts`) — cellule = bloc de
+wins adjacents (■kW), Σ par heure ; à l'heure d'écriture : 481W/195L, −$67.36,
+10-07 = 11W/0L (run 00:00–02:45).
+répétitions exactes de tranche : **22:45–23:45 ET ×3 jours** (4W/4W/3W),
+**17:00–19:00 ×2** (7W/8W), **00:30–02:00 ×2 consécutifs** (6W/6W, signature W/L
+identique 10-02 vs 10-03), **03:00–04:15 ×2** (7W/4W) ; ancre **03:00 ET
+(±15 min) sur 5 jours** (7/6/10/4/5W, span WR 73.7 %, +$96.53). Heures figées :
+rouge 20:00–21:00 ET (WR 34.8 %, −$95.47) et 15:00 (50 %, −$91.66) ; vertes
+17:00 (89.7 %, +$95.32), 01:00, 03:00, 12:00, 21:00. Artifacts :
+`win-streaks-live-sim-1791355719624.json` + `.md`. Script :
+`scripts/research/fav-band/win-streaks-live-sim.mts`.
+**Scan exhaustif tranches (2026-10-07)** : 2 016 bandes candidates (pas 5 min,
+largeurs 15→180 min) — **aucune tranche 12/12** (10-07 en cours, tradé
+00:00–02:45 ET seulement) ; couverture max **11/11 jours complets** =
+tranche matinale **08:40–11:40 ET** (±20 min) : ≥1 win chaque jour, 73W/25L
+(74,5 %), +$35,48. Tranches 0-loss quand tradées (win pur) : **11:15 ET ×8j**
+(8W/0L), **17:00 ET ×7j** (7W/0L), **19:25–19:45 ×7j** (8W/0L),
+**21:05–21:45 ×5j** (10W/0L), **03:35–04:10 ×7j** (11W/0L). Artifacts :
+`win-band-scan-live-sim-1791356191135.json` + `.md`. Script :
+`scripts/research/fav-band/win-band-scan-live-sim.mts`.
+**Backtest tranches horaires (2026-10-07, runner officiel, offline)** :
+univers **1296 fenêtres 15m** (08/09→07/10), config identique partout (bande
+0.70–0.85, min 200, exit OFF), seul le gate de début de fenêtre (ET) diffère :
+baseline toutes heures **+$176.13 / WR 74 % / DD 357 / PnL/DD 0.493** ;
+**A 03:00–05:00 +$50.11 / WR 76 % / DD 67 / 0.75** ; **B 09:00–10:00
++$35.86 / WR 78 % / DD 48 / 0.745** ; **C 11:00–15:00 +$10.73 / WR 74 % /
+DD 158 / 0.068 (maillon faible)** ; **union ABC +$96.70 (55 % du baseline) /
+75 % / DD 141 / 0.685** ; complément (hors tranches) +$79.43 / DD 332 / 0.239.
+Lecture : A et B sont les tranches les plus efficientes ; la tranche 11–15
+dilue le risque. Artifacts `win-windows-hours-1791358012342.json` + `.md`.
+Script : `scripts/research/fav-band/win-windows-hours-backtest.mts`.
+**Split-half (2026-10-07, mode --split, capital 500 $)** : H1 = 08→25/09
+(out-of-sample), H2 = 26/09→07/10 (période de détection, régime whipsaw).
+H1 : baseline +$420.7 / PnL-DD 1.704 ; union-ABC-H1 +$153.18 / **2.348**
+(1,38× baseline) ; union-AB-H1 +$72.7 / 1.358. H2 : baseline **−$237.98** ;
+union-ABC-H2 −$49.89 ; **union-AB-H2 +$19.86 = seul positif** (WR 77 %, DD 42).
+Full (capital 500) : union-AB **+$92.56 / DD 53.54 / PnL-DD 1.729 / WR 77 %**
+vs union-ABC 0.732 vs baseline 0.511. **WR union-AB stable à 77 % sur les
+2 moitiés, DD stable (53.5/42)** → gate A+B (03–05 + 09–10 ET) = la
+configuration la plus robuste ; la tranche C (11–15) n'apportait que sur H1.
+Trade-off à arbitrer : robustesse PnL/DD (union-AB) vs PnL absolu (union-ABC).
+Artifact `win-windows-hours-split-1791359962844.json` + `.md`.
 
 ## 📁 dip-revert/ — moteur dip-revert (favori chuté + rebond)
 
@@ -256,6 +301,25 @@ L2/L3 que le runner ne peut pas vendre. Switch laissé à l'utilisateur
 (défaut ON = config backtestée). Overlap early-conviction 478/511 même
 côté — PnL non additifs, un seul des deux par marché. Builds backend
 448/448 + frontend verts, `<Show>` balancés 37/37, 21/21 et 34/34.
+
+## 📁 early-low/ — dip extrême à l'ouverture (optimisé 2026-09-29, run complet 2026-10-07)
+
+Scripts : `scripts/research/early-low/` (`backtest-preset.mts` = runner preset,
+`optimize.mts`/`optimize-combos.mts`/`robustness.mts` = phases d'optimisation,
+`sweep.mts`, probes db)
+
+| Fichier | Contenu |
+|---|---|
+| `OPTIMIZATION-REPORT-2026-09-29.md` | Optimisation 21 jours : exit wait-and-see destructeur ; preset retenu **hold intégral + entrée ≤150 s + band <12¢** → +$33.55, 8/8 segments positifs (vs ancien preset exit 0.40 : −$30.39, 7/8 négatifs) |
+| `official-2026-09-29T07-02-54-574Z.{json,md}` | Run de référence ancien config (300 s / exit 0.50), 851 fenêtres : +$1.04 — conservé comme point de comparaison |
+| `current-2026-10-07T05-08-34-589Z.{json,md}` | **Re-run preset actuel sur univers complet 29 jours** (09-08→10-07, 2 782 fenêtres 15m ≥500 ticks, gap ≤180 s) : +$29.81 total, **BTC seul (univers preset) +$24.63** (39 fenêtres, W/L 7/32, PF 1.77, 7/22 jours positifs), ETH +$5.18 (hors preset, triangulation) ; avg win +8.18 vs avg loss −1.00 ; streak pertes max 10 ; depuis 09-29 : BTC +$1.18 (2/15) |
+| `current-earlyLowBuyAskMax=0-10-2026-10-07T05-40-16-542Z.{json,md}` | **Variante demandée bande <0.10** (même univers 29 j) : total +$12.83 (33 tr) ; **BTC seul +$6.22** (16 tr, W/L 2/14, PF 1.44) mais **BTC récent +$12.22** (2/10) vs +$1.18 au 0.12 ; le resserrement retire 23 fenêtres BTC qui portaient +$22.45 dans le run 0.12 (4 wins +8.09 dans [0.10,0.12) + 19 pertes −1) → l'edge de la décote légère (0.10–0.12) est confirmé sur 29 j, le 0.10 gagne seulement sur le régime récent |
+
+**Verdict** : hold intégral confirmé sur 29 jours (PF 1.77 BTC). L'edge persiste mais
+s'était raréfié sur la période récente (2 gagnants BTC depuis 09-29, pertes unitaires
+−1$ compensées par les wins ~+8$). Script reproductible preset-fidèle :
+`npx tsx scripts/research/early-low/backtest-preset.mts [minTicks] [maxGapMs]` — lit le
+preset au moment du run, contrairement à `backtest-official.mts` (ancienne config hard-codée).
 
 ## 📁 research-new-strats/ — travail transverse (3 stratégies, 2026-09-15)
 

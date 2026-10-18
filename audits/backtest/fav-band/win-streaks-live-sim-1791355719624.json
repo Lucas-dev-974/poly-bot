@@ -1,0 +1,3187 @@
+{
+  "meta": {
+    "generatedAt": "2026-10-07T06:48:39.624Z",
+    "dbPath": "data/bot-live.db",
+    "engine": "fav-band",
+    "source": "simulation live (paper) : sim_positions + sim_positions_archive",
+    "timeRef": "ET (America/New_York) — heure de début de la fenêtre marché (slug)",
+    "params": {
+      "minRunWins": 3,
+      "anchorToleranceMin": 15,
+      "soldPolicy": "exclues, ne coupent pas le run"
+    },
+    "countRaw": 677,
+    "countUnique": 677,
+    "dupeCount": 0,
+    "slugSkipped": 0,
+    "dupPositionsSameWindow": 1,
+    "windowSpanET": {
+      "min": "2026-09-26",
+      "max": "2026-10-07"
+    },
+    "firstWindowET": "2026-09-26 01:55",
+    "lastWindowET": "2026-10-07 02:30",
+    "totals": {
+      "closed": 675,
+      "wins": 480,
+      "losses": 195,
+      "wr": 71.1,
+      "pnl": -72.36,
+      "days": 12
+    },
+    "runLenHist2plus": {
+      "2": 25,
+      "3": 14,
+      "4": 17,
+      "5": 9,
+      "6": 7,
+      "7": 8,
+      "8": 5,
+      "9": 1,
+      "10": 3,
+      "12": 1,
+      "15": 1,
+      "17": 1,
+      "19": 1
+    },
+    "nExactRepeats": 6,
+    "nStartAnchorsRecurring": 7
+  },
+  "runs": [
+    {
+      "day": "2026-09-26",
+      "startH": 3,
+      "endH": 4.25,
+      "nWins": 7,
+      "ids": [
+        "btc-updown-15m-1790406000:Up:cheap-0.75:1790406200927",
+        "btc-updown-5m-1790406900:Up:cheap-0.75:1790407121788",
+        "btc-updown-15m-1790406900:Up:cheap-0.68:1790407471532",
+        "btc-updown-5m-1790407800:Up:cheap-0.7:1790408011133",
+        "btc-updown-15m-1790407800:Up:cheap-0.68:1790408319256",
+        "btc-updown-15m-1790408700:Up:cheap-0.72:1790408902623",
+        "btc-updown-15m-1790409600:Down:cheap-0.76:1790409802926"
+      ]
+    },
+    {
+      "day": "2026-09-26",
+      "startH": 9.25,
+      "endH": 11.666666666666668,
+      "nWins": 15,
+      "ids": [
+        "btc-updown-5m-1790428500:Down:cheap-0.67:1790428711734",
+        "btc-updown-15m-1790428500:Down:cheap-0.73:1790428967487",
+        "btc-updown-5m-1790429400:Down:cheap-0.69:1790429637260",
+        "btc-updown-15m-1790429400:Up:cheap-0.67:1790429906159",
+        "btc-updown-5m-1790430300:Up:cheap-0.69:1790430500799",
+        "btc-updown-15m-1790430300:Up:cheap-0.68:1790430819842",
+        "btc-updown-5m-1790431200:Up:cheap-0.71:1790431401366",
+        "btc-updown-15m-1790431200:Up:cheap-0.69:1790431739744",
+        "btc-updown-5m-1790432100:Up:cheap-0.72:1790432300538",
+        "btc-updown-15m-1790432100:Up:cheap-0.73:1790432637007",
+        "btc-updown-15m-1790433000:Up:cheap-0.76:1790433296602",
+        "btc-updown-15m-1790433900:Up:cheap-0.67:1790434212100",
+        "btc-updown-15m-1790434800:Up:cheap-0.68:1790435089467",
+        "btc-updown-15m-1790435700:Up:cheap-0.67:1790436039941",
+        "btc-updown-5m-1790436900:Down:cheap-0.76:1790437112544"
+      ]
+    },
+    {
+      "day": "2026-09-27",
+      "startH": 10,
+      "endH": 10.75,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1790517600:Down:cheap-0.76:1790517801180",
+        "btc-updown-5m-1790518500:Down:cheap-0.68:1790518704806",
+        "btc-updown-15m-1790519400:Up:cheap-0.74:1790519602967"
+      ]
+    },
+    {
+      "day": "2026-09-27",
+      "startH": 11,
+      "endH": 15.25,
+      "nWins": 19,
+      "ids": [
+        "btc-updown-15m-1790521200:Down:cheap-0.76:1790521607906",
+        "btc-updown-15m-1790522100:Up:cheap-0.75:1790522300130",
+        "btc-updown-15m-1790523000:Down:cheap-0.68:1790523200831",
+        "btc-updown-15m-1790523900:Up:cheap-0.67:1790524103730",
+        "btc-updown-5m-1790525700:Up:cheap-0.68:1790525910245",
+        "btc-updown-15m-1790525700:Up:cheap-0.73:1790526220515",
+        "btc-updown-15m-1790526600:Down:cheap-0.71:1790526801203",
+        "btc-updown-15m-1790527500:Up:cheap-0.72:1790527700800",
+        "btc-updown-15m-1790528400:Down:cheap-0.69:1790528816960",
+        "btc-updown-15m-1790529300:Up:cheap-0.73:1790529552774",
+        "btc-updown-15m-1790530200:Up:cheap-0.76:1790530420237",
+        "btc-updown-5m-1790531400:Up:cheap-0.72:1790531600124",
+        "btc-updown-15m-1790532000:Up:cheap-0.67:1790532220356",
+        "btc-updown-15m-1790532900:Up:cheap-0.76:1790533124859",
+        "btc-updown-5m-1790533800:Down:cheap-0.7:1790534000063",
+        "btc-updown-15m-1790533800:Up:cheap-0.67:1790534410937",
+        "btc-updown-5m-1790534700:Down:cheap-0.71:1790534900657",
+        "btc-updown-15m-1790534700:Up:cheap-0.71:1790535069104",
+        "btc-updown-15m-1790535600:Down:cheap-0.76:1790536192344"
+      ]
+    },
+    {
+      "day": "2026-09-27",
+      "startH": 18.25,
+      "endH": 20,
+      "nWins": 8,
+      "ids": [
+        "btc-updown-15m-1790547300:Up:cheap-0.76:1790547510204",
+        "btc-updown-5m-1790549100:Down:cheap-0.72:1790549306064",
+        "btc-updown-15m-1790549100:Up:cheap-0.67:1790549525522",
+        "btc-updown-15m-1790550000:Up:cheap-0.72:1790550203460",
+        "btc-updown-5m-1790550900:Up:cheap-0.76:1790551118126",
+        "btc-updown-5m-1790551800:Up:cheap-0.7:1790552020809",
+        "btc-updown-5m-1790552100:Down:cheap-0.76:1790552307723",
+        "btc-updown-5m-1790553300:Down:cheap-0.72:1790553500620"
+      ]
+    },
+    {
+      "day": "2026-09-27",
+      "startH": 21,
+      "endH": 21.75,
+      "nWins": 6,
+      "ids": [
+        "btc-updown-5m-1790557200:Down:cheap-0.7:1790557402995",
+        "btc-updown-15m-1790557200:Down:cheap-0.69:1790557791612",
+        "btc-updown-5m-1790558100:Down:cheap-0.76:1790558332072",
+        "btc-updown-15m-1790558100:Up:cheap-0.76:1790558576028",
+        "btc-updown-5m-1790559000:Down:cheap-0.73:1790559200464",
+        "btc-updown-15m-1790559000:Down:cheap-0.76:1790559373968"
+      ]
+    },
+    {
+      "day": "2026-09-27",
+      "startH": 22.25,
+      "endH": 23.333333333333332,
+      "nWins": 5,
+      "ids": [
+        "btc-updown-15m-1790561700:Down:cheap-0.75:1790561981140",
+        "btc-updown-15m-1790562600:Down:cheap-0.76:1790562929344",
+        "btc-updown-15m-1790563500:Down:cheap-0.71:1790563701058",
+        "btc-updown-15m-1790564400:Up:cheap-0.7:1790564610063",
+        "btc-updown-5m-1790565300:Up:cheap-0.74:1790565516897"
+      ]
+    },
+    {
+      "day": "2026-09-28",
+      "startH": 2,
+      "endH": 3,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1790575200:Up:cheap-0.72:1790575744974",
+        "btc-updown-15m-1790576100:Down:cheap-0.72:1790576303354",
+        "btc-updown-15m-1790577000:Up:cheap-0.72:1790577200635",
+        "btc-updown-15m-1790577900:Down:cheap-0.67:1790578101413"
+      ]
+    },
+    {
+      "day": "2026-09-28",
+      "startH": 3.5,
+      "endH": 5.333333333333333,
+      "nWins": 7,
+      "ids": [
+        "btc-updown-15m-1790580600:Down:cheap-0.72:1790581195318",
+        "btc-updown-15m-1790581500:Up:cheap-0.72:1790581752104",
+        "btc-updown-15m-1790582400:Up:cheap-0.74:1790582624594",
+        "btc-updown-15m-1790583300:Down:cheap-0.67:1790583520226",
+        "btc-updown-15m-1790584200:Up:cheap-0.76:1790584577674",
+        "btc-updown-15m-1790585100:Up:cheap-0.75:1790585300023",
+        "btc-updown-5m-1790586900:Up:cheap-0.68:1790587108244"
+      ]
+    },
+    {
+      "day": "2026-09-28",
+      "startH": 5.5,
+      "endH": 6.75,
+      "nWins": 6,
+      "ids": [
+        "btc-updown-5m-1790587800:Down:cheap-0.68:1790588028178",
+        "btc-updown-5m-1790588400:Down:cheap-0.7:1790588682605",
+        "btc-updown-15m-1790588700:Up:cheap-0.68:1790589276579",
+        "btc-updown-15m-1790589600:Up:cheap-0.7:1790590264480",
+        "btc-updown-15m-1790590500:Up:cheap-0.76:1790590705228",
+        "btc-updown-15m-1790591400:Up:cheap-0.67:1790591618633"
+      ]
+    },
+    {
+      "day": "2026-09-28",
+      "startH": 7,
+      "endH": 7.916666666666666,
+      "nWins": 5,
+      "ids": [
+        "btc-updown-15m-1790593200:Up:cheap-0.67:1790593444102",
+        "btc-updown-15m-1790594100:Up:cheap-0.73:1790594300009",
+        "btc-updown-15m-1790595000:Up:cheap-0.74:1790595462534",
+        "btc-updown-15m-1790595900:Up:cheap-0.68:1790596680231",
+        "btc-updown-5m-1790596200:Down:cheap-0.73:1790596419771"
+      ]
+    },
+    {
+      "day": "2026-09-28",
+      "startH": 8.25,
+      "endH": 9.5,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1790597700:Up:cheap-0.67:1790597918544",
+        "btc-updown-15m-1790598600:Down:cheap-0.67:1790598814842",
+        "btc-updown-5m-1790601300:Down:cheap-0.67:1790601531381",
+        "btc-updown-15m-1790601300:Up:cheap-0.67:1790601915997"
+      ]
+    },
+    {
+      "day": "2026-09-28",
+      "startH": 13.75,
+      "endH": 16.5,
+      "nWins": 10,
+      "ids": [
+        "btc-updown-15m-1790617500:Down:cheap-0.71:1790617700361",
+        "btc-updown-15m-1790618400:Up:cheap-0.68:1790618608656",
+        "btc-updown-15m-1790619300:Down:cheap-0.7:1790619501215",
+        "btc-updown-15m-1790620200:Down:cheap-0.74:1790620482912",
+        "btc-updown-15m-1790621100:Up:cheap-0.68:1790621316739",
+        "btc-updown-15m-1790622900:Down:cheap-0.69:1790623275448",
+        "btc-updown-15m-1790623800:Down:cheap-0.7:1790624000248",
+        "btc-updown-15m-1790624700:Up:cheap-0.76:1790625125288",
+        "btc-updown-15m-1790625600:Up:cheap-0.67:1790625875643",
+        "btc-updown-15m-1790626500:Down:cheap-0.75:1790626745856"
+      ]
+    },
+    {
+      "day": "2026-09-28",
+      "startH": 17,
+      "endH": 19,
+      "nWins": 7,
+      "ids": [
+        "btc-updown-15m-1790629200:Up:cheap-0.76:1790629424272",
+        "btc-updown-15m-1790630100:Down:cheap-0.74:1790630384992",
+        "btc-updown-15m-1790631000:Down:cheap-0.67:1790631501865",
+        "btc-updown-15m-1790631900:Down:cheap-0.67:1790632262041",
+        "btc-updown-15m-1790632800:Down:cheap-0.69:1790633140210",
+        "btc-updown-15m-1790633700:Up:cheap-0.7:1790634106496",
+        "btc-updown-15m-1790635500:Up:cheap-0.67:1790635761652"
+      ]
+    },
+    {
+      "day": "2026-09-28",
+      "startH": 19.25,
+      "endH": 20,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1790637300:Up:cheap-0.74:1790637500238",
+        "btc-updown-15m-1790638200:Up:cheap-0.71:1790638745254",
+        "btc-updown-15m-1790639100:Down:cheap-0.72:1790639300656"
+      ]
+    },
+    {
+      "day": "2026-09-29",
+      "startH": 0.5,
+      "endH": 8,
+      "nWins": 17,
+      "ids": [
+        "btc-updown-15m-1790656200:Down:cheap-0.73:1790656401425",
+        "btc-updown-15m-1790658000:Up:cheap-0.73:1790658200439",
+        "btc-updown-15m-1790658900:Up:cheap-0.71:1790659101081",
+        "btc-updown-15m-1790659800:Down:cheap-0.74:1790660668689",
+        "btc-updown-15m-1790660700:Up:cheap-0.68:1790660991865",
+        "btc-updown-15m-1790665200:Down:cheap-0.76:1790665415895",
+        "btc-updown-15m-1790666100:Up:cheap-0.73:1790666301622",
+        "btc-updown-15m-1790667000:Up:cheap-0.68:1790667206927",
+        "btc-updown-15m-1790671500:Down:cheap-0.73:1790671700144",
+        "btc-updown-15m-1790672400:Down:cheap-0.71:1790672600540",
+        "btc-updown-15m-1790673300:Up:cheap-0.67:1790673601915",
+        "btc-updown-15m-1790676000:Down:cheap-0.72:1790676549382",
+        "btc-updown-15m-1790677800:Down:cheap-0.7:1790678000116",
+        "btc-updown-15m-1790678700:Up:cheap-0.68:1790679065912",
+        "btc-updown-15m-1790679600:Down:cheap-0.67:1790679820731",
+        "btc-updown-15m-1790680500:Up:cheap-0.67:1790680717028",
+        "btc-updown-15m-1790682300:Up:cheap-0.75:1790682568918"
+      ]
+    },
+    {
+      "day": "2026-09-29",
+      "startH": 13,
+      "endH": 15,
+      "nWins": 7,
+      "ids": [
+        "btc-updown-15m-1790701200:Up:cheap-0.7:1790701511799",
+        "btc-updown-15m-1790702100:Down:cheap-0.68:1790702464740",
+        "btc-updown-15m-1790703000:Up:cheap-0.69:1790703200526",
+        "btc-updown-15m-1790703900:Down:cheap-0.68:1790704145951",
+        "btc-updown-15m-1790705700:Up:cheap-0.68:1790706095916",
+        "btc-updown-15m-1790706600:Up:cheap-0.76:1790706825151",
+        "btc-updown-15m-1790707500:Down:cheap-0.71:1790707701352"
+      ]
+    },
+    {
+      "day": "2026-09-29",
+      "startH": 17.75,
+      "endH": 18.5,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1790718300:Down:cheap-0.76:1790718753002",
+        "btc-updown-15m-1790719200:Up:cheap-0.76:1790719477854",
+        "btc-updown-15m-1790720100:Down:cheap-0.69:1790720426257"
+      ]
+    },
+    {
+      "day": "2026-09-29",
+      "startH": 18.75,
+      "endH": 20,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1790721900:Up:cheap-0.67:1790722304959",
+        "btc-updown-15m-1790723700:Down:cheap-0.67:1790723925556",
+        "btc-updown-15m-1790724600:Down:cheap-0.67:1790724820236",
+        "btc-updown-15m-1790725500:Up:cheap-0.69:1790725701164"
+      ]
+    },
+    {
+      "day": "2026-09-30",
+      "startH": 0.5,
+      "endH": 1.5,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1790742600:Down:cheap-0.73:1790742800198",
+        "btc-updown-15m-1790743500:Down:cheap-0.67:1790743769194",
+        "btc-updown-15m-1790744400:Up:cheap-0.76:1790744723308",
+        "btc-updown-15m-1790745300:Up:cheap-0.7:1790745576701"
+      ]
+    },
+    {
+      "day": "2026-09-30",
+      "startH": 3,
+      "endH": 9.5,
+      "nWins": 6,
+      "ids": [
+        "btc-updown-15m-1790751600:Down:cheap-0.67:1790751888358",
+        "btc-updown-15m-1790756100:Up:cheap-0.74:1790756404315",
+        "btc-updown-15m-1790757000:Down:cheap-0.74:1790757249529",
+        "btc-updown-15m-1790757900:Up:cheap-0.74:1790758116750",
+        "btc-updown-15m-1790759700:Up:cheap-0.68:1790760039622",
+        "btc-updown-15m-1790774100:Down:cheap-0.71:1790774508529"
+      ]
+    },
+    {
+      "day": "2026-10-01",
+      "startH": 10.75,
+      "endH": 12.25,
+      "nWins": 5,
+      "ids": [
+        "btc-updown-15m-1790865900:Down:cheap-0.74:1790866101188",
+        "btc-updown-15m-1790866800:Up:cheap-0.71:1790867036795",
+        "btc-updown-15m-1790867700:Up:cheap-0.8:1790867900711",
+        "btc-updown-15m-1790868600:Down:cheap-0.85:1790868800160",
+        "btc-updown-15m-1790870400:Up:cheap-0.77:1790870670429"
+      ]
+    },
+    {
+      "day": "2026-10-01",
+      "startH": 15,
+      "endH": 15.75,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1790881200:Down:cheap-0.72:1790881400638",
+        "btc-updown-15m-1790882100:Down:cheap-0.67:1790882308314",
+        "btc-updown-15m-1790883000:Up:cheap-0.76:1790883388652"
+      ]
+    },
+    {
+      "day": "2026-10-01",
+      "startH": 16.5,
+      "endH": 18.75,
+      "nWins": 8,
+      "ids": [
+        "btc-updown-15m-1790886600:Down:cheap-0.67:1790886878923",
+        "btc-updown-15m-1790887500:Up:cheap-0.67:1790887850958",
+        "btc-updown-15m-1790888400:Up:cheap-0.71:1790888802434",
+        "btc-updown-15m-1790889300:Down:cheap-0.67:1790889500229",
+        "btc-updown-15m-1790890200:Down:cheap-0.68:1790890427940",
+        "btc-updown-15m-1790891100:Up:cheap-0.76:1790891322084",
+        "btc-updown-15m-1790892900:Down:cheap-0.67:1790893133377",
+        "btc-updown-15m-1790893800:Down:cheap-0.69:1790894002860"
+      ]
+    },
+    {
+      "day": "2026-10-01",
+      "startH": 20,
+      "endH": 21.5,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1790899200:Up:cheap-0.7:1790899991564",
+        "btc-updown-15m-1790900100:Down:cheap-0.71:1790900472957",
+        "btc-updown-15m-1790902800:Down:cheap-0.77:1790903235051",
+        "btc-updown-15m-1790903700:Down:cheap-0.68:1790903972744"
+      ]
+    },
+    {
+      "day": "2026-10-01",
+      "startH": 22.75,
+      "endH": 23.75,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1790909100:Up:cheap-0.77:1790909300187",
+        "btc-updown-15m-1790910000:Up:cheap-0.74:1790910503853",
+        "btc-updown-15m-1790910900:Down:cheap-0.77:1790911100376",
+        "btc-updown-15m-1790911800:Up:cheap-0.77:1790912264536"
+      ]
+    },
+    {
+      "day": "2026-10-02",
+      "startH": 0.5,
+      "endH": 2,
+      "nWins": 6,
+      "ids": [
+        "btc-updown-15m-1790915400:Down:cheap-0.71:1790915600177",
+        "btc-updown-15m-1790916300:Up:cheap-0.71:1790916500523",
+        "btc-updown-15m-1790917200:Down:cheap-0.7:1790917476842",
+        "btc-updown-15m-1790918100:Down:cheap-0.69:1790918300824",
+        "btc-updown-15m-1790919000:Down:cheap-0.67:1790919309270",
+        "btc-updown-15m-1790919900:Down:cheap-0.73:1790920100639"
+      ]
+    },
+    {
+      "day": "2026-10-02",
+      "startH": 2.75,
+      "endH": 5.5,
+      "nWins": 10,
+      "ids": [
+        "btc-updown-15m-1790923500:Up:cheap-0.69:1790923843722",
+        "btc-updown-15m-1790924400:Down:cheap-0.7:1790924600390",
+        "btc-updown-15m-1790925300:Down:cheap-0.68:1790925634892",
+        "btc-updown-15m-1790926200:Down:cheap-0.68:1790926403570",
+        "btc-updown-15m-1790927100:Up:cheap-0.76:1790927300533",
+        "btc-updown-15m-1790928900:Up:cheap-0.77:1790929429197",
+        "btc-updown-15m-1790929800:Down:cheap-0.69:1790930000358",
+        "btc-updown-15m-1790930700:Down:cheap-0.67:1790931005218",
+        "btc-updown-15m-1790931600:Down:cheap-0.72:1790931800138",
+        "btc-updown-15m-1790932500:Down:cheap-0.67:1790932936466"
+      ]
+    },
+    {
+      "day": "2026-10-02",
+      "startH": 6.25,
+      "endH": 7.25,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1790936100:Up:cheap-0.69:1790936506906",
+        "btc-updown-15m-1790937000:Up:cheap-0.67:1790937264559",
+        "btc-updown-15m-1790937900:Down:cheap-0.67:1790938508805",
+        "btc-updown-15m-1790938800:Up:cheap-0.74:1790939051521"
+      ]
+    },
+    {
+      "day": "2026-10-02",
+      "startH": 11,
+      "endH": 11.75,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1790953200:Down:cheap-0.67:1790953427503",
+        "btc-updown-15m-1790954100:Down:cheap-0.67:1790954401534",
+        "btc-updown-15m-1790955000:Down:cheap-0.71:1790955490813"
+      ]
+    },
+    {
+      "day": "2026-10-02",
+      "startH": 14.5,
+      "endH": 15.25,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1790965800:Down:cheap-0.67:1790966010380",
+        "btc-updown-15m-1790966700:Up:cheap-0.68:1790966972957",
+        "btc-updown-15m-1790967600:Down:cheap-0.68:1790967800405"
+      ]
+    },
+    {
+      "day": "2026-10-02",
+      "startH": 15.5,
+      "endH": 16.25,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1790969400:Up:cheap-0.69:1790969779359",
+        "btc-updown-15m-1790970300:Up:cheap-0.67:1790970567112",
+        "btc-updown-15m-1790971200:Up:cheap-0.71:1790971400223"
+      ]
+    },
+    {
+      "day": "2026-10-02",
+      "startH": 16.75,
+      "endH": 18,
+      "nWins": 5,
+      "ids": [
+        "btc-updown-15m-1790973900:Up:cheap-0.77:1790974134631",
+        "btc-updown-15m-1790974800:Up:cheap-0.68:1790975015199",
+        "btc-updown-15m-1790975700:Down:cheap-0.71:1790976338447",
+        "btc-updown-15m-1790976600:Up:cheap-0.67:1790976969169",
+        "btc-updown-15m-1790977500:Up:cheap-0.67:1790977941288"
+      ]
+    },
+    {
+      "day": "2026-10-02",
+      "startH": 18.75,
+      "endH": 21.75,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1790981100:Up:cheap-0.67:1790981315012",
+        "btc-updown-15m-1790989200:Down:cheap-0.67:1790989400278",
+        "btc-updown-15m-1790990100:Down:cheap-0.67:1790990431419",
+        "btc-updown-15m-1790991000:Up:cheap-0.71:1790991200302"
+      ]
+    },
+    {
+      "day": "2026-10-02",
+      "startH": 22,
+      "endH": 23,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1790992800:Down:cheap-0.72:1790993198211",
+        "btc-updown-15m-1790993700:Up:cheap-0.76:1790993900338",
+        "btc-updown-15m-1790994600:Up:cheap-0.7:1790995182652",
+        "btc-updown-15m-1790995500:Down:cheap-0.77:1790995700640"
+      ]
+    },
+    {
+      "day": "2026-10-03",
+      "startH": 0.5,
+      "endH": 2,
+      "nWins": 6,
+      "ids": [
+        "btc-updown-15m-1791001800:Up:cheap-0.7:1791002000395",
+        "btc-updown-15m-1791002700:Up:cheap-0.76:1791003037241",
+        "btc-updown-15m-1791003600:Down:cheap-0.74:1791003800100",
+        "btc-updown-15m-1791004500:Up:cheap-0.75:1791004700402",
+        "btc-updown-15m-1791005400:Up:cheap-0.72:1791005600115",
+        "btc-updown-15m-1791006300:Up:cheap-0.67:1791006513424"
+      ]
+    },
+    {
+      "day": "2026-10-03",
+      "startH": 3.75,
+      "endH": 4.5,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1791013500:Up:cheap-0.68:1791013703649",
+        "btc-updown-15m-1791014400:Up:cheap-0.68:1791014649232",
+        "btc-updown-15m-1791015300:Down:cheap-0.69:1791015500468"
+      ]
+    },
+    {
+      "day": "2026-10-03",
+      "startH": 5,
+      "endH": 6,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1791018000:Up:cheap-0.73:1791018202472",
+        "btc-updown-15m-1791018900:Down:cheap-0.7:1791019100197",
+        "btc-updown-15m-1791019800:Down:cheap-0.75:1791020169465",
+        "btc-updown-15m-1791020700:Up:cheap-0.67:1791021328755"
+      ]
+    },
+    {
+      "day": "2026-10-03",
+      "startH": 8.75,
+      "endH": 10.75,
+      "nWins": 7,
+      "ids": [
+        "btc-updown-15m-1791031500:Up:cheap-0.68:1791031700320",
+        "btc-updown-15m-1791032400:Down:cheap-0.72:1791032600570",
+        "btc-updown-15m-1791033300:Down:cheap-0.77:1791033501244",
+        "btc-updown-15m-1791034200:Up:cheap-0.67:1791034425489",
+        "btc-updown-15m-1791035100:Up:cheap-0.68:1791035338921",
+        "btc-updown-15m-1791036900:Up:cheap-0.72:1791037235947",
+        "btc-updown-15m-1791037800:Down:cheap-0.77:1791038000048"
+      ]
+    },
+    {
+      "day": "2026-10-03",
+      "startH": 11.25,
+      "endH": 13.5,
+      "nWins": 9,
+      "ids": [
+        "btc-updown-15m-1791040500:Up:cheap-0.67:1791040828123",
+        "btc-updown-15m-1791041400:Down:cheap-0.77:1791041602166",
+        "btc-updown-15m-1791042300:Up:cheap-0.67:1791042638883",
+        "btc-updown-15m-1791043200:Down:cheap-0.67:1791043400358",
+        "btc-updown-15m-1791044100:Down:cheap-0.68:1791044300183",
+        "btc-updown-15m-1791045000:Up:cheap-0.7:1791045205869",
+        "btc-updown-15m-1791045900:Up:cheap-0.69:1791046100511",
+        "btc-updown-15m-1791046800:Up:cheap-0.72:1791047106621",
+        "btc-updown-15m-1791047700:Up:cheap-0.77:1791047900789"
+      ]
+    },
+    {
+      "day": "2026-10-03",
+      "startH": 16,
+      "endH": 17.5,
+      "nWins": 6,
+      "ids": [
+        "btc-updown-15m-1791057600:Up:cheap-0.71:1791057905430",
+        "btc-updown-15m-1791058500:Up:cheap-0.68:1791058783883",
+        "btc-updown-15m-1791059400:Down:cheap-0.67:1791059708991",
+        "btc-updown-15m-1791060300:Down:cheap-0.68:1791060546852",
+        "btc-updown-15m-1791061200:Down:cheap-0.71:1791061444378",
+        "btc-updown-15m-1791062100:Up:cheap-0.71:1791062344121"
+      ]
+    },
+    {
+      "day": "2026-10-03",
+      "startH": 17.75,
+      "endH": 18.5,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1791063900:Up:cheap-0.76:1791064106703",
+        "btc-updown-15m-1791064800:Up:cheap-0.67:1791065008738",
+        "btc-updown-15m-1791065700:Down:cheap-0.72:1791065900879"
+      ]
+    },
+    {
+      "day": "2026-10-03",
+      "startH": 19.5,
+      "endH": 20.25,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1791070200:Up:cheap-0.68:1791070470721",
+        "btc-updown-15m-1791071100:Down:cheap-0.68:1791071408943",
+        "btc-updown-15m-1791072000:Up:cheap-0.68:1791072200557"
+      ]
+    },
+    {
+      "day": "2026-10-03",
+      "startH": 21.25,
+      "endH": 22.5,
+      "nWins": 5,
+      "ids": [
+        "btc-updown-15m-1791076500:Down:cheap-0.71:1791076700328",
+        "btc-updown-15m-1791077400:Up:cheap-0.67:1791077674592",
+        "btc-updown-15m-1791078300:Up:cheap-0.7:1791078712494",
+        "btc-updown-15m-1791079200:Up:cheap-0.75:1791079676736",
+        "btc-updown-15m-1791080100:Up:cheap-0.68:1791080552149"
+      ]
+    },
+    {
+      "day": "2026-10-04",
+      "startH": 3,
+      "endH": 4.25,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1791097200:Down:cheap-0.69:1791097648913",
+        "btc-updown-15m-1791098100:Down:cheap-0.75:1791098563493",
+        "btc-updown-15m-1791099000:Down:cheap-0.67:1791099352569",
+        "btc-updown-15m-1791100800:Up:cheap-0.74:1791101013025"
+      ]
+    },
+    {
+      "day": "2026-10-04",
+      "startH": 6,
+      "endH": 8,
+      "nWins": 7,
+      "ids": [
+        "btc-updown-15m-1791108000:Up:cheap-0.67:1791108243864",
+        "btc-updown-15m-1791109800:Down:cheap-0.69:1791110009523",
+        "btc-updown-15m-1791110700:Down:cheap-0.67:1791111360812",
+        "btc-updown-15m-1791111600:Down:cheap-0.76:1791111817722",
+        "btc-updown-15m-1791112500:Up:cheap-0.68:1791112700313",
+        "btc-updown-15m-1791113400:Down:cheap-0.67:1791113718404",
+        "btc-updown-15m-1791114300:Up:cheap-0.67:1791114621987"
+      ]
+    },
+    {
+      "day": "2026-10-04",
+      "startH": 8.25,
+      "endH": 10.5,
+      "nWins": 8,
+      "ids": [
+        "btc-updown-15m-1791116100:Up:cheap-0.67:1791116509052",
+        "btc-updown-15m-1791117000:Down:cheap-0.67:1791117364300",
+        "btc-updown-15m-1791118800:Up:cheap-0.72:1791119213179",
+        "btc-updown-15m-1791119700:Up:cheap-0.67:1791119901393",
+        "btc-updown-15m-1791120600:Up:cheap-0.74:1791120801599",
+        "btc-updown-15m-1791121500:Up:cheap-0.74:1791121701622",
+        "btc-updown-15m-1791122400:Down:cheap-0.68:1791122843893",
+        "btc-updown-15m-1791123300:Down:cheap-0.68:1791123513844"
+      ]
+    },
+    {
+      "day": "2026-10-04",
+      "startH": 12,
+      "endH": 13,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1791129600:Down:cheap-0.8:1791130187103",
+        "btc-updown-15m-1791130500:Down:cheap-0.67:1791130870193",
+        "btc-updown-15m-1791131400:Up:cheap-0.76:1791131601220",
+        "btc-updown-15m-1791132300:Up:cheap-0.77:1791132621222"
+      ]
+    },
+    {
+      "day": "2026-10-04",
+      "startH": 14.25,
+      "endH": 15.5,
+      "nWins": 5,
+      "ids": [
+        "btc-updown-15m-1791137700:Up:cheap-0.7:1791137945051",
+        "btc-updown-15m-1791138600:Up:cheap-0.68:1791139210411",
+        "btc-updown-15m-1791139500:Down:cheap-0.68:1791139744149",
+        "btc-updown-15m-1791140400:Up:cheap-0.74:1791140601566",
+        "btc-updown-15m-1791141300:Up:cheap-0.67:1791141657124"
+      ]
+    },
+    {
+      "day": "2026-10-04",
+      "startH": 16.25,
+      "endH": 18.25,
+      "nWins": 8,
+      "ids": [
+        "btc-updown-15m-1791144900:Up:cheap-0.74:1791145101665",
+        "btc-updown-15m-1791145800:Up:cheap-0.75:1791146028658",
+        "btc-updown-15m-1791146700:Up:cheap-0.75:1791146902177",
+        "btc-updown-15m-1791147600:Up:cheap-0.67:1791147940437",
+        "btc-updown-15m-1791148500:Down:cheap-0.69:1791148814061",
+        "btc-updown-15m-1791149400:Up:cheap-0.67:1791149633837",
+        "btc-updown-15m-1791150300:Down:cheap-0.67:1791150572545",
+        "btc-updown-15m-1791151200:Up:cheap-0.8:1791151417535"
+      ]
+    },
+    {
+      "day": "2026-10-04",
+      "startH": 19.5,
+      "endH": 20.25,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1791156600:Down:cheap-0.7:1791156805477",
+        "btc-updown-15m-1791157500:Up:cheap-0.68:1791157816051",
+        "btc-updown-15m-1791158400:Down:cheap-0.8:1791158613529"
+      ]
+    },
+    {
+      "day": "2026-10-04",
+      "startH": 20.75,
+      "endH": 22,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1791161100:Up:cheap-0.7:1791161481772",
+        "btc-updown-15m-1791162000:Down:cheap-0.79:1791162268547",
+        "btc-updown-15m-1791162900:Up:cheap-0.78:1791163101719",
+        "btc-updown-15m-1791164700:Down:cheap-0.67:1791165035364"
+      ]
+    },
+    {
+      "day": "2026-10-04",
+      "startH": 22.75,
+      "endH": 23.75,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1791168300:Down:cheap-0.71:1791168501561",
+        "btc-updown-15m-1791169200:Down:cheap-0.69:1791169484667",
+        "btc-updown-15m-1791170100:Down:cheap-0.69:1791170300801",
+        "btc-updown-15m-1791171000:Down:cheap-0.78:1791171207724"
+      ]
+    },
+    {
+      "day": "2026-10-05",
+      "startH": 4.5,
+      "endH": 7.75,
+      "nWins": 12,
+      "ids": [
+        "btc-updown-15m-1791189000:Down:cheap-0.78:1791189256834",
+        "btc-updown-15m-1791189900:Down:cheap-0.8:1791190144357",
+        "btc-updown-15m-1791190800:Down:cheap-0.67:1791191000514",
+        "btc-updown-15m-1791191700:Down:cheap-0.8:1791191972803",
+        "btc-updown-15m-1791192600:Up:cheap-0.68:1791193074722",
+        "btc-updown-15m-1791193500:Up:cheap-0.68:1791193784893",
+        "btc-updown-15m-1791194400:Up:cheap-0.71:1791194600818",
+        "btc-updown-15m-1791195300:Up:cheap-0.74:1791195500679",
+        "btc-updown-15m-1791196200:Down:cheap-0.71:1791196434932",
+        "btc-updown-15m-1791197100:Up:cheap-0.78:1791197527361",
+        "btc-updown-15m-1791198900:Up:cheap-0.7:1791199100181",
+        "btc-updown-15m-1791199800:Down:cheap-0.69:1791200018442"
+      ]
+    },
+    {
+      "day": "2026-10-05",
+      "startH": 8,
+      "endH": 9,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1791201600:Down:cheap-0.67:1791201800415",
+        "btc-updown-15m-1791202500:Down:cheap-0.67:1791202735766",
+        "btc-updown-15m-1791203400:Down:cheap-0.8:1791203611861",
+        "btc-updown-15m-1791204300:Down:cheap-0.7:1791204500253"
+      ]
+    },
+    {
+      "day": "2026-10-05",
+      "startH": 10.25,
+      "endH": 11.75,
+      "nWins": 5,
+      "ids": [
+        "btc-updown-15m-1791209700:Down:cheap-0.7:1791209900152",
+        "btc-updown-15m-1791211500:Down:cheap-0.76:1791211700573",
+        "btc-updown-15m-1791212400:Down:cheap-0.72:1791212600677",
+        "btc-updown-15m-1791213300:Down:cheap-0.67:1791213744592",
+        "btc-updown-15m-1791214200:Down:cheap-0.8:1791214712589"
+      ]
+    },
+    {
+      "day": "2026-10-05",
+      "startH": 12,
+      "endH": 13.75,
+      "nWins": 7,
+      "ids": [
+        "btc-updown-15m-1791216000:Down:cheap-0.69:1791216234545",
+        "btc-updown-15m-1791216900:Down:cheap-0.78:1791217100372",
+        "btc-updown-15m-1791217800:Up:cheap-0.7:1791218000662",
+        "btc-updown-15m-1791218700:Up:cheap-0.68:1791218914536",
+        "btc-updown-15m-1791219600:Down:cheap-0.77:1791219831954",
+        "btc-updown-15m-1791220500:Up:cheap-0.79:1791220702747",
+        "btc-updown-15m-1791221400:Down:cheap-0.77:1791221632592"
+      ]
+    },
+    {
+      "day": "2026-10-05",
+      "startH": 17,
+      "endH": 19,
+      "nWins": 8,
+      "ids": [
+        "btc-updown-15m-1791234000:Down:cheap-0.8:1791234385276",
+        "btc-updown-15m-1791234900:Up:cheap-0.72:1791235100500",
+        "btc-updown-15m-1791235800:Up:cheap-0.68:1791236004549",
+        "btc-updown-15m-1791236700:Up:cheap-0.67:1791237013337",
+        "btc-updown-15m-1791237600:Up:cheap-0.67:1791237805751",
+        "btc-updown-15m-1791238500:Up:cheap-0.68:1791238759326",
+        "btc-updown-15m-1791239400:Down:cheap-0.67:1791239814776",
+        "btc-updown-15m-1791240300:Down:cheap-0.67:1791240641811"
+      ]
+    },
+    {
+      "day": "2026-10-05",
+      "startH": 19.25,
+      "endH": 20.25,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1791242100:Up:cheap-0.69:1791242300529",
+        "btc-updown-15m-1791243000:Down:cheap-0.76:1791243200462",
+        "btc-updown-15m-1791243900:Down:cheap-0.8:1791244100577",
+        "btc-updown-15m-1791244800:Up:cheap-0.75:1791245000312"
+      ]
+    },
+    {
+      "day": "2026-10-06",
+      "startH": 1.25,
+      "endH": 2.75,
+      "nWins": 5,
+      "ids": [
+        "btc-updown-15m-1791263700:Down:cheap-0.68:1791263907634",
+        "btc-updown-15m-1791264600:Down:cheap-0.7:1791264881540",
+        "btc-updown-15m-1791265500:Down:cheap-0.69:1791265700150",
+        "btc-updown-15m-1791267300:Up:cheap-0.74:1791267500288",
+        "btc-updown-15m-1791268200:Up:cheap-0.67:1791268400518"
+      ]
+    },
+    {
+      "day": "2026-10-06",
+      "startH": 3,
+      "endH": 4.5,
+      "nWins": 5,
+      "ids": [
+        "btc-updown-15m-1791270000:Up:cheap-0.67:1791270303388",
+        "btc-updown-15m-1791270900:Down:cheap-0.68:1791271284617",
+        "btc-updown-15m-1791272700:Up:cheap-0.77:1791272900554",
+        "btc-updown-15m-1791273600:Up:cheap-0.74:1791273800812",
+        "btc-updown-15m-1791274500:Up:cheap-0.67:1791274827766"
+      ]
+    },
+    {
+      "day": "2026-10-06",
+      "startH": 5.5,
+      "endH": 6.5,
+      "nWins": 4,
+      "ids": [
+        "btc-updown-15m-1791279000:Up:cheap-0.8:1791279305662",
+        "btc-updown-15m-1791279900:Up:cheap-0.78:1791280100505",
+        "btc-updown-15m-1791280800:Up:cheap-0.68:1791281000769",
+        "btc-updown-15m-1791281700:Down:cheap-0.7:1791281900786"
+      ]
+    },
+    {
+      "day": "2026-10-06",
+      "startH": 7,
+      "endH": 7.75,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1791284400:Up:cheap-0.74:1791284600438",
+        "btc-updown-15m-1791285300:Up:cheap-0.8:1791285597974",
+        "btc-updown-15m-1791286200:Up:cheap-0.77:1791286400744"
+      ]
+    },
+    {
+      "day": "2026-10-06",
+      "startH": 8,
+      "endH": 9.75,
+      "nWins": 7,
+      "ids": [
+        "btc-updown-15m-1791288000:Up:cheap-0.7:1791288212499",
+        "btc-updown-15m-1791288900:Down:cheap-0.76:1791289100415",
+        "btc-updown-15m-1791289800:Up:cheap-0.69:1791290116529",
+        "btc-updown-15m-1791290700:Down:cheap-0.73:1791290900459",
+        "btc-updown-15m-1791291600:Down:cheap-0.67:1791291802489",
+        "btc-updown-15m-1791292500:Down:cheap-0.8:1791292700681",
+        "btc-updown-15m-1791293400:Up:cheap-0.79:1791293600618"
+      ]
+    },
+    {
+      "day": "2026-10-06",
+      "startH": 11.75,
+      "endH": 13.25,
+      "nWins": 6,
+      "ids": [
+        "btc-updown-15m-1791301500:Down:cheap-0.68:1791301744402",
+        "btc-updown-15m-1791302400:Up:cheap-0.7:1791302600520",
+        "btc-updown-15m-1791303300:Down:cheap-0.72:1791303638669",
+        "btc-updown-15m-1791304200:Down:cheap-0.69:1791304401642",
+        "btc-updown-15m-1791305100:Down:cheap-0.67:1791305383383",
+        "btc-updown-15m-1791306000:Down:cheap-0.68:1791306288008"
+      ]
+    },
+    {
+      "day": "2026-10-06",
+      "startH": 14,
+      "endH": 15,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1791309600:Up:cheap-0.8:1791309800221",
+        "btc-updown-15m-1791310500:Down:cheap-0.67:1791310751137",
+        "btc-updown-15m-1791312300:Down:cheap-0.8:1791312730216"
+      ]
+    },
+    {
+      "day": "2026-10-06",
+      "startH": 22.75,
+      "endH": 23.75,
+      "nWins": 3,
+      "ids": [
+        "btc-updown-15m-1791341100:Up:cheap-0.73:1791341526827",
+        "btc-updown-15m-1791342900:Up:cheap-0.8:1791343238781",
+        "btc-updown-15m-1791343800:Up:cheap-0.74:1791344000735"
+      ]
+    },
+    {
+      "day": "2026-10-07",
+      "startH": 0,
+      "endH": 2.75,
+      "nWins": 10,
+      "ids": [
+        "btc-updown-15m-1791345600:Up:cheap-0.76:1791345800611",
+        "btc-updown-15m-1791346500:Down:cheap-0.79:1791346700353",
+        "btc-updown-15m-1791347400:Down:cheap-0.8:1791347606375",
+        "btc-updown-15m-1791348300:Up:cheap-0.72:1791348500322",
+        "btc-updown-15m-1791349200:Up:cheap-0.67:1791349400565",
+        "btc-updown-15m-1791350100:Up:cheap-0.68:1791350410311",
+        "btc-updown-15m-1791351000:Up:cheap-0.69:1791351200512",
+        "btc-updown-15m-1791351900:Up:cheap-0.8:1791352433664",
+        "btc-updown-15m-1791352800:Down:cheap-0.68:1791353163549",
+        "btc-updown-15m-1791354600:Up:cheap-0.67:1791354816527"
+      ]
+    }
+  ],
+  "exactRepeats": [
+    {
+      "key": "1365|1425",
+      "start": 22.75,
+      "end": 23.75,
+      "days": [
+        "2026-10-01",
+        "2026-10-04",
+        "2026-10-06"
+      ],
+      "nRuns": 3,
+      "runsList": [
+        {
+          "day": "2026-10-01",
+          "start": "22:45",
+          "end": "23:45",
+          "nWins": 4
+        },
+        {
+          "day": "2026-10-04",
+          "start": "22:45",
+          "end": "23:45",
+          "nWins": 4
+        },
+        {
+          "day": "2026-10-06",
+          "start": "22:45",
+          "end": "23:45",
+          "nWins": 3
+        }
+      ],
+      "winsRange": [
+        3,
+        4
+      ],
+      "band": {
+        "wins": 20,
+        "losses": 7,
+        "pnl": 22.21,
+        "wr": 74.1
+      },
+      "span": {
+        "spanStart": 22.75,
+        "spanEnd": 23.75
+      },
+      "core": {
+        "coreStart": 22.75,
+        "coreEnd": 23.75
+      },
+      "bandCore": {
+        "wins": 20,
+        "losses": 7,
+        "pnl": 22.21,
+        "wr": 74.1
+      }
+    },
+    {
+      "key": "1020|1140",
+      "start": 17,
+      "end": 19,
+      "days": [
+        "2026-09-28",
+        "2026-10-05"
+      ],
+      "nRuns": 2,
+      "runsList": [
+        {
+          "day": "2026-09-28",
+          "start": "17:00",
+          "end": "19:00",
+          "nWins": 7
+        },
+        {
+          "day": "2026-10-05",
+          "start": "17:00",
+          "end": "19:00",
+          "nWins": 8
+        }
+      ],
+      "winsRange": [
+        7,
+        8
+      ],
+      "band": {
+        "wins": 46,
+        "losses": 12,
+        "pnl": 59.53,
+        "wr": 79.3
+      },
+      "span": {
+        "spanStart": 17,
+        "spanEnd": 19
+      },
+      "core": {
+        "coreStart": 17,
+        "coreEnd": 19
+      },
+      "bandCore": {
+        "wins": 46,
+        "losses": 12,
+        "pnl": 59.53,
+        "wr": 79.3
+      }
+    },
+    {
+      "key": "1065|1110",
+      "start": 17.75,
+      "end": 18.5,
+      "days": [
+        "2026-09-29",
+        "2026-10-03"
+      ],
+      "nRuns": 2,
+      "runsList": [
+        {
+          "day": "2026-09-29",
+          "start": "17:45",
+          "end": "18:30",
+          "nWins": 3
+        },
+        {
+          "day": "2026-10-03",
+          "start": "17:45",
+          "end": "18:30",
+          "nWins": 3
+        }
+      ],
+      "winsRange": [
+        3,
+        3
+      ],
+      "band": {
+        "wins": 18,
+        "losses": 4,
+        "pnl": 20.33,
+        "wr": 81.8
+      },
+      "span": {
+        "spanStart": 17.75,
+        "spanEnd": 18.5
+      },
+      "core": {
+        "coreStart": 17.75,
+        "coreEnd": 18.5
+      },
+      "bandCore": {
+        "wins": 18,
+        "losses": 4,
+        "pnl": 20.33,
+        "wr": 81.8
+      }
+    },
+    {
+      "key": "1170|1215",
+      "start": 19.5,
+      "end": 20.25,
+      "days": [
+        "2026-10-03",
+        "2026-10-04"
+      ],
+      "nRuns": 2,
+      "runsList": [
+        {
+          "day": "2026-10-03",
+          "start": "19:30",
+          "end": "20:15",
+          "nWins": 3
+        },
+        {
+          "day": "2026-10-04",
+          "start": "19:30",
+          "end": "20:15",
+          "nWins": 3
+        }
+      ],
+      "winsRange": [
+        3,
+        3
+      ],
+      "band": {
+        "wins": 18,
+        "losses": 4,
+        "pnl": 49.32,
+        "wr": 81.8
+      },
+      "span": {
+        "spanStart": 19.5,
+        "spanEnd": 20.25
+      },
+      "core": {
+        "coreStart": 19.5,
+        "coreEnd": 20.25
+      },
+      "bandCore": {
+        "wins": 18,
+        "losses": 4,
+        "pnl": 49.32,
+        "wr": 81.8
+      }
+    },
+    {
+      "key": "180|255",
+      "start": 3,
+      "end": 4.25,
+      "days": [
+        "2026-09-26",
+        "2026-10-04"
+      ],
+      "nRuns": 2,
+      "runsList": [
+        {
+          "day": "2026-09-26",
+          "start": "03:00",
+          "end": "04:15",
+          "nWins": 7
+        },
+        {
+          "day": "2026-10-04",
+          "start": "03:00",
+          "end": "04:15",
+          "nWins": 4
+        }
+      ],
+      "winsRange": [
+        4,
+        7
+      ],
+      "band": {
+        "wins": 31,
+        "losses": 5,
+        "pnl": 64.03,
+        "wr": 86.1
+      },
+      "span": {
+        "spanStart": 3,
+        "spanEnd": 4.25
+      },
+      "core": {
+        "coreStart": 3,
+        "coreEnd": 4.25
+      },
+      "bandCore": {
+        "wins": 31,
+        "losses": 5,
+        "pnl": 64.03,
+        "wr": 86.1
+      }
+    },
+    {
+      "key": "30|120",
+      "start": 0.5,
+      "end": 2,
+      "days": [
+        "2026-10-02",
+        "2026-10-03"
+      ],
+      "nRuns": 2,
+      "runsList": [
+        {
+          "day": "2026-10-02",
+          "start": "00:30",
+          "end": "02:00",
+          "nWins": 6
+        },
+        {
+          "day": "2026-10-03",
+          "start": "00:30",
+          "end": "02:00",
+          "nWins": 6
+        }
+      ],
+      "winsRange": [
+        6,
+        6
+      ],
+      "band": {
+        "wins": 35,
+        "losses": 11,
+        "pnl": 30.05,
+        "wr": 76.1
+      },
+      "span": {
+        "spanStart": 0.5,
+        "spanEnd": 2
+      },
+      "core": {
+        "coreStart": 0.5,
+        "coreEnd": 2
+      },
+      "bandCore": {
+        "wins": 35,
+        "losses": 11,
+        "pnl": 30.05,
+        "wr": 76.1
+      }
+    }
+  ],
+  "startAnchors": [
+    {
+      "key": "anchor-02:45",
+      "start": 3,
+      "end": 4.25,
+      "days": [
+        "2026-09-26",
+        "2026-09-30",
+        "2026-10-02",
+        "2026-10-04",
+        "2026-10-06"
+      ],
+      "nRuns": 5,
+      "runsList": [
+        {
+          "day": "2026-09-26",
+          "start": "03:00",
+          "end": "04:15",
+          "nWins": 7
+        },
+        {
+          "day": "2026-09-30",
+          "start": "03:00",
+          "end": "09:30",
+          "nWins": 6
+        },
+        {
+          "day": "2026-10-02",
+          "start": "02:45",
+          "end": "05:30",
+          "nWins": 10
+        },
+        {
+          "day": "2026-10-04",
+          "start": "03:00",
+          "end": "04:15",
+          "nWins": 4
+        },
+        {
+          "day": "2026-10-06",
+          "start": "03:00",
+          "end": "04:30",
+          "nWins": 5
+        }
+      ],
+      "winsRange": [
+        4,
+        10
+      ],
+      "band": {
+        "wins": 146,
+        "losses": 52,
+        "pnl": 96.53,
+        "wr": 73.7
+      },
+      "span": {
+        "spanStart": 2.75,
+        "spanEnd": 9.5
+      },
+      "core": {
+        "coreStart": 3,
+        "coreEnd": 4.25
+      },
+      "bandCore": {
+        "wins": 31,
+        "losses": 5,
+        "pnl": 64.03,
+        "wr": 86.1
+      }
+    },
+    {
+      "key": "anchor-00:30",
+      "start": 0.5,
+      "end": 1.5,
+      "days": [
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-02",
+        "2026-10-03"
+      ],
+      "nRuns": 4,
+      "runsList": [
+        {
+          "day": "2026-09-29",
+          "start": "00:30",
+          "end": "08:00",
+          "nWins": 17
+        },
+        {
+          "day": "2026-09-30",
+          "start": "00:30",
+          "end": "01:30",
+          "nWins": 4
+        },
+        {
+          "day": "2026-10-02",
+          "start": "00:30",
+          "end": "02:00",
+          "nWins": 6
+        },
+        {
+          "day": "2026-10-03",
+          "start": "00:30",
+          "end": "02:00",
+          "nWins": 6
+        }
+      ],
+      "winsRange": [
+        4,
+        17
+      ],
+      "band": {
+        "wins": 162,
+        "losses": 59,
+        "pnl": 44.69,
+        "wr": 73.3
+      },
+      "span": {
+        "spanStart": 0.5,
+        "spanEnd": 8
+      },
+      "core": {
+        "coreStart": 0.5,
+        "coreEnd": 1.5
+      },
+      "bandCore": {
+        "wins": 24,
+        "losses": 9,
+        "pnl": -10.99,
+        "wr": 72.7
+      }
+    },
+    {
+      "key": "anchor-08:00",
+      "start": 8.25,
+      "end": 9,
+      "days": [
+        "2026-09-28",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06"
+      ],
+      "nRuns": 4,
+      "runsList": [
+        {
+          "day": "2026-09-28",
+          "start": "08:15",
+          "end": "09:30",
+          "nWins": 4
+        },
+        {
+          "day": "2026-10-04",
+          "start": "08:15",
+          "end": "10:30",
+          "nWins": 8
+        },
+        {
+          "day": "2026-10-05",
+          "start": "08:00",
+          "end": "09:00",
+          "nWins": 4
+        },
+        {
+          "day": "2026-10-06",
+          "start": "08:00",
+          "end": "09:45",
+          "nWins": 7
+        }
+      ],
+      "winsRange": [
+        4,
+        8
+      ],
+      "band": {
+        "wins": 57,
+        "losses": 23,
+        "pnl": 46.91,
+        "wr": 71.3
+      },
+      "span": {
+        "spanStart": 8,
+        "spanEnd": 10.5
+      },
+      "core": {
+        "coreStart": 8.25,
+        "coreEnd": 9
+      },
+      "bandCore": {
+        "wins": 15,
+        "losses": 4,
+        "pnl": 43.53,
+        "wr": 78.9
+      }
+    },
+    {
+      "key": "anchor-19:15",
+      "start": 19.5,
+      "end": 20,
+      "days": [
+        "2026-09-28",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05"
+      ],
+      "nRuns": 4,
+      "runsList": [
+        {
+          "day": "2026-09-28",
+          "start": "19:15",
+          "end": "20:00",
+          "nWins": 3
+        },
+        {
+          "day": "2026-10-03",
+          "start": "19:30",
+          "end": "20:15",
+          "nWins": 3
+        },
+        {
+          "day": "2026-10-04",
+          "start": "19:30",
+          "end": "20:15",
+          "nWins": 3
+        },
+        {
+          "day": "2026-10-05",
+          "start": "19:15",
+          "end": "20:15",
+          "nWins": 4
+        }
+      ],
+      "winsRange": [
+        3,
+        4
+      ],
+      "band": {
+        "wins": 22,
+        "losses": 6,
+        "pnl": 30.23,
+        "wr": 78.6
+      },
+      "span": {
+        "spanStart": 19.25,
+        "spanEnd": 20.25
+      },
+      "core": {
+        "coreStart": 19.5,
+        "coreEnd": 20
+      },
+      "bandCore": {
+        "wins": 14,
+        "losses": 1,
+        "pnl": 37.68,
+        "wr": 93.3
+      }
+    },
+    {
+      "key": "anchor-10:45",
+      "start": 11,
+      "end": 11.75,
+      "days": [
+        "2026-09-27",
+        "2026-10-01",
+        "2026-10-02"
+      ],
+      "nRuns": 3,
+      "runsList": [
+        {
+          "day": "2026-09-27",
+          "start": "11:00",
+          "end": "15:15",
+          "nWins": 19
+        },
+        {
+          "day": "2026-10-01",
+          "start": "10:45",
+          "end": "12:15",
+          "nWins": 5
+        },
+        {
+          "day": "2026-10-02",
+          "start": "11:00",
+          "end": "11:45",
+          "nWins": 3
+        }
+      ],
+      "winsRange": [
+        3,
+        19
+      ],
+      "band": {
+        "wins": 96,
+        "losses": 33,
+        "pnl": -22.4,
+        "wr": 74.4
+      },
+      "span": {
+        "spanStart": 10.75,
+        "spanEnd": 15.25
+      },
+      "core": {
+        "coreStart": 11,
+        "coreEnd": 11.75
+      },
+      "bandCore": {
+        "wins": 20,
+        "losses": 5,
+        "pnl": 24.51,
+        "wr": 80
+      }
+    },
+    {
+      "key": "anchor-11:45",
+      "start": 12,
+      "end": 13,
+      "days": [
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06"
+      ],
+      "nRuns": 3,
+      "runsList": [
+        {
+          "day": "2026-10-04",
+          "start": "12:00",
+          "end": "13:00",
+          "nWins": 4
+        },
+        {
+          "day": "2026-10-05",
+          "start": "12:00",
+          "end": "13:45",
+          "nWins": 7
+        },
+        {
+          "day": "2026-10-06",
+          "start": "11:45",
+          "end": "13:15",
+          "nWins": 6
+        }
+      ],
+      "winsRange": [
+        4,
+        7
+      ],
+      "band": {
+        "wins": 41,
+        "losses": 13,
+        "pnl": 37.57,
+        "wr": 75.9
+      },
+      "span": {
+        "spanStart": 11.75,
+        "spanEnd": 13.75
+      },
+      "core": {
+        "coreStart": 12,
+        "coreEnd": 13
+      },
+      "bandCore": {
+        "wins": 21,
+        "losses": 5,
+        "pnl": 56.52,
+        "wr": 80.8
+      }
+    },
+    {
+      "key": "anchor-22:45",
+      "start": 22.75,
+      "end": 23.75,
+      "days": [
+        "2026-10-01",
+        "2026-10-04",
+        "2026-10-06"
+      ],
+      "nRuns": 3,
+      "runsList": [
+        {
+          "day": "2026-10-01",
+          "start": "22:45",
+          "end": "23:45",
+          "nWins": 4
+        },
+        {
+          "day": "2026-10-04",
+          "start": "22:45",
+          "end": "23:45",
+          "nWins": 4
+        },
+        {
+          "day": "2026-10-06",
+          "start": "22:45",
+          "end": "23:45",
+          "nWins": 3
+        }
+      ],
+      "winsRange": [
+        3,
+        4
+      ],
+      "band": {
+        "wins": 20,
+        "losses": 7,
+        "pnl": 22.21,
+        "wr": 74.1
+      },
+      "span": {
+        "spanStart": 22.75,
+        "spanEnd": 23.75
+      },
+      "core": {
+        "coreStart": 22.75,
+        "coreEnd": 23.75
+      },
+      "bandCore": {
+        "wins": 20,
+        "losses": 7,
+        "pnl": 22.21,
+        "wr": 74.1
+      }
+    }
+  ],
+  "daysSummary": [
+    {
+      "day": "2026-09-26",
+      "positions": 47,
+      "wins": 33,
+      "losses": 14,
+      "others": 0,
+      "pnl": 1.65,
+      "runs": [
+        {
+          "startET": "03:00",
+          "endET": "04:15",
+          "nWins": 7,
+          "ids": [
+            "btc-updown-15m-1790406000:Up:cheap-0.75:1790406200927",
+            "btc-updown-5m-1790406900:Up:cheap-0.75:1790407121788",
+            "btc-updown-15m-1790406900:Up:cheap-0.68:1790407471532",
+            "btc-updown-5m-1790407800:Up:cheap-0.7:1790408011133",
+            "btc-updown-15m-1790407800:Up:cheap-0.68:1790408319256",
+            "btc-updown-15m-1790408700:Up:cheap-0.72:1790408902623",
+            "btc-updown-15m-1790409600:Down:cheap-0.76:1790409802926"
+          ]
+        },
+        {
+          "startET": "09:15",
+          "endET": "11:40",
+          "nWins": 15,
+          "ids": [
+            "btc-updown-5m-1790428500:Down:cheap-0.67:1790428711734",
+            "btc-updown-15m-1790428500:Down:cheap-0.73:1790428967487",
+            "btc-updown-5m-1790429400:Down:cheap-0.69:1790429637260",
+            "btc-updown-15m-1790429400:Up:cheap-0.67:1790429906159",
+            "btc-updown-5m-1790430300:Up:cheap-0.69:1790430500799",
+            "btc-updown-15m-1790430300:Up:cheap-0.68:1790430819842",
+            "btc-updown-5m-1790431200:Up:cheap-0.71:1790431401366",
+            "btc-updown-15m-1790431200:Up:cheap-0.69:1790431739744",
+            "btc-updown-5m-1790432100:Up:cheap-0.72:1790432300538",
+            "btc-updown-15m-1790432100:Up:cheap-0.73:1790432637007",
+            "btc-updown-15m-1790433000:Up:cheap-0.76:1790433296602",
+            "btc-updown-15m-1790433900:Up:cheap-0.67:1790434212100",
+            "btc-updown-15m-1790434800:Up:cheap-0.68:1790435089467",
+            "btc-updown-15m-1790435700:Up:cheap-0.67:1790436039941",
+            "btc-updown-5m-1790436900:Down:cheap-0.76:1790437112544"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-09-27",
+      "positions": 59,
+      "wins": 45,
+      "losses": 14,
+      "others": 0,
+      "pnl": 13.55,
+      "runs": [
+        {
+          "startET": "10:00",
+          "endET": "10:45",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1790517600:Down:cheap-0.76:1790517801180",
+            "btc-updown-5m-1790518500:Down:cheap-0.68:1790518704806",
+            "btc-updown-15m-1790519400:Up:cheap-0.74:1790519602967"
+          ]
+        },
+        {
+          "startET": "11:00",
+          "endET": "15:15",
+          "nWins": 19,
+          "ids": [
+            "btc-updown-15m-1790521200:Down:cheap-0.76:1790521607906",
+            "btc-updown-15m-1790522100:Up:cheap-0.75:1790522300130",
+            "btc-updown-15m-1790523000:Down:cheap-0.68:1790523200831",
+            "btc-updown-15m-1790523900:Up:cheap-0.67:1790524103730",
+            "btc-updown-5m-1790525700:Up:cheap-0.68:1790525910245",
+            "btc-updown-15m-1790525700:Up:cheap-0.73:1790526220515",
+            "btc-updown-15m-1790526600:Down:cheap-0.71:1790526801203",
+            "btc-updown-15m-1790527500:Up:cheap-0.72:1790527700800",
+            "btc-updown-15m-1790528400:Down:cheap-0.69:1790528816960",
+            "btc-updown-15m-1790529300:Up:cheap-0.73:1790529552774",
+            "btc-updown-15m-1790530200:Up:cheap-0.76:1790530420237",
+            "btc-updown-5m-1790531400:Up:cheap-0.72:1790531600124",
+            "btc-updown-15m-1790532000:Up:cheap-0.67:1790532220356",
+            "btc-updown-15m-1790532900:Up:cheap-0.76:1790533124859",
+            "btc-updown-5m-1790533800:Down:cheap-0.7:1790534000063",
+            "btc-updown-15m-1790533800:Up:cheap-0.67:1790534410937",
+            "btc-updown-5m-1790534700:Down:cheap-0.71:1790534900657",
+            "btc-updown-15m-1790534700:Up:cheap-0.71:1790535069104",
+            "btc-updown-15m-1790535600:Down:cheap-0.76:1790536192344"
+          ]
+        },
+        {
+          "startET": "18:15",
+          "endET": "20:00",
+          "nWins": 8,
+          "ids": [
+            "btc-updown-15m-1790547300:Up:cheap-0.76:1790547510204",
+            "btc-updown-5m-1790549100:Down:cheap-0.72:1790549306064",
+            "btc-updown-15m-1790549100:Up:cheap-0.67:1790549525522",
+            "btc-updown-15m-1790550000:Up:cheap-0.72:1790550203460",
+            "btc-updown-5m-1790550900:Up:cheap-0.76:1790551118126",
+            "btc-updown-5m-1790551800:Up:cheap-0.7:1790552020809",
+            "btc-updown-5m-1790552100:Down:cheap-0.76:1790552307723",
+            "btc-updown-5m-1790553300:Down:cheap-0.72:1790553500620"
+          ]
+        },
+        {
+          "startET": "21:00",
+          "endET": "21:45",
+          "nWins": 6,
+          "ids": [
+            "btc-updown-5m-1790557200:Down:cheap-0.7:1790557402995",
+            "btc-updown-15m-1790557200:Down:cheap-0.69:1790557791612",
+            "btc-updown-5m-1790558100:Down:cheap-0.76:1790558332072",
+            "btc-updown-15m-1790558100:Up:cheap-0.76:1790558576028",
+            "btc-updown-5m-1790559000:Down:cheap-0.73:1790559200464",
+            "btc-updown-15m-1790559000:Down:cheap-0.76:1790559373968"
+          ]
+        },
+        {
+          "startET": "22:15",
+          "endET": "23:20",
+          "nWins": 5,
+          "ids": [
+            "btc-updown-15m-1790561700:Down:cheap-0.75:1790561981140",
+            "btc-updown-15m-1790562600:Down:cheap-0.76:1790562929344",
+            "btc-updown-15m-1790563500:Down:cheap-0.71:1790563701058",
+            "btc-updown-15m-1790564400:Up:cheap-0.7:1790564610063",
+            "btc-updown-5m-1790565300:Up:cheap-0.74:1790565516897"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-09-28",
+      "positions": 72,
+      "wins": 51,
+      "losses": 21,
+      "others": 0,
+      "pnl": 0,
+      "runs": [
+        {
+          "startET": "02:00",
+          "endET": "03:00",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1790575200:Up:cheap-0.72:1790575744974",
+            "btc-updown-15m-1790576100:Down:cheap-0.72:1790576303354",
+            "btc-updown-15m-1790577000:Up:cheap-0.72:1790577200635",
+            "btc-updown-15m-1790577900:Down:cheap-0.67:1790578101413"
+          ]
+        },
+        {
+          "startET": "03:30",
+          "endET": "05:20",
+          "nWins": 7,
+          "ids": [
+            "btc-updown-15m-1790580600:Down:cheap-0.72:1790581195318",
+            "btc-updown-15m-1790581500:Up:cheap-0.72:1790581752104",
+            "btc-updown-15m-1790582400:Up:cheap-0.74:1790582624594",
+            "btc-updown-15m-1790583300:Down:cheap-0.67:1790583520226",
+            "btc-updown-15m-1790584200:Up:cheap-0.76:1790584577674",
+            "btc-updown-15m-1790585100:Up:cheap-0.75:1790585300023",
+            "btc-updown-5m-1790586900:Up:cheap-0.68:1790587108244"
+          ]
+        },
+        {
+          "startET": "05:30",
+          "endET": "06:45",
+          "nWins": 6,
+          "ids": [
+            "btc-updown-5m-1790587800:Down:cheap-0.68:1790588028178",
+            "btc-updown-5m-1790588400:Down:cheap-0.7:1790588682605",
+            "btc-updown-15m-1790588700:Up:cheap-0.68:1790589276579",
+            "btc-updown-15m-1790589600:Up:cheap-0.7:1790590264480",
+            "btc-updown-15m-1790590500:Up:cheap-0.76:1790590705228",
+            "btc-updown-15m-1790591400:Up:cheap-0.67:1790591618633"
+          ]
+        },
+        {
+          "startET": "07:00",
+          "endET": "07:55",
+          "nWins": 5,
+          "ids": [
+            "btc-updown-15m-1790593200:Up:cheap-0.67:1790593444102",
+            "btc-updown-15m-1790594100:Up:cheap-0.73:1790594300009",
+            "btc-updown-15m-1790595000:Up:cheap-0.74:1790595462534",
+            "btc-updown-15m-1790595900:Up:cheap-0.68:1790596680231",
+            "btc-updown-5m-1790596200:Down:cheap-0.73:1790596419771"
+          ]
+        },
+        {
+          "startET": "08:15",
+          "endET": "09:30",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1790597700:Up:cheap-0.67:1790597918544",
+            "btc-updown-15m-1790598600:Down:cheap-0.67:1790598814842",
+            "btc-updown-5m-1790601300:Down:cheap-0.67:1790601531381",
+            "btc-updown-15m-1790601300:Up:cheap-0.67:1790601915997"
+          ]
+        },
+        {
+          "startET": "13:45",
+          "endET": "16:30",
+          "nWins": 10,
+          "ids": [
+            "btc-updown-15m-1790617500:Down:cheap-0.71:1790617700361",
+            "btc-updown-15m-1790618400:Up:cheap-0.68:1790618608656",
+            "btc-updown-15m-1790619300:Down:cheap-0.7:1790619501215",
+            "btc-updown-15m-1790620200:Down:cheap-0.74:1790620482912",
+            "btc-updown-15m-1790621100:Up:cheap-0.68:1790621316739",
+            "btc-updown-15m-1790622900:Down:cheap-0.69:1790623275448",
+            "btc-updown-15m-1790623800:Down:cheap-0.7:1790624000248",
+            "btc-updown-15m-1790624700:Up:cheap-0.76:1790625125288",
+            "btc-updown-15m-1790625600:Up:cheap-0.67:1790625875643",
+            "btc-updown-15m-1790626500:Down:cheap-0.75:1790626745856"
+          ]
+        },
+        {
+          "startET": "17:00",
+          "endET": "19:00",
+          "nWins": 7,
+          "ids": [
+            "btc-updown-15m-1790629200:Up:cheap-0.76:1790629424272",
+            "btc-updown-15m-1790630100:Down:cheap-0.74:1790630384992",
+            "btc-updown-15m-1790631000:Down:cheap-0.67:1790631501865",
+            "btc-updown-15m-1790631900:Down:cheap-0.67:1790632262041",
+            "btc-updown-15m-1790632800:Down:cheap-0.69:1790633140210",
+            "btc-updown-15m-1790633700:Up:cheap-0.7:1790634106496",
+            "btc-updown-15m-1790635500:Up:cheap-0.67:1790635761652"
+          ]
+        },
+        {
+          "startET": "19:15",
+          "endET": "20:00",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1790637300:Up:cheap-0.74:1790637500238",
+            "btc-updown-15m-1790638200:Up:cheap-0.71:1790638745254",
+            "btc-updown-15m-1790639100:Down:cheap-0.72:1790639300656"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-09-29",
+      "positions": 47,
+      "wins": 33,
+      "losses": 14,
+      "others": 0,
+      "pnl": -0.5,
+      "runs": [
+        {
+          "startET": "00:30",
+          "endET": "08:00",
+          "nWins": 17,
+          "ids": [
+            "btc-updown-15m-1790656200:Down:cheap-0.73:1790656401425",
+            "btc-updown-15m-1790658000:Up:cheap-0.73:1790658200439",
+            "btc-updown-15m-1790658900:Up:cheap-0.71:1790659101081",
+            "btc-updown-15m-1790659800:Down:cheap-0.74:1790660668689",
+            "btc-updown-15m-1790660700:Up:cheap-0.68:1790660991865",
+            "btc-updown-15m-1790665200:Down:cheap-0.76:1790665415895",
+            "btc-updown-15m-1790666100:Up:cheap-0.73:1790666301622",
+            "btc-updown-15m-1790667000:Up:cheap-0.68:1790667206927",
+            "btc-updown-15m-1790671500:Down:cheap-0.73:1790671700144",
+            "btc-updown-15m-1790672400:Down:cheap-0.71:1790672600540",
+            "btc-updown-15m-1790673300:Up:cheap-0.67:1790673601915",
+            "btc-updown-15m-1790676000:Down:cheap-0.72:1790676549382",
+            "btc-updown-15m-1790677800:Down:cheap-0.7:1790678000116",
+            "btc-updown-15m-1790678700:Up:cheap-0.68:1790679065912",
+            "btc-updown-15m-1790679600:Down:cheap-0.67:1790679820731",
+            "btc-updown-15m-1790680500:Up:cheap-0.67:1790680717028",
+            "btc-updown-15m-1790682300:Up:cheap-0.75:1790682568918"
+          ]
+        },
+        {
+          "startET": "13:00",
+          "endET": "15:00",
+          "nWins": 7,
+          "ids": [
+            "btc-updown-15m-1790701200:Up:cheap-0.7:1790701511799",
+            "btc-updown-15m-1790702100:Down:cheap-0.68:1790702464740",
+            "btc-updown-15m-1790703000:Up:cheap-0.69:1790703200526",
+            "btc-updown-15m-1790703900:Down:cheap-0.68:1790704145951",
+            "btc-updown-15m-1790705700:Up:cheap-0.68:1790706095916",
+            "btc-updown-15m-1790706600:Up:cheap-0.76:1790706825151",
+            "btc-updown-15m-1790707500:Down:cheap-0.71:1790707701352"
+          ]
+        },
+        {
+          "startET": "17:45",
+          "endET": "18:30",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1790718300:Down:cheap-0.76:1790718753002",
+            "btc-updown-15m-1790719200:Up:cheap-0.76:1790719477854",
+            "btc-updown-15m-1790720100:Down:cheap-0.69:1790720426257"
+          ]
+        },
+        {
+          "startET": "18:45",
+          "endET": "20:00",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1790721900:Up:cheap-0.67:1790722304959",
+            "btc-updown-15m-1790723700:Down:cheap-0.67:1790723925556",
+            "btc-updown-15m-1790724600:Down:cheap-0.67:1790724820236",
+            "btc-updown-15m-1790725500:Up:cheap-0.69:1790725701164"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-09-30",
+      "positions": 13,
+      "wins": 11,
+      "losses": 2,
+      "others": 0,
+      "pnl": 6.3,
+      "runs": [
+        {
+          "startET": "00:30",
+          "endET": "01:30",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1790742600:Down:cheap-0.73:1790742800198",
+            "btc-updown-15m-1790743500:Down:cheap-0.67:1790743769194",
+            "btc-updown-15m-1790744400:Up:cheap-0.76:1790744723308",
+            "btc-updown-15m-1790745300:Up:cheap-0.7:1790745576701"
+          ]
+        },
+        {
+          "startET": "03:00",
+          "endET": "09:30",
+          "nWins": 6,
+          "ids": [
+            "btc-updown-15m-1790751600:Down:cheap-0.67:1790751888358",
+            "btc-updown-15m-1790756100:Up:cheap-0.74:1790756404315",
+            "btc-updown-15m-1790757000:Down:cheap-0.74:1790757249529",
+            "btc-updown-15m-1790757900:Up:cheap-0.74:1790758116750",
+            "btc-updown-15m-1790759700:Up:cheap-0.68:1790760039622",
+            "btc-updown-15m-1790774100:Down:cheap-0.71:1790774508529"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-10-01",
+      "positions": 38,
+      "wins": 28,
+      "losses": 8,
+      "others": 2,
+      "pnl": 28.55,
+      "runs": [
+        {
+          "startET": "10:45",
+          "endET": "12:15",
+          "nWins": 5,
+          "ids": [
+            "btc-updown-15m-1790865900:Down:cheap-0.74:1790866101188",
+            "btc-updown-15m-1790866800:Up:cheap-0.71:1790867036795",
+            "btc-updown-15m-1790867700:Up:cheap-0.8:1790867900711",
+            "btc-updown-15m-1790868600:Down:cheap-0.85:1790868800160",
+            "btc-updown-15m-1790870400:Up:cheap-0.77:1790870670429"
+          ]
+        },
+        {
+          "startET": "15:00",
+          "endET": "15:45",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1790881200:Down:cheap-0.72:1790881400638",
+            "btc-updown-15m-1790882100:Down:cheap-0.67:1790882308314",
+            "btc-updown-15m-1790883000:Up:cheap-0.76:1790883388652"
+          ]
+        },
+        {
+          "startET": "16:30",
+          "endET": "18:45",
+          "nWins": 8,
+          "ids": [
+            "btc-updown-15m-1790886600:Down:cheap-0.67:1790886878923",
+            "btc-updown-15m-1790887500:Up:cheap-0.67:1790887850958",
+            "btc-updown-15m-1790888400:Up:cheap-0.71:1790888802434",
+            "btc-updown-15m-1790889300:Down:cheap-0.67:1790889500229",
+            "btc-updown-15m-1790890200:Down:cheap-0.68:1790890427940",
+            "btc-updown-15m-1790891100:Up:cheap-0.76:1790891322084",
+            "btc-updown-15m-1790892900:Down:cheap-0.67:1790893133377",
+            "btc-updown-15m-1790893800:Down:cheap-0.69:1790894002860"
+          ]
+        },
+        {
+          "startET": "20:00",
+          "endET": "21:30",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1790899200:Up:cheap-0.7:1790899991564",
+            "btc-updown-15m-1790900100:Down:cheap-0.71:1790900472957",
+            "btc-updown-15m-1790902800:Down:cheap-0.77:1790903235051",
+            "btc-updown-15m-1790903700:Down:cheap-0.68:1790903972744"
+          ]
+        },
+        {
+          "startET": "22:45",
+          "endET": "23:45",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1790909100:Up:cheap-0.77:1790909300187",
+            "btc-updown-15m-1790910000:Up:cheap-0.74:1790910503853",
+            "btc-updown-15m-1790910900:Down:cheap-0.77:1790911100376",
+            "btc-updown-15m-1790911800:Up:cheap-0.77:1790912264536"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-10-02",
+      "positions": 74,
+      "wins": 51,
+      "losses": 23,
+      "others": 0,
+      "pnl": -16.22,
+      "runs": [
+        {
+          "startET": "00:30",
+          "endET": "02:00",
+          "nWins": 6,
+          "ids": [
+            "btc-updown-15m-1790915400:Down:cheap-0.71:1790915600177",
+            "btc-updown-15m-1790916300:Up:cheap-0.71:1790916500523",
+            "btc-updown-15m-1790917200:Down:cheap-0.7:1790917476842",
+            "btc-updown-15m-1790918100:Down:cheap-0.69:1790918300824",
+            "btc-updown-15m-1790919000:Down:cheap-0.67:1790919309270",
+            "btc-updown-15m-1790919900:Down:cheap-0.73:1790920100639"
+          ]
+        },
+        {
+          "startET": "02:45",
+          "endET": "05:30",
+          "nWins": 10,
+          "ids": [
+            "btc-updown-15m-1790923500:Up:cheap-0.69:1790923843722",
+            "btc-updown-15m-1790924400:Down:cheap-0.7:1790924600390",
+            "btc-updown-15m-1790925300:Down:cheap-0.68:1790925634892",
+            "btc-updown-15m-1790926200:Down:cheap-0.68:1790926403570",
+            "btc-updown-15m-1790927100:Up:cheap-0.76:1790927300533",
+            "btc-updown-15m-1790928900:Up:cheap-0.77:1790929429197",
+            "btc-updown-15m-1790929800:Down:cheap-0.69:1790930000358",
+            "btc-updown-15m-1790930700:Down:cheap-0.67:1790931005218",
+            "btc-updown-15m-1790931600:Down:cheap-0.72:1790931800138",
+            "btc-updown-15m-1790932500:Down:cheap-0.67:1790932936466"
+          ]
+        },
+        {
+          "startET": "06:15",
+          "endET": "07:15",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1790936100:Up:cheap-0.69:1790936506906",
+            "btc-updown-15m-1790937000:Up:cheap-0.67:1790937264559",
+            "btc-updown-15m-1790937900:Down:cheap-0.67:1790938508805",
+            "btc-updown-15m-1790938800:Up:cheap-0.74:1790939051521"
+          ]
+        },
+        {
+          "startET": "11:00",
+          "endET": "11:45",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1790953200:Down:cheap-0.67:1790953427503",
+            "btc-updown-15m-1790954100:Down:cheap-0.67:1790954401534",
+            "btc-updown-15m-1790955000:Down:cheap-0.71:1790955490813"
+          ]
+        },
+        {
+          "startET": "14:30",
+          "endET": "15:15",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1790965800:Down:cheap-0.67:1790966010380",
+            "btc-updown-15m-1790966700:Up:cheap-0.68:1790966972957",
+            "btc-updown-15m-1790967600:Down:cheap-0.68:1790967800405"
+          ]
+        },
+        {
+          "startET": "15:30",
+          "endET": "16:15",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1790969400:Up:cheap-0.69:1790969779359",
+            "btc-updown-15m-1790970300:Up:cheap-0.67:1790970567112",
+            "btc-updown-15m-1790971200:Up:cheap-0.71:1790971400223"
+          ]
+        },
+        {
+          "startET": "16:45",
+          "endET": "18:00",
+          "nWins": 5,
+          "ids": [
+            "btc-updown-15m-1790973900:Up:cheap-0.77:1790974134631",
+            "btc-updown-15m-1790974800:Up:cheap-0.68:1790975015199",
+            "btc-updown-15m-1790975700:Down:cheap-0.71:1790976338447",
+            "btc-updown-15m-1790976600:Up:cheap-0.67:1790976969169",
+            "btc-updown-15m-1790977500:Up:cheap-0.67:1790977941288"
+          ]
+        },
+        {
+          "startET": "18:45",
+          "endET": "21:45",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1790981100:Up:cheap-0.67:1790981315012",
+            "btc-updown-15m-1790989200:Down:cheap-0.67:1790989400278",
+            "btc-updown-15m-1790990100:Down:cheap-0.67:1790990431419",
+            "btc-updown-15m-1790991000:Up:cheap-0.71:1790991200302"
+          ]
+        },
+        {
+          "startET": "22:00",
+          "endET": "23:00",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1790992800:Down:cheap-0.72:1790993198211",
+            "btc-updown-15m-1790993700:Up:cheap-0.76:1790993900338",
+            "btc-updown-15m-1790994600:Up:cheap-0.7:1790995182652",
+            "btc-updown-15m-1790995500:Down:cheap-0.77:1790995700640"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-10-03",
+      "positions": 84,
+      "wins": 57,
+      "losses": 27,
+      "others": 0,
+      "pnl": -46.46,
+      "runs": [
+        {
+          "startET": "00:30",
+          "endET": "02:00",
+          "nWins": 6,
+          "ids": [
+            "btc-updown-15m-1791001800:Up:cheap-0.7:1791002000395",
+            "btc-updown-15m-1791002700:Up:cheap-0.76:1791003037241",
+            "btc-updown-15m-1791003600:Down:cheap-0.74:1791003800100",
+            "btc-updown-15m-1791004500:Up:cheap-0.75:1791004700402",
+            "btc-updown-15m-1791005400:Up:cheap-0.72:1791005600115",
+            "btc-updown-15m-1791006300:Up:cheap-0.67:1791006513424"
+          ]
+        },
+        {
+          "startET": "03:45",
+          "endET": "04:30",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1791013500:Up:cheap-0.68:1791013703649",
+            "btc-updown-15m-1791014400:Up:cheap-0.68:1791014649232",
+            "btc-updown-15m-1791015300:Down:cheap-0.69:1791015500468"
+          ]
+        },
+        {
+          "startET": "05:00",
+          "endET": "06:00",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1791018000:Up:cheap-0.73:1791018202472",
+            "btc-updown-15m-1791018900:Down:cheap-0.7:1791019100197",
+            "btc-updown-15m-1791019800:Down:cheap-0.75:1791020169465",
+            "btc-updown-15m-1791020700:Up:cheap-0.67:1791021328755"
+          ]
+        },
+        {
+          "startET": "08:45",
+          "endET": "10:45",
+          "nWins": 7,
+          "ids": [
+            "btc-updown-15m-1791031500:Up:cheap-0.68:1791031700320",
+            "btc-updown-15m-1791032400:Down:cheap-0.72:1791032600570",
+            "btc-updown-15m-1791033300:Down:cheap-0.77:1791033501244",
+            "btc-updown-15m-1791034200:Up:cheap-0.67:1791034425489",
+            "btc-updown-15m-1791035100:Up:cheap-0.68:1791035338921",
+            "btc-updown-15m-1791036900:Up:cheap-0.72:1791037235947",
+            "btc-updown-15m-1791037800:Down:cheap-0.77:1791038000048"
+          ]
+        },
+        {
+          "startET": "11:15",
+          "endET": "13:30",
+          "nWins": 9,
+          "ids": [
+            "btc-updown-15m-1791040500:Up:cheap-0.67:1791040828123",
+            "btc-updown-15m-1791041400:Down:cheap-0.77:1791041602166",
+            "btc-updown-15m-1791042300:Up:cheap-0.67:1791042638883",
+            "btc-updown-15m-1791043200:Down:cheap-0.67:1791043400358",
+            "btc-updown-15m-1791044100:Down:cheap-0.68:1791044300183",
+            "btc-updown-15m-1791045000:Up:cheap-0.7:1791045205869",
+            "btc-updown-15m-1791045900:Up:cheap-0.69:1791046100511",
+            "btc-updown-15m-1791046800:Up:cheap-0.72:1791047106621",
+            "btc-updown-15m-1791047700:Up:cheap-0.77:1791047900789"
+          ]
+        },
+        {
+          "startET": "16:00",
+          "endET": "17:30",
+          "nWins": 6,
+          "ids": [
+            "btc-updown-15m-1791057600:Up:cheap-0.71:1791057905430",
+            "btc-updown-15m-1791058500:Up:cheap-0.68:1791058783883",
+            "btc-updown-15m-1791059400:Down:cheap-0.67:1791059708991",
+            "btc-updown-15m-1791060300:Down:cheap-0.68:1791060546852",
+            "btc-updown-15m-1791061200:Down:cheap-0.71:1791061444378",
+            "btc-updown-15m-1791062100:Up:cheap-0.71:1791062344121"
+          ]
+        },
+        {
+          "startET": "17:45",
+          "endET": "18:30",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1791063900:Up:cheap-0.76:1791064106703",
+            "btc-updown-15m-1791064800:Up:cheap-0.67:1791065008738",
+            "btc-updown-15m-1791065700:Down:cheap-0.72:1791065900879"
+          ]
+        },
+        {
+          "startET": "19:30",
+          "endET": "20:15",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1791070200:Up:cheap-0.68:1791070470721",
+            "btc-updown-15m-1791071100:Down:cheap-0.68:1791071408943",
+            "btc-updown-15m-1791072000:Up:cheap-0.68:1791072200557"
+          ]
+        },
+        {
+          "startET": "21:15",
+          "endET": "22:30",
+          "nWins": 5,
+          "ids": [
+            "btc-updown-15m-1791076500:Down:cheap-0.71:1791076700328",
+            "btc-updown-15m-1791077400:Up:cheap-0.67:1791077674592",
+            "btc-updown-15m-1791078300:Up:cheap-0.7:1791078712494",
+            "btc-updown-15m-1791079200:Up:cheap-0.75:1791079676736",
+            "btc-updown-15m-1791080100:Up:cheap-0.68:1791080552149"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-10-04",
+      "positions": 81,
+      "wins": 56,
+      "losses": 25,
+      "others": 0,
+      "pnl": -28.75,
+      "runs": [
+        {
+          "startET": "03:00",
+          "endET": "04:15",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1791097200:Down:cheap-0.69:1791097648913",
+            "btc-updown-15m-1791098100:Down:cheap-0.75:1791098563493",
+            "btc-updown-15m-1791099000:Down:cheap-0.67:1791099352569",
+            "btc-updown-15m-1791100800:Up:cheap-0.74:1791101013025"
+          ]
+        },
+        {
+          "startET": "06:00",
+          "endET": "08:00",
+          "nWins": 7,
+          "ids": [
+            "btc-updown-15m-1791108000:Up:cheap-0.67:1791108243864",
+            "btc-updown-15m-1791109800:Down:cheap-0.69:1791110009523",
+            "btc-updown-15m-1791110700:Down:cheap-0.67:1791111360812",
+            "btc-updown-15m-1791111600:Down:cheap-0.76:1791111817722",
+            "btc-updown-15m-1791112500:Up:cheap-0.68:1791112700313",
+            "btc-updown-15m-1791113400:Down:cheap-0.67:1791113718404",
+            "btc-updown-15m-1791114300:Up:cheap-0.67:1791114621987"
+          ]
+        },
+        {
+          "startET": "08:15",
+          "endET": "10:30",
+          "nWins": 8,
+          "ids": [
+            "btc-updown-15m-1791116100:Up:cheap-0.67:1791116509052",
+            "btc-updown-15m-1791117000:Down:cheap-0.67:1791117364300",
+            "btc-updown-15m-1791118800:Up:cheap-0.72:1791119213179",
+            "btc-updown-15m-1791119700:Up:cheap-0.67:1791119901393",
+            "btc-updown-15m-1791120600:Up:cheap-0.74:1791120801599",
+            "btc-updown-15m-1791121500:Up:cheap-0.74:1791121701622",
+            "btc-updown-15m-1791122400:Down:cheap-0.68:1791122843893",
+            "btc-updown-15m-1791123300:Down:cheap-0.68:1791123513844"
+          ]
+        },
+        {
+          "startET": "12:00",
+          "endET": "13:00",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1791129600:Down:cheap-0.8:1791130187103",
+            "btc-updown-15m-1791130500:Down:cheap-0.67:1791130870193",
+            "btc-updown-15m-1791131400:Up:cheap-0.76:1791131601220",
+            "btc-updown-15m-1791132300:Up:cheap-0.77:1791132621222"
+          ]
+        },
+        {
+          "startET": "14:15",
+          "endET": "15:30",
+          "nWins": 5,
+          "ids": [
+            "btc-updown-15m-1791137700:Up:cheap-0.7:1791137945051",
+            "btc-updown-15m-1791138600:Up:cheap-0.68:1791139210411",
+            "btc-updown-15m-1791139500:Down:cheap-0.68:1791139744149",
+            "btc-updown-15m-1791140400:Up:cheap-0.74:1791140601566",
+            "btc-updown-15m-1791141300:Up:cheap-0.67:1791141657124"
+          ]
+        },
+        {
+          "startET": "16:15",
+          "endET": "18:15",
+          "nWins": 8,
+          "ids": [
+            "btc-updown-15m-1791144900:Up:cheap-0.74:1791145101665",
+            "btc-updown-15m-1791145800:Up:cheap-0.75:1791146028658",
+            "btc-updown-15m-1791146700:Up:cheap-0.75:1791146902177",
+            "btc-updown-15m-1791147600:Up:cheap-0.67:1791147940437",
+            "btc-updown-15m-1791148500:Down:cheap-0.69:1791148814061",
+            "btc-updown-15m-1791149400:Up:cheap-0.67:1791149633837",
+            "btc-updown-15m-1791150300:Down:cheap-0.67:1791150572545",
+            "btc-updown-15m-1791151200:Up:cheap-0.8:1791151417535"
+          ]
+        },
+        {
+          "startET": "19:30",
+          "endET": "20:15",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1791156600:Down:cheap-0.7:1791156805477",
+            "btc-updown-15m-1791157500:Up:cheap-0.68:1791157816051",
+            "btc-updown-15m-1791158400:Down:cheap-0.8:1791158613529"
+          ]
+        },
+        {
+          "startET": "20:45",
+          "endET": "22:00",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1791161100:Up:cheap-0.7:1791161481772",
+            "btc-updown-15m-1791162000:Down:cheap-0.79:1791162268547",
+            "btc-updown-15m-1791162900:Up:cheap-0.78:1791163101719",
+            "btc-updown-15m-1791164700:Down:cheap-0.67:1791165035364"
+          ]
+        },
+        {
+          "startET": "22:45",
+          "endET": "23:45",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1791168300:Down:cheap-0.71:1791168501561",
+            "btc-updown-15m-1791169200:Down:cheap-0.69:1791169484667",
+            "btc-updown-15m-1791170100:Down:cheap-0.69:1791170300801",
+            "btc-updown-15m-1791171000:Down:cheap-0.78:1791171207724"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-10-05",
+      "positions": 81,
+      "wins": 56,
+      "losses": 25,
+      "others": 0,
+      "pnl": -52.8,
+      "runs": [
+        {
+          "startET": "04:30",
+          "endET": "07:45",
+          "nWins": 12,
+          "ids": [
+            "btc-updown-15m-1791189000:Down:cheap-0.78:1791189256834",
+            "btc-updown-15m-1791189900:Down:cheap-0.8:1791190144357",
+            "btc-updown-15m-1791190800:Down:cheap-0.67:1791191000514",
+            "btc-updown-15m-1791191700:Down:cheap-0.8:1791191972803",
+            "btc-updown-15m-1791192600:Up:cheap-0.68:1791193074722",
+            "btc-updown-15m-1791193500:Up:cheap-0.68:1791193784893",
+            "btc-updown-15m-1791194400:Up:cheap-0.71:1791194600818",
+            "btc-updown-15m-1791195300:Up:cheap-0.74:1791195500679",
+            "btc-updown-15m-1791196200:Down:cheap-0.71:1791196434932",
+            "btc-updown-15m-1791197100:Up:cheap-0.78:1791197527361",
+            "btc-updown-15m-1791198900:Up:cheap-0.7:1791199100181",
+            "btc-updown-15m-1791199800:Down:cheap-0.69:1791200018442"
+          ]
+        },
+        {
+          "startET": "08:00",
+          "endET": "09:00",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1791201600:Down:cheap-0.67:1791201800415",
+            "btc-updown-15m-1791202500:Down:cheap-0.67:1791202735766",
+            "btc-updown-15m-1791203400:Down:cheap-0.8:1791203611861",
+            "btc-updown-15m-1791204300:Down:cheap-0.7:1791204500253"
+          ]
+        },
+        {
+          "startET": "10:15",
+          "endET": "11:45",
+          "nWins": 5,
+          "ids": [
+            "btc-updown-15m-1791209700:Down:cheap-0.7:1791209900152",
+            "btc-updown-15m-1791211500:Down:cheap-0.76:1791211700573",
+            "btc-updown-15m-1791212400:Down:cheap-0.72:1791212600677",
+            "btc-updown-15m-1791213300:Down:cheap-0.67:1791213744592",
+            "btc-updown-15m-1791214200:Down:cheap-0.8:1791214712589"
+          ]
+        },
+        {
+          "startET": "12:00",
+          "endET": "13:45",
+          "nWins": 7,
+          "ids": [
+            "btc-updown-15m-1791216000:Down:cheap-0.69:1791216234545",
+            "btc-updown-15m-1791216900:Down:cheap-0.78:1791217100372",
+            "btc-updown-15m-1791217800:Up:cheap-0.7:1791218000662",
+            "btc-updown-15m-1791218700:Up:cheap-0.68:1791218914536",
+            "btc-updown-15m-1791219600:Down:cheap-0.77:1791219831954",
+            "btc-updown-15m-1791220500:Up:cheap-0.79:1791220702747",
+            "btc-updown-15m-1791221400:Down:cheap-0.77:1791221632592"
+          ]
+        },
+        {
+          "startET": "17:00",
+          "endET": "19:00",
+          "nWins": 8,
+          "ids": [
+            "btc-updown-15m-1791234000:Down:cheap-0.8:1791234385276",
+            "btc-updown-15m-1791234900:Up:cheap-0.72:1791235100500",
+            "btc-updown-15m-1791235800:Up:cheap-0.68:1791236004549",
+            "btc-updown-15m-1791236700:Up:cheap-0.67:1791237013337",
+            "btc-updown-15m-1791237600:Up:cheap-0.67:1791237805751",
+            "btc-updown-15m-1791238500:Up:cheap-0.68:1791238759326",
+            "btc-updown-15m-1791239400:Down:cheap-0.67:1791239814776",
+            "btc-updown-15m-1791240300:Down:cheap-0.67:1791240641811"
+          ]
+        },
+        {
+          "startET": "19:15",
+          "endET": "20:15",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1791242100:Up:cheap-0.69:1791242300529",
+            "btc-updown-15m-1791243000:Down:cheap-0.76:1791243200462",
+            "btc-updown-15m-1791243900:Down:cheap-0.8:1791244100577",
+            "btc-updown-15m-1791244800:Up:cheap-0.75:1791245000312"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-10-06",
+      "positions": 71,
+      "wins": 49,
+      "losses": 22,
+      "others": 0,
+      "pnl": -46.61,
+      "runs": [
+        {
+          "startET": "01:15",
+          "endET": "02:45",
+          "nWins": 5,
+          "ids": [
+            "btc-updown-15m-1791263700:Down:cheap-0.68:1791263907634",
+            "btc-updown-15m-1791264600:Down:cheap-0.7:1791264881540",
+            "btc-updown-15m-1791265500:Down:cheap-0.69:1791265700150",
+            "btc-updown-15m-1791267300:Up:cheap-0.74:1791267500288",
+            "btc-updown-15m-1791268200:Up:cheap-0.67:1791268400518"
+          ]
+        },
+        {
+          "startET": "03:00",
+          "endET": "04:30",
+          "nWins": 5,
+          "ids": [
+            "btc-updown-15m-1791270000:Up:cheap-0.67:1791270303388",
+            "btc-updown-15m-1791270900:Down:cheap-0.68:1791271284617",
+            "btc-updown-15m-1791272700:Up:cheap-0.77:1791272900554",
+            "btc-updown-15m-1791273600:Up:cheap-0.74:1791273800812",
+            "btc-updown-15m-1791274500:Up:cheap-0.67:1791274827766"
+          ]
+        },
+        {
+          "startET": "05:30",
+          "endET": "06:30",
+          "nWins": 4,
+          "ids": [
+            "btc-updown-15m-1791279000:Up:cheap-0.8:1791279305662",
+            "btc-updown-15m-1791279900:Up:cheap-0.78:1791280100505",
+            "btc-updown-15m-1791280800:Up:cheap-0.68:1791281000769",
+            "btc-updown-15m-1791281700:Down:cheap-0.7:1791281900786"
+          ]
+        },
+        {
+          "startET": "07:00",
+          "endET": "07:45",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1791284400:Up:cheap-0.74:1791284600438",
+            "btc-updown-15m-1791285300:Up:cheap-0.8:1791285597974",
+            "btc-updown-15m-1791286200:Up:cheap-0.77:1791286400744"
+          ]
+        },
+        {
+          "startET": "08:00",
+          "endET": "09:45",
+          "nWins": 7,
+          "ids": [
+            "btc-updown-15m-1791288000:Up:cheap-0.7:1791288212499",
+            "btc-updown-15m-1791288900:Down:cheap-0.76:1791289100415",
+            "btc-updown-15m-1791289800:Up:cheap-0.69:1791290116529",
+            "btc-updown-15m-1791290700:Down:cheap-0.73:1791290900459",
+            "btc-updown-15m-1791291600:Down:cheap-0.67:1791291802489",
+            "btc-updown-15m-1791292500:Down:cheap-0.8:1791292700681",
+            "btc-updown-15m-1791293400:Up:cheap-0.79:1791293600618"
+          ]
+        },
+        {
+          "startET": "11:45",
+          "endET": "13:15",
+          "nWins": 6,
+          "ids": [
+            "btc-updown-15m-1791301500:Down:cheap-0.68:1791301744402",
+            "btc-updown-15m-1791302400:Up:cheap-0.7:1791302600520",
+            "btc-updown-15m-1791303300:Down:cheap-0.72:1791303638669",
+            "btc-updown-15m-1791304200:Down:cheap-0.69:1791304401642",
+            "btc-updown-15m-1791305100:Down:cheap-0.67:1791305383383",
+            "btc-updown-15m-1791306000:Down:cheap-0.68:1791306288008"
+          ]
+        },
+        {
+          "startET": "14:00",
+          "endET": "15:00",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1791309600:Up:cheap-0.8:1791309800221",
+            "btc-updown-15m-1791310500:Down:cheap-0.67:1791310751137",
+            "btc-updown-15m-1791312300:Down:cheap-0.8:1791312730216"
+          ]
+        },
+        {
+          "startET": "22:45",
+          "endET": "23:45",
+          "nWins": 3,
+          "ids": [
+            "btc-updown-15m-1791341100:Up:cheap-0.73:1791341526827",
+            "btc-updown-15m-1791342900:Up:cheap-0.8:1791343238781",
+            "btc-updown-15m-1791343800:Up:cheap-0.74:1791344000735"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-10-07",
+      "positions": 10,
+      "wins": 10,
+      "losses": 0,
+      "others": 0,
+      "pnl": 57.7,
+      "runs": [
+        {
+          "startET": "00:00",
+          "endET": "02:45",
+          "nWins": 10,
+          "ids": [
+            "btc-updown-15m-1791345600:Up:cheap-0.76:1791345800611",
+            "btc-updown-15m-1791346500:Down:cheap-0.79:1791346700353",
+            "btc-updown-15m-1791347400:Down:cheap-0.8:1791347606375",
+            "btc-updown-15m-1791348300:Up:cheap-0.72:1791348500322",
+            "btc-updown-15m-1791349200:Up:cheap-0.67:1791349400565",
+            "btc-updown-15m-1791350100:Up:cheap-0.68:1791350410311",
+            "btc-updown-15m-1791351000:Up:cheap-0.69:1791351200512",
+            "btc-updown-15m-1791351900:Up:cheap-0.8:1791352433664",
+            "btc-updown-15m-1791352800:Down:cheap-0.68:1791353163549",
+            "btc-updown-15m-1791354600:Up:cheap-0.67:1791354816527"
+          ]
+        }
+      ]
+    }
+  ],
+  "hourly": [
+    {
+      "hour": 0,
+      "wins": 17,
+      "losses": 12,
+      "wr": 58.6,
+      "pnl": -72.02
+    },
+    {
+      "hour": 1,
+      "wins": 25,
+      "losses": 4,
+      "wr": 86.2,
+      "pnl": 71.37
+    },
+    {
+      "hour": 2,
+      "wins": 17,
+      "losses": 11,
+      "wr": 60.7,
+      "pnl": -30.21
+    },
+    {
+      "hour": 3,
+      "wins": 26,
+      "losses": 5,
+      "wr": 83.9,
+      "pnl": 43.93
+    },
+    {
+      "hour": 4,
+      "wins": 21,
+      "losses": 6,
+      "wr": 77.8,
+      "pnl": 0.53
+    },
+    {
+      "hour": 5,
+      "wins": 21,
+      "losses": 7,
+      "wr": 75,
+      "pnl": 13.08
+    },
+    {
+      "hour": 6,
+      "wins": 21,
+      "losses": 11,
+      "wr": 65.6,
+      "pnl": -15.73
+    },
+    {
+      "hour": 7,
+      "wins": 21,
+      "losses": 8,
+      "wr": 72.4,
+      "pnl": 3.04
+    },
+    {
+      "hour": 8,
+      "wins": 19,
+      "losses": 7,
+      "wr": 73.1,
+      "pnl": 41.55
+    },
+    {
+      "hour": 9,
+      "wins": 26,
+      "losses": 12,
+      "wr": 68.4,
+      "pnl": 21.41
+    },
+    {
+      "hour": 10,
+      "wins": 21,
+      "losses": 8,
+      "wr": 72.4,
+      "pnl": -37.32
+    },
+    {
+      "hour": 11,
+      "wins": 23,
+      "losses": 8,
+      "wr": 74.2,
+      "pnl": -4.37
+    },
+    {
+      "hour": 12,
+      "wins": 21,
+      "losses": 5,
+      "wr": 80.8,
+      "pnl": 56.52
+    },
+    {
+      "hour": 13,
+      "wins": 20,
+      "losses": 9,
+      "wr": 69,
+      "pnl": -45.61
+    },
+    {
+      "hour": 14,
+      "wins": 24,
+      "losses": 6,
+      "wr": 80,
+      "pnl": -1.81
+    },
+    {
+      "hour": 15,
+      "wins": 16,
+      "losses": 16,
+      "wr": 50,
+      "pnl": -91.66
+    },
+    {
+      "hour": 16,
+      "wins": 17,
+      "losses": 10,
+      "wr": 63,
+      "pnl": -30.6
+    },
+    {
+      "hour": 17,
+      "wins": 26,
+      "losses": 3,
+      "wr": 89.7,
+      "pnl": 95.32
+    },
+    {
+      "hour": 18,
+      "wins": 20,
+      "losses": 9,
+      "wr": 69,
+      "pnl": -35.79
+    },
+    {
+      "hour": 19,
+      "wins": 22,
+      "losses": 5,
+      "wr": 81.5,
+      "pnl": 22.06
+    },
+    {
+      "hour": 20,
+      "wins": 8,
+      "losses": 15,
+      "wr": 34.8,
+      "pnl": -95.47
+    },
+    {
+      "hour": 21,
+      "wins": 17,
+      "losses": 3,
+      "wr": 85,
+      "pnl": 42.56
+    },
+    {
+      "hour": 22,
+      "wins": 12,
+      "losses": 7,
+      "wr": 63.2,
+      "pnl": -17.24
+    },
+    {
+      "hour": 23,
+      "wins": 19,
+      "losses": 8,
+      "wr": 70.4,
+      "pnl": -5.9
+    }
+  ],
+  "heat": {
+    "2026-09-26": [
+      "·",
+      "0W/1L",
+      "3W/3L",
+      "6W",
+      "1W/1L",
+      "0W/1L",
+      "3W/2L",
+      "2W/3L",
+      "2W/2L",
+      "7W/1L",
+      "6W",
+      "3W",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·"
+    ],
+    "2026-09-27": [
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "0W/2L",
+      "0W/1L",
+      "·",
+      "1W/1L",
+      "3W",
+      "4W/1L",
+      "4W",
+      "4W",
+      "6W",
+      "1W/3L",
+      "·",
+      "·",
+      "3W",
+      "5W",
+      "2W/2L",
+      "6W/1L",
+      "3W/1L",
+      "3W/2L"
+    ],
+    "2026-09-28": [
+      "1W/3L",
+      "2W",
+      "4W/1L",
+      "2W/1L",
+      "4W",
+      "4W/1L",
+      "3W/1L",
+      "5W",
+      "2W/1L",
+      "2W/3L",
+      "·",
+      "·",
+      "0W/1L",
+      "3W/2L",
+      "4W",
+      "3W",
+      "2W/2L",
+      "4W",
+      "3W",
+      "3W/1L",
+      "0W/3L",
+      "·",
+      "0W/1L",
+      "·"
+    ],
+    "2026-09-29": [
+      "1W",
+      "4W",
+      "·",
+      "3W",
+      "1W",
+      "2W",
+      "3W",
+      "3W",
+      "2W/2L",
+      "0W/3L",
+      "·",
+      "·",
+      "0W/1L",
+      "4W",
+      "3W",
+      "0W/3L",
+      "·",
+      "1W",
+      "3W/1L",
+      "3W",
+      "0W/3L",
+      "·",
+      "0W/1L",
+      "·"
+    ],
+    "2026-09-30": [
+      "2W",
+      "2W",
+      "0W/1L",
+      "1W",
+      "3W",
+      "1W",
+      "·",
+      "·",
+      "·",
+      "2W/1L",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·"
+    ],
+    "2026-10-01": [
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "3W/1L",
+      "3W",
+      "1W/1L",
+      "·",
+      "·",
+      "3W/1L",
+      "2W/1L",
+      "4W",
+      "2W/1L",
+      "2W/1L",
+      "2W",
+      "2W",
+      "1W/1L",
+      "3W/1L"
+    ],
+    "2026-10-02": [
+      "2W/1L",
+      "4W",
+      "2W/2L",
+      "4W",
+      "3W",
+      "2W/1L",
+      "3W/1L",
+      "2W/2L",
+      "2W/1L",
+      "2W/1L",
+      "1W/3L",
+      "3W/1L",
+      "0W/2L",
+      "·",
+      "2W",
+      "3W/1L",
+      "2W/2L",
+      "4W",
+      "1W/3L",
+      "·",
+      "·",
+      "3W/1L",
+      "4W",
+      "2W/1L"
+    ],
+    "2026-10-03": [
+      "2W/1L",
+      "4W",
+      "2W/2L",
+      "2W/2L",
+      "2W/2L",
+      "4W",
+      "0W/3L",
+      "·",
+      "1W",
+      "4W",
+      "2W",
+      "3W/1L",
+      "4W",
+      "2W/2L",
+      "2W/2L",
+      "2W/1L",
+      "4W",
+      "3W/1L",
+      "2W/2L",
+      "3W/1L",
+      "1W/3L",
+      "3W/1L",
+      "2W/2L",
+      "3W/1L"
+    ],
+    "2026-10-04": [
+      "1W/3L",
+      "·",
+      "·",
+      "3W",
+      "2W/1L",
+      "1W/3L",
+      "3W",
+      "4W",
+      "2W/1L",
+      "4W",
+      "2W/2L",
+      "2W/2L",
+      "4W",
+      "2W/2L",
+      "3W/1L",
+      "2W/2L",
+      "3W/1L",
+      "4W",
+      "2W/2L",
+      "3W/1L",
+      "2W/2L",
+      "3W",
+      "1W/1L",
+      "3W/1L"
+    ],
+    "2026-10-05": [
+      "2W/2L",
+      "2W/2L",
+      "2W/1L",
+      "2W/2L",
+      "2W/1L",
+      "4W",
+      "4W",
+      "2W/1L",
+      "4W",
+      "1W/1L",
+      "2W/1L",
+      "3W/1L",
+      "4W",
+      "3W/1L",
+      "1W/3L",
+      "1W/3L",
+      "2W/2L",
+      "4W",
+      "4W",
+      "3W/1L",
+      "1W/2L",
+      "·",
+      "·",
+      "3W/1L"
+    ],
+    "2026-10-06": [
+      "2W/2L",
+      "3W/1L",
+      "2W/1L",
+      "3W",
+      "3W/1L",
+      "3W/1L",
+      "2W/2L",
+      "3W/1L",
+      "4W",
+      "3W/1L",
+      "2W/1L",
+      "2W/2L",
+      "4W",
+      "2W/2L",
+      "3W",
+      "1W/2L",
+      "2W/2L",
+      "2W/2L",
+      "·",
+      "·",
+      "·",
+      "·",
+      "1W",
+      "2W/1L"
+    ],
+    "2026-10-07": [
+      "4W",
+      "4W",
+      "2W",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·",
+      "·"
+    ]
+  }
+}

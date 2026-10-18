@@ -41,8 +41,9 @@ git reset --hard origin/master
 # 2. Fix permissions on problematic directories that break Docker build context
 # (Docker reads all files before applying .dockerignore)
 # Do this AFTER git operations since we need .git for fetch/reset
-# Use chmod instead of rm to preserve .git for future pulls
+# Use sudo to fix ownership/permissions (files may be owned by root from previous builds)
 echo "Fixing build context permissions..."
+sudo chown -R $(id -u):$(id -g) .cursor .vscode .hermes .kilo .git 2>/dev/null || true
 chmod -R a+r .cursor .vscode .hermes .kilo .git 2>/dev/null || true
 
 # 3. Check env file exists
@@ -52,6 +53,7 @@ if [[ ! -f "$ENV_FILE" ]]; then
 fi
 
 # Fix permissions on env file (Docker needs to read it)
+sudo chown $(id -u):$(id -g) "$ENV_FILE" 2>/dev/null || true
 chmod 644 "$ENV_FILE" 2>/dev/null || true
 
 # 4. Build images

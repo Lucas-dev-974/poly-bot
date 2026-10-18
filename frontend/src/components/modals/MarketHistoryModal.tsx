@@ -210,6 +210,8 @@ function pairTradesFromStore(conditionId: string): DisplayTrade[] {
  *  3. positions de la liste (heure approximative).
  * Les trades de simulation (origine "sim") contournent la priorité : le
  * capital étant séparé, ils s'ajoutent aux trades réels au lieu de les masquer.
+ * Déduplication finale : un seul BUY par outcomeIndex (le plus ancien),
+ * pour correspondre à la vue positions ouvertes (une position par marché/outcome).
  */
 function buildTrades(
   bot: DisplayTrade[],
@@ -234,7 +236,25 @@ function buildTrades(
   for (const t of apiMissing) covered.add(t.outcomeIndex);
   out.push(...legs.filter((t) => !covered.has(t.outcomeIndex)));
   out.push(...sim);
-  return out.sort((a, b) => a.timestamp - b.timestamp);
+
+  // Déduplication finale des BUY (entrées) par outcomeIndex : garde le plus ancien
+  const buyByOutcome = new Map<number, DisplayTrade>();
+  const result: DisplayTrade[] = [];
+  for (const t of out) {
+    if (t.side === "BUY") {
+      const existing = buyByOutcome.get(t.outcomeIndex);
+      if (!existing || t.timestamp < existing.timestamp) {
+        buyByOutcome.set(t.outcomeIndex, t);
+      }
+    } else {
+      // SELL (sorties) : on garde tout
+      result.push(t);
+    }
+  }
+  // Ajouter les BUY dédupliqués
+  result.push(...buyByOutcome.values());
+
+  return result.sort((a, b) => a.timestamp - b.timestamp);
 }
 
 // ---------------------------------------------------------------------------

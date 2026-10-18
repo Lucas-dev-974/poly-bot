@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Deploy script for Polymarket Bot VPS
-# Usage: ./deploy.sh [prod|staging|no-domain]
+# Usage: ./deploy.sh [prod|staging|no-domain] [project_dir]
+#   project_dir defaults to current directory
 
 set -euo pipefail
 
 ENV="${1:-prod}"
-PROJECT_DIR="/opt/polymarket-bot"
+PROJECT_DIR="${2:-$(pwd)}"
 COMPOSE_FILES="-f docker-compose.yml"
 
 case "$ENV" in

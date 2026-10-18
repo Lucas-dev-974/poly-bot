@@ -8,6 +8,8 @@ interface TradePoint {
   side: "BUY" | "SELL";
   outcome: string;
   outcomeIndex: number;
+  /** Wallet source du fill (funderAddress du bot). */
+  wallet?: string;
 }
 
 /** Fill Data API du wallet, avec identifiants de marché pour le matching chart. */
@@ -167,19 +169,23 @@ export async function getMarketTrades(
   url.searchParams.set("limit", "50");
 
   const raw = await fetchJson<RawTrade[]>(url);
+  // Post-filtre défensif : l'API Data peut mal appliquer le param `market` ;
+  // on ne garde que les fills dont le conditionId correspond au marché demandé.
   const trades: TradePoint[] = (Array.isArray(raw) ? raw : [])
-    .filter((t) => t.side === "BUY" || t.side === "SELL")
-    .map((t) => {
-      const side: "BUY" | "SELL" = t.side === "SELL" ? "SELL" : "BUY";
-      return {
-        timestamp: Number(t.timestamp ?? 0),
-        price: Number(t.price ?? 0),
-        size: Number(t.size ?? 0),
-        side,
-        outcome: String(t.outcome ?? ""),
-        outcomeIndex: Number(t.outcomeIndex ?? 0),
-      };
-    })
+  .filter((t) => !t.conditionId || String(t.conditionId) === conditionId)
+  .filter((t) => t.side === "BUY" || t.side === "SELL")
+  .map((t) => {
+    const side: "BUY" | "SELL" = t.side === "SELL" ? "SELL" : "BUY";
+    return {
+      timestamp: Number(t.timestamp ?? 0),
+      price: Number(t.price ?? 0),
+      size: Number(t.size ?? 0),
+      side,
+      outcome: String(t.outcome ?? ""),
+      outcomeIndex: Number(t.outcomeIndex ?? 0),
+      wallet: config.funderAddress,
+    };
+  })
     .filter((t) => t.timestamp > 0)
     .sort((a, b) => a.timestamp - b.timestamp);
 

@@ -575,6 +575,8 @@ export interface TradePoint {
   side: "BUY" | "SELL";
   outcome: string;
   outcomeIndex: number;
+  /** Wallet source du fill (funderAddress du bot). */
+  wallet?: string;
 }
 
 export interface MarketHistoryResponse {

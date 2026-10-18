@@ -911,12 +911,12 @@ export function MarketHistoryModal(props: ModalProps): JSX.Element {
                         <td>{trade.size}</td>
                         <td>{trade.strategyId ?? "—"}</td>
                         <td class="muted">
-                          {trade.origin === "bot"
-                            ? (trade.dryRun ? "bot (sim)" : "bot")
-                            : trade.origin === "sim"
-                              ? "simulation"
-                              : trade.origin === "api"
-                                ? "API"
+                          {trade.origin === "api"
+                            ? (trade.wallet ?? "API")
+                            : trade.origin === "bot"
+                              ? (trade.dryRun ? "bot (sim)" : "bot")
+                              : trade.origin === "sim"
+                                ? "simulation"
                                 : "position"}
                         </td>
                       </tr>

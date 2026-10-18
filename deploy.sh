@@ -33,17 +33,18 @@ esac
 
 echo "=== Deploying $ENV environment ==="
 
-# 0. Clean up problematic directories that break Docker build context
-# (Docker reads all files before applying .dockerignore)
-echo "Cleaning build context..."
-rm -rf .cursor .vscode .hermes .kilo 2>/dev/null || true
-
 # 1. Pull latest code
 cd "$PROJECT_DIR"
 git fetch origin
 git reset --hard origin/master
 
-# 2. Check env file exists
+# 2. Clean up problematic directories that break Docker build context
+# (Docker reads all files before applying .dockerignore)
+# Do this AFTER git operations since we need .git for fetch/reset
+echo "Cleaning build context..."
+rm -rf .cursor .vscode .hermes .kilo .git 2>/dev/null || true
+
+# 3. Check env file exists
 if [[ ! -f "$ENV_FILE" ]]; then
     echo "ERROR: $ENV_FILE not found. Copy from .env.prod.example and fill in secrets."
     exit 1

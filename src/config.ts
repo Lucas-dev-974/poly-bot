@@ -117,6 +117,7 @@ export interface BotConfig {
   readonlyLive: boolean;
   privateKey?: `0x${string}`;
   funderAddress?: `0x${string}`;
+  simulation?: boolean;
   signatureType: number;
   clobHost: string;
   chainId: number;
@@ -743,6 +744,7 @@ export function loadConfig(): BotConfig {
     readonlyLive,
     privateKey: process.env.PRIVATE_KEY as `0x${string}` | undefined,
     funderAddress: process.env.FUNDER_ADDRESS as `0x${string}` | undefined,
+    simulation: envBoolean("SIM_MODE", false),
     signatureType: envNumber("SIGNATURE_TYPE", 3),
     clobHost: envString("CLOB_HOST", "https://clob.polymarket.com"),
     chainId: envNumber("CHAIN_ID", 137),
@@ -1549,6 +1551,11 @@ export function validateTradingConfig(
   opts?: { leadsWithEdge?: boolean; allowNoPrivateKey?: boolean },
 ): void {
   validateConfigCoherence(config, opts);
+
+  if (config.simulation) {
+    // Simulation mode skips privateKey and funderAddress requirements
+    return;
+  }
 
   if (config.simResolveFallback !== "none") {
     throw new Error(

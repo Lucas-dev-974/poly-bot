@@ -888,6 +888,38 @@
   background: rgba(255, 255, 255, 0.02);
 }
 
+/* Colonnes P&L / côté / countdown : surpasse la couleur de base des td
+   (spécificité : `.sim2-table td` = (0,1,1) > `.pnl-pos` seul = (0,1,0)). */
+.sim2-table td.pnl-pos {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.sim2-table td.pnl-neg {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.sim2-table td.sim2-side-buy {
+  color: var(--green);
+  font-weight: 650;
+}
+
+.sim2-table td.sim2-side-sell {
+  color: var(--red);
+  font-weight: 650;
+}
+
+.sim2-cd.am-countdown--hot {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.sim2-cd.am-countdown--warm {
+  color: var(--amber);
+  font-weight: 500;
+}
+
 .sim2-table th.num,
 .sim2-table td.num {
   text-align: right;

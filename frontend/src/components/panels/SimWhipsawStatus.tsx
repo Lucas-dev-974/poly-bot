@@ -1,6 +1,5 @@
 import { Show, createMemo, createSignal, onMount } from "solid-js";
 import type { JSX } from "solid-js";
-import { Panel } from "../ui/Panel";
 import { api } from "../../api/client";
 import { addLog } from "../../stores/logStore";
 import { simWhipsaw, simRemainingMsAt, setSimWhipsaw } from "../../stores/simWhipsawStore";
@@ -12,12 +11,13 @@ function toMessage(e: unknown): string {
 }
 
 /**
- * Panneau « Filtre whipsaw » de la page Simulation (paper trading) — miroir
- * de WhipsawStatus (dashboard live), branché sur le moteur sim :
- * event SSE `simStrategyStatus` (5 s) + GET /api/sim/strategy-status au
- * montage. La pause est armée par les pertes des positions SIMULÉES
- * (tracker sim), indépendante du bot live. Entry masquée si le statut est
- * null (moteur sim ≠ fav-band, ou pas encore reçu).
+ * Statut compact « Filtre whipsaw » (page Simulation, paper trading) —
+ * ligne compacte intégrée à la section « Filtre whipsaw » du rail
+ * Paramètres (redesign sim2). Miroir du WhipsawStatus du dashboard live,
+ * branché sur le moteur sim : event SSE `simStrategyStatus` (5 s) + GET
+ * /api/sim/strategy-status au montage. La pause est armée par les pertes
+ * des positions SIMULÉES (tracker sim), indépendante du bot live.
+ * Masqué si le statut est null (moteur sim ≠ fav-band, ou pas encore reçu).
  */
 export function SimWhipsawStatus(): JSX.Element {
   const [resetting, setResetting] = createSignal(false);
@@ -69,14 +69,14 @@ export function SimWhipsawStatus(): JSX.Element {
     return `${m}:${sec.toString().padStart(2, "0")}`;
   });
 
-  const nextWindowText = createMemo(() => {
+  const statusText = createMemo(() => {
     const s = status();
     if (!s || !s.enabled) return null;
-    if (s.active) return `Pause active — ${remainingText()} restants`;
+    if (s.active) return `Pause active — ${remainingText() ?? "—"} restants`;
     if (s.lossStreak > 0 && s.pauseAfterLosses != null && s.lossStreak >= s.pauseAfterLosses) {
-      return `Seuil atteint (${s.lossStreak}/${s.pauseAfterLosses}) — prochaine fenêtre déclenchera la pause`;
+      return `Seuil atteint (${s.lossStreak}/${s.pauseAfterLosses}) — la prochaine perte déclenche la pause`;
     }
-    return `Inactif — série pertes: ${s.lossStreak}/${s.pauseAfterLosses ?? "—"}`;
+    return `Actif — série de pertes : ${s.lossStreak}/${s.pauseAfterLosses ?? "—"}`;
   });
 
   async function handleReset(): Promise<void> {
@@ -101,65 +101,33 @@ export function SimWhipsawStatus(): JSX.Element {
   return (
     <Show when={status()}>
       {(s) => (
-        <Panel title="Filtre whipsaw (paper)">
-          <div class="whipsaw-status">
-            <div class={`whipsaw-badge ${badgeClass()}`}>
-              <span class="dot" />
-              <span class="label">
-                {badgeClass() === "active" && "Pause active"}
-                {badgeClass() === "ready" && "Prêt"}
-                {badgeClass() === "disabled" && "Désactivé"}
-              </span>
-            </div>
-
-            <Show when={s().enabled}>
-              <div class="whipsaw-details">
-                <div class="detail-row">
-                  <span class="detail-label">Fenêtres de pause :</span>
-                  <span class="detail-value">{s().pauseWindows} fenêtre(s) (≈{s().pauseWindows * 15} min)</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Seuil déclenchement :</span>
-                  <span class="detail-value">
-                    {s().pauseAfterLosses != null
-                      ? `${s().pauseAfterLosses} pertes consécutives`
-                      : "Non configuré"}
-                  </span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Série pertes actuelle :</span>
-                  <span class="detail-value">{s().lossStreak}</span>
-                </div>
-                <Show when={s().active}>
-                  <div class="detail-row highlight">
-                    <span class="detail-label">Temps restant :</span>
-                    <span class="detail-value countdown">{remainingText()}</span>
-                  </div>
-                  <div class="detail-row reset-row">
-                    <button
-                      class="btn btn-danger-solid"
-                      onClick={() => void handleReset()}
-                      disabled={resetting()}
-                    >
-                      {resetting() ? "Réinitialisation…" : "Réinitialiser la pause"}
-                    </button>
-                  </div>
-                </Show>
-                <div class="detail-row status-text">
-                  {nextWindowText()}
-                </div>
-              </div>
+        <div class="sim2-whip-row">
+          <span class={`sim2-whip-badge ${badgeClass()}`}>
+            <span class="sim2-whip-dot" aria-hidden="true" />
+            <Show when={s().enabled} fallback={<span>Désactivé</span>}>
+              <span>{badgeClass() === "active" ? `Pause ${remainingText() ?? "—"}` : "Whipsaw prêt"}</span>
             </Show>
-
-            <Show when={!s().enabled}>
-              <div class="whipsaw-disabled">
-                Le filtre whipsaw est désactivé dans la configuration du moteur sim.
-                <br />
-                Activez <code>favBandWhipsawEnabled</code> dans le panneau Paramètres (section « Filtre whipsaw ») pour voir l'état ici.
-              </div>
-            </Show>
-          </div>
-        </Panel>
+          </span>
+          <span
+            class="sim2-whip-note"
+            title={
+              s().enabled
+                ? `Fenêtres de pause : ${s().pauseWindows} · seuil ${s().pauseAfterLosses ?? "—"} pertes · série ${s().lossStreak}`
+                : undefined
+            }
+          >
+            {s().enabled ? statusText() : "Activez favBandWhipsawEnabled pour armer le filtre."}
+          </span>
+          <Show when={s().enabled && s().active}>
+            <button
+              class="btn btn-ghost sim2-whip-reset"
+              onClick={() => void handleReset()}
+              disabled={resetting()}
+            >
+              {resetting() ? "Réinitialisation…" : "Réinitialiser la pause"}
+            </button>
+          </Show>
+        </div>
       )}
     </Show>
   );

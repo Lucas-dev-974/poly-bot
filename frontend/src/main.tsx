@@ -27,7 +27,7 @@ const DataPage = lazy(() =>
   import("./pages/DataPage").then((m) => ({ default: m.DataPage })),
 );
 const SimulationPage = lazy(() =>
-  import("./pages/SimulationPage").then((m) => ({ default: m.SimulationPage })),
+  import("./pages/simulation/SimulationPage").then((m) => ({ default: m.SimulationPage })),
 );
 
 const root = document.getElementById("root");

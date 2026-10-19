@@ -1,820 +1,40 @@
-/* Simulation live (paper trading) — page /simulation
+/* Simulation live (paper trading) — page /simulation · redesign « sim2 »
+   ---------------------------------------------------------------------- +
+   Layout : topbar sticky → barre de contexte → rangée KPI → workspace
+   (flux 1fr + rail Paramètres 384px sticky).
    Design : tokens globaux (variables.css) uniquement — pas de couleur
-   hardcodée. Échelle cohérente : radius 12 (cartes) / 8 (contrôles) /
-   6 (chips) / 999 (pills) ; espacements multiples de 4. */
+   hardcodée. Nombres = fonte mono tabulaire. Radius : 12 (cartes) /
+   8 (contrôles) / 999 (pills). Espacement multiple de 4.
+   Les classes .collapse-chevron / .panel-collapsible restent ici : le
+   composant Panel (toutes les pages) compte sur elles.
+*/
 
-/* ─── Header ─────────────────────────────────────────────────────────── */
-
-.sim-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
+:root {
+  /* Tokens locaux de la page (préfixés, sans conflit global). */
+  --sim2-track: #1e2532;
+  --sim2-border-soft: #1b202c;
+  --sim2-hover: #3a4150;
+  --sim2-radius: 12px;
 }
 
-.sim-header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.sim-back {
-  text-decoration: none;
-  padding: 5px 12px;
-}
-
-.sim-header h1 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 650;
-  letter-spacing: -0.01em;
-}
-
-.sim-header-actions {
-  display: flex;
-  gap: 8px;
-}
-
-/* Badge d'état du moteur : pill avec point de vie (pulse quand actif). */
-.sim-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.6px;
-}
-
-.sim-badge-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-  flex-shrink: 0;
-}
-
-.sim-badge.on {
-  background: rgba(46, 204, 113, 0.12);
-  color: var(--green);
-  border: 1px solid rgba(46, 204, 113, 0.35);
-}
-
-.sim-badge.on .sim-badge-dot {
-  animation: sim-badge-pulse 2s ease-in-out infinite;
-}
-
-.sim-badge.off {
-  background: rgba(139, 147, 163, 0.1);
-  color: var(--muted);
-  border: 1px solid rgba(139, 147, 163, 0.3);
-}
-
-@keyframes sim-badge-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sim-badge.on .sim-badge-dot {
-    animation: none;
-  }
-}
-
-/* ─── Cartes KPI ─────────────────────────────────────────────────────── */
-
-.sim-kpis {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.sim-kpi {
+.sim2-shell {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 14px 16px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  transition: border-color 0.15s ease;
-}
-
-.sim-kpi:hover {
-  border-color: #3a4150;
-}
-
-.sim-kpi-label {
-  font-size: 10.5px;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.sim-kpi-value {
-  font-size: 22px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
-}
-
-.sim-kpi-capital .sim-kpi-value {
-  font-size: 24px;
-  color: var(--accent);
-}
-
-/* KPI Capital total éditable : la valeur est un bouton stylé en texte
-   (clic → champ inline) ; le champ reprend la typo de la valeur. */
-.sim-kpi-capital-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-  cursor: pointer;
-  align-self: flex-start;
-  border-bottom: 1px dashed transparent;
-  transition: border-color 0.15s ease, filter 0.15s ease;
-  font-family: inherit;
-}
-
-.sim-kpi-capital-btn:hover,
-.sim-kpi-capital-btn:focus-visible {
-  border-bottom-color: currentColor;
-  filter: brightness(1.2);
-  outline: none;
-}
-
-.sim-kpi-capital-edit {
-  font-family: inherit;
-  font-variant-numeric: tabular-nums;
-  background: var(--bg);
-  border: 1px solid var(--accent);
-  border-radius: 8px;
-  padding: 0 8px;
-  align-self: flex-start;
-  min-width: 150px;
-}
-
-.sim-kpi-capital-edit:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-/* Indice « (cliquer pour modifier) » : discret, plein au survol de la carte. */
-.sim-kpi-editable-hint {
-  font-size: 9px;
-  text-transform: none;
-  letter-spacing: 0;
-  color: var(--muted);
-  opacity: 0.6;
-  transition: opacity 0.15s ease;
-}
-
-.sim-kpi-capital:hover .sim-kpi-editable-hint {
-  opacity: 1;
-}
-
-/* Ligne de valeur du KPI P&L réalisé : réalisé à gauche, latent à droite. */
-.sim-kpi-pnl-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
   gap: 10px;
-}
-
-.sim-kpi-latent {
-  font-size: 12px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-.sim-kpi-latent.pos {
-  color: var(--green);
-}
-
-.sim-kpi-latent.neg {
-  color: var(--red);
-}
-
-.sim-kpi-sub {
-  font-size: 11px;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ─── Panneau Paramètres (form config stratégie active) ─────────────── */
-
-.sim-5m-config-panel {
-  margin-bottom: 12px;
-  padding: 12px 16px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-}
-
-.sim-5m-cp-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.sim-5m-cp-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.sim-5m-cp-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.sim-5m-cp-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 10px 12px;
-}
-
-.sim-5m-field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.sim-5m-field input,
-.sim-5m-field select {
-  padding: 6px 8px;
-  font-size: 12px;
-  font-family: inherit;
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.sim-5m-field select {
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b93a3' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  padding-right: 26px;
-}
-
-.sim-5m-field select option {
-  background: var(--panel);
-  color: var(--text);
-}
-
-.sim-5m-field input:focus,
-.sim-5m-field select:focus,
-.sim-5m-preset-save input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
-}
-
-.sim-5m-field input.input-error,
-.sim-5m-field select.input-error {
-  border-color: var(--red);
-}
-
-/* Checkbox de paramètre : réinitialise l'héritage de .sim-5m-field input
-   (spécificité supérieure ici grâce au type) — pas de padding/bordure/fond. */
-.sim-5m-field input[type="checkbox"].sim-5m-check {
-  padding: 0;
-  border: none;
-  background: none;
-  transition: none;
-}
-
-.sim-5m-check {
-  width: 16px;
-  height: 16px;
-  margin: 2px 0;
-  accent-color: var(--accent);
-  cursor: pointer;
-}
-
-.sim-5m-check:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.field-error {
-  color: var(--red);
-  font-size: 10px;
-}
-
-.sim-5m-cp-presets {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.sim-5m-cp-subtitle {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-}
-
-/* Sections internes du panneau Paramètres. */
-.sim-5m-cp-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px dashed var(--border);
-}
-
-/* Champ actif de la stratégie : légère mise en évidence. */
-.sim-5m-field-active {
-  color: var(--text);
-}
-
-.sim-5m-field-active input {
-  border-color: rgba(79, 140, 255, 0.45);
-}
-
-/* Champ inactif : estompé pour signaler « ne participe pas à cette stratégie ». */
-.sim-5m-field-inactive {
-  opacity: 0.55;
-}
-
-.sim-5m-cp-collapse {
-  align-self: flex-start;
-  padding: 4px 8px;
-  font-size: 11px;
-}
-
-.sim-5m-preset-save {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.sim-5m-preset-save input {
-  flex: 1;
-  max-width: 260px;
-  padding: 6px 8px;
-  font-size: 12px;
-  font-family: inherit;
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-}
-
-.sim-5m-preset-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.sim-5m-preset-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 5px 8px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  transition: border-color 0.15s ease;
-}
-
-.sim-5m-preset-item:hover {
-  border-color: #3a4150;
-}
-
-.sim-5m-preset-name {
-  font-size: 12px;
-  color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sim-5m-preset-actions {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.btn-danger {
-  color: var(--red);
-}
-
-/* ─── Barre de configuration : Stratégie | Capital + actions ────────── */
-
-.sim-control-bar {
-  display: flex;
-  align-items: stretch;
-  gap: 16px;
-  padding: 12px 16px;
-  margin-bottom: 12px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-}
-
-.sim-cb-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   min-width: 0;
 }
 
-.sim-cb-title {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.sim-cb-fields {
-  display: flex;
-  gap: 12px;
-}
-
-.sim-cb-hint {
-  margin: 0;
-  font-size: 11px;
-  color: var(--muted);
-  font-style: italic;
-  max-width: 420px;
-}
-
-.sim-cb-hint.warn {
-  color: var(--amber);
-  font-style: normal;
-}
-
-.sim-cb-divider {
-  width: 1px;
-  background: var(--border);
-  align-self: stretch;
-}
-
-.sim-cb-actions {
-  margin-left: auto;
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.sim-cb-revert {
-  opacity: 0.85;
-}
-
-.sim-field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.sim-field select,
-.sim-field input {
-  min-width: 130px;
-  padding: 7px 10px;
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 12.5px;
-  font-family: inherit;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  height: 34px;
-  box-sizing: border-box;
-}
-
-.sim-field select:focus,
-.sim-field input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
-}
-
-.sim-field select:hover,
-.sim-field input:hover:not(:focus) {
-  border-color: var(--accent);
-}
-
-/* Champ avec unité suffixe (ex. pUSD) affichée à droite. */
-.sim-field-control {
-  position: relative;
-  display: flex;
-}
-
-.sim-field-control input {
-  width: 100%;
-  padding-right: 52px;
-}
-
-.sim-field-unit {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted);
-  pointer-events: none;
-  letter-spacing: 0.3px;
-}
-
-/* Chevron custom sur les selects (appearance none + SVG inline). */
-.sim-field select {
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b93a3' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  padding-right: 30px;
-}
-
-.sim-field select option {
-  background: var(--panel);
-  color: var(--text);
-}
-
-/* Masque les spinners du champ number (cohérence visuelle). */
-.sim-field input[type="number"] {
-  appearance: textfield;
-  -moz-appearance: textfield;
-}
-
-.sim-field input[type="number"]::-webkit-outer-spin-button,
-.sim-field input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.sim-field input::placeholder,
-.sim-5m-field input::placeholder,
-.sim-5m-preset-save input::placeholder {
-  color: var(--muted);
-}
-
-/* ─── Variantes de boutons propre à la page ──────────────────────────── */
-
-/* Action secondaire discrète (Réinitialiser, Charger, Annuler…). */
-.btn.btn-ghost {
-  background: transparent;
-  border-color: var(--border);
-  color: var(--muted);
-}
-
-.btn.btn-ghost:hover:not(:disabled) {
-  border-color: #3a4150;
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.03);
-}
-
-/* Action destructive secondaire : contour rouge, jamais de fond plein. */
-.btn.danger {
-  background: transparent;
-  border-color: rgba(231, 76, 60, 0.45);
-  color: var(--red);
-}
-
-.btn.danger:hover:not(:disabled) {
-  background: rgba(231, 76, 60, 0.1);
-  border-color: var(--red);
-}
-
-/* ─── Sections de listes ─────────────────────────────────────────────── */
-
-/* Ordres en attente (GTC papier non remplis). */
-.sim-resting-row {
-  opacity: 0.65;
-  font-style: italic;
-}
-
-.sim-active-markets {
-  margin-top: 16px;
-}
-
-.sim-whipsaw {
-  margin-top: 16px;
-}
-
-.sim-history {
-  margin-top: 16px;
-}
-
-/* ─── Onglets historique ─────────────────────────────────────────────── */
-
-.sim-tabs {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.sim-tab {
-  appearance: none;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: var(--muted);
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  padding: 8px 12px;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-.sim-tab:hover {
-  color: var(--text);
-}
-
-.sim-tab.active {
-  color: var(--accent);
-  font-weight: 600;
-  border-bottom: 2px solid var(--accent);
-}
-
-.sim-tab-toggle {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--muted);
-  cursor: pointer;
-  padding-bottom: 8px;
-}
-
-.sim-tab-toggle input {
-  accent-color: var(--accent);
-}
-
-/* ─── Pagination positions résolues ──────────────────────────────────── */
-
-.sim-pagination {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.sim-pagination-info {
-  font-weight: 500;
-  color: var(--text);
-}
-
-.sim-pagination-size {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--muted);
-}
-
-.sim-pagination-size select {
-  min-width: 64px;
-}
-
-.sim-pagination-nav {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.sim-pagination-page {
-  min-width: 64px;
-  text-align: center;
-  color: var(--text);
-  font-weight: 500;
-}
-
-.sim-pagination-btn {
-  padding: 2px 8px;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-.sim-pagination-btn:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-/* ─── Tables ─────────────────────────────────────────────────────────── */
-
-.sim-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-
-.sim-table th,
-.sim-table td {
-  text-align: left;
-  padding: 6px 8px;
-  border-bottom: 1px solid var(--border);
-}
-
-.sim-table th {
-  color: var(--muted);
-  font-weight: 600;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-/* Colonnes numériques : alignées à droite, chiffres tabulaires. */
-.sim-table th.num,
-.sim-table td.num {
-  text-align: right;
+.sim2-mono {
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
   font-variant-numeric: tabular-nums;
 }
 
-/* Zébrage ultra-subtil + survol de ligne (lisibilité des longues listes).
-   Niveau `tr` (pas `td`) : les fonds de cellule — ex. teinte d'urgence des
-   countdowns am-countdown--hot/warm — restent peints par-dessus. */
-.sim-table tbody tr:nth-child(even):not([aria-hidden]) {
-  background: rgba(255, 255, 255, 0.015);
+.sim2-muted {
+  color: var(--muted);
 }
 
-.sim-table tbody tr:not([aria-hidden]):hover {
-  background: rgba(255, 255, 255, 0.035);
-}
-
-/* Le compteur de positions ouvertes est déjà dans le titre ; les cellules de
-   marché (titre) gardent la priorité visuelle : texte normal, ellipsis. */
-.sim-table td:first-child {
-  max-width: 320px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Header collant des tables scrollables (historique long). */
-.sim-table-scroll {
-  scrollbar-width: thin;
-}
-
-.sim-table-scroll::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.sim-table-scroll::-webkit-scrollbar-thumb {
-  background: #2a303c;
-  border-radius: 999px;
-}
-
-.sim-table-scroll::-webkit-scrollbar-thumb:hover {
-  background: #3a4150;
-}
-
-.sim-table-scroll thead th {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: var(--panel);
-  box-shadow: inset 0 -1px 0 var(--border);
-}
-
-/* ─── Couleurs d'état (miroir components.css) ──────────────────────────
-
-   Redondance volontaire : la page Sim est un chunk lazy ; garder les règles
-   ici garantit son indépendance du CSS global (components.css définit les
-   mêmes couleurs pour .am-countdown--hot/warm). */
-
+/* Couleurs d'état : identiques à components.css (.am-countdown--hot/warm),
+   redéclarées ici pour l'indépendance du chunk de la page (lazy). */
 .am-countdown--hot {
   color: var(--red);
   font-weight: 600;
@@ -833,108 +53,1492 @@
   color: var(--red);
 }
 
-/* Pourcentage de P&L affiché à côté du montant (positions ouvertes). */
-.sim-pnl-pct {
-  font-size: 10.5px;
-  opacity: 0.75;
-  font-weight: 400;
+.pos {
+  color: var(--green);
 }
 
-.sim-muted {
+.neg {
+  color: var(--red);
+}
+
+/* ─── Topbar (sticky) ────────────────────────────────────────────────── */
+
+.sim2-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  /* S'étend sur le padding body (20px global) pour coller aux bords. */
+  margin: -20px -20px 0;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(15, 17, 21, 0.84);
+  background: color-mix(in srgb, var(--bg) 84%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--sim2-border-soft);
+}
+
+.sim2-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.sim2-back {
+  text-decoration: none;
+  padding: 5px 12px 5px 8px;
+  font-size: 12.5px;
+  border-radius: 8px;
+}
+
+.sim2-back:hover {
+  background: var(--panel);
+}
+
+.sim2-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.sim2-topbar-muted {
   font-size: 12px;
   color: var(--muted);
   font-style: italic;
 }
 
-/* ─── Responsive ─────────────────────────────────────────────────────── */
-
-@media (max-width: 1100px) {
-  .sim-kpis {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 900px) {
-  .sim-kpis {
-    grid-template-columns: 1fr;
-  }
-  .sim-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .sim-control-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .sim-cb-divider {
-    width: auto;
-    height: 1px;
-    align-self: stretch;
-  }
-  .sim-cb-fields {
-    flex-direction: column;
-    gap: 8px;
-  }
-  .sim-cb-actions {
-    margin-left: 0;
-  }
-  .sim-cb-hint {
-    max-width: none;
-  }
-  .sim-field select,
-  .sim-field input {
-    min-width: 0;
-  }
-}
-
-/* ─── Sections pliables (CollapsibleSection — utilisée par cette page) ─ */
-
-.collapsible-section {
-  margin-bottom: 12px;
-}
-
-/* Conteneurs internes : les blocs sim-* gardent leur propre carte (fond,
-   bordure). La section pliable est un simple wrapper transparent. */
-.collapsible-header {
-  display: flex;
-  flex-wrap: wrap;
+/* Badge d'état du moteur : pill avec point de vie (pulse quand actif). */
+.sim2-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  cursor: pointer;
-  user-select: none;
-  transition: border-color 0.15s ease;
+  gap: 7px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
 }
 
-.collapsible-header:hover {
-  border-color: #3a4150;
+.sim2-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
 }
 
-.collapsible-title {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+.sim2-badge.on {
+  background: rgba(46, 204, 113, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(46, 204, 113, 0.35);
+}
+
+.sim2-badge.on .sim2-badge-dot {
+  animation: sim2-pulse-dot 2.2s ease-in-out infinite;
+}
+
+.sim2-badge.off {
+  background: rgba(139, 147, 163, 0.1);
   color: var(--muted);
-  flex: 1;
+  border: 1px solid rgba(139, 147, 163, 0.3);
 }
 
-.collapsible-header:hover .collapsible-title {
-  color: var(--text);
+@keyframes sim2-pulse-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(46, 204, 113, 0);
+  }
 }
 
-/* Actions à droite du header (non cliquables pour le pliage). */
-.collapsible-actions {
+.sim2-topbar-actions {
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-left: auto;
 }
 
-/* Chevron de pliage : pivot 90° quand ouvert. */
+/* Arrêter : contour rouge, fond transparent (le seul vrai danger de la
+   topbar ; le reste passe par l'archivage confirmé). */
+.sim2-danger-ghost {
+  background: transparent;
+  border-color: rgba(231, 76, 60, 0.45);
+  color: var(--red);
+}
+
+.sim2-danger-ghost:hover:not(:disabled) {
+  background: rgba(231, 76, 60, 0.1);
+  border-color: var(--red);
+}
+
+/* Compteur dans un bouton (archivage). */
+.sim2-count {
+  font-size: 10.5px;
+  padding: 1.5px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: inherit;
+}
+
+/* ─── Barre de contexte moteur ───────────────────────────────────────── */
+
+.sim2-context {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sim2-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  font-size: 11.5px;
+  color: var(--muted);
+  max-width: 100%;
+}
+
+.sim2-chip b {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.sim2-chip small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.sim2-chip .num {
+  color: var(--text-2, var(--text));
+}
+
+.sim2-chip-sep {
+  width: 1px;
+  height: 14px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.sim2-ellip {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Selects mini (moteur / preset) dans la chip de contexte. */
+.sim2-mini-select {
+  height: 24px;
+  padding: 0 22px 0 8px;
+  font-size: 11.5px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23828aa0' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  max-width: 190px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sim2-mini-select:hover:not(:disabled) {
+  border-color: var(--sim2-hover);
+}
+
+.sim2-mini-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
+}
+
+.sim2-mini-select option {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.sim2-chip-hint {
+  color: var(--muted);
+  font-size: 11px;
+  cursor: help;
+}
+
+/* Chip countdown de fenêtre (accentué). */
+.sim2-chip-timer {
+  color: var(--text);
+}
+
+.sim2-chip-timer b {
+  color: var(--accent);
+  font-weight: 650;
+}
+
+/* ─── Rangée KPI ─────────────────────────────────────────────────────── */
+
+.sim2-kpis {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.sim2-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 13px 15px 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color 0.15s ease;
+  min-width: 0;
+}
+
+.sim2-kpi:hover {
+  border-color: var(--sim2-hover);
+}
+
+.sim2-kpi-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.7px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.sim2-kpi-value {
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-variant-numeric: tabular-nums;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sim2-kpi-unit {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.sim2-kpi-sub {
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sim2-kpi-sub b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* KPI Capital éditable : la valeur est un bouton stylé en texte (clic →
+   champ inline) + crayon discret visible au survol. */
+.sim2-kpi-cap-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+  align-self: flex-start;
+  border-bottom: 1px dashed transparent;
+  transition: border-color 0.15s ease, filter 0.15s ease;
+  font-family: inherit;
+}
+
+.sim2-kpi-cap-btn:hover,
+.sim2-kpi-cap-btn:focus-visible {
+  border-bottom-color: currentColor;
+  color: var(--accent);
+  outline: none;
+}
+
+.sim2-kpi-edit {
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-variant-numeric: tabular-nums;
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 0 10px;
+  align-self: flex-start;
+  min-width: 160px;
+  height: 34px;
+}
+
+.sim2-kpi-edit:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
+}
+
+.sim2-pencil {
+  margin-left: auto;
+  opacity: 0;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 3px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.sim2-kpi:hover .sim2-pencil {
+  opacity: 1;
+}
+
+.sim2-pencil:hover:not(:disabled) {
+  color: var(--accent);
+  background: rgba(79, 140, 255, 0.13);
+}
+
+.sim2-spark {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* Tags (latent, % du plafond…). */
+.sim2-tag {
+  font-family: var(--sans, inherit);
+  font-size: 10px;
+  font-weight: 650;
+  padding: 2.5px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.sim2-tag-latent {
+  background: rgba(241, 196, 15, 0.12);
+  color: var(--amber);
+}
+
+.sim2-tag-latent.pos {
+  background: rgba(46, 204, 113, 0.12);
+  color: var(--green);
+}
+
+.sim2-tag-latent.neg {
+  background: rgba(231, 76, 60, 0.12);
+  color: var(--red);
+}
+
+.sim2-tag-ok {
+  background: rgba(46, 204, 113, 0.12);
+  color: var(--green);
+}
+
+/* Barre win/loss (KPI P&L) + barre progression (exposition, fill rate). */
+.sim2-gpbar,
+.sim2-expbar {
+  display: flex;
+  height: 5px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--sim2-track);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.sim2-gpbar-w {
+  display: block;
+  height: 100%;
+  background: var(--green);
+}
+
+.sim2-gpbar-l {
+  display: block;
+  height: 100%;
+  flex: 1;
+  background: var(--red);
+}
+
+.sim2-expbar > i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+/* Jauge + sous-texte winrate (gauche ronde, droite texte). */
+.sim2-wr {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+}
+
+.sim2-wr .sim2-kpi-sub {
+  white-space: normal;
+  overflow: visible;
+  line-height: 1.5;
+}
+
+/* ─── Workspace : flux (1fr) + rail (384px) ──────────────────────────── */
+
+.sim2-work {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 384px;
+  gap: 10px;
+  align-items: start;
+}
+
+.sim2-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.sim2-rail {
+  position: sticky;
+  top: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* ─── Cartes ─────────────────────────────────────────────────────────── */
+
+.sim2-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--sim2-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sim2-card-h {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--sim2-border-soft);
+  flex-wrap: wrap;
+}
+
+.sim2-card-h h2 {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--text);
+}
+
+.sim2-card-note {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.sim2-card-spacer {
+  flex: 1;
+}
+
+.sim2-card-b {
+  padding: 2px 16px 14px;
+}
+
+/* Variante flush (contenu qui gère son propre espacement, ex. ActiveMarkets). */
+.sim2-card-b-flush {
+  padding: 10px;
+}
+
+.sim2-count {
+  font-size: 10.5px;
+}
+
+/* ─── Onglets segmentés ──────────────────────────────────────────────── */
+
+.sim2-seg {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2.5px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.sim2-seg button {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  padding: 4.5px 12px;
+  font-size: 11.5px;
+  font-weight: 550;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+}
+
+.sim2-seg button:hover:not(.on) {
+  color: var(--text);
+}
+
+.sim2-seg button.on {
+  background: var(--panel-2, #1a1f2b);
+  background: #1a1f2b;
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.sim2-seg .n {
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-left: 5px;
+}
+
+/* ─── Courbe de capital ──────────────────────────────────────────────── */
+
+.sim2-equity {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 200px;
+  gap: 16px;
+  padding: 14px 16px 12px;
+}
+
+.sim2-eq-chartwrap {
+  min-width: 0;
+}
+
+.sim2-eq-svg {
+  width: 100%;
+  height: 172px;
+  display: block;
+}
+
+.sim2-axis {
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-size: 9.5px;
+  fill: var(--muted);
+}
+
+.sim2-eq-lastdot {
+  animation: sim2-dot-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes sim2-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.sim2-eq-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding-left: 16px;
+  border-left: 1px solid var(--sim2-border-soft);
+}
+
+.sim2-eq-stat small {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.sim2-eq-stat b {
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+/* ─── Outils historique (recherche, chips, tri) ──────────────────────── */
+
+.sim2-search {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  min-width: 190px;
+  color: var(--muted);
+}
+
+.sim2-search input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.sim2-search input::placeholder {
+  color: var(--muted);
+}
+
+.sim2-fchips {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.sim2-fchip {
+  padding: 4.5px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.sim2-fchip-win {
+  color: var(--green);
+}
+
+.sim2-fchip-loss {
+  color: var(--red);
+}
+
+.sim2-fchip:hover {
+  border-color: var(--sim2-hover);
+  color: var(--text);
+}
+
+.sim2-fchip-on {
+  background: rgba(79, 140, 255, 0.13);
+  border-color: rgba(79, 140, 255, 0.4);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.sim2-sort {
+  padding: 4.5px 11px;
+  border-radius: 999px;
+  border: 1px dashed var(--border);
+  background: transparent;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.sim2-sort:hover {
+  color: var(--text);
+  border-color: var(--sim2-hover);
+}
+
+.sim2-sort-on {
+  border-style: solid;
+  background: rgba(79, 140, 255, 0.13);
+  border-color: rgba(79, 140, 255, 0.4);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ─── Pagination ─────────────────────────────────────────────────────── */
+
+.sim2-pager {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 9px 16px;
+  border-top: 1px solid var(--sim2-border-soft);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.sim2-pager-info b,
+.sim2-pager-info .num {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.sim2-pager-size {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sim2-pager-size select {
+  height: 26px;
+  padding: 0 22px 0 8px;
+  font-size: 11.5px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23828aa0' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+}
+
+.sim2-pbtns {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sim2-pbtns button {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--bg);
+  font-size: 11px;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.sim2-pbtns button:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--sim2-hover);
+}
+
+.sim2-pbtns button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.sim2-pager-page {
+  min-width: 52px;
+  text-align: center;
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ─── Tables ─────────────────────────────────────────────────────────── */
+
+.sim2-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.sim2-table th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.7px;
+  color: var(--muted);
+  text-transform: uppercase;
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--sim2-border-soft);
+  white-space: nowrap;
+  background: var(--panel);
+}
+
+.sim2-table td {
+  text-align: left;
+  padding: 8.5px 10px;
+  border-bottom: 1px solid var(--sim2-border-soft);
+  white-space: nowrap;
+  color: var(--text-2, var(--text));
+  color: #aeb5c4;
+}
+
+.sim2-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.sim2-table tbody tr:not([aria-hidden]):hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sim2-table th.num,
+.sim2-table td.num {
+  text-align: right;
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cellule marché : titre + slug mono en dessous, ellipsis. */
+.sim2-mkt {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.sim2-mkt b {
+  color: var(--text);
+  font-weight: 550;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sim2-mkt small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+/* Chip d'outcome UP / DOWN. */
+.sim2-outcome {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+  background: rgba(139, 147, 163, 0.12);
+  color: var(--muted);
+}
+
+.sim2-outcome i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.sim2-outcome-up {
+  background: rgba(46, 204, 113, 0.12);
+  color: var(--green);
+}
+
+.sim2-outcome-down {
+  background: rgba(231, 76, 60, 0.12);
+  color: var(--red);
+}
+
+/* Tags légers (type d'ordre, moteur). */
+.sim2-tag2 {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  background: var(--bg);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+/* Côté du journal. */
+.sim2-side-buy {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.sim2-side-sell {
+  color: var(--red);
+  font-weight: 600;
+}
+
+/* Pill countdown de clôture. */
+.sim2-cd {
+  display: inline-flex;
+  align-items: center;
+  padding: 2.5px 9px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 11px;
+  font-size: 11px;
+}
+
+.sim2-resting-row {
+  opacity: 0.6;
+}
+
+.sim2-pnl-pct {
+  font-size: 10.5px;
+  opacity: 0.75;
+  font-weight: 400;
+}
+
+/* Header collant + scrollbar fine des tables scrollables (historique). */
+.sim2-table-scroll {
+  scrollbar-width: thin;
+}
+
+.sim2-table-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.sim2-table-scroll::-webkit-scrollbar-thumb {
+  background: #2a303c;
+  border-radius: 999px;
+}
+
+.sim2-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--sim2-hover);
+}
+
+.sim2-table-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--panel);
+  box-shadow: inset 0 -1px 0 var(--sim2-border-soft);
+}
+
+/* ─── Rail Paramètres ────────────────────────────────────────────────── */
+
+.sim2-set-h {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 16px 0;
+  flex-wrap: wrap;
+}
+
+.sim2-set-h h2 {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--text);
+}
+
+/* Badge « modifié » (dirty) du rail. */
+.sim2-dirty {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 650;
+  color: var(--amber);
+  background: rgba(241, 196, 15, 0.12);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.sim2-set-hint {
+  margin: 6px 16px 0;
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.sim2-set-reset {
+  padding: 4px 10px;
+  font-size: 11.5px;
+}
+
+.sim2-set-search {
+  padding: 10px 16px 8px;
+}
+
+.sim2-search-full {
+  min-width: 0;
+  width: 100%;
+}
+
+/* Sections accordéon du rail. */
+.sim2-acc {
+  border-top: 1px solid var(--sim2-border-soft);
+}
+
+.sim2-acc:first-of-type {
+  border-top: 1px solid var(--border);
+}
+
+.sim2-acc-h {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+
+.sim2-acc-h:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sim2-acc-chev {
+  color: var(--muted);
+  font-size: 11px;
+  transition: transform 0.18s ease;
+  flex-shrink: 0;
+}
+
+.sim2-acc.open .sim2-acc-chev {
+  transform: rotate(90deg);
+  color: var(--accent);
+}
+
+.sim2-acc-t {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sim2-acc-meta {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.sim2-acc-off {
+  border: 1px solid var(--border);
+  padding: 1.5px 7px;
+  border-radius: 999px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 650;
+}
+
+.sim2-acc-off-yes {
+  color: var(--green);
+  border-color: rgba(46, 204, 113, 0.4);
+  background: rgba(46, 204, 113, 0.1);
+}
+
+.sim2-acc-b {
+  padding: 0 16px 12px;
+}
+
+/* Grille 2 colonnes compacte des champs. */
+.sim2-acc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 10px;
+}
+
+.sim2-acc-grid-dim .sim2-fld:not(.sim2-switch-row) {
+  opacity: 0.45;
+}
+
+/* Champ de paramètre. */
+.sim2-fld {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.sim2-fld label,
+.sim2-fld {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.sim2-fld input,
+.sim2-fld select {
+  height: 28px;
+  padding: 0 9px;
+  font-size: 12px;
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+}
+
+.sim2-fld input:hover:not(:focus):not(:disabled),
+.sim2-fld select:hover:not(:focus):not(:disabled) {
+  border-color: var(--sim2-hover);
+}
+
+.sim2-fld input:focus,
+.sim2-fld select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
+}
+
+.sim2-fld input.input-error,
+.sim2-fld select.input-error,
+.sim2-fld input[type="number"].input-error {
+  border-color: var(--red);
+}
+
+.sim2-fld input::placeholder {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Select custom + options sombres. */
+.sim2-fld select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: inherit;
+  font-size: 11.5px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23828aa0' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 24px;
+}
+
+.sim2-fld select option {
+  background: var(--panel);
+  color: var(--text);
+}
+
+/* Masque les spinners des champs numbers (cohérence visuelle). */
+.sim2-fld input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.sim2-fld input[type="number"]::-webkit-outer-spin-button,
+.sim2-fld input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Checkbox standalone (rare — hors switch). */
+.sim2-check {
+  width: 16px;
+  height: 16px;
+  margin: 2px 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.sim2-check:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Champ atténué quand le module de la section est désactivé. */
+.sim2-fld-dim {
+  opacity: 0.45;
+}
+
+/* Ligne switch (checkbox d'activation d'une section). */
+.sim2-switch-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  background: var(--bg);
+  border: 1px solid var(--sim2-border-soft);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 11.5px;
+  color: var(--text);
+  opacity: 1 !important;
+}
+
+/* Interrupteur CSS pur (input[type=checkbox] restylé). */
+.sim2-switch {
+  appearance: none;
+  -webkit-appearance: none;
+  margin-left: auto;
+  width: 30px;
+  height: 17px;
+  border-radius: 999px;
+  background: var(--sim2-track);
+  border: 1px solid var(--border);
+  position: relative;
+  cursor: pointer;
+  transition: 0.15s ease;
+  flex-shrink: 0;
+}
+
+.sim2-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2.5px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: 0.15s ease;
+}
+
+.sim2-switch:checked {
+  background: rgba(46, 204, 113, 0.3);
+  border-color: rgba(46, 204, 113, 0.5);
+}
+
+.sim2-switch:checked::after {
+  left: 15px;
+  background: var(--green);
+}
+
+.sim2-switch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.field-error {
+  color: var(--red);
+  font-size: 10px;
+}
+
+/* Ligne statut whipsaw compacte (section Filtre whipsaw du rail). */
+.sim2-whip-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  padding: 7px 10px;
+  background: var(--bg);
+  border: 1px solid var(--sim2-border-soft);
+  border-radius: 8px;
+  margin-bottom: 2px;
+}
+
+.sim2-whip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  font-weight: 650;
+  padding: 2.5px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.sim2-whip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.sim2-whip-badge.active {
+  color: var(--amber);
+  background: rgba(241, 196, 15, 0.12);
+  border-color: rgba(241, 196, 15, 0.4);
+}
+
+.sim2-whip-badge.ready {
+  color: var(--green);
+  background: rgba(46, 204, 113, 0.1);
+  border-color: rgba(46, 204, 113, 0.35);
+}
+
+.sim2-whip-badge.disabled {
+  color: var(--muted);
+}
+
+.sim2-whip-badge.active .sim2-whip-dot {
+  animation: sim2-whip-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes sim2-whip-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.sim2-whip-note {
+  font-size: 11px;
+  color: var(--muted);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.sim2-whip-reset {
+  padding: 3px 9px;
+  font-size: 10.5px;
+}
+
+/* ── Presets utilisateur (rail) ──────────────────────────────────────── */
+
+.sim2-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sim2-preset-add {
+  align-self: flex-start;
+  padding: 5px 10px;
+  font-size: 11.5px;
+}
+
+.sim2-preset-save {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sim2-preset-save input {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  padding: 0 9px;
+  font-size: 12px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+
+.sim2-preset-save input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
+}
+
+.sim2-preset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sim2-preset-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  transition: border-color 0.15s ease;
+}
+
+.sim2-preset-item:hover {
+  border-color: var(--sim2-hover);
+}
+
+.sim2-preset-name {
+  font-size: 12px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sim2-preset-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.sim2-btn-xs {
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.sim2-btn-danger {
+  color: var(--red);
+}
+
+.sim2-btn-danger:hover {
+  border-color: rgba(231, 76, 60, 0.45);
+}
+
+/* ── Footer du rail (Réinitialiser / Appliquer) ──────────────────────── */
+
+.sim2-set-foot {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.sim2-set-foot-note {
+  margin-right: auto;
+  font-size: 10px;
+  color: var(--muted);
+  max-width: 190px;
+}
+
+.sim2-set-apply {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ─── Variantes de boutons propre à la page ──────────────────────────── */
+
+/* Action secondaire discrète (Réinitialiser, Charger, Annuler…). */
+.btn.btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.btn.btn-ghost:hover:not(:disabled) {
+  border-color: var(--sim2-hover);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Action destructive secondaire : contour rouge, jamais de fond plein. */
+.btn.danger {
+  background: transparent;
+  border-color: rgba(231, 76, 60, 0.45);
+  color: var(--red);
+}
+
+.btn.danger:hover:not(:disabled) {
+  background: rgba(231, 76, 60, 0.1);
+  border-color: var(--red);
+}
+
+/* ─── Chevron / panneaux pliables (Panel — partagé toutes les pages) ── */
+
 .collapse-chevron {
   display: inline-block;
   color: var(--accent);
@@ -947,43 +1551,6 @@
   transform: rotate(90deg);
 }
 
-/* Corps : marge au-dessus pour respirer sous le header plié. */
-.collapsible-body {
-  margin-top: 8px;
-}
-
-/* Variante boxed : la section EST la carte (historique à onglets). Header
-   collé en haut. */
-.collapsible-section.boxed {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--panel);
-  padding: 16px;
-}
-
-.collapsible-section.boxed .collapsible-header {
-  padding: 0 0 10px;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--border);
-  border-radius: 0;
-  margin-bottom: 12px;
-}
-
-.collapsible-section.boxed .collapsible-header:hover {
-  border-color: var(--border);
-}
-
-.collapsible-section.boxed .collapsible-header:hover .collapsible-title {
-  color: var(--text);
-}
-
-.collapsible-section.boxed .collapsible-body {
-  margin-top: 0;
-}
-
-/* Panneaux pliables du composant Panel (positions ouvertes, ordres en
-   attente, marché actif) : le h2 devient la zone cliquable. */
 .panel-collapsible > h2 {
   display: flex;
   align-items: center;
@@ -996,17 +1563,71 @@
   color: var(--text);
 }
 
-/* Header du panneau Paramètres (plié) : le titre redevient cliquable —
-   la carte garde sa structure existante. */
-.sim-5m-config-panel .sim-5m-cp-header {
-  cursor: pointer;
-  user-select: none;
+/* ─── Responsive ─────────────────────────────────────────────────────── */
+
+@media (max-width: 1280px) {
+  .sim2-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sim2-work {
+    grid-template-columns: 1fr;
+  }
+
+  .sim2-rail {
+    position: static;
+  }
 }
 
-.sim-5m-config-panel .sim-5m-cp-header:hover .sim-5m-cp-title {
-  color: var(--text);
+@media (max-width: 860px) {
+  .sim2-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sim2-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .sim2-topbar-actions {
+    margin-left: 0;
+  }
+
+  .sim2-equity {
+    grid-template-columns: 1fr;
+  }
+
+  .sim2-eq-stats {
+    border-left: none;
+    border-top: 1px solid var(--sim2-border-soft);
+    padding-left: 0;
+    padding-top: 12px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .sim2-card-h {
+    align-items: flex-start;
+  }
+
+  .sim2-card-h .sim2-seg {
+    order: 10;
+  }
 }
 
-/* Sections internes du panneau Paramètres : le corps entier bascule d'un
-   coup (le pliage par sous-section est couvert par les « Filtres inactifs »
-   et par la section elle-même). */
+@media (prefers-reduced-motion: reduce) {
+  .sim2-badge.on .sim2-badge-dot,
+  .sim2-eq-lastdot,
+  .sim2-whip-badge.active .sim2-whip-dot {
+    animation: none;
+  }
+
+  .sim2-acc-chev,
+  .sim2-switch,
+  .sim2-switch::after,
+  .collapse-chevron {
+    transition: none;
+  }
+}

@@ -369,6 +369,9 @@
   border-bottom: 1px dashed transparent;
   transition: border-color 0.15s ease, filter 0.15s ease;
   font-family: inherit;
+  /* Texte stylé en bouton sans reset UA : le navigateur applique
+     color: buttontext (noir) — force la couleur du thème. */
+  color: var(--text);
 }
 
 .sim2-kpi-cap-btn:hover,
@@ -634,6 +637,7 @@
 
 .sim2-eq-chartwrap {
   min-width: 0;
+  position: relative;
 }
 
 .sim2-eq-svg {
@@ -683,6 +687,35 @@
 .sim2-eq-stat b {
   font-size: 14.5px;
   font-weight: 600;
+}
+
+/* Tooltip de survol de la courbe (overlay HTML au-dessus du SVG — le texte
+   d'un <div> n'est jamais étiré contrairement à un <text> dans un SVG
+   preserveAspectRatio="none"). Positionné en px, clampé dans la carte. */
+.sim2-eq-tip {
+  position: absolute;
+  top: 6px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 11px;
+  font-size: 11.5px;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 5;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.sim2-eq-tip small {
+  color: var(--muted);
+  font-size: 10px;
 }
 
 /* ─── Outils historique (recherche, chips, tri) ──────────────────────── */

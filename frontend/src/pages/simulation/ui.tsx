@@ -11,13 +11,6 @@ export function clamp01(v: number): number {
   return Math.min(1, Math.max(0, v));
 }
 
-/** fmtUsd compact pour les axes de courbe (pas de décimales au-delà de 1k). */
-export function fmtUsdCompact(v: number): string {
-  const n = Math.abs(v);
-  if (n >= 1000) return `$${(v / 1000).toFixed(1)}k`;
-  return `$${v.toFixed(0)}`;
-}
-
 /** Jauge circulaire (winrate…). value ∈ [0,1]. */
 export function RingGauge(props: { value: number; label: string; class?: string }): JSX.Element {
   const C = 2 * Math.PI * 16;

@@ -153,6 +153,17 @@ export class PaperTradingEngine {
     if (patch.strategyId || patch.presetId !== undefined || patch.settings) {
       const strategyId = patch.strategyId ?? this.effectiveConfig.strategyId;
       const presetId = patch.presetId === undefined ? this.simConfig?.presetId : patch.presetId;
+      // Re-commande IDENTIQUE sans settings (select moteur/preset re-émit sur
+      // la même valeur) : no-op — return avant la sémantique « REMPLACE tout »
+      // ci-dessous, qui purgerait simConfig.settings et détruirait sans raison
+      // les éditions du rail Paramètres (bug « whipsaw coché perdu au F5 »).
+      if (
+        !patch.settings &&
+        (!patch.strategyId || patch.strategyId === this.effectiveConfig.strategyId) &&
+        (presetId ?? null) === (this.presetId ?? null)
+      ) {
+        return;
+      }
       // Sémantique du patch :
       //  - preset explicite (ou null) SANS settings → REMPLACE tout : les
       //    settings hérités d'un preset/édition précédent sont purgés, sinon

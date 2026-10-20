@@ -185,6 +185,50 @@ describe("PaperTradingEngine", () => {
     repos.db.close();
   });
 
+  it("applyConfig identique (même preset, sans settings) préserve les éditions du rail", () => {
+    const repos = simRepos();
+    const engine = new PaperTradingEngine(baseConfig(), repos);
+    engine.init();
+    // Édition runtime (rail Paramètres, ex : whipsaw coché) — persiste dans le blob.
+    engine.applyConfig({
+      strategyId: "fav-band",
+      presetId: "fav-band",
+      settings: { favBandWhipsawEnabled: true },
+    });
+    assert.ok(
+      engine.getEffectiveConfig().favBandWhipsawEnabled,
+      "whipsaw doit être actif après l'édition",
+    );
+    // Re-sélection du MÊME preset dans la barre de contexte (sans settings) :
+    // no-op — le blob ne doit PAS être purgé.
+    engine.applyConfig({ strategyId: "fav-band", presetId: "fav-band" });
+    assert.ok(
+      engine.getEffectiveConfig().favBandWhipsawEnabled,
+      "re-sélectionner le même preset doit préserver les éditions du rail",
+    );
+    // Reload/restart : re-init sur la même DB, l'édition doit survivre.
+    const reloaded = new PaperTradingEngine(baseConfig(), repos);
+    reloaded.init();
+    assert.ok(
+      reloaded.getEffectiveConfig().favBandWhipsawEnabled,
+      "l'édition doit survivre à l'init sur le blob persisté",
+    );
+    // Contrôle inverse : switch vers un AUTRE preset purge bien les settings
+    // (bug « panneau ne suit pas le select » : le vieux patch primerait sinon).
+    const engine3 = new PaperTradingEngine(baseConfig(), repos);
+    engine3.init();
+    engine3.applyConfig({ strategyId: "fav-band", presetId: "fav-band-opt" });
+    const blob3 = JSON.parse(
+      repos.simState.get("simConfigJson") ?? "null",
+    ) as { settings?: Record<string, unknown> } | null;
+    assert.equal(
+      blob3?.settings ?? undefined,
+      undefined,
+      "un preset différent doit purger les settings hérités",
+    );
+    repos.db.close();
+  });
+
   it("resolveDue purge les GTC resting dont la fenêtre est passée", async () => {
     const repos = simRepos();
     const slug = "btc-updown-5m-1700000000";

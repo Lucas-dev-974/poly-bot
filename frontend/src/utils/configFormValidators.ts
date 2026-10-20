@@ -9,6 +9,21 @@ function parseNum(raw: string, label: string): number {
   return parsed;
 }
 
+/**
+ * Miroir validateEngineBudget (src/utils/prices.ts) : le budget doit atteindre
+ * MIN_CLOB_SHARES (5) au pire prix de la bande, cap maxShares — le backend
+ * refuse le PATCH sinon (« moteur muet »). Retourne le message d'erreur ou
+ * null si viable. La formule est exactement computeSize.
+ */
+function budgetError(budget: number, bandMax: number, maxSharesRaw: string, label: string): string | null {
+  const cap = Number(maxSharesRaw);
+  const capped = Number.isFinite(cap) && cap > 0 ? cap : Number.MAX_SAFE_INTEGER;
+  const px = Math.max(bandMax, 0.01);
+  const size = Math.floor(Math.min(budget / px, capped) * 100) / 100;
+  if (size >= 5) return null;
+  return `Min ${Math.ceil(5 * px * 100) / 100} USDC (5 shares au pire prix ${px.toFixed(2)})`;
+}
+
 export function validateConfigForm(
   form: ConfigFormState,
   isBacktest: boolean,
@@ -73,6 +88,34 @@ export function validateConfigForm(
         if (!(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
           errors.push("Ratio hedge doit être dans (0, 1]");
         }
+        // Miroir backend : viabilité du budget cheap barbell à cheapBuyMax.
+        const bBarbell = budgetError(
+          Number(form.barbellCheapOrderUsdc),
+          cheapBuyMax,
+          form.maxSharesPerOrder,
+          "barbell cheap",
+        );
+        if (bBarbell) errors.push(bBarbell);
+      }
+      if (form.strategyId === "reverse") {
+        // Miroir backend : viabilité du budget cheap reverse à cheapBuyMax.
+        const bReverse = budgetError(
+          Number(form.reverseCheapOrderUsdc),
+          cheapBuyMax,
+          form.maxSharesPerOrder,
+          "reverse cheap",
+        );
+        if (bReverse) errors.push(bReverse);
+      }
+      if (form.strategyId.startsWith("custom:")) {
+        // Miroir backend : budget custom > 0, viable au pire prix 0.99.
+        const cBudget = Number(form.customOrderUsdc);
+        if (!Number.isFinite(cBudget) || cBudget <= 0) {
+          errors.push("Custom: budget doit être > 0");
+        } else {
+          const b = budgetError(cBudget, 0.99, form.maxSharesPerOrder, "custom graph");
+          if (b) errors.push(b);
+        }
       }
     }
     if (minutesBeforeCloseMin > minutesBeforeCloseMax) {
@@ -106,6 +149,14 @@ export function validateConfigForm(
       }
       if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed > 900) {
         errors.push("Fav-band: min elapsed entre 0 et 900");
+      }
+      // Miroir backend : budget > 0 + viabilité 5 shares au pire askMax.
+      const fbBudget = Number(form.favBandOrderUsdc);
+      if (!Number.isFinite(fbBudget) || fbBudget <= 0) {
+        errors.push("Fav-band: budget doit être > 0");
+      } else {
+        const b = budgetError(fbBudget, Number(form.favBandAskMax), form.maxSharesPerOrder, "fav-band");
+        if (b) errors.push(b);
       }
       if (form.favBandMaxElapsedSec.trim() !== "") {
         const maxE = Number(form.favBandMaxElapsedSec);
@@ -163,6 +214,10 @@ export function validateConfigForm(
           const swBudget = Number(form.favBandExitSwitchOrderUsdc);
           if (!Number.isFinite(swBudget) || swBudget <= 0) {
             errors.push("Fav-band exit switch: budget doit être > 0");
+          } else {
+            // Pire cas prix côté opposé : anywhere in (0, 1) → 0.99 (backend).
+            const b = budgetError(swBudget, 0.99, form.maxSharesPerOrder, "fav-band exit switch");
+            if (b) errors.push(b);
           }
           const maxPos = Number(form.maxOpenPositionsPerSide);
           if (Number.isFinite(maxPos) && maxPos < 2) {
@@ -202,6 +257,9 @@ export function validateConfigForm(
       }
       if (!Number.isFinite(budget) || budget <= 0) {
         errors.push("Dip-revert: budget doit être > 0");
+      } else {
+        const b = budgetError(budget, hi, form.maxSharesPerOrder, "dip-revert");
+        if (b) errors.push(b);
       }
       if (form.dipRevertExitTakeProfitEnabled) {
         const tpAsk = Number(form.dipRevertExitWinAsk);
@@ -243,6 +301,16 @@ export function validateConfigForm(
       }
       if (!Number.isFinite(budget) || budget <= 0) {
         errors.push("Antiflip: budget doit être > 0");
+      } else {
+        const b = budgetError(budget, hi, form.maxSharesPerOrder, "antiflip");
+        if (b) errors.push(b);
+      }
+      // Miroir backend : antiflipFavAskMin < antiflipFavAskMax (bande favori
+      // du nouveau favori — absente du front jusqu'ici → 400 au clic).
+      const favLo = Number(form.antiflipFavAskMin);
+      const favHi = Number(form.antiflipFavAskMax);
+      if (!Number.isFinite(favLo) || !Number.isFinite(favHi) || favLo >= favHi) {
+        errors.push("Antiflip: fav ask min doit être < fav ask max");
       }
       // Miroir backend (config.ts) : bounceFloor null ou dans la bande.
       if (form.antiflipBounceFloor.trim() !== "") {
@@ -279,6 +347,9 @@ export function validateConfigForm(
       }
       if (!Number.isFinite(budget) || budget <= 0) {
         errors.push("Flip-confirm: budget doit être > 0");
+      } else {
+        const b = budgetError(budget, hi, form.maxSharesPerOrder, "flip-confirm");
+        if (b) errors.push(b);
       }
     }
     if (form.strategyId === "early-conviction") {
@@ -301,6 +372,9 @@ export function validateConfigForm(
       }
       if (!Number.isFinite(budget) || budget <= 0) {
         errors.push("Early-conviction: budget doit être > 0");
+      } else {
+        const b = budgetError(budget, hi, form.maxSharesPerOrder, "early-conviction");
+        if (b) errors.push(b);
       }
     }
     if (form.strategyId === "early-low") {
@@ -325,6 +399,9 @@ export function validateConfigForm(
       }
       if (!Number.isFinite(budget) || budget <= 0) {
         errors.push("Early-low: budget doit être > 0");
+      } else {
+        const b = budgetError(budget, hi, form.maxSharesPerOrder, "early-low");
+        if (b) errors.push(b);
       }
       if (form.earlyLowExitEnabled) {
         if (!Number.isFinite(exitAsk) || exitAsk <= 0 || exitAsk >= 1) {
@@ -363,6 +440,11 @@ export function validateConfigForm(
       }
       if (!Number.isFinite(budget) || budget <= 0) {
         errors.push("Open-entry: budget doit être > 0");
+      } else {
+        // Pire prix d'entrée : (fair sum max - 1) / 2 + 0.5 (backend).
+        const worst = (fair - 1) / 2 + 0.5;
+        const b = budgetError(budget, worst, form.maxSharesPerOrder, "open-entry");
+        if (b) errors.push(b);
       }
       if (!Number.isFinite(flipDist) || flipDist <= 0 || flipDist > 1) {
         errors.push("Open-entry: SL struct flip dist entre 0 (exclu) et 1");
@@ -415,6 +497,9 @@ export function validateConfigForm(
       }
       if (!Number.isFinite(orderUsdc) || orderUsdc <= 0) {
         errors.push("Repricing: order USDC doit être > 0");
+      } else {
+        const b = budgetError(orderUsdc, pEntryMax, form.maxSharesPerOrder, "repricing");
+        if (b) errors.push(b);
       }
       if (!Number.isFinite(targetAbs) || targetAbs <= 0 || targetAbs > 1) {
         errors.push("Repricing: target abs entre 0 (exclu) et 1");
@@ -494,6 +579,10 @@ export function validateConfigForm(
       }
       if (edgeCheapOrderUsdc <= 0) {
         errors.push("Budget cheap doit être > 0");
+      } else {
+        // Miroir backend : viabilité 5 shares à edgeCheapBandMax.
+        const b = budgetError(edgeCheapOrderUsdc, edgeCheapBandMax, form.maxSharesPerOrder, "edge cheap");
+        if (b) errors.push(b);
       }
       if (edgeCheapBandMin >= edgeCheapBandMax) {
         errors.push("Cheap band min doit être < cheap band max");
@@ -650,6 +739,30 @@ export function fieldErrors(
         if (Number.isFinite(barbellHedgeRatio) && !(barbellHedgeRatio > 0 && barbellHedgeRatio <= 1)) {
           result.barbellHedgeRatio = "Doit être dans (0, 1]";
         }
+        const bBarbell = budgetError(
+          Number(form.barbellCheapOrderUsdc),
+          cheapBuyMax,
+          form.maxSharesPerOrder,
+          "barbell cheap",
+        );
+        if (bBarbell) result.barbellCheapOrderUsdc = bBarbell;
+      }
+      if (form.strategyId === "reverse") {
+        const bReverse = budgetError(
+          Number(form.reverseCheapOrderUsdc),
+          cheapBuyMax,
+          form.maxSharesPerOrder,
+          "reverse cheap",
+        );
+        if (bReverse) result.reverseCheapOrderUsdc = bReverse;
+      }
+      if (form.strategyId.startsWith("custom:")) {
+        const cBudget = Number(form.customOrderUsdc);
+        if (!Number.isFinite(cBudget) || cBudget <= 0) result.customOrderUsdc = "> 0";
+        else {
+          const b = budgetError(cBudget, 0.99, form.maxSharesPerOrder, "custom graph");
+          if (b) result.customOrderUsdc = b;
+        }
       }
     }
     if (Number.isFinite(minutesBeforeCloseMin) && Number.isFinite(minutesBeforeCloseMax) && minutesBeforeCloseMin > minutesBeforeCloseMax) {
@@ -718,6 +831,10 @@ export function fieldErrors(
       if (Number.isFinite(edgeOrderUsdc) && edgeOrderUsdc <= 0) result.edgeOrderUsdc = "> 0";
       if (Number.isFinite(maxShareEdge) && maxShareEdge < 1) result.maxShareEdge = "≥ 1";
       if (Number.isFinite(edgeCheapOrderUsdc) && edgeCheapOrderUsdc <= 0) result.edgeCheapOrderUsdc = "> 0";
+      else if (Number.isFinite(edgeCheapOrderUsdc)) {
+        const b = budgetError(edgeCheapOrderUsdc, edgeCheapBandMax, form.maxSharesPerOrder, "edge cheap");
+        if (b) result.edgeCheapOrderUsdc = b;
+      }
       if (Number.isFinite(edgeCheapBandMin) && Number.isFinite(edgeCheapBandMax)) {
         if (edgeCheapBandMin >= edgeCheapBandMax) result.edgeCheapBandMax = "Max doit être > min";
         if (edgeCheapBandMin < 0.01 || edgeCheapBandMax > 0.49) result.edgeCheapBandMin = "Bande dans [0.01, 0.49]";
@@ -754,6 +871,14 @@ export function fieldErrors(
       }
       if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed > 900) {
         result.favBandMinElapsedSec = "Entre 0 et 900";
+      }
+      // Miroir backend : budget > 0 + viabilité 5 shares au pire askMax.
+      const fbBudget = Number(form.favBandOrderUsdc);
+      if (!Number.isFinite(fbBudget) || fbBudget <= 0) {
+        result.favBandOrderUsdc = "> 0";
+      } else {
+        const b = budgetError(fbBudget, hi, form.maxSharesPerOrder, "fav-band");
+        if (b) result.favBandOrderUsdc = b;
       }
       if (form.favBandMaxElapsedSec.trim() !== "") {
         const maxE = Number(form.favBandMaxElapsedSec);
@@ -813,6 +938,9 @@ export function fieldErrors(
           const swBudget = Number(form.favBandExitSwitchOrderUsdc);
           if (!Number.isFinite(swBudget) || swBudget <= 0) {
             result.favBandExitSwitchOrderUsdc = "> 0";
+          } else {
+            const b = budgetError(swBudget, 0.99, form.maxSharesPerOrder, "fav-band exit switch");
+            if (b) result.favBandExitSwitchOrderUsdc = b;
           }
           const maxPos = Number(form.maxOpenPositionsPerSide);
           if (Number.isFinite(maxPos) && maxPos < 2) {
@@ -847,6 +975,10 @@ export function fieldErrors(
       }
       if (!Number.isFinite(spread) || spread < 0) result.dipRevertMaxSpread = ">= 0";
       if (!Number.isFinite(budget) || budget <= 0) result.dipRevertOrderUsdc = "> 0";
+      else {
+        const b = budgetError(budget, hi, form.maxSharesPerOrder, "dip-revert");
+        if (b) result.dipRevertOrderUsdc = b;
+      }
     }
     if (form.strategyId === "antiflip-revert") {
       const lo = Number(form.antiflipBandMin);
@@ -876,6 +1008,16 @@ export function fieldErrors(
       }
       if (!Number.isFinite(spread) || spread < 0) result.antiflipMaxSpread = ">= 0";
       if (!Number.isFinite(budget) || budget <= 0) result.antiflipOrderUsdc = "> 0";
+      else {
+        const b = budgetError(budget, hi, form.maxSharesPerOrder, "antiflip");
+        if (b) result.antiflipOrderUsdc = b;
+      }
+      // Miroir backend : antiflipFavAskMin < antiflipFavAskMax.
+      const favLo = Number(form.antiflipFavAskMin);
+      const favHi = Number(form.antiflipFavAskMax);
+      if (Number.isFinite(favLo) && Number.isFinite(favHi) && favLo >= favHi) {
+        result.antiflipFavAskMin = "Doit être < fav ask max";
+      }
       const tp = Number(form.antiflipTakeProfitPct);
       if (!Number.isFinite(tp) || tp < 0 || tp > 0.9) {
         result.antiflipTakeProfitPct = "Entre 0 et 0.9 (0 = hold to resolution)";
@@ -917,6 +1059,10 @@ export function fieldErrors(
       }
       if (!Number.isFinite(spread) || spread < 0) result.flipConfirmMaxSpread = ">= 0";
       if (!Number.isFinite(budget) || budget <= 0) result.flipConfirmOrderUsdc = "> 0";
+      else {
+        const b = budgetError(budget, hi, form.maxSharesPerOrder, "flip-confirm");
+        if (b) result.flipConfirmOrderUsdc = b;
+      }
     }
     if (form.strategyId === "early-conviction") {
       const lo = Number(form.earlyConvictionAskMin);
@@ -935,6 +1081,10 @@ export function fieldErrors(
       }
       if (!Number.isFinite(spread) || spread < 0) result.earlyConvictionMaxSpread = ">= 0";
       if (!Number.isFinite(budget) || budget <= 0) result.earlyConvictionOrderUsdc = "> 0";
+      else {
+        const b = budgetError(budget, hi, form.maxSharesPerOrder, "early-conviction");
+        if (b) result.earlyConvictionOrderUsdc = b;
+      }
     }
     if (form.strategyId === "early-low") {
       const lo = Number(form.earlyLowBuyAskMin);
@@ -952,6 +1102,10 @@ export function fieldErrors(
       }
       if (!Number.isFinite(spread) || spread < 0) result.earlyLowMaxSpread = ">= 0";
       if (!Number.isFinite(budget) || budget <= 0) result.earlyLowOrderUsdc = "> 0";
+      else {
+        const b = budgetError(budget, hi, form.maxSharesPerOrder, "early-low");
+        if (b) result.earlyLowOrderUsdc = b;
+      }
       if (form.earlyLowExitEnabled) {
         if (!Number.isFinite(exitAsk) || exitAsk <= 0 || exitAsk >= 1) { result.earlyLowExitAsk = "En (0, 1)"; }
         else if (Number.isFinite(hi) && exitAsk <= hi) { result.earlyLowExitAsk = "> bande max d'achat"; }
@@ -980,6 +1134,11 @@ export function fieldErrors(
       }
       if (!Number.isFinite(spread) || spread < 0) result.openEntryMaxSpread = ">= 0";
       if (!Number.isFinite(budget) || budget <= 0) result.openEntryOrderUsdc = "> 0";
+      else {
+        const worst = (fair - 1) / 2 + 0.5; // pire prix d'entrée (backend)
+        const b = budgetError(budget, worst, form.maxSharesPerOrder, "open-entry");
+        if (b) result.openEntryOrderUsdc = b;
+      }
       if (!Number.isFinite(flipDist) || flipDist <= 0 || flipDist > 1) {
         result.openEntrySlStructFlipDist = "Entre 0 (exclu) et 1";
       }
@@ -1029,7 +1188,13 @@ export function fieldErrors(
         result.repricingPEntryMax = "Entre 0 (exclu) et 1";
       }
       if (!Number.isFinite(edgeMin) || edgeMin < 0) result.repricingEdgeMin = ">= 0";
-      if (!Number.isFinite(orderUsdc) || orderUsdc <= 0) result.repricingOrderUsdc = "> 0";
+      if (!Number.isFinite(orderUsdc) || orderUsdc <= 0) {
+        result.repricingOrderUsdc = "> 0";
+      } else {
+        // Miroir backend : viabilité 5 shares au pire prix pEntryMax.
+        const b = budgetError(orderUsdc, pEntryMax, form.maxSharesPerOrder, "repricing");
+        if (b) result.repricingOrderUsdc = b;
+      }
       if (!Number.isFinite(targetAbs) || targetAbs <= 0 || targetAbs > 1) {
         result.repricingTargetAbs = "Entre 0 (exclu) et 1";
       }

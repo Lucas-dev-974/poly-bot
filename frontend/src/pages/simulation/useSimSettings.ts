@@ -121,7 +121,22 @@ export function useSimSettings(opts: {
   // est disponible, quel que soit le moteur actif.
   const sim5mBase = createMemo(() => simEffectiveConfig());
   const formErrors = createMemo(() => (sim5mForm() ? fieldErrors(sim5mForm()!, true) : {}));
-  const hasErrors = createMemo(() => Object.keys(formErrors()).length > 0);
+  /** Filet de sécurité : formToSettings (sérialiseur vers le backend) peut
+   * throw sur des valeurs que fieldErrors ne couvre pas (champ numérique vidé
+   * ou non numérique sur une clé sans check dédié). Sans ce filet, le bouton
+   * restait ACTIVÉ et le throw n'apparaissait qu'au clic (toast après-coup).
+   * Le message devient une erreur bloquante affichée au footer. */
+  const parseBlocker = createMemo(() => {
+    const form = sim5mForm();
+    if (!form) return null;
+    try {
+      formToSettings(form);
+      return null;
+    } catch (e) {
+      return toMessage(e);
+    }
+  });
+  const hasErrors = createMemo(() => Object.keys(formErrors()).length > 0 || parseBlocker() != null);
 
   /** Re-remplit le form dès que la config effective CHANGE DE CONTENU
    * (preset/strategy switché depuis un select, la barre de contexte ou un
@@ -294,6 +309,9 @@ export function useSimSettings(opts: {
     const errs = formErrors() as Partial<Record<keyof ConfigFormState, string>>;
     const sections = railSections();
     const out: Array<{ key: string; section: string; label: string; msg: string }> = [];
+    // Filet parse (champs non couverts par fieldErrors) en tête de liste.
+    const blocker = parseBlocker();
+    if (blocker != null) out.push({ key: "", section: "Valeurs", label: "Valeur invalide", msg: blocker });
     for (const [key, msg] of Object.entries(errs)) {
       if (!msg) continue;
       const field = sections.flatMap((s) => s.fields).find((f) => f.key === key);

@@ -258,15 +258,29 @@ export function useSimSettings(opts: {
   });
 
   /** Liste des accordéons du rail : communs + spécifiques au moteur actif ; les
-   * filtres 5m antiflip et les presets utilisateur sont gérés séparément. */
+   * filtres 5m antiflip et les presets utilisateur sont gérés séparément.
+   * CACHE identité : le memo lit sim5mForm() (toute édition de champ le
+   * re-déclenche) mais retourne la MÊME référence tant que strategyId n'a pas
+   * changé — sans cela chaque édition produisait des objets de section neufs
+   * et <For> (diff par référence) re-monter TOUTES les sections moteur :
+   * perte de focus des inputs à chaque frappe + re-fetch
+   * /api/sim/strategy-status (SimWhipsawStatus remonté à chaque édition). */
+  let railCache: { strategy: string; sections: SimSection[] } | null = null;
   const railSections = createMemo<SimSection[]>(() => {
     const strategy = sim5mForm()?.strategyId ?? "arb";
-    const engineSections: SimSection[] = paramSectionsFor(strategy).map((s) => ({
-      id: slugOf(s.title),
-      title: s.title,
-      fields: s.fields,
-    }));
-    return [...commonRailSections(), ...engineSections];
+    if (railCache?.strategy === strategy) return railCache.sections;
+    railCache = {
+      strategy,
+      sections: [
+        ...commonRailSections(),
+        ...paramSectionsFor(strategy).map((s) => ({
+          id: slugOf(s.title),
+          title: s.title,
+          fields: s.fields,
+        })),
+      ],
+    };
+    return railCache.sections;
   });
 
   /** Erreurs aplaties avec la section qui porte le champ — pour le résumé du

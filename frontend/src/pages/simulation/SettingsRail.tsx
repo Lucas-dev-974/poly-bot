@@ -120,7 +120,7 @@ export function SettingsRail(props: { ctrl: SimControl }): JSX.Element {
           <button
             type="button"
             class="btn btn-ghost sim2-set-reset"
-            disabled={props.ctrl.sending()}
+            disabled={props.ctrl.sending() || set.dirtyCount() === 0}
             onClick={() => set.resetForm()}
           >
             Réinitialiser
@@ -372,13 +372,19 @@ export function SettingsRail(props: { ctrl: SimControl }): JSX.Element {
           </div>
         </div>
 
-        {/* Footer du rail : réinitialiser + appliquer */}
+        {/* Footer du rail : réinitialiser + appliquer — le bouton n'est actif
+            QUE si des edits existent (dirtyCount > 0) et sans erreur bloquante :
+            au load il est grisé ("aucune modification"), et une édition avec
+            erreur (ex : Hedge inverse + max positions < 2) le garde grisé avec
+            le résumé des erreurs à corriger. */}
         <div class="sim2-set-foot">
           <Show
             when={set.hasErrors() && set.errorList().length > 0}
             fallback={
               <span class="sim2-set-foot-note">
-                l'application remplace l'ensemble des settings du moteur
+                {set.dirtyCount() === 0
+                  ? "aucune modification à appliquer"
+                  : "l'application remplace l'ensemble des settings du moteur"}
               </span>
             }
           >
@@ -396,7 +402,7 @@ export function SettingsRail(props: { ctrl: SimControl }): JSX.Element {
           <button
             type="button"
             class="btn btn-primary sim2-set-apply"
-            disabled={props.ctrl.sending() || set.hasErrors()}
+            disabled={props.ctrl.sending() || set.hasErrors() || set.dirtyCount() === 0}
             onClick={() => void set.applySettings()}
           >
             Appliquer au moteur

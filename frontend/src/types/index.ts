@@ -375,6 +375,8 @@ export interface BotConfig {
   simResolveFallback: "none" | "probabilistic";
   simMaxRetryAttempts: number;
   simRandomSeed?: string;
+  /** Cadence d'ingestion du moteur sim (ms) — null/0 = suivre le bot. */
+  simIngestIntervalMs: number | null;
   relayerHost: string;
   autoRedeemWinners: boolean;
   dbPath: string;

@@ -40,6 +40,7 @@ export const EDITABLE_CONFIG_KEYS = [
   "simResolveFallback",
   "simMaxRetryAttempts",
   "simRandomSeed",
+  "simIngestIntervalMs",
   "edgeBandMin",
   "edgeBandMax",
   "edgeConfirmSamples",
@@ -219,6 +220,7 @@ export const EDITABLE_ENV_ALIASES: Record<EditableConfigKey, string> = {
   simResolveFallback: "SIM_RESOLVE_FALLBACK",
   simMaxRetryAttempts: "SIM_MAX_RETRY_ATTEMPTS",
   simRandomSeed: "SIM_RANDOM_SEED",
+  simIngestIntervalMs: "SIM_INGEST_INTERVAL_MS",
   edgeBandMin: "EDGE_BAND_MIN",
   edgeBandMax: "EDGE_BAND_MAX",
   edgeConfirmSamples: "EDGE_CONFIRM_SAMPLES",
@@ -577,6 +579,7 @@ function parseField(key: EditableConfigKey, value: unknown): RuntimeSettingsPatc
       return parseEnum(value, ["shares", "pusd", "dynamic"] as const, key);
     case "minMinutesBeforeCloseToBuy":
     case "edgeAskSumMax":
+    case "simIngestIntervalMs":
     case "arbAskSumMax":
     case "arbAskLockMinElapsedSec":
     case "arbAskLockMaxImbalance":

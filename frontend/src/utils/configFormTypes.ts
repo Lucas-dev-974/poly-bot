@@ -37,6 +37,7 @@ export type ConfigFormState = {
   simResolveFallback: "none" | "probabilistic";
   simMaxRetryAttempts: string;
   simRandomSeed: string;
+  simIngestIntervalMs: string;
   edgeBandMin: string;
   edgeBandMax: string;
   edgeConfirmSamples: string;

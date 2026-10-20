@@ -53,7 +53,14 @@ export function SimulationPage(): JSX.Element {
     return list[0] ?? null;
   });
   const marketsLabel = createMemo(() => simEffectiveConfig()?.marketSlugPrefixes?.join(", ") || "—");
-  const scanLabel = createMemo(() => simEffectiveConfig()?.pollIntervalMs ?? "—");
+  /** Cadence affichée : celle du sim si définie (throttle), sinon celle du bot. */
+  const scanLabel = createMemo(() => {
+    const c = simEffectiveConfig();
+    if (!c) return "—";
+    return c.simIngestIntervalMs != null && c.simIngestIntervalMs > 0
+      ? String(c.simIngestIntervalMs)
+      : `${c.pollIntervalMs} (bot)`;
+  });
 
   onMount(() => {
     void ctrl.reload();

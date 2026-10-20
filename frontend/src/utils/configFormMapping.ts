@@ -51,6 +51,8 @@ export function configToForm(config: BotConfig): ConfigFormState {
     simResolveFallback: config.simResolveFallback,
     simMaxRetryAttempts: String(config.simMaxRetryAttempts),
     simRandomSeed: config.simRandomSeed ?? "",
+    simIngestIntervalMs:
+      config.simIngestIntervalMs == null ? "" : String(config.simIngestIntervalMs),
     edgeBandMin: String(config.edgeBandMin),
     edgeBandMax: String(config.edgeBandMax),
     edgeConfirmSamples: String(config.edgeConfirmSamples),
@@ -286,6 +288,10 @@ export function formToSettings(form: ConfigFormState): Partial<BotConfig> {
     simResolveFallback: form.simResolveFallback,
     simMaxRetryAttempts: parseNum(form.simMaxRetryAttempts, "Max retry attempts"),
     simRandomSeed: form.simRandomSeed.trim() === "" ? undefined : form.simRandomSeed.trim(),
+    simIngestIntervalMs:
+      form.simIngestIntervalMs.trim() === ""
+        ? null
+        : parseNum(form.simIngestIntervalMs, "Cadence d'ingestion sim"),
     edgeBandMin: parseNum(form.edgeBandMin, "Edge band min"),
     edgeBandMax: parseNum(form.edgeBandMax, "Edge band max"),
     edgeConfirmSamples: parseNum(form.edgeConfirmSamples, "Edge confirm samples"),

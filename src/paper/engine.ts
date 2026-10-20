@@ -51,6 +51,8 @@ export class PaperTradingEngine {
   /** Dernier bid connu par slug (positionsValue latente pour simBalance). */
   private lastBids = new Map<string, number>();
   private restingSyncedSlugs = new Set<string>();
+  /** Dernier tick INGÉRÉ (d2 — throttle simIngestIntervalMs). */
+  private lastIngestMs = 0;
   private timers: Array<ReturnType<typeof setInterval>> = [];
 
   constructor(
@@ -123,6 +125,17 @@ export class PaperTradingEngine {
 
   isEnabled(): boolean {
     return this.enabled;
+  }
+
+  /**
+   * d1 — allow-list d'ingestion des marchés (config SIM). Miroir exact du
+   * filtre de scan du bot live (matchesSlugPrefixes — startsWith sur chaque
+   * préfixe) pour une sémantique homogène entre les deux mondes.
+   */
+  private simSlugAllowed(slug: string): boolean {
+    const prefixes = this.effectiveConfig.marketSlugPrefixes;
+    if (!prefixes || prefixes.length === 0) return true;
+    return prefixes.some((prefix) => slug.startsWith(prefix));
   }
 
   setEnabled(enabled: boolean): void {
@@ -233,6 +246,22 @@ export class PaperTradingEngine {
     if (!this.restingSyncedSlugs.has(event.slug)) {
       this.syncRestingFromTracker(event);
       this.restingSyncedSlugs.add(event.slug);
+    }
+
+    // d1 — allow-list d'ingestion (config SIM, marketSlugPrefixes) : les books
+    // d'un slug hors liste sont ignorés. Miroir du filtre de scan du bot
+    // (matchesSlugPrefixes, utils/market.ts) — liste vide/absente = tout
+    // ingérer (rétro-compat vieux blobs). Les GTC d'un marché retiré restent
+    // sans match puis expirent au sweep resolveDue (fenêtre + 60 s).
+    if (!this.simSlugAllowed(event.slug)) return;
+
+    // d2 — cadence d'ingestion propre au sim (simIngestIntervalMs) :
+    // échantillonnage indépendant de la cadence du bot qui alimente onBooks.
+    // null/0 = traiter chaque tick (comportement d'origine).
+    const ingestInterval = this.effectiveConfig.simIngestIntervalMs;
+    if (ingestInterval != null && ingestInterval > 0) {
+      if (nowMs - this.lastIngestMs < ingestInterval) return;
+      this.lastIngestMs = nowMs;
     }
 
     // trading:false bloque les NOUVELLES entrées (allowNewEntries) mais laisse

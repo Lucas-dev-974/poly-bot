@@ -133,6 +133,11 @@ export function validateConfigForm(
     if (simResolveRetryIntervalMs < 500) {
       errors.push("Resolve retry interval doit être ≥ 500 ms");
     }
+    // Cadence d'ingestion sim : vide = suivre le bot live ; sinon ≥ 100 ms.
+    const simIngest = Number(form.simIngestIntervalMs);
+    if (form.simIngestIntervalMs.trim() !== "" && (!Number.isFinite(simIngest) || simIngest < 100)) {
+      errors.push("Cadence d'ingestion sim : vide (suivre le bot) ou ≥ 100");
+    }
     if (!isBacktest && form.simResolveFallback === "probabilistic") {
       errors.push("Resolve fallback probabilistic interdit en mode live");
     }
@@ -793,6 +798,14 @@ export function fieldErrors(
     else if (simResolveDelaySeconds < 0) result.simResolveDelaySeconds = "≥ 0";
     if (!Number.isFinite(simResolveMaxRetries)) result.simResolveMaxRetries = "Nombre invalide";
     else if (simResolveMaxRetries < 0) result.simResolveMaxRetries = "≥ 0";
+
+    // Cadence d'ingestion sim : vide = suivre le bot live ; sinon ≥ 100 ms.
+    if (form.simIngestIntervalMs.trim() !== "") {
+      const ingest = Number(form.simIngestIntervalMs);
+      if (!Number.isFinite(ingest) || ingest < 100) {
+        result.simIngestIntervalMs = "Vide (suivre le bot) ou ≥ 100";
+      }
+    }
     if (!Number.isFinite(simMaxRetryAttempts)) result.simMaxRetryAttempts = "Nombre invalide";
     else if (simMaxRetryAttempts < 0) result.simMaxRetryAttempts = "≥ 0";
     if (!Number.isFinite(simulatedCapital)) result.simulatedCapital = "Nombre invalide";

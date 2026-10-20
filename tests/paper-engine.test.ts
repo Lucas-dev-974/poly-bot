@@ -19,6 +19,9 @@ function simRepos() {
 function baseConfig(): BotConfig {
   return {
     ...strategyDefaults(),
+    // Aligne la config de scan (miroir sim du filtre du bot live) sur les
+    // slugs 5m des events de test (le défaut strategyDefaults = 15m).
+    marketSlugPrefixes: ["btc-updown-5m"],
     simulatedCapital: 1000,
     strategyId: "arb",
     // Clé/funder factices : la validation exige leur présence, mais la
@@ -183,6 +186,75 @@ describe("PaperTradingEngine", () => {
     engine.applyConfig({ strategyId: "barbell" });
     assert.equal(engine.getState().strategyId, "barbell");
     repos.db.close();
+  });
+
+  it("d1 — allow-list marchés sim : les slugs hors liste ne sont pas ingérés", () => {
+    const repos = simRepos();
+    // Allow-list sim = eth : les books btc arrivés du bot live sont ignorés.
+    const engine = new PaperTradingEngine(
+      { ...baseConfig(), marketSlugPrefixes: ["eth-updown-5m"] } as unknown as BotConfig,
+      repos,
+    );
+    engine.init();
+    engine.setEnabled(true);
+    engine.onBooks(event(Date.now() / 1000 + 240), books(0.1, 0.88), Date.now());
+    assert.equal(
+      engine.getOpenPositions().length,
+      0,
+      "slug btc hors allow-list sim → tick ignoré",
+    );
+    // Contrôle : avec le préfixe btc autorisé, la même opportunité est traitée.
+    const repos2 = simRepos();
+    const engineOk = new PaperTradingEngine(
+      { ...baseConfig(), marketSlugPrefixes: ["btc-updown"] } as unknown as BotConfig,
+      repos2,
+    );
+    engineOk.init();
+    engineOk.setEnabled(true);
+    engineOk.onBooks(event(Date.now() / 1000 + 240), books(0.1, 0.88), Date.now());
+    assert.ok(
+      engineOk.getOpenPositions().length >= 1,
+      "slug autorisé (préfixe) → traité normalement",
+    );
+    repos.db.close();
+    repos2.db.close();
+  });
+
+  it("d2 — cadence d'ingestion sim : throttle indépendant du bot, null = suivre", () => {
+    const repos = simRepos();
+    // Interval déraisonnablement long : après le 1er tick, tout est throttlé.
+    const engine = new PaperTradingEngine(
+      { ...baseConfig(), simIngestIntervalMs: 10_000_000 } as unknown as BotConfig,
+      repos,
+    );
+    engine.init();
+    engine.setEnabled(true);
+    const t0 = Date.now();
+    const nowSec = Math.floor(t0 / 1000);
+    const ev1 = event(nowSec + 240);
+    engine.onBooks(ev1, books(0.1, 0.88), t0);
+    assert.ok(engine.getOpenPositions().length >= 1, "1er tick traité");
+    const countBefore = engine.getOpenPositions().length;
+    // Fenêtre DIFFÉRENTE 1 ms plus tard (dédup pas en cause) → throttlée.
+    const ev2 = event(nowSec + 480);
+    engine.onBooks(ev2, books(0.1, 0.88), t0 + 1);
+    assert.equal(
+      engine.getOpenPositions().length,
+      countBefore,
+      "tick sous l'interval → ignoré",
+    );
+    // Défaut (null) : chaque tick est ingéré — une fenêtre neuve s'ouvre.
+    const repos2 = simRepos();
+    const engineDefault = new PaperTradingEngine(baseConfig(), repos2);
+    engineDefault.init();
+    engineDefault.setEnabled(true);
+    engineDefault.onBooks(ev2, books(0.1, 0.88), t0 + 2);
+    assert.ok(
+      engineDefault.getOpenPositions().length >= 1,
+      "simIngestIntervalMs null → chaque tick ingéré (comportement d'origine)",
+    );
+    repos.db.close();
+    repos2.db.close();
   });
 
   it("applyConfig identique (même preset, sans settings) préserve les éditions du rail", () => {

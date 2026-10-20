@@ -145,6 +145,13 @@ export interface BotConfig {
   simResolveFallback: "probabilistic" | "none";
   simMaxRetryAttempts: number;
   simRandomSeed?: string;
+  /**
+   * Cadence d'ingestion du moteur sim (ms) — paramètre SIM ONLY, ignoré du
+   * bot live (omis de keysForStrategy). null/0 = traiter chaque tick du bot
+   * (comportement d'origine) ; sinon le sim échantillonne à son propre
+   * rythme, indépendant de la cadence de scan du bot live.
+   */
+  simIngestIntervalMs: number | null;
   dbPath: string;
   persistenceEnabled: boolean;
   builderApiKey?: string;
@@ -571,6 +578,7 @@ export function strategyDefaults(): RuntimeSettingsPatch &
     simResolveFallback: "none",
     simMaxRetryAttempts: 20,
     simRandomSeed: undefined,
+    simIngestIntervalMs: null,
     edgeBandMin: 0.85,
     edgeBandMax: 0.9,
     edgeConfirmSamples: 5,
@@ -923,6 +931,10 @@ export function validateConfigCoherence(
   }
   if (config.pollIntervalMs < 500) {
     throw new Error("POLL_INTERVAL_MS must be >= 500");
+  }
+  // Paramètre SIM ONLY (ingestion) : null/0 = suivre le bot ; sinon ≥ 100 ms.
+  if (config.simIngestIntervalMs != null && config.simIngestIntervalMs < 100) {
+    throw new Error("SIM_INGEST_INTERVAL_MS must be null/0 or >= 100 (sim ingestion guard)");
   }
   if (config.wsBookMaxAgeMs < 500) {
     throw new Error("WS_BOOK_MAX_AGE_MS must be >= 500");

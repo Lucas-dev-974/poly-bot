@@ -1569,6 +1569,23 @@
   max-width: 190px;
 }
 
+/* Résumé des erreurs bloquantes (le bouton Appliquer est grisé) : une erreur
+   peut vivre dans une autre section que le champ édité (ex : Hedge inverse →
+   Max positions des Garde-fous, accordion replié) — résumé visible au footer. */
+.sim2-set-err {
+  margin-right: auto;
+  max-width: 340px;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--red);
+  font-weight: 500;
+}
+
+.sim2-set-err b {
+  font-weight: 650;
+  color: var(--text);
+}
+
 .sim2-set-apply {
   padding: 6px 14px;
   font-size: 12px;

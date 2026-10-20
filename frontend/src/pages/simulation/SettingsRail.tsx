@@ -374,9 +374,25 @@ export function SettingsRail(props: { ctrl: SimControl }): JSX.Element {
 
         {/* Footer du rail : réinitialiser + appliquer */}
         <div class="sim2-set-foot">
-          <span class="sim2-set-foot-note">
-            l'application remplace l'ensemble des settings du moteur
-          </span>
+          <Show
+            when={set.hasErrors() && set.errorList().length > 0}
+            fallback={
+              <span class="sim2-set-foot-note">
+                l'application remplace l'ensemble des settings du moteur
+              </span>
+            }
+          >
+            <span class="sim2-set-err" role="alert">
+              <For each={set.errorList()}>
+                {(e, i) => (
+                  <>
+                    <Show when={i() > 0}> · </Show>
+                    <b title={`Section : ${e.section}`}>{e.label}</b> {e.msg}
+                  </>
+                )}
+              </For>
+            </span>
+          </Show>
           <button
             type="button"
             class="btn btn-primary sim2-set-apply"

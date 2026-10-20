@@ -71,6 +71,9 @@ export interface SimSettings {
   /** Erreurs de validation par clé de champ. */
   fieldError(key: keyof ConfigFormState): string | undefined;
   hasErrors(): boolean;
+  /** Erreurs bloquantes, aplaties — section du champ, libellé et message —
+   * pour le résumé du footer. */
+  errorList(): Array<{ key: string; section: string; label: string; msg: string }>;
   /** Nombre de champs édités non appliqués. */
   dirtyCount(): number;
   /** Recherche rail (filtre les champs par libellé). */
@@ -266,6 +269,31 @@ export function useSimSettings(opts: {
     return [...commonRailSections(), ...engineSections];
   });
 
+  /** Erreurs aplaties avec la section qui porte le champ — pour le résumé du
+   * footer : une erreur peut vivre dans UNE AUTRE section que le champ édité
+   * (ex : Hedge inverse → « Max positions par côté ≥ 2 » des Garde-fous,
+   * replié par défaut — sans résumé l'utilisateur ne comprend pas pourquoi
+   * le bouton Appliquer est désactivé). Déclaré APRÈS railSections (lit son
+   * memo) et jamais exécuté pendant le setup : le form est null au montage. */
+  const errorList = createMemo(() => {
+    if (!sim5mForm()) return [];
+    const errs = formErrors() as Partial<Record<keyof ConfigFormState, string>>;
+    const sections = railSections();
+    const out: Array<{ key: string; section: string; label: string; msg: string }> = [];
+    for (const [key, msg] of Object.entries(errs)) {
+      if (!msg) continue;
+      const field = sections.flatMap((s) => s.fields).find((f) => f.key === key);
+      const section = field ? sections.find((s) => s.fields.includes(field)) : undefined;
+      out.push({
+        key,
+        section: section?.title ?? "Paramètres",
+        label: field?.label ?? key, // clé brute si le champ n'est pas exposé au rail
+        msg,
+      });
+    }
+    return out;
+  });
+
   // État des accordéons : persisté localStorage (ids ouverts). Défaut = les
   // sections communes + la première section moteur ouverts.
   const ACC_STORAGE_KEY = "sim-acc-open";
@@ -340,6 +368,7 @@ export function useSimSettings(opts: {
     strategyId: () => sim5mForm()?.strategyId ?? "",
     fieldError,
     hasErrors,
+    errorList,
     dirtyCount,
     searchQuery: settingsQuery,
     setSearchQuery: setSettingsQuery,

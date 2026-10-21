@@ -35,6 +35,7 @@ import type { SimulatedPosition } from "./types";
 import { Topbar } from "./pages/dashboard/Topbar";
 import { ContextBar } from "./pages/dashboard/ContextBar";
 import { KpiStrip } from "./pages/dashboard/KpiStrip";
+import "./styles/dash.css";
 
 export function App(): JSX.Element {
   // Horloge globale partagée (tick 1 s) — countdowns des panneaux.
@@ -180,7 +181,7 @@ export function App(): JSX.Element {
   );
 
   return (
-    <>
+    <div class="dash-shell">
       <Topbar
         onOpenWallet={() => setWalletOpen(true)}
         onOpenRecording={() => setRecordingOpen(true)}
@@ -256,6 +257,6 @@ export function App(): JSX.Element {
         }}
         onCancel={() => setConfirmDiscardSettings(false)}
       />
-    </>
+    </div>
   );
 }

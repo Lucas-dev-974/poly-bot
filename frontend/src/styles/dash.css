@@ -1,0 +1,34 @@
+/* Dashboard (/) — écarts de séparation propres à la page.
+   ------------------------------------------------------------ +
+   Le dashboard n'utilise PAS .sim2-shell (la page /simulation garde ce
+   socle à gap 10px) : il définit son shell ici, avec des sections plus
+   aérées. Les surcharges ciblent .dash-shell > classes sim2 (spécificité
+   0,2,0 > 0,1,0) : indépendantes de l'ordre CSS dans le bundle.
+   Espacement multiple de 4 (convention sim2).
+*/
+
+.dash-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* Chips de contexte un peu plus détachées (la rangée est pleine à 1500px). */
+.dash-shell .sim2-context {
+  gap: 10px;
+}
+
+/* Rangée KPI : cartes séparées. */
+.dash-shell .sim2-kpis {
+  gap: 12px;
+}
+
+/* Workspace : séparation nette colonne principale / rail Journal. */
+.dash-shell .sim2-work {
+  gap: 16px;
+}
+
+.dash-shell .sim2-main {
+  gap: 14px;
+}

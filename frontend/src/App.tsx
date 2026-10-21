@@ -34,6 +34,7 @@ import { ContextBar } from "./pages/dashboard/ContextBar";
 import { KpiStrip } from "./pages/dashboard/KpiStrip";
 import { HistoryCard } from "./pages/dashboard/HistoryCard";
 import "./styles/dash.css";
+import { toMessage } from "./utils/display";
 
 export function App(): JSX.Element {
   // Horloge globale partagée (tick 1 s) — countdowns des panneaux.
@@ -133,7 +134,7 @@ export function App(): JSX.Element {
       });
     } catch (e) {
       failRedeem(conditionId);
-      const message = e instanceof Error ? e.message : String(e);
+      const message = toMessage(e);
       addLog("Erreur lors de la clôture : " + message, undefined, true);
       pushError("Redeem échoué : " + message);
       notifyError("Redeem échoué : " + p.outcome, message);
@@ -161,7 +162,7 @@ export function App(): JSX.Element {
       });
       await syncPositions();
     } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
+      const message = toMessage(e);
       addLog("Erreur fermeture manuelle : " + message, undefined, true);
       pushError(message, { group: "position-close", replaceGroup: true });
       notifyError("Clôture manuelle échouée", message);

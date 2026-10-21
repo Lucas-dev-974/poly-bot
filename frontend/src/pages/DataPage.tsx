@@ -3,6 +3,7 @@ import type { JSX } from "solid-js";
 import { api } from "../api/client";
 import { navigate } from "../router";
 import "../styles/data.css";
+import { toMessage } from "../utils/display";
 
 interface DbTableStat {
   name: string;
@@ -146,7 +147,7 @@ export function DataPage(): JSX.Element {
       const data = await api.dbTables();
       setTables(data.tables);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(toMessage(e));
     } finally {
       setLoading(false);
       setRefreshing(false);

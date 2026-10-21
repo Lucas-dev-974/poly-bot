@@ -1,15 +1,3 @@
-import { Show, createMemo, createSignal, onMount } from "solid-js";
-import type { JSX } from "solid-js";
-import { api } from "../../api/client";
-import { addLog } from "../../stores/logStore";
-import { simWhipsaw, simRemainingMsAt, setSimWhipsaw } from "../../stores/simWhipsawStore";
-import { useClock, clockNow } from "../../stores/clockStore";
-import { pushError } from "../../stores/toastStore";
-
-function toMessage(e: unknown): string {
-  return e instanceof Error ? e.message : String(e);
-}
-
 /**
  * Statut compact « Filtre whipsaw » (page Simulation, paper trading) —
  * ligne compacte intégrée à la section « Filtre whipsaw » du rail
@@ -18,12 +6,21 @@ function toMessage(e: unknown): string {
  * /api/sim/strategy-status au montage. La pause est armée par les pertes
  * des positions SIMULÉES (tracker sim), indépendante du bot live.
  * Masqué si le statut est null (moteur sim ≠ fav-band, ou pas encore reçu).
+ *
+ * La logique dérivée (classe de badge, countdown, seuil) est dans
+ * `useWhipsawView` — partagée avec le panneau LIVE.
  */
+import { Show, createSignal, onMount } from "solid-js";
+import type { JSX } from "solid-js";
+import { api } from "../../api/client";
+import { addLog } from "../../stores/logStore";
+import { simWhipsaw, simRemainingMsAt, setSimWhipsaw } from "../../stores/simWhipsawStore";
+import { pushError } from "../../stores/toastStore";
+import { toMessage } from "../../utils/display";
+import { useWhipsawView } from "./useWhipsawView";
+
 export function SimWhipsawStatus(): JSX.Element {
   const [resetting, setResetting] = createSignal(false);
-
-  // Horloge globale partagée (tick 1 s) pour le countdown client.
-  useClock();
 
   // Hydratation initiale : un seul GET au montage (le ring buffer SSE peut
   // être vide juste après le boot, le premier event n'arrive qu'au prochain
@@ -39,45 +36,17 @@ export function SimWhipsawStatus(): JSX.Element {
     })();
   });
 
-  // Snapshot live du store SSE. `null` = moteur sim ≠ fav-band → masqué.
-  const snap = createMemo(() => simWhipsaw());
-  const status = createMemo(() => snap()?.status ?? null);
+  const view = useWhipsawView(simWhipsaw, simRemainingMsAt);
 
-  // Countdown ancré : remainingMs mesuré à receivedAt, décrémenté par
-  // l'horloge locale (simRemainingMsAt lit aussi le snapshot → réactif).
-  const remainingMs = createMemo(() => {
-    const s = status();
-    if (!s) return null;
-    void clockNow(); // réactivité 1 s
-    return simRemainingMsAt(clockNow());
-  });
-
-  const badgeClass = createMemo(() => {
-    const s = status();
-    if (!s) return "unknown";
-    if (!s.enabled) return "disabled";
-    if (s.active) return "active";
-    return "ready";
-  });
-
-  const remainingText = createMemo(() => {
-    const ms = remainingMs();
-    if (ms == null || !status()?.active) return null;
-    const remaining = Math.max(0, Math.ceil(ms / 1000));
-    const m = Math.floor(remaining / 60);
-    const sec = remaining % 60;
-    return `${m}:${sec.toString().padStart(2, "0")}`;
-  });
-
-  const statusText = createMemo(() => {
-    const s = status();
+  const statusText = (): string | null => {
+    const s = view.status();
     if (!s || !s.enabled) return null;
-    if (s.active) return `Pause active — ${remainingText() ?? "—"} restants`;
-    if (s.lossStreak > 0 && s.pauseAfterLosses != null && s.lossStreak >= s.pauseAfterLosses) {
+    if (s.active) return `Pause active — ${view.remainingText() ?? "—"} restants`;
+    if (view.thresholdReached()) {
       return `Seuil atteint (${s.lossStreak}/${s.pauseAfterLosses}) — la prochaine perte déclenche la pause`;
     }
     return `Actif — série de pertes : ${s.lossStreak}/${s.pauseAfterLosses ?? "—"}`;
-  });
+  };
 
   async function handleReset(): Promise<void> {
     if (resetting()) return;
@@ -99,13 +68,13 @@ export function SimWhipsawStatus(): JSX.Element {
   }
 
   return (
-    <Show when={status()}>
+    <Show when={view.status()}>
       {(s) => (
         <div class="sim2-whip-row">
-          <span class={`sim2-whip-badge ${badgeClass()}`}>
+          <span class={`sim2-whip-badge ${view.badgeClass()}`}>
             <span class="sim2-whip-dot" aria-hidden="true" />
             <Show when={s().enabled} fallback={<span>Désactivé</span>}>
-              <span>{badgeClass() === "active" ? `Pause ${remainingText() ?? "—"}` : "Whipsaw prêt"}</span>
+              <span>{view.badgeClass() === "active" ? `Pause ${view.remainingText() ?? "—"}` : "Whipsaw prêt"}</span>
             </Show>
           </span>
           <span

@@ -9,7 +9,7 @@ import {
   requestNotifyPermission,
   type NotifyPref,
 } from "../../utils/notifications";
-import { Sim2Card } from "../../pages/dashboard/ui";
+import { Sim2Card } from "../ui/Sim2Card";
 
 /** Button label for the current notification preference. */
 function notifyLabel(pref: NotifyPref): string {

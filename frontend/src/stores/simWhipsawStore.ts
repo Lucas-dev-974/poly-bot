@@ -1,31 +1,13 @@
-import { createSignal } from "solid-js";
-import type { FavBandWhipsawStatus } from "../types";
-
 /**
- * Dernier statut whipsaw du moteur paper (event SSE `simStrategyStatus`,
- * émis toutes les 5 s par le moteur sim, comme le live). `receivedAt` ancre
- * le countdown client : remainingMs est mesuré à l'émission, décrémenté par
- * l'horloge locale entre deux events. `null` = moteur sim ≠ fav-band (ou
- * statut non encore reçu) → le panneau Simulation masque l'entry.
+ * Store du statut whipsaw du moteur PAPER (fav-band).
+ * Event SSE `simStrategyStatus` (toutes les 5 s) + GET
+ * /api/sim/strategy-status. La pause est armée par les pertes des positions
+ * SIMULÉES, jamais par le live.
  */
-interface SimWhipsawSnapshot {
-  status: FavBandWhipsawStatus | null;
-  receivedAt: number;
-}
+import { createWhipsawStore } from "./whipsawStore";
 
-const [simWhipsaw, setSimWhipsawRaw] = createSignal<SimWhipsawSnapshot | null>(null);
+const store = createWhipsawStore();
 
-export { simWhipsaw };
-
-export function setSimWhipsaw(status: FavBandWhipsawStatus | null): void {
-  setSimWhipsawRaw({ status, receivedAt: Date.now() });
-}
-
-/** ResteMs réel, décrémenté par l'horloge locale depuis la réception. */
-export function simRemainingMsAt(now: number): number | null {
-  const snap = simWhipsaw();
-  const s = snap?.status;
-  if (!snap || !s) return null;
-  const elapsed = Math.max(0, now - snap.receivedAt);
-  return Math.max(0, s.remainingMs - elapsed);
-}
+export const simWhipsaw = store.snapshot;
+export const setSimWhipsaw = store.set;
+export const simRemainingMsAt = store.remainingMsAt;

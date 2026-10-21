@@ -15,7 +15,7 @@ import type { Accessor } from "solid-js";
 import type { EquityStats } from "../../utils/equity";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { dateTimeStr, fmtUsd, fmtUsdCompact } from "../../utils/format";
-import { pnlClass } from "../simPageHelpers";
+import { pnlClass } from "../../utils/display";
 
 const H = 172;
 /** Marge horizontale du tracé. */

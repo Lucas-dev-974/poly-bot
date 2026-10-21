@@ -9,6 +9,7 @@ import type {
   MarketRuleRow,
   MarketRulesResponse,
 } from "../../types";
+import { toMessage } from "../../utils/display";
 
 const STORAGE_KEY = "market-recording.lastPrefix";
 // Multi-timeframe : la durée fait partie du préfixe (15m, 5m, 1h…).
@@ -39,7 +40,7 @@ export function MarketRecordingModal(props: {
     } catch (e) {
       addLog(
         "Enregistrements : échec du chargement — " +
-          (e instanceof Error ? e.message : String(e)),
+          (toMessage(e)),
         undefined,
         true,
       );
@@ -66,7 +67,7 @@ export function MarketRecordingModal(props: {
       setNewPrefix("");
       await refresh();
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
+      const msg = toMessage(e);
       addLog("Erreur d'ajout : " + msg, undefined, true);
       pushError(msg, { group: "market-rule-add", replaceGroup: true });
       notifyError("Ajout famille échoué", msg);
@@ -95,7 +96,7 @@ export function MarketRecordingModal(props: {
       if (r.warning) addLog(r.warning, undefined, true);
       await refresh();
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
+      const msg = toMessage(e);
       addLog("Erreur de toggle : " + msg, undefined, true);
       pushError(msg, { group: "market-rule-toggle", replaceGroup: true });
       notifyError("Changement refusé", msg);

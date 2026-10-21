@@ -13,6 +13,7 @@ import { orders, replaceOrders } from "../../stores/orderStore";
 import { addLog } from "../../stores/logStore";
 import { countdown, fmtPrice, formatReturnPct } from "../../utils/format";
 import { reasonLabel } from "../../utils/helpers";
+import { toMessage } from "../../utils/display";
 
 /** Statut « rejeté » du dashboard : non rempli, ni GTC en attente, ni annulé. */
 function isRejected(o: { filled: boolean; reason?: string }): boolean {
@@ -34,7 +35,7 @@ export function RecentOrdersBody(props: { now: number }): JSX.Element {
     } catch (e) {
       addLog(
         "Purge des rejetés impossible : " +
-          (e instanceof Error ? e.message : String(e)),
+          (toMessage(e)),
         undefined,
         true,
       );

@@ -10,8 +10,8 @@
  */
 import type { JSX } from "solid-js";
 import { Show, createMemo } from "solid-js";
-import { RingGauge, clamp01 } from "../simulation/ui";
-import { pnlClass } from "../simPageHelpers";
+import { RingGauge, clamp01 } from "../../components/ui/sim2Widgets";
+import { pnlClass } from "../../utils/display";
 import { globalStats } from "../../stores/statsStore";
 import { liveBalance } from "../../stores/balanceStore";
 import { config } from "../../stores/botStore";

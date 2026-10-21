@@ -2,9 +2,8 @@ import { For, Index, Show, createMemo, createSignal } from "solid-js";
 import { LazyMarketHistoryModal } from "../modals/LazyMarketHistoryModal";
 import { marketToChartTarget } from "../../utils/chart-target-adapters";
 import type { JSX } from "solid-js";
-import { Badge } from "../ui/Badge";
 import { EmptyState } from "../ui/EmptyState";
-import { Sim2Card } from "../../pages/dashboard/ui";
+import { Sim2Card } from "../ui/Sim2Card";
 import { marketList } from "../../stores/marketStore";
 import {
   ruleFor,
@@ -15,6 +14,7 @@ import { countdownClass, prefixOfSlug } from "../../utils/market";
 import { api } from "../../api/client";
 import { pushInfo } from "../../stores/toastStore";
 import type { MarketView, TokenBook } from "../../types";
+import { ChartButtonEmoji } from "../ui/sim2Widgets";
 
 /** Minimum CLOB : un ordre sous 5 shares est refusé par le venue. */
 const MIN_SHARES = 5;
@@ -122,7 +122,7 @@ function OutcomeTile(props: {
       <div class="am-outcome__head">
         <span class="am-outcome__name">{props.book.outcome}</span>
         <div class="am-outcome__head-right">
-          <Badge variant={role()}>{role()}</Badge>
+          <span class={`badge ${role()}`}>{role()}</span>
         </div>
       </div>
       <div class="am-prices">
@@ -348,15 +348,11 @@ export function ActiveMarkets(props: { now: number }): JSX.Element {
                       >
                         {isTradable(m.slug) ? "trade" : "no-trade"}
                       </span>
-                      <button
-                        class="chart-btn"
-                        type="button"
+                      <ChartButtonEmoji
                         title={m.books.length > 0 ? "Voir le graphique" : "Données indisponibles"}
                         disabled={m.books.length === 0}
                         onClick={() => setChartMarket(m)}
-                      >
-                        📊
-                      </button>
+                      />
                     </div>
                   </header>
                   <Show

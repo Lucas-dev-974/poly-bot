@@ -11,6 +11,7 @@
 import type { JSX } from "solid-js";
 import { For, Show, createMemo, createSignal } from "solid-js";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { Sim2Card, Sim2Tabs } from "../../components/ui/Sim2Card";
 import type { ChartTarget } from "../../types";
 import { simTradeToChartTarget, simulatedPositionToChartTarget } from "../../utils/chart-target-adapters";
 import { useClock, clockNow } from "../../stores/clockStore";
@@ -25,8 +26,8 @@ import {
   simResolvedPositions,
 } from "../../stores/simStore";
 import { pushError } from "../../stores/toastStore";
-import { countdownClass, pnlClass } from "../simPageHelpers";
-import { GraphButton, OutcomeChip } from "./ui";
+import { pnlClass } from "../../utils/display";
+import { GraphButton, OutcomeChip } from "../../components/ui/sim2Widgets";
 import { fmtPrice, fmtShares, fmtUsd, timeStr } from "../../utils/format";
 import type { SimControl } from "./useSimControl";
 
@@ -115,76 +116,76 @@ export function HistoryCard(props: {
   const journalWindow = useTableWindow(() => journalFiltered().length, { rowHeight: 34, maxHeightPx: 480 });
   const resolvedWindow = useTableWindow(() => resolvedFiltered().length, { rowHeight: 34, maxHeightPx: 480 });
 
-  return (
-    <section class="sim2-card">
-      <div class="sim2-card-h">
-        <h2>Historique</h2>
-        <div class="sim2-seg" role="tablist">
-          <button
-            role="tab"
-            classList={{ on: historyTab() === "resolved" }}
-            onClick={() => setHistoryTab("resolved")}
-          >
-            Résolues <span class="n">{props.ctrl.resolvedCount()}</span>
-          </button>
-          <button
-            role="tab"
-            classList={{ on: historyTab() === "journal" }}
-            onClick={() => setHistoryTab("journal")}
-          >
-            Journal <span class="n">{simJournal().length}</span>
-          </button>
-        </div>
-        <span class="sim2-card-spacer" />
-        <div class="sim2-search">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <circle cx="11" cy="11" r="7" />
-            <path d="M20 20l-3.5-3.5" />
-          </svg>
-          <input
-            type="search"
-            placeholder="Filtrer par marché, outcome…"
-            value={historyQuery()}
-            onInput={(e) => setHistoryQuery(e.currentTarget.value)}
-          />
-        </div>
-        <div class="sim2-fchips" role="group" aria-label="Filtre P&L">
-          <button
-            type="button"
-            class="sim2-fchip"
-            classList={{ "sim2-fchip-on": historyFilter() === "all" }}
-            onClick={() => setHistoryFilter("all")}
-          >
-            Tous
-          </button>
-          <button
-            type="button"
-            class="sim2-fchip sim2-fchip-win"
-            classList={{ "sim2-fchip-on": historyFilter() === "wins" }}
-            onClick={() => setHistoryFilter("wins")}
-          >
-            Wins
-          </button>
-          <button
-            type="button"
-            class="sim2-fchip sim2-fchip-loss"
-            classList={{ "sim2-fchip-on": historyFilter() === "losses" }}
-            onClick={() => setHistoryFilter("losses")}
-          >
-            Pertes
-          </button>
-        </div>
-        <button
-          type="button"
-          class="sim2-sort"
-          classList={{ "sim2-sort-on": reverseOrder() }}
-          title="Inverser l'ordre d'affichage"
-          onClick={() => setReverseOrder((v) => !v)}
-        >
-          {reverseOrder() ? "Récents d'abord" : "Anciens d'abord"}
-        </button>
-      </div>
+  // Onglets : compteurs lus au rendu (jamais capturés).
+  const tabs = (): Array<{ id: HistoryTab; label: string; count: number }> => [
+    { id: "resolved", label: "Résolues", count: props.ctrl.resolvedCount() },
+    { id: "journal", label: "Journal", count: simJournal().length },
+  ];
 
+  return (
+    <Sim2Card
+      title="Historique"
+      raw
+      tabs={
+        <Sim2Tabs
+          tabs={tabs}
+          active={historyTab()}
+          onSelect={setHistoryTab}
+          ariaLabel="Historique de la simulation"
+        />
+      }
+      tools={
+        <>
+          <div class="sim2-search">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.5-3.5" />
+            </svg>
+            <input
+              type="search"
+              placeholder="Filtrer par marché, outcome…"
+              value={historyQuery()}
+              onInput={(e) => setHistoryQuery(e.currentTarget.value)}
+            />
+          </div>
+          <div class="sim2-fchips" role="group" aria-label="Filtre P&L">
+            <button
+              type="button"
+              class="sim2-fchip"
+              classList={{ "sim2-fchip-on": historyFilter() === "all" }}
+              onClick={() => setHistoryFilter("all")}
+            >
+              Tous
+            </button>
+            <button
+              type="button"
+              class="sim2-fchip sim2-fchip-win"
+              classList={{ "sim2-fchip-on": historyFilter() === "wins" }}
+              onClick={() => setHistoryFilter("wins")}
+            >
+              Wins
+            </button>
+            <button
+              type="button"
+              class="sim2-fchip sim2-fchip-loss"
+              classList={{ "sim2-fchip-on": historyFilter() === "losses" }}
+              onClick={() => setHistoryFilter("losses")}
+            >
+              Pertes
+            </button>
+          </div>
+          <button
+            type="button"
+            class="sim2-sort"
+            classList={{ "sim2-sort-on": reverseOrder() }}
+            title="Inverser l'ordre d'affichage"
+            onClick={() => setReverseOrder((v) => !v)}
+          >
+            {reverseOrder() ? "Récents d'abord" : "Anciens d'abord"}
+          </button>
+        </>
+      }
+    >
       {/* Barre de pagination (onglet résolues, mode paginé /api/sim/resolved) : la
           page est demandée au serveur (DB complète) ; total + totalPages viennent
           du COUNT SQL — sans le plafond slice(0, 200) de /api/sim/state.
@@ -404,6 +405,6 @@ export function HistoryCard(props: {
           </Show>
         </div>
       </Show>
-    </section>
+    </Sim2Card>
   );
 }

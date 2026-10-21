@@ -4,7 +4,8 @@ import { EmptyState } from "../ui/EmptyState";
 import { globalStats, engineRows, refreshEngineStats } from "../../stores/statsStore";
 import type { EngineStatsRow } from "../../types";
 import { fmtUsd, pct } from "../../utils/format";
-import { Sim2Card } from "../../pages/dashboard/ui";
+import { Sim2Card } from "../ui/Sim2Card";
+import { pnlClass } from "../../utils/display";
 
 /**
  * Panneau Performance : vue globale (flux SSE `stats`, tous moteurs
@@ -73,7 +74,7 @@ function EngineTable(props: { row: EngineStatsRow }): JSX.Element {
       <tbody>
         <tr>
           <td>P&amp;L réalisé</td>
-          <td class={`num ${r().realizedPnl >= 0 ? "pnl-pos" : "pnl-neg"}`}>{fmtUsd(r().realizedPnl)}</td>
+          <td class={`num ${pnlClass(r().realizedPnl)}`}>{fmtUsd(r().realizedPnl)}</td>
         </tr>
         <tr>
           <td>Exposition ouverte</td>
@@ -103,19 +104,19 @@ function GlobalTable(props: { s: NonNullable<ReturnType<typeof globalStats>> }):
       <tbody>
         <tr>
           <td>P&amp;L réalisé</td>
-          <td class={`num ${s().realizedPnl >= 0 ? "pnl-pos" : "pnl-neg"}`}>
+          <td class={`num ${pnlClass(s().realizedPnl)}`}>
             {fmtUsd(s().realizedPnl)}
           </td>
         </tr>
         <tr>
           <td>— Arbitrage couvert</td>
-          <td class={`num ${s().arbRealizedPnl >= 0 ? "pnl-pos" : "pnl-neg"}`}>
+          <td class={`num ${pnlClass(s().arbRealizedPnl)}`}>
             {fmtUsd(s().arbRealizedPnl)}
           </td>
         </tr>
         <tr>
           <td>— Directionnel non couvert</td>
-          <td class={`num ${s().directionalRealizedPnl >= 0 ? "pnl-pos" : "pnl-neg"}`}>
+          <td class={`num ${pnlClass(s().directionalRealizedPnl)}`}>
             {fmtUsd(s().directionalRealizedPnl)}
           </td>
         </tr>

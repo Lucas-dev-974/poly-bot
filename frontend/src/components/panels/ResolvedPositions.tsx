@@ -8,6 +8,7 @@ import type { JSX } from "solid-js";
 import { EmptyState } from "../ui/EmptyState";
 import { resolvedPositions } from "../../stores/positionStore";
 import { dateTimeStr, fmtPrice, fmtUsd } from "../../utils/format";
+import { pnlClass } from "../../utils/display";
 
 export function ResolvedPositionsBody(): JSX.Element {
   return (
@@ -56,7 +57,7 @@ export function ResolvedPositionsBody(): JSX.Element {
                     <td class="num">{p.size}</td>
                     <td class="num">{fmtUsd(p.cost)}</td>
                     <td class="num">{fmtUsd(credit)}</td>
-                    <td class={`num ${(p.pnl || 0) >= 0 ? "pnl-pos" : "pnl-neg"}`}>
+                    <td class={`num ${pnlClass(p.pnl ?? 0)}`}>
                       {fmtUsd(p.pnl)}
                     </td>
                     <td>

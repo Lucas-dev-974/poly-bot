@@ -12,7 +12,7 @@
 import { createEffect, createMemo, createSignal } from "solid-js";
 import type { Accessor } from "solid-js";
 import { api } from "../../api/client";
-import { toMessage } from "../simPageHelpers";
+import { toMessage } from "../../utils/display";
 import { SIM_5M_STRATEGIES, SIM_5M_FILTER_FIELDS } from "../../config/sim5mStrategies";
 import {
   COMMON_PARAM_SECTIONS,

@@ -9,6 +9,7 @@ import type { JSX } from "solid-js";
 import { api } from "../../api/client";
 import { botEnabled, setBotEnabled } from "../../stores/botStore";
 import { addLog } from "../../stores/logStore";
+import { toMessage } from "../../utils/display";
 
 const NAV_LINKS: Array<{ href: string; label: string }> = [
   { href: "/guide", label: "Guide" },
@@ -42,7 +43,7 @@ export function Topbar(props: {
       setBotEnabled(!next); // rollback
       addLog(
         "Erreur lors du changement d'état : " +
-          (e instanceof Error ? e.message : String(e)),
+          (toMessage(e)),
         undefined,
         true,
       );

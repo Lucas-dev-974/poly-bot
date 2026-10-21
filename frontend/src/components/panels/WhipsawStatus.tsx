@@ -1,6 +1,15 @@
-import { Show, createMemo, createSignal, onMount } from "solid-js";
+/**
+ * Statut du filtre whipsaw (fav-band) — bot LIVE, rail du dashboard.
+ *
+ * Données : event SSE `strategyStatus` (5 s) + GET /api/strategy/status au
+ * montage. La pause est armée par les pertes du bot live.
+ *
+ * La logique dérivée (classe de badge, countdown, seuil) est dans
+ * `useWhipsawView` — partagée avec le panneau SIM.
+ */
+import { Show, createSignal, onMount } from "solid-js";
 import type { JSX } from "solid-js";
-import { Sim2Card } from "../../pages/dashboard/ui";
+import { Sim2Card } from "../ui/Sim2Card";
 import { api } from "../../api/client";
 import { config } from "../../stores/botStore";
 import { addLog } from "../../stores/logStore";
@@ -9,13 +18,11 @@ import {
   remainingMsAt,
   setStrategyStatus,
 } from "../../stores/strategyStatusStore";
-import { useClock, clockNow } from "../../stores/clockStore";
+import { toMessage } from "../../utils/display";
+import { useWhipsawView } from "./useWhipsawView";
 
 export function WhipsawStatus(): JSX.Element {
   const [resetting, setResetting] = createSignal(false);
-
-  // Horloge globale partagée (tick 1 s) pour le countdown client.
-  useClock();
 
   // Hydratation initiale : un seul GET au montage (le ring buffer SSE peut
   // être vide juste après le boot du bot, le premier event n'arrive qu'au
@@ -31,53 +38,24 @@ export function WhipsawStatus(): JSX.Element {
     })();
   });
 
-  const cfg = createMemo(() => config());
-  const isFavBand = createMemo(() => cfg()?.strategyId === "fav-band");
+  const view = useWhipsawView(strategyStatus, remainingMsAt);
 
   // Snapshot live du store SSE. Si le moteur n'est plus fav-band (switch à
-  // chaud), le backend n'émet plus : on masque l'entry plutôt que d'afficher
-  // un statut figé — aligné sur la condition isFavBand ci-dessus.
-  const snap = createMemo(() => strategyStatus());
+  // chaud), le backend n'émet plus : on masque l'entry plutôt qu'afficher
+  // un statut figé — aligné sur la condition isFavBand ci-dessous.
+  const isFavBand = (): boolean => config()?.strategyId === "fav-band";
 
-  const status = createMemo(() => snap()?.status ?? null);
-
-  // Countdown ancré : remainingMs mesuré à receivedAt, décrémenté par
-  // l'horloge locale (remainingMsAt lit aussi le snapshot → réactif).
-  const remainingMs = createMemo(() => {
-    const s = snap();
-    if (!s) return null;
-    void clockNow(); // réactivité 1 s
-    return remainingMsAt(clockNow());
-  });
-
-  const badgeClass = createMemo(() => {
-    const s = status();
-    if (!s) return "unknown";
-    if (!s.enabled) return "disabled";
-    if (s.active) return "active";
-    return "ready";
-  });
-
-  const remainingText = createMemo(() => {
-    const ms = remainingMs();
-    if (ms == null || !status()?.active) return null;
-    const remaining = Math.max(0, Math.ceil(ms / 1000));
-    const m = Math.floor(remaining / 60);
-    const sec = remaining % 60;
-    return `${m}:${sec.toString().padStart(2, "0")}`;
-  });
-
-  const nextWindowText = createMemo(() => {
-    const s = status();
+  const nextWindowText = (): string | null => {
+    const s = view.status();
     if (!s || !s.enabled) return null;
-    if (s.active) return `Pause active — ${remainingText()} restants`;
-    if (s.lossStreak > 0 && s.pauseAfterLosses != null && s.lossStreak >= s.pauseAfterLosses) {
+    if (s.active) return `Pause active — ${view.remainingText()} restants`;
+    if (view.thresholdReached()) {
       return `Seuil atteint (${s.lossStreak}/${s.pauseAfterLosses}) — prochaine fenêtre déclenchera la pause`;
     }
     return `Inactif — série pertes: ${s.lossStreak}/${s.pauseAfterLosses ?? "—"}`;
-  });
+  };
 
-  const handleReset = async () => {
+  const handleReset = async (): Promise<void> => {
     if (resetting()) return;
     setResetting(true);
     try {
@@ -91,7 +69,7 @@ export function WhipsawStatus(): JSX.Element {
         addLog("Échec réinitialisation whipsaw: " + (res.error ?? "inconnu"), undefined, true);
       }
     } catch (e) {
-      addLog("Erreur réinitialisation whipsaw: " + (e instanceof Error ? e.message : String(e)), undefined, true);
+      addLog("Erreur réinitialisation whipsaw: " + toMessage(e), undefined, true);
     } finally {
       setResetting(false);
     }
@@ -101,45 +79,47 @@ export function WhipsawStatus(): JSX.Element {
     <Show when={isFavBand()}>
       <Sim2Card title="Filtre Whipsaw (fav-band)">
         <div class="whipsaw-status">
-          <div class={`whipsaw-badge ${badgeClass()}`}>
+          <div class={`whipsaw-badge ${view.badgeClass()}`}>
             <span class="dot" />
             <span class="label">
-              {badgeClass() === "active" && "⏸️ Pause active"}
-              {badgeClass() === "ready" && "✅ Prêt"}
-              {badgeClass() === "disabled" && "⭕ Désactivé"}
-              {badgeClass() === "unknown" && "❓ Inconnu"}
+              {view.badgeClass() === "active" && "⏸️ Pause active"}
+              {view.badgeClass() === "ready" && "✅ Prêt"}
+              {view.badgeClass() === "disabled" && "⭕ Désactivé"}
+              {view.badgeClass() === "unknown" && "❓ Inconnu"}
             </span>
           </div>
 
-          <Show when={status()?.enabled}>
+          <Show when={view.status()?.enabled}>
             <div class="whipsaw-details">
               <div class="detail-row">
                 <span class="detail-label">Fenêtres de pause :</span>
-                <span class="detail-value">{status()!.pauseWindows} fenêtre(s) (≈{status()!.pauseWindows * 15} min)</span>
+                <span class="detail-value">
+                  {view.status()!.pauseWindows} fenêtre(s) (≈{view.status()!.pauseWindows * 15} min)
+                </span>
               </div>
               <div class="detail-row">
                 <span class="detail-label">Seuil déclenchement :</span>
                 <span class="detail-value">
-                  {status()!.pauseAfterLosses != null
-                    ? `${status()!.pauseAfterLosses} pertes consécutives`
+                  {view.status()!.pauseAfterLosses != null
+                    ? `${view.status()!.pauseAfterLosses} pertes consécutives`
                     : "Non configuré"}
                 </span>
               </div>
               <div class="detail-row">
                 <span class="detail-label">Série pertes actuelle :</span>
-                <span class="detail-value">{status()!.lossStreak}</span>
+                <span class="detail-value">{view.status()!.lossStreak}</span>
               </div>
-              <Show when={status()!.active}>
+              <Show when={view.status()!.active}>
                 <div class="detail-row highlight">
                   <span class="detail-label">Temps restant :</span>
-                  <span class="detail-value countdown">{remainingText()}</span>
+                  <span class="detail-value countdown">{view.remainingText()}</span>
                 </div>
               </Show>
-              <Show when={status()!.active}>
+              <Show when={view.status()!.active}>
                 <div class="detail-row reset-row">
                   <button
                     class="btn btn-danger-solid"
-                    onClick={handleReset}
+                    onClick={() => void handleReset()}
                     disabled={resetting()}
                   >
                     {resetting() ? "⏳ Réinitialisation..." : "🔄 Réinitialiser la pause"}
@@ -152,7 +132,7 @@ export function WhipsawStatus(): JSX.Element {
             </div>
           </Show>
 
-          <Show when={status() && !status()!.enabled}>
+          <Show when={view.status() && !view.status()!.enabled}>
             <div class="whipsaw-disabled">
               Le filtre whipsaw est désactivé dans la configuration.
               <br />

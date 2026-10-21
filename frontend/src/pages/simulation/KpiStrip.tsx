@@ -11,8 +11,8 @@ import type { JSX } from "solid-js";
 import { Show, createMemo } from "solid-js";
 import type { SimControl } from "./useSimControl";
 import type { SimEquity } from "./useSimEquity";
-import { MicroSpark, RingGauge, clamp01 } from "./ui";
-import { pnlClass } from "../simPageHelpers";
+import { MicroSpark, RingGauge, clamp01 } from "../../components/ui/sim2Widgets";
+import { pnlClass } from "../../utils/display";
 import { simBalance, simEngineStats, simJournal, simResting, simEffectiveConfig } from "../../stores/simStore";
 import { fmtUsd } from "../../utils/format";
 

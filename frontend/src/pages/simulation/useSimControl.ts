@@ -7,7 +7,7 @@
  */
 import { createMemo, createSignal } from "solid-js";
 import { api, type SimConfigPatch, type SimEngineState } from "../../api/client";
-import { toMessage } from "../simPageHelpers";
+import { toMessage } from "../../utils/display";
 import { allPresetsForStrategy, type AnyPreset, type StrategyId } from "../../config/strategyPresets";
 import { useAdaptiveSync } from "../../hooks/useAdaptiveSync";
 import { addLog } from "../../stores/logStore";

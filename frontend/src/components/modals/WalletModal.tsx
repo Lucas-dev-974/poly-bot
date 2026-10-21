@@ -4,6 +4,7 @@ import { api } from "../../api/client";
 import { addLog } from "../../stores/logStore";
 import { fmtUsd } from "../../utils/format";
 import type { WalletQuote, WithdrawalRow } from "../../types";
+import { toMessage } from "../../utils/display";
 
 const STORAGE_KEY = "wallet.withdraw.to";
 const POLYGONSCAN_BASE = "https://polygonscan.com";
@@ -41,7 +42,7 @@ export function WalletModal(props: {
     } catch (e) {
       addLog(
         "Wallet : échec du chargement du solde — " +
-          (e instanceof Error ? e.message : String(e)),
+          (toMessage(e)),
         undefined,
         true,
       );
@@ -127,7 +128,7 @@ export function WalletModal(props: {
       await Promise.all([refreshQuote(), refreshHistory()]);
     } catch (e) {
       addLog(
-        "Erreur de retrait : " + (e instanceof Error ? e.message : String(e)),
+        "Erreur de retrait : " + (toMessage(e)),
         undefined,
         true,
       );

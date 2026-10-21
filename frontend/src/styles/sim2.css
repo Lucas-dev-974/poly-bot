@@ -860,32 +860,6 @@
   border-color: var(--red);
 }
 
-/* ─── Chevron / panneaux pliables (Panel — partagé toutes les pages) ── */
-
-.collapse-chevron {
-  display: inline-block;
-  color: var(--accent);
-  font-size: 11px;
-  transition: transform 0.15s ease;
-  flex-shrink: 0;
-}
-
-.collapse-chevron.open {
-  transform: rotate(90deg);
-}
-
-.panel-collapsible > h2 {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.panel-collapsible > h2:hover {
-  color: var(--text);
-}
-
 /* ─── Responsive ─────────────────────────────────────────────────────── */
 
 @media (max-width: 1280px) {
@@ -928,8 +902,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sim2-badge.on .sim2-badge-dot,
-  .collapse-chevron {
+  .sim2-badge.on .sim2-badge-dot {
     animation: none;
     transition: none;
   }

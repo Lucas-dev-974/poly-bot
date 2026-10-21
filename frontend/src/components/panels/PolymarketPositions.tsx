@@ -19,6 +19,8 @@ import { openPositionList, resolvedPositions } from "../../stores/positionStore"
 import { dateTimeStr, fmtPrice, fmtUsd } from "../../utils/format";
 import { marketRecencyMs } from "../../utils/market";
 import type { PolymarketPosition, PositionKind, StrategyId } from "../../types";
+import { pnlClass } from "../../utils/display";
+import { ChartButtonEmoji } from "../ui/sim2Widgets";
 
 /** Identifie un marché par son créneau visible (titre = date + heure), pas par token. */
 function marketKey(position: PolymarketPosition): string {
@@ -384,9 +386,7 @@ export function PolymarketPositionsBody(props: {
 
                     const actionCell = (
                       <span class="poly-action-cell">
-                        <button
-                          class="chart-btn"
-                          type="button"
+                        <ChartButtonEmoji
                           title={
                             canChart
                               ? "Voir le graphique du marché"
@@ -394,9 +394,7 @@ export function PolymarketPositionsBody(props: {
                           }
                           disabled={!canChart}
                           onClick={() => setChartPosition(p)}
-                        >
-                          📊
-                        </button>
+                        />
                         {action}
                       </span>
                     );
@@ -434,7 +432,7 @@ export function PolymarketPositionsBody(props: {
                         <td style={cellStyle}>{fmtPrice(p.curPrice)}</td>
                         <td style={cellStyle}>{fmtUsd(p.currentValue)}</td>
                         <td
-                          class={`num ${p.cashPnl >= 0 ? "pnl-pos" : "pnl-neg"}`}
+                          class={`num ${pnlClass(p.cashPnl)}`}
                           style={cellStyle}
                         >
                           {fmtUsd(p.cashPnl)} ({p.percentPnl.toFixed(1)}%)

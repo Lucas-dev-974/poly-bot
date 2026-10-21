@@ -1,7 +1,9 @@
 /**
- * Composants de présentation purs de la page Simulation (aucun état métier,
- * aucune requête). Partagés entre les cartes de la page (KPI, historique,
- * flux). SolidJS : les lectures de signaux restent inline dans le JSX des
+ * Widgets de présentation « sim2 » — sans état métier, sans requête.
+ * Partagés par le Dashboard (/) et la page Simulation (/simulation) :
+ * jauges KPI, chip d'outcome, bouton graphique.
+ *
+ * SolidJS : les lectures de signaux restent inline dans le JSX des
  * consommateurs — ces composants sont sans état.
  */
 import type { JSX } from "solid-js";
@@ -59,7 +61,7 @@ export function MicroSpark(props: { values: readonly number[]; class?: string })
 }
 
 /** Chemin polyline d'une série de valeurs (sparkline), viewBox w×h. */
-export function polylinePath(values: readonly number[], w: number, h: number, pad: number): string {
+function polylinePath(values: readonly number[], w: number, h: number, pad: number): string {
   if (values.length === 0) return "";
   const lo = Math.min(...values);
   const hi = Math.max(...values);
@@ -74,13 +76,46 @@ export function polylinePath(values: readonly number[], w: number, h: number, pa
     .join("");
 }
 
-/** Bouton icône graphique (classe .chart-btn globale, style existant). */
-export function GraphButton(props: { title: string; onClick: () => void }): JSX.Element {
+/**
+ * Bouton icône graphique (classe .chart-btn globale, style existant).
+ * `disabled` + `title` : un tableau sans données désactive le bouton et
+ * l'explique — c'est le cas sur tous les tableaux de positions.
+ */
+export function GraphButton(props: {
+  title: string;
+  onClick: () => void;
+  disabled?: boolean;
+}): JSX.Element {
   return (
-    <button class="chart-btn" type="button" title={props.title} onClick={props.onClick}>
+    <button
+      class="chart-btn"
+      type="button"
+      title={props.title}
+      disabled={props.disabled}
+      onClick={props.onClick}
+    >
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="M3 17l6-7 4 4 8-9M3 21h18" />
       </svg>
+    </button>
+  );
+}
+
+/** Bouton graphique emoji (variante historique du dashboard). */
+export function ChartButtonEmoji(props: {
+  title: string;
+  onClick: () => void;
+  disabled?: boolean;
+}): JSX.Element {
+  return (
+    <button
+      class="chart-btn"
+      type="button"
+      title={props.title}
+      disabled={props.disabled}
+      onClick={props.onClick}
+    >
+      📊
     </button>
   );
 }

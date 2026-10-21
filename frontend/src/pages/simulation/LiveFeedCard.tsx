@@ -10,14 +10,15 @@ import type { JSX } from "solid-js";
 import { For, Show, createSignal } from "solid-js";
 import { ActiveMarkets } from "../../components/panels/ActiveMarkets";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { Sim2Card, Sim2Tabs } from "../../components/ui/Sim2Card";
 import type { ChartTarget, SimulatedPosition } from "../../types";
 import { simulatedPositionToChartTarget } from "../../utils/chart-target-adapters";
 import { useClock, clockNow } from "../../stores/clockStore";
 import { liveBidForToken, marketTitleForToken } from "../../stores/marketStore";
 import { simOpenPositions, simResting } from "../../stores/simStore";
 import { countdown, fmtPrice, fmtShares, fmtUsd, pct } from "../../utils/format";
-import { countdownClass, pnlClass } from "../simPageHelpers";
-import { GraphButton, OutcomeChip } from "./ui";
+import { countdownClass, pnlClass } from "../../utils/display";
+import { GraphButton, OutcomeChip } from "../../components/ui/sim2Widgets";
 
 /** P&L non réalisé d'une position ouverte, au prix de sortie (bid live). */
 function unrealizedPnl(p: SimulatedPosition): number | null {
@@ -34,23 +35,26 @@ export function LiveFeedCard(props: { onChart: (t: ChartTarget) => void }): JSX.
   const now = clockNow;
   const [feedTab, setFeedTab] = createSignal<FeedTab>("positions");
 
-  return (
-    <section class="sim2-card">
-      <div class="sim2-card-h">
-        <h2>Flux en direct</h2>
-        <div class="sim2-seg" role="tablist">
-          <button role="tab" classList={{ on: feedTab() === "positions" }} onClick={() => setFeedTab("positions")}>
-            Positions ouvertes <span class="n">{simOpenPositions().length}</span>
-          </button>
-          <button role="tab" classList={{ on: feedTab() === "resting" }} onClick={() => setFeedTab("resting")}>
-            Ordres reposés <span class="n">{simResting().length}</span>
-          </button>
-          <button role="tab" classList={{ on: feedTab() === "market" }} onClick={() => setFeedTab("market")}>
-            Marché actif
-          </button>
-        </div>
-      </div>
+  // Onglets : compteurs lus au rendu (jamais capturés).
+  const tabs = (): Array<{ id: FeedTab; label: string; count?: number }> => [
+    { id: "positions", label: "Positions ouvertes", count: simOpenPositions().length },
+    { id: "resting", label: "Ordres reposés", count: simResting().length },
+    { id: "market", label: "Marché actif" },
+  ];
 
+  return (
+    <Sim2Card
+      title="Flux en direct"
+      raw
+      tabs={
+        <Sim2Tabs
+          tabs={tabs}
+          active={feedTab()}
+          onSelect={setFeedTab}
+          ariaLabel="Flux en direct de la simulation"
+        />
+      }
+    >
       <Show when={feedTab() === "positions"}>
         <div class="sim2-card-b">
           <Show
@@ -173,6 +177,6 @@ export function LiveFeedCard(props: { onChart: (t: ChartTarget) => void }): JSX.
           <ActiveMarkets now={now()} />
         </div>
       </Show>
-    </section>
+    </Sim2Card>
   );
 }

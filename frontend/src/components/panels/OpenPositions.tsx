@@ -8,7 +8,9 @@ import { openPositionList } from "../../stores/positionStore";
 import { currentQuotesForPosition, marketCoverage } from "../../utils/helpers";
 import { countdown, fmtPrice, fmtUsd } from "../../utils/format";
 import type { SimulatedPosition } from "../../types";
-import { Sim2Card } from "../../pages/dashboard/ui";
+import { Sim2Card } from "../ui/Sim2Card";
+import { pnlClass } from "../../utils/display";
+import { ChartButtonEmoji } from "../ui/sim2Widgets";
 
 // PNL latent + quotes du token d'une position : (bid courant - fillPrice) × size.
 // Doit être un createMemo pour rester réactif aux mises à jour du book.
@@ -154,7 +156,7 @@ export function OpenPositions(props: {
                                 <td class="num">{fmtPrice(pnlInfo().ask)}</td>
                                 <td class="num">{fmtUsd(p.cost)}</td>
                                 <td
-                                  class={`num ${pnlInfo().pnl == null ? "" : pnlInfo().pnl! >= 0 ? "pnl-pos" : "pnl-neg"}`}
+                                  class={`num ${pnlInfo().pnl == null ? "" : pnlClass(pnlInfo().pnl!)}`}
                                 >
                                   <Show
                                     when={pnlInfo().pnl != null}
@@ -165,14 +167,10 @@ export function OpenPositions(props: {
                                 </td>
                                 <td>
                                   <span class="poly-action-cell">
-                                    <button
-                                      class="chart-btn"
-                                      type="button"
+                                    <ChartButtonEmoji
                                       title="Voir le graphique du marché"
                                       onClick={() => setChartPosition(p)}
-                                    >
-                                      📊
-                                    </button>
+                                    />
                                     <Show when={props.onClosePosition}>
                                       <button
                                         class="btn btn-ghost"
@@ -193,7 +191,7 @@ export function OpenPositions(props: {
                     </table>
                     <div class="mc-total">
                       Coût {fmtUsd(m.positions.reduce((s, p) => s + p.cost, 0))} · PNL latent{" "}
-                      <span class={`num ${pnlMap() >= 0 ? "pnl-pos" : "pnl-neg"}`}>
+                      <span class={`num ${pnlClass(pnlMap())}`}>
                         {fmtUsd(pnlMap())}
                       </span>
                     </div>
@@ -204,7 +202,7 @@ export function OpenPositions(props: {
           </div>
           <div class="orders-total">
             PNL latent total :{" "}
-            <span class={`num ${totalPnl() >= 0 ? "pnl-pos" : "pnl-neg"}`}>{fmtUsd(totalPnl())}</span>
+            <span class={`num ${pnlClass(totalPnl())}`}>{fmtUsd(totalPnl())}</span>
           </div>
         </Show>
       </Sim2Card>

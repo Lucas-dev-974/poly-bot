@@ -225,7 +225,7 @@ export function toChartTimeSec(ts: number): number {
   return ts > 1_000_000_000_000 ? ts / 1000 : ts;
 }
 
-export function isOverlayPosition(row: { id: string; ts: number; fillPrice: number }): boolean {
+function isOverlayPosition(row: { id: string; ts: number; fillPrice: number }): boolean {
   if (!Number.isFinite(row.ts) || row.ts <= 0) return false;
   return Number.isFinite(row.fillPrice);
 }

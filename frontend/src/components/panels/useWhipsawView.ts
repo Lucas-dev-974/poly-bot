@@ -3,9 +3,17 @@
  * LIVE (dashboard) et le panneau SIM (rail Paramètres de /simulation).
  *
  * Les deux panneaux affichent le même statut, avec des libellés légèrement
- * différents (« Inactif… » côté live, « Actif… » côté sim) mais des règles
- * de calcul identiques : classe de badge, countdown restant, phrase de
- * seuil. Cette hook factorise les règles ; le libellé reste au composant.
+ * différents (« Actif — série pertes… » côté live, « Actif — série de
+ * pertes… » côté sim) mais des règles de calcul identiques : classe de
+ * badge, countdown restant, phrase de seuil. Cette hook factorise les
+ * règles ; le libellé reste au composant.
+ *
+ * `enabled` = source de vérité « filtre whipsaw ACTIVÉ » : la config LIVE
+ * (dashboard) ou la config EFFECTIVE du moteur sim (rail Simulation). Le
+ * snapshot backend ne porte QUE l'état runtime (pause active, countdown,
+ * série de pertes) ; son propre flag `enabled` est daté de l'émission
+ * (≤ 5 s) et ne peut pas piloter l'affichage — la config est plus fraîche.
+ * Les deux panneaux ne s'affichent QUE si ce flag est vrai.
  */
 import { createMemo } from "solid-js";
 import type { Accessor } from "solid-js";
@@ -15,7 +23,9 @@ import type { FavBandWhipsawStatus } from "../../types";
 export interface WhipsawView {
   /** Statut courant (null = moteur ≠ fav-band, ou pas encore reçu). */
   status: Accessor<FavBandWhipsawStatus | null>;
-  /** Classe CSS du badge : unknown | disabled | active | ready. */
+  /** Filtre whipsaw ACTIVÉ (config live / config effective du moteur sim). */
+  enabled: Accessor<boolean>;
+  /** Classe CSS du badge : unknown | active | ready. */
   badgeClass: Accessor<string>;
   /** Countdown restant « m:ss » (null si pas de pause active). */
   remainingText: Accessor<string | null>;
@@ -28,6 +38,8 @@ export interface WhipsawView {
 export function useWhipsawView(
   snapshot: Accessor<{ status: FavBandWhipsawStatus | null } | null>,
   remainingMsAt: (now: number) => number | null,
+  /** Source de vérité « filtre activé » (config live / config effective sim). */
+  enabled: Accessor<boolean>,
 ): WhipsawView {
   // Horloge globale partagée (tick 1 s) pour le countdown client.
   useClock();
@@ -42,10 +54,11 @@ export function useWhipsawView(
     return remainingMsAt(clockNow());
   });
 
+  // L'état « désactivé » n'est PAS un état de badge : la carte n'est rendue
+  // que si le filtre est activé (gate `enabled` côté composant).
   const badgeClass = createMemo(() => {
     const s = status();
     if (!s) return "unknown";
-    if (!s.enabled) return "disabled";
     if (s.active) return "active";
     return "ready";
   });
@@ -62,10 +75,10 @@ export function useWhipsawView(
   const thresholdReached = createMemo(() => {
     const s = status();
     return Boolean(
-      s && s.enabled && s.lossStreak > 0 &&
+      enabled() && s && s.lossStreak > 0 &&
         s.pauseAfterLosses != null && s.lossStreak >= s.pauseAfterLosses,
     );
   });
 
-  return { status, badgeClass, remainingText, remainingMs, thresholdReached };
+  return { status, enabled, badgeClass, remainingText, remainingMs, thresholdReached };
 }

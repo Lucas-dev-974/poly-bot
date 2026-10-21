@@ -4,6 +4,11 @@
  * Données : event SSE `strategyStatus` (5 s) + GET /api/strategy/status au
  * montage. La pause est armée par les pertes du bot live.
  *
+ * La carte n'est affichée QUE si le filtre whipsaw est ACTIVÉ dans la config
+ * live (`favBandWhipsawEnabled`) — la source de vérité est la CONFIG, pas le
+ * snapshot runtime (daté de ≤ 5 s) : un filtre désactivé ne doit pas
+ * afficher de carte du tout.
+ *
  * La logique dérivée (classe de badge, countdown, seuil) est dans
  * `useWhipsawView` — partagée avec le panneau SIM.
  */
@@ -38,7 +43,12 @@ export function WhipsawStatus(): JSX.Element {
     })();
   });
 
-  const view = useWhipsawView(strategyStatus, remainingMsAt);
+  // Source de vérité « filtre whipsaw ACTIVÉ » : la config LIVE (event SSE
+  // `config` + /api/state). Le snapshot runtime ne porte que l'état de la
+  // pause (daté de ≤ 5 s) — il ne peut pas piloter l'affichage de la carte.
+  const view = useWhipsawView(strategyStatus, remainingMsAt, () =>
+    config()?.favBandWhipsawEnabled === true,
+  );
 
   // Snapshot live du store SSE. Si le moteur n'est plus fav-band (switch à
   // chaud), le backend n'émet plus : on masque l'entry plutôt qu'afficher
@@ -47,12 +57,12 @@ export function WhipsawStatus(): JSX.Element {
 
   const nextWindowText = (): string | null => {
     const s = view.status();
-    if (!s || !s.enabled) return null;
+    if (!s) return null;
     if (s.active) return `Pause active — ${view.remainingText()} restants`;
     if (view.thresholdReached()) {
       return `Seuil atteint (${s.lossStreak}/${s.pauseAfterLosses}) — prochaine fenêtre déclenchera la pause`;
     }
-    return `Inactif — série pertes: ${s.lossStreak}/${s.pauseAfterLosses ?? "—"}`;
+    return `Actif — série pertes: ${s.lossStreak}/${s.pauseAfterLosses ?? "—"}`;
   };
 
   const handleReset = async (): Promise<void> => {
@@ -76,7 +86,7 @@ export function WhipsawStatus(): JSX.Element {
   };
 
   return (
-    <Show when={isFavBand()}>
+    <Show when={isFavBand() && view.enabled()}>
       <Sim2Card title="Filtre Whipsaw (fav-band)">
         <div class="whipsaw-status">
           <div class={`whipsaw-badge ${view.badgeClass()}`}>
@@ -84,60 +94,53 @@ export function WhipsawStatus(): JSX.Element {
             <span class="label">
               {view.badgeClass() === "active" && "⏸️ Pause active"}
               {view.badgeClass() === "ready" && "✅ Prêt"}
-              {view.badgeClass() === "disabled" && "⭕ Désactivé"}
               {view.badgeClass() === "unknown" && "❓ Inconnu"}
             </span>
           </div>
 
-          <Show when={view.status()?.enabled}>
-            <div class="whipsaw-details">
-              <div class="detail-row">
-                <span class="detail-label">Fenêtres de pause :</span>
-                <span class="detail-value">
-                  {view.status()!.pauseWindows} fenêtre(s) (≈{view.status()!.pauseWindows * 15} min)
-                </span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">Seuil déclenchement :</span>
-                <span class="detail-value">
-                  {view.status()!.pauseAfterLosses != null
-                    ? `${view.status()!.pauseAfterLosses} pertes consécutives`
-                    : "Non configuré"}
-                </span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">Série pertes actuelle :</span>
-                <span class="detail-value">{view.status()!.lossStreak}</span>
-              </div>
-              <Show when={view.status()!.active}>
-                <div class="detail-row highlight">
-                  <span class="detail-label">Temps restant :</span>
-                  <span class="detail-value countdown">{view.remainingText()}</span>
+          <Show when={view.status()}>
+            {(s) => (
+              <div class="whipsaw-details">
+                <div class="detail-row">
+                  <span class="detail-label">Fenêtres de pause :</span>
+                  <span class="detail-value">
+                    {s().pauseWindows} fenêtre(s) (≈{s().pauseWindows * 15} min)
+                  </span>
                 </div>
-              </Show>
-              <Show when={view.status()!.active}>
-                <div class="detail-row reset-row">
-                  <button
-                    class="btn btn-danger-solid"
-                    onClick={() => void handleReset()}
-                    disabled={resetting()}
-                  >
-                    {resetting() ? "⏳ Réinitialisation..." : "🔄 Réinitialiser la pause"}
-                  </button>
+                <div class="detail-row">
+                  <span class="detail-label">Seuil déclenchement :</span>
+                  <span class="detail-value">
+                    {s().pauseAfterLosses != null
+                      ? `${s().pauseAfterLosses} pertes consécutives`
+                      : "Non configuré"}
+                  </span>
                 </div>
-              </Show>
-              <div class="detail-row status-text">
-                {nextWindowText()}
+                <div class="detail-row">
+                  <span class="detail-label">Série pertes actuelle :</span>
+                  <span class="detail-value">{s().lossStreak}</span>
+                </div>
+                <Show when={s().active}>
+                  <div class="detail-row highlight">
+                    <span class="detail-label">Temps restant :</span>
+                    <span class="detail-value countdown">{view.remainingText()}</span>
+                  </div>
+                </Show>
+                <Show when={s().active}>
+                  <div class="detail-row reset-row">
+                    <button
+                      class="btn btn-danger-solid"
+                      onClick={() => void handleReset()}
+                      disabled={resetting()}
+                    >
+                      {resetting() ? "⏳ Réinitialisation..." : "🔄 Réinitialiser la pause"}
+                    </button>
+                  </div>
+                </Show>
+                <div class="detail-row status-text">
+                  {nextWindowText()}
+                </div>
               </div>
-            </div>
-          </Show>
-
-          <Show when={view.status() && !view.status()!.enabled}>
-            <div class="whipsaw-disabled">
-              Le filtre whipsaw est désactivé dans la configuration.
-              <br />
-              Activez <code>favBandWhipsawEnabled</code> pour voir l'état ici.
-            </div>
+            )}
           </Show>
         </div>
       </Sim2Card>

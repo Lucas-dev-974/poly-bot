@@ -5,7 +5,12 @@
  * branché sur le moteur sim : event SSE `simStrategyStatus` (5 s) + GET
  * /api/sim/strategy-status au montage. La pause est armée par les pertes
  * des positions SIMULÉES (tracker sim), indépendante du bot live.
- * Masqué si le statut est null (moteur sim ≠ fav-band, ou pas encore reçu).
+ *
+ * La ligne n'est affichée QUE si le filtre whipsaw est ACTIVÉ dans la
+ * config EFFECTIVE du moteur sim (`favBandWhipsawEnabled`) — même règle que
+ * la carte du dashboard live : la source de vérité est la CONFIG (ce que le
+ * moteur applique), pas le snapshot runtime (daté de ≤ 5 s). Masquée aussi
+ * si le statut est null (moteur sim ≠ fav-band, ou pas encore reçu).
  *
  * La logique dérivée (classe de badge, countdown, seuil) est dans
  * `useWhipsawView` — partagée avec le panneau LIVE.
@@ -15,6 +20,7 @@ import type { JSX } from "solid-js";
 import { api } from "../../api/client";
 import { addLog } from "../../stores/logStore";
 import { simWhipsaw, simRemainingMsAt, setSimWhipsaw } from "../../stores/simWhipsawStore";
+import { simEffectiveConfig } from "../../stores/simStore";
 import { pushError } from "../../stores/toastStore";
 import { toMessage } from "../../utils/display";
 import { useWhipsawView } from "./useWhipsawView";
@@ -36,11 +42,16 @@ export function SimWhipsawStatus(): JSX.Element {
     })();
   });
 
-  const view = useWhipsawView(simWhipsaw, simRemainingMsAt);
+  // Source de vérité « filtre whipsaw ACTIVÉ » : la config EFFECTIVE du
+  // moteur sim (preset + settings appliqués). Le snapshot runtime ne porte
+  // que l'état de la pause — il ne peut pas piloter l'affichage.
+  const view = useWhipsawView(simWhipsaw, simRemainingMsAt, () =>
+    simEffectiveConfig()?.favBandWhipsawEnabled === true,
+  );
 
   const statusText = (): string | null => {
     const s = view.status();
-    if (!s || !s.enabled) return null;
+    if (!s) return null;
     if (s.active) return `Pause active — ${view.remainingText() ?? "—"} restants`;
     if (view.thresholdReached()) {
       return `Seuil atteint (${s.lossStreak}/${s.pauseAfterLosses}) — la prochaine perte déclenche la pause`;
@@ -68,36 +79,32 @@ export function SimWhipsawStatus(): JSX.Element {
   }
 
   return (
-    <Show when={view.status()}>
-      {(s) => (
-        <div class="sim2-whip-row">
-          <span class={`sim2-whip-badge ${view.badgeClass()}`}>
-            <span class="sim2-whip-dot" aria-hidden="true" />
-            <Show when={s().enabled} fallback={<span>Désactivé</span>}>
+    <Show when={view.enabled()}>
+      <Show when={view.status()}>
+        {(s) => (
+          <div class="sim2-whip-row">
+            <span class={`sim2-whip-badge ${view.badgeClass()}`}>
+              <span class="sim2-whip-dot" aria-hidden="true" />
               <span>{view.badgeClass() === "active" ? `Pause ${view.remainingText() ?? "—"}` : "Whipsaw prêt"}</span>
-            </Show>
-          </span>
-          <span
-            class="sim2-whip-note"
-            title={
-              s().enabled
-                ? `Fenêtres de pause : ${s().pauseWindows} · seuil ${s().pauseAfterLosses ?? "—"} pertes · série ${s().lossStreak}`
-                : undefined
-            }
-          >
-            {s().enabled ? statusText() : "Activez favBandWhipsawEnabled pour armer le filtre."}
-          </span>
-          <Show when={s().enabled && s().active}>
-            <button
-              class="btn btn-ghost sim2-whip-reset"
-              onClick={() => void handleReset()}
-              disabled={resetting()}
+            </span>
+            <span
+              class="sim2-whip-note"
+              title={`Fenêtres de pause : ${s().pauseWindows} · seuil ${s().pauseAfterLosses ?? "—"} pertes · série ${s().lossStreak}`}
             >
-              {resetting() ? "Réinitialisation…" : "Réinitialiser la pause"}
-            </button>
-          </Show>
-        </div>
-      )}
+              {statusText()}
+            </span>
+            <Show when={s().active}>
+              <button
+                class="btn btn-ghost sim2-whip-reset"
+                onClick={() => void handleReset()}
+                disabled={resetting()}
+              >
+                {resetting() ? "Réinitialisation…" : "Réinitialiser la pause"}
+              </button>
+            </Show>
+          </div>
+        )}
+      </Show>
     </Show>
   );
 }

@@ -615,10 +615,6 @@
   border-color: rgba(46, 204, 113, 0.35);
 }
 
-.sim2-whip-badge.disabled {
-  color: var(--muted);
-}
-
 .sim2-whip-badge.active .sim2-whip-dot {
   animation: sim2-whip-pulse 1.2s ease-in-out infinite;
 }

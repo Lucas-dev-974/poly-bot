@@ -51,8 +51,14 @@ export class PaperTradingEngine {
   /** Dernier bid connu par slug (positionsValue latente pour simBalance). */
   private lastBids = new Map<string, number>();
   private restingSyncedSlugs = new Set<string>();
-  /** Dernier tick INGÉRÉ (d2 — throttle simIngestIntervalMs). */
-  private lastIngestMs = 0;
+  /**
+   * Dernier tick INGÉRÉ par slug (d2 — throttle simIngestIntervalMs).
+   * Par slug et non global : le bot live livre les books famille par famille
+   * en séquence (reverse-bot.ts — boucle for...await, books en salve à chaque
+   * poll) → un throttle global ferait mourir de faim toutes les familles
+   * scannées après la première (probe : btc ingéré en boucle, eth jamais).
+   */
+  private lastIngestMsBySlug = new Map<string, number>();
   private timers: Array<ReturnType<typeof setInterval>> = [];
 
   constructor(
@@ -256,12 +262,22 @@ export class PaperTradingEngine {
     if (!this.simSlugAllowed(event.slug)) return;
 
     // d2 — cadence d'ingestion propre au sim (simIngestIntervalMs) :
-    // échantillonnage indépendant de la cadence du bot qui alimente onBooks.
-    // null/0 = traiter chaque tick (comportement d'origine).
+    // échantillonnage indépendant de la cadence du bot qui alimente onBooks,
+    // PAR SLUG (chaque marché échantillonne à son propre rythme — un throttle
+    // global affamerait les familles scannées après la 1re, les books étant
+    // livrés en salve à chaque poll). null/0 = traiter chaque tick (origine).
     const ingestInterval = this.effectiveConfig.simIngestIntervalMs;
     if (ingestInterval != null && ingestInterval > 0) {
-      if (nowMs - this.lastIngestMs < ingestInterval) return;
-      this.lastIngestMs = nowMs;
+      // Purge défensive : les slugs sont fenêtrés (nouveau slug à chaque
+      // fenêtre 5m/15m) → la map croît sans borne sinon.
+      if (this.lastIngestMsBySlug.size > 256) {
+        for (const [slug, ts] of this.lastIngestMsBySlug) {
+          if (nowMs - ts > 3_600_000) this.lastIngestMsBySlug.delete(slug);
+        }
+      }
+      const lastIngest = this.lastIngestMsBySlug.get(event.slug) ?? 0;
+      if (nowMs - lastIngest < ingestInterval) return;
+      this.lastIngestMsBySlug.set(event.slug, nowMs);
     }
 
     // trading:false bloque les NOUVELLES entrées (allowNewEntries) mais laisse

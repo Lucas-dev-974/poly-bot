@@ -59,6 +59,16 @@ describe("validateTradingConfig", () => {
     );
   });
 
+  it("simIngestIntervalMs : null/0 acceptés (suivre le bot), ]0,100[ rejeté", () => {
+    assert.doesNotThrow(() => validateConfigCoherence(testConfig({ simIngestIntervalMs: null })));
+    assert.doesNotThrow(() => validateConfigCoherence(testConfig({ simIngestIntervalMs: 0 })));
+    assert.doesNotThrow(() => validateConfigCoherence(testConfig({ simIngestIntervalMs: 100 })));
+    assert.throws(
+      () => validateConfigCoherence(testConfig({ simIngestIntervalMs: 99 })),
+      /SIM_INGEST_INTERVAL_MS/,
+    );
+  });
+
   it("rejects a fav-band budget that cannot reach MIN_CLOB_SHARES (incident 2026-09-14)", () => {
     assert.throws(
       () =>

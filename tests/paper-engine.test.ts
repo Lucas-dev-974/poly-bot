@@ -257,6 +257,63 @@ describe("PaperTradingEngine", () => {
     repos2.db.close();
   });
 
+  it("d2 — throttle par slug : les familles livrées en salve sont toutes ingérées", () => {
+    const repos = simRepos();
+    // Miroir reverse-bot.ts:434-441 : boucle for...await sur les familles,
+    // books btc puis eth à ~20 ms d'écart (salve < interval). Avant le fix
+    // (throttle GLOBAL partagé), eth n'était JAMAIS ingérée — probe réelle
+    // : { btc: 3, eth: 0 } au bout de 3 polls.
+    const engine = new PaperTradingEngine(
+      {
+        ...baseConfig(),
+        marketSlugPrefixes: ["btc-updown", "eth-updown"],
+        simulatedCapital: 10000,
+        simIngestIntervalMs: 1000,
+      } as unknown as BotConfig,
+      repos,
+    );
+    engine.init();
+    engine.setEnabled(true);
+    const eventFor = (slug: string, windowEndSec: number): UpDownEvent => ({
+      title: slug,
+      slug,
+      market: {
+        conditionId: "0x" + slug,
+        slug,
+        clobTokenIds: JSON.stringify([`${slug}-up`, `${slug}-down`]),
+        outcomes: JSON.stringify(["Up", "Down"]),
+        negRisk: false,
+        orderPriceMinTickSize: 0.01,
+        active: false,
+        closed: false,
+      },
+      windowStart: windowEndSec - 300,
+      windowEnd: windowEndSec,
+    });
+    const booksFor = (slug: string, cheapAsk: number, upAsk: number): TokenBook[] => [
+      { tokenId: `${slug}-up`, outcome: "Up", outcomeIndex: 0, bestBid: upAsk - 0.01, bestAsk: upAsk, bestAskSize: 100, bestBidSize: 100 },
+      { tokenId: `${slug}-down`, outcome: "Down", outcomeIndex: 1, bestBid: cheapAsk - 0.01, bestAsk: cheapAsk, bestAskSize: 100, bestBidSize: 100 },
+    ];
+    const t0 = Date.now();
+    for (let i = 0; i < 3; i++) {
+      const nowSec = Math.floor(t0 / 1000) + 240 + i * 300;
+      const slugBtc = `btc-updown-5m-${nowSec}`;
+      const slugEth = `eth-updown-5m-${nowSec}`;
+      engine.onBooks(eventFor(slugBtc, nowSec), booksFor(slugBtc, 0.1, 0.88), t0 + i * 1000);
+      engine.onBooks(eventFor(slugEth, nowSec), booksFor(slugEth, 0.1, 0.88), t0 + i * 1000 + 20);
+    }
+    const open = engine.getOpenPositions();
+    assert.ok(
+      open.some((p) => p.eventSlug.startsWith("btc-updown")),
+      "famille 1 (btc) ingérée",
+    );
+    assert.ok(
+      open.some((p) => p.eventSlug.startsWith("eth-updown")),
+      "famille 2 (eth) ingérée — throttle PAR SLUG, pas global",
+    );
+    repos.db.close();
+  });
+
   it("applyConfig identique (même preset, sans settings) préserve les éditions du rail", () => {
     const repos = simRepos();
     const engine = new PaperTradingEngine(baseConfig(), repos);

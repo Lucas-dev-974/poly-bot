@@ -932,8 +932,15 @@ export function validateConfigCoherence(
   if (config.pollIntervalMs < 500) {
     throw new Error("POLL_INTERVAL_MS must be >= 500");
   }
-  // Paramètre SIM ONLY (ingestion) : null/0 = suivre le bot ; sinon ≥ 100 ms.
-  if (config.simIngestIntervalMs != null && config.simIngestIntervalMs < 100) {
+  // Paramètre SIM ONLY (ingestion) : null/0 = suivre le bot ; sinon ≥ 100 ms
+  // (négatif = invalide aussi). 0 est traité comme null (pas de throttle) —
+  // cohérent avec le commentaire d'interface, le hint rail et le moteur
+  // (ingestInterval > 0 ⇒ pas de throttle sur 0).
+  if (
+    config.simIngestIntervalMs != null &&
+    config.simIngestIntervalMs !== 0 &&
+    config.simIngestIntervalMs < 100
+  ) {
     throw new Error("SIM_INGEST_INTERVAL_MS must be null/0 or >= 100 (sim ingestion guard)");
   }
   if (config.wsBookMaxAgeMs < 500) {

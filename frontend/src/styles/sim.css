@@ -268,6 +268,33 @@
 
 /* ─── Rail Paramètres ────────────────────────────────────────────────── */
 
+/* Rail de la page Simulation borné au viewport.
+   Le rail est `position: sticky` (sim2.css) mais SANS hauteur max : sa
+   hauteur naturelle (carte whipsaw + carte Paramètres ≈ 1250px) dépasse
+   l'écran, donc le rail déborde sous la fold et son contenu n'est
+   atteignable qu'en scrolling toute la page — le sticky ne « colle » plus.
+   Borné, le rail tient dans l'écran : la carte whipsaw reste épinglée en
+   haut (hors scroll) et la carte Paramètres défile en local. */
+.simulation-page .sim2-rail {
+  max-height: calc(100vh - 76px);
+}
+
+/* Carte whipsaw : épinglée en haut du rail, jamais compressée. */
+.simulation-page .sim2-whip-card {
+  flex-shrink: 0;
+}
+
+/* Carte Paramètres : le reste de la hauteur, scroll local.
+   flex:1 + min-height:0 = le fondFlexible peut réellement rétrécir sous
+   la contrainte de hauteur du parent (sans min-height:0, un enfant flex
+   refuse de descendre sous sa taille de contenu). */
+.simulation-page .sim2-settings {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 .sim2-set-h {
   display: flex;
   align-items: center;
@@ -570,82 +597,6 @@
   font-size: 10px;
 }
 
-/* Ligne statut whipsaw compacte (section Filtre whipsaw du rail).
-   Vivante sous l'en-tête de section, HORS du corps repliable : le statut
-   doit rester lisible accordéon fermé. Le padding horizontal 16px est donc
-   porté par la marge (le corps .sim2-acc-b ne l'englobe plus). */
-.sim2-whip-row {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  flex-wrap: wrap;
-  padding: 7px 10px;
-  background: var(--bg);
-  border: 1px solid var(--sim2-border-soft);
-  border-radius: 8px;
-  margin: 0 16px 10px;
-}
-
-.sim2-whip-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10.5px;
-  font-weight: 650;
-  padding: 2.5px 9px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  color: var(--muted);
-}
-
-.sim2-whip-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.sim2-whip-badge.active {
-  color: var(--amber);
-  background: rgba(241, 196, 15, 0.12);
-  border-color: rgba(241, 196, 15, 0.4);
-}
-
-.sim2-whip-badge.ready {
-  color: var(--green);
-  background: rgba(46, 204, 113, 0.1);
-  border-color: rgba(46, 204, 113, 0.35);
-}
-
-.sim2-whip-badge.active .sim2-whip-dot {
-  animation: sim2-whip-pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes sim2-whip-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
-}
-
-.sim2-whip-note {
-  font-size: 11px;
-  color: var(--muted);
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-}
-
-.sim2-whip-reset {
-  padding: 3px 9px;
-  font-size: 10.5px;
-}
-
 /* ── Presets utilisateur (rail) ──────────────────────────────────────── */
 
 .sim2-presets {
@@ -792,8 +743,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sim2-eq-lastdot,
-  .sim2-whip-badge.active .sim2-whip-dot {
+  .sim2-eq-lastdot {
     animation: none;
   }
 

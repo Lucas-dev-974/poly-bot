@@ -11,7 +11,6 @@
  */
 import type { JSX } from "solid-js";
 import { For, Show, createMemo } from "solid-js";
-import { SimWhipsawStatus } from "../../components/panels/SimWhipsawStatus";
 import { SIM_5M_FILTER_FIELDS } from "../../config/sim5mStrategies";
 import { strategyShortLabel, type ParamFieldDef } from "../../config/strategyFields";
 import type { ConfigFormState } from "../../utils/configForm";
@@ -183,16 +182,6 @@ export function SettingsRail(props: { ctrl: SimControl }): JSX.Element {
                       </span>
                     </span>
                   </div>
-                  {/* Statut whipsaw : HORS du corps repliable — un accordéon
-                      fermé cache TOUT son contenu (display:none), or le
-                      statut du filtre (pause active, série de pertes) doit
-                      rester lisible sans ouvrir la section. Avant le redesign
-                      sim2 c'était un bloc autonome toujours visible ;
-                      l'enfouir dans l'accordéon l'a rendu invisible par
-                      défaut. */}
-                  <Show when={sec.title === "Filtre whipsaw"}>
-                    <SimWhipsawStatus />
-                  </Show>
                   <div class="sim2-acc-b" style={{ display: set.openAccs().has(sec.id) ? "" : "none" }}>
                     <div
                       class="sim2-acc-grid"

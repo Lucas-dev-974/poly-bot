@@ -1,19 +1,17 @@
 /**
- * Statut compact « Filtre whipsaw » (page Simulation, paper trading) —
- * ligne compacte intégrée à la section « Filtre whipsaw » du rail
- * Paramètres (redesign sim2). Miroir du WhipsawStatus du dashboard live,
- * branché sur le moteur sim : event SSE `simStrategyStatus` (5 s) + GET
+ * Statut du filtre whipsaw (fav-band) — page Simulation (paper trading).
+ *
+ * Données : event SSE `simStrategyStatus` (5 s) + GET
  * /api/sim/strategy-status au montage. La pause est armée par les pertes
  * des positions SIMULÉES (tracker sim), indépendante du bot live.
  *
- * La ligne n'est affichée QUE si le filtre whipsaw est ACTIVÉ dans la
+ * La carte n'est affichée QUE si le filtre whipsaw est ACTIVÉ dans la
  * config EFFECTIVE du moteur sim (`favBandWhipsawEnabled`) — même règle que
  * la carte du dashboard live : la source de vérité est la CONFIG (ce que le
- * moteur applique), pas le snapshot runtime (daté de ≤ 5 s). Masquée aussi
- * si le statut est null (moteur sim ≠ fav-band, ou pas encore reçu).
+ * moteur applique), pas le snapshot runtime (daté de ≤ 5 s).
  *
- * La logique dérivée (classe de badge, countdown, seuil) est dans
- * `useWhipsawView` — partagée avec le panneau LIVE.
+ * La PRÉSENTATION (carte) est partagée avec le dashboard live via
+ * `WhipsawCard` ; ce composant ne porte que les données SIM + le reset.
  */
 import { Show, createSignal, onMount } from "solid-js";
 import type { JSX } from "solid-js";
@@ -24,6 +22,7 @@ import { simEffectiveConfig } from "../../stores/simStore";
 import { pushError } from "../../stores/toastStore";
 import { toMessage } from "../../utils/display";
 import { useWhipsawView } from "./useWhipsawView";
+import { WhipsawCard } from "./WhipsawCard";
 
 export function SimWhipsawStatus(): JSX.Element {
   const [resetting, setResetting] = createSignal(false);
@@ -49,16 +48,6 @@ export function SimWhipsawStatus(): JSX.Element {
     simEffectiveConfig()?.favBandWhipsawEnabled === true,
   );
 
-  const statusText = (): string | null => {
-    const s = view.status();
-    if (!s) return null;
-    if (s.active) return `Pause active — ${view.remainingText() ?? "—"} restants`;
-    if (view.thresholdReached()) {
-      return `Seuil atteint (${s.lossStreak}/${s.pauseAfterLosses}) — la prochaine perte déclenche la pause`;
-    }
-    return `Actif — série de pertes : ${s.lossStreak}/${s.pauseAfterLosses ?? "—"}`;
-  };
-
   async function handleReset(): Promise<void> {
     if (resetting()) return;
     setResetting(true);
@@ -80,31 +69,11 @@ export function SimWhipsawStatus(): JSX.Element {
 
   return (
     <Show when={view.enabled()}>
-      <Show when={view.status()}>
-        {(s) => (
-          <div class="sim2-whip-row">
-            <span class={`sim2-whip-badge ${view.badgeClass()}`}>
-              <span class="sim2-whip-dot" aria-hidden="true" />
-              <span>{view.badgeClass() === "active" ? `Pause ${view.remainingText() ?? "—"}` : "Whipsaw prêt"}</span>
-            </span>
-            <span
-              class="sim2-whip-note"
-              title={`Fenêtres de pause : ${s().pauseWindows} · seuil ${s().pauseAfterLosses ?? "—"} pertes · série ${s().lossStreak}`}
-            >
-              {statusText()}
-            </span>
-            <Show when={s().active}>
-              <button
-                class="btn btn-ghost sim2-whip-reset"
-                onClick={() => void handleReset()}
-                disabled={resetting()}
-              >
-                {resetting() ? "Réinitialisation…" : "Réinitialiser la pause"}
-              </button>
-            </Show>
-          </div>
-        )}
-      </Show>
+      <WhipsawCard
+        view={view}
+        resetting={resetting()}
+        onReset={() => void handleReset()}
+      />
     </Show>
   );
 }

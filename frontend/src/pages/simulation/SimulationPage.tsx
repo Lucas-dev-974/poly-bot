@@ -19,6 +19,7 @@ import { Show, createMemo, createSignal, onMount } from "solid-js";
 import type { ChartTarget } from "../../types";
 import { ConfirmModal } from "../../components/modals/ConfirmModal";
 import { LazyMarketHistoryModal } from "../../components/modals/LazyMarketHistoryModal";
+import { SimWhipsawStatus } from "../../components/panels/SimWhipsawStatus";
 import { EngineSelect, PresetSelect } from "../../components/strategy/EnginePresetSelects";
 import { useClock, clockNow } from "../../stores/clockStore";
 import { simConfigState, simEffectiveConfig, simOpenPositions } from "../../stores/simStore";
@@ -176,8 +177,11 @@ export function SimulationPage(): JSX.Element {
           <HistoryCard ctrl={ctrl} onChart={setChartTarget} />
         </main>
 
-        {/* ── Rail Paramètres ─────────────────────────────────────────── */}
+        {/* ── Rail : carte whipsaw + Paramètres ───────────────────────── */}
         <aside class="sim2-rail">
+          <div class="sim2-whip-card">
+            <SimWhipsawStatus />
+          </div>
           <SettingsRail ctrl={ctrl} />
         </aside>
       </div>

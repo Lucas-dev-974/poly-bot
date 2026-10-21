@@ -570,9 +570,11 @@
   font-size: 10px;
 }
 
-/* Ligne statut whipsaw compacte (section Filtre whipsaw du rail). */
+/* Ligne statut whipsaw compacte (section Filtre whipsaw du rail).
+   Vivante sous l'en-tête de section, HORS du corps repliable : le statut
+   doit rester lisible accordéon fermé. Le padding horizontal 16px est donc
+   porté par la marge (le corps .sim2-acc-b ne l'englobe plus). */
 .sim2-whip-row {
-  grid-column: 1 / -1;
   display: flex;
   align-items: center;
   gap: 9px;
@@ -581,7 +583,7 @@
   background: var(--bg);
   border: 1px solid var(--sim2-border-soft);
   border-radius: 8px;
-  margin-bottom: 2px;
+  margin: 0 16px 10px;
 }
 
 .sim2-whip-badge {

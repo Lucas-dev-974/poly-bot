@@ -1,7 +1,5 @@
 import { createMemo, createSignal, onMount, Show } from "solid-js";
 import type { JSX } from "solid-js";
-import { Header } from "./components/layout/Header";
-import { ConfigBar } from "./components/layout/ConfigBar";
 import { OpenPositions } from "./components/panels/OpenPositions";
 import { ActiveMarkets } from "./components/panels/ActiveMarkets";
 import { RecentOrders } from "./components/panels/RecentOrders";
@@ -34,6 +32,8 @@ import { notifyError } from "./utils/notifications";
 import { pushError } from "./stores/toastStore";
 import { fmtUsd } from "./utils/format";
 import type { SimulatedPosition } from "./types";
+import { Topbar } from "./pages/dashboard/Topbar";
+import { ContextBar } from "./pages/dashboard/ContextBar";
 
 export function App(): JSX.Element {
   // Horloge globale partagée (tick 1 s) — countdowns des panneaux.
@@ -180,11 +180,11 @@ export function App(): JSX.Element {
 
   return (
     <>
-      <Header
+      <Topbar
         onOpenWallet={() => setWalletOpen(true)}
         onOpenRecording={() => setRecordingOpen(true)}
       />
-      <ConfigBar onConfigure={() => setSettingsOpen(true)} />
+      <ContextBar onConfigure={() => setSettingsOpen(true)} />
       <div class="grid">
               <PolymarketPositions onRedeem={handleRedeem} />
               <OpenPositions

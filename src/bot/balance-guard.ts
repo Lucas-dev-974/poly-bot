@@ -10,6 +10,7 @@ type BalanceGuardDeps = {
 export class BalanceGuard {
   private consecutiveBalanceRejections = 0;
   private balanceBackoffUntil = 0;
+  private shortageBackoffUntil = 0;
   private cachedBalance: number | null = null;
   private cachedBalanceAt = 0;
   private static readonly BALANCE_CACHE_MS = 30_000;
@@ -17,7 +18,7 @@ export class BalanceGuard {
   constructor(private readonly deps: BalanceGuardDeps) {}
 
   isInBackoff(now = Date.now()): boolean {
-    return now < this.balanceBackoffUntil;
+    return now < this.balanceBackoffUntil || now < this.shortageBackoffUntil;
   }
 
   async getCachedAvailableCollateral(): Promise<number | null> {
@@ -41,6 +42,24 @@ export class BalanceGuard {
     return this.cachedBalance;
   }
 
+  /**
+   * Rejet LOCAL pré-check (solde caché < coût estimé) : pause 60s.
+   * Une seule opportunité produit une trace (row "rejeté"), les suivantes
+   * pendant la fenêtre sont silenciées par la gate isInBackoff — aucun
+   * ordre n'est préparé tant que le solde ne couvre pas le coût estimé.
+   * Auto-réprise : le cache balance (30s < 60s) se recharge pendant la
+   * pause ; au premier tick post-pause, si le solde couvre, noteBalanceOk
+   * (post réussi) lève la pause immédiatement.
+   */
+  noteBalanceShortage(now = Date.now()): void {
+    if (now >= this.shortageBackoffUntil) {
+      log("Live buying paused 60s - insufficient balance (local pre-check)", {
+        resumeAt: new Date(now + 60_000).toISOString(),
+      });
+    }
+    this.shortageBackoffUntil = now + 60_000;
+  }
+
   /** Incrémente ; active backoff 60s après 3 rejects. */
   noteBalanceRejection(now = Date.now()): void {
     this.consecutiveBalanceRejections++;
@@ -53,12 +72,16 @@ export class BalanceGuard {
 
   noteBalanceOk(): void {
     this.consecutiveBalanceRejections = 0;
+    // Un post réussi prouve que le solde couvrait : lève aussitôt la pause
+    // "shortage" pour reprendre le trading sans attendre la fin des 60s.
+    this.shortageBackoffUntil = 0;
   }
 
   /** Optional; ReverseBot.reset must NOT call this (move-only). */
   reset(): void {
     this.consecutiveBalanceRejections = 0;
     this.balanceBackoffUntil = 0;
+    this.shortageBackoffUntil = 0;
     this.cachedBalance = null;
     this.cachedBalanceAt = 0;
   }

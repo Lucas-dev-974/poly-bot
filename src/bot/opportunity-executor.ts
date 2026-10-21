@@ -40,6 +40,13 @@ export class OpportunityExecutor {
   }
 
   async executeOpportunity(opportunity: TradeOpportunity): Promise<void> {
+    // Gate solde/backoff : pendant une pause (venue ou pré-check local),
+    // AUCUN ordre n'est préparé ni affiché — retour silencieux. Le début et
+    // la fin de pause sont journalisés au niveau de BalanceGuard.
+    if (this.deps.balance.isInBackoff()) {
+      return;
+    }
+
     log("Placing limit order", {
       kind: opportunity.kind,
       market: opportunity.event.title,
@@ -70,11 +77,6 @@ export class OpportunityExecutor {
         });
         return;
       }
-    }
-
-    if (this.deps.balance.isInBackoff()) {
-      log("Live order skipped - balance backoff active");
-      return;
     }
 
     if (this.deps.config.readonlyLive) {
@@ -243,6 +245,10 @@ export class OpportunityExecutor {
       this.rejectLiveWithRetry(opportunity, "balance-unknown", {});
       return;
     } else if (estimatedCost > available) {
+      // Pré-check LOCAL : solde (caché) < coût estimé → jamais posté à la
+      // venue. Une trace (row rejeté) par tradeKey, puis pause 60s : les
+      // opportunités suivantes sont silenciées par la gate de tête.
+      this.deps.balance.noteBalanceShortage();
       this.rejectLiveWithRetry(opportunity, "insufficient-balance", {
         estimatedCost,
         available,

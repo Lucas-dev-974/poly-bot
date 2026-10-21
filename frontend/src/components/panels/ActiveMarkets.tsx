@@ -4,7 +4,7 @@ import { marketToChartTarget } from "../../utils/chart-target-adapters";
 import type { JSX } from "solid-js";
 import { Badge } from "../ui/Badge";
 import { EmptyState } from "../ui/EmptyState";
-import { Panel } from "../ui/Panel";
+import { Sim2Card } from "../../pages/dashboard/ui";
 import { marketList } from "../../stores/marketStore";
 import {
   ruleFor,
@@ -260,7 +260,7 @@ export function ActiveMarkets(props: { now: number }): JSX.Element {
 
   return (
     <>
-      <Panel title="Marchés actifs">
+      <Sim2Card title="Marchés actifs">
         <div class="am-toolbar">
           <input
             class="am-search"
@@ -374,7 +374,7 @@ export function ActiveMarkets(props: { now: number }): JSX.Element {
             </For>
           </div>
         </Show>
-      </Panel>
+      </Sim2Card>
       <Show when={chartMarket()}>
         {(m) => (
           <LazyMarketHistoryModal

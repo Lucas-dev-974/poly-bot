@@ -187,20 +187,24 @@ export function App(): JSX.Element {
       />
       <ContextBar onConfigure={() => setSettingsOpen(true)} />
       <KpiStrip />
-      <div class="grid">
-              <PolymarketPositions onRedeem={handleRedeem} />
-              <OpenPositions
-                now={clockNow()}
-                onClosePosition={handleClosePosition}
-                closingId={closingId()}
-              />
-              <ActiveMarkets now={clockNow()} />
-              <RecentOrders now={now()} />
-              <Performance />
-              <ResolvedPositions />
-              <Logs />
-              <WhipsawStatus />
-            </div>
+      <div class="sim2-work">
+        <main class="sim2-main">
+          <RecentOrders now={now()} />
+          <OpenPositions
+            now={clockNow()}
+            onClosePosition={handleClosePosition}
+            closingId={closingId()}
+          />
+          <PolymarketPositions onRedeem={handleRedeem} />
+          <ActiveMarkets now={clockNow()} />
+          <ResolvedPositions />
+          <Performance />
+        </main>
+        <aside class="sim2-rail">
+          <Logs />
+          <WhipsawStatus />
+        </aside>
+      </div>
       <ConfirmModal
         open={redeemTarget() !== null}
         title={`Clôturer la position "${redeemPosition()?.title ?? ""}" ?`}

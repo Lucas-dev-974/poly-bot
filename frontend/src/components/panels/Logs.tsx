@@ -1,7 +1,6 @@
 import { For, Show, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { EmptyState } from "../ui/EmptyState";
-import { Panel } from "../ui/Panel";
 import { logs } from "../../stores/logStore";
 import { timeStr } from "../../utils/format";
 import {
@@ -10,6 +9,7 @@ import {
   requestNotifyPermission,
   type NotifyPref,
 } from "../../utils/notifications";
+import { Sim2Card } from "../../pages/dashboard/ui";
 
 /** Button label for the current notification preference. */
 function notifyLabel(pref: NotifyPref): string {
@@ -38,7 +38,7 @@ export function Logs(): JSX.Element {
   }
 
   return (
-    <Panel title="Logs" full>
+    <Sim2Card title="Journal" count={logs.length} flush>
       <div class="logs">
         <Show
           when={logs.length > 0}
@@ -63,7 +63,7 @@ export function Logs(): JSX.Element {
           }
         >
           <button
-            class="btn"
+            class="btn btn-ghost"
             type="button"
             disabled={pref() === "denied"}
             onClick={() => void toggleNotifications()}
@@ -72,6 +72,6 @@ export function Logs(): JSX.Element {
           </button>
         </Show>
       </div>
-    </Panel>
+    </Sim2Card>
   );
 }

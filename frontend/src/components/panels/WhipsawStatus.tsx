@@ -1,6 +1,6 @@
 import { Show, createMemo, createSignal, onMount } from "solid-js";
 import type { JSX } from "solid-js";
-import { Panel } from "../ui/Panel";
+import { Sim2Card } from "../../pages/dashboard/ui";
 import { api } from "../../api/client";
 import { config } from "../../stores/botStore";
 import { addLog } from "../../stores/logStore";
@@ -99,7 +99,7 @@ export function WhipsawStatus(): JSX.Element {
 
   return (
     <Show when={isFavBand()}>
-      <Panel title="Filtre Whipsaw (fav-band)">
+      <Sim2Card title="Filtre Whipsaw (fav-band)">
         <div class="whipsaw-status">
           <div class={`whipsaw-badge ${badgeClass()}`}>
             <span class="dot" />
@@ -160,7 +160,7 @@ export function WhipsawStatus(): JSX.Element {
             </div>
           </Show>
         </div>
-      </Panel>
+      </Sim2Card>
     </Show>
   );
 }

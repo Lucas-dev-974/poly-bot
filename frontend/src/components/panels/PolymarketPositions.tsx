@@ -2,9 +2,8 @@ import { For, Show, createMemo, createSignal } from "solid-js";
 import { LazyMarketHistoryModal } from "../modals/LazyMarketHistoryModal";
 import { positionToChartTarget } from "../../utils/chart-target-adapters";
 import type { JSX } from "solid-js";
-import { Badge } from "../ui/Badge";
 import { EmptyState } from "../ui/EmptyState";
-import { Panel } from "../ui/Panel";
+import { Sim2Card } from "../../pages/dashboard/ui";
 import {
   polyPositions,
   redeemedConditions,
@@ -195,10 +194,10 @@ export function PolymarketPositions(props: {
 
   const title = createMemo(() => {
     const { open, closed, total } = counts();
-    if (total === 0) return "Positions Polymarket";
+    if (total === 0) return "";
     const { totalGain, totalLoss, netPnl, redeemableGainCount } = pnlStats();
     return (
-      `Positions Polymarket (${open} ouvertes · ${closed} clôturées · ${total} total) · ` +
+      `${open} ouvertes · ${closed} clôturées · ${total} total · ` +
       `Gain ${fmtUsd(totalGain)} · Perte ${fmtUsd(totalLoss)} · ` +
       `Net ${fmtUsd(netPnl)} · Redeemable en gain ${redeemableGainCount}`
     );
@@ -262,7 +261,7 @@ export function PolymarketPositions(props: {
 
   return (
     <>
-      <Panel title={title()} full>
+      <Sim2Card title="Positions Polymarket" note={title()} flush>
       <Show
         when={polyPositions.length > 0}
         fallback={<EmptyState text="En attente de données…" />}
@@ -307,20 +306,20 @@ export function PolymarketPositions(props: {
           when={visible().length > 0}
           fallback={<EmptyState text="Aucune position pour ce filtre." />}
         >
-          <div class="poly-positions-scroll">
-            <table>
+          <div class="poly-positions-scroll sim2-table-scroll">
+            <table class="sim2-table">
               <thead>
                 <tr>
                   <th>Marché</th>
                   <th>Outcome</th>
                   <th>Type</th>
                   <th>Moteur</th>
-                  <th>Fill</th>
-                  <th>Taille</th>
-                  <th>Coût</th>
-                  <th>Prix actuel</th>
-                  <th>Valeur</th>
-                  <th>P&L</th>
+                  <th class="num">Fill</th>
+                  <th class="num">Taille</th>
+                  <th class="num">Coût</th>
+                  <th class="num">Prix actuel</th>
+                  <th class="num">Valeur</th>
+                  <th class="num">P&amp;L</th>
                   <th>Statut</th>
                   <th>Action</th>
                 </tr>
@@ -335,13 +334,13 @@ export function PolymarketPositions(props: {
                     const orderType = meta.orderType;
                     const strategyId = meta.strategyId;
                     const status = closed ? (
-                      <Badge variant="cheap">clôturée</Badge>
+                      <span class="sim2-tag2">clôturée</span>
                     ) : isRedeemablePosition(p) ? (
-                      <Badge variant="dry">redeemable</Badge>
+                      <span class="sim2-tag2 pnl-pos">redeemable</span>
                     ) : isActivePosition(p) ? (
-                      <Badge variant="live">active</Badge>
+                      <span class="sim2-tag2 sim2-tag-ok">active</span>
                     ) : (
-                      <Badge variant="cheap">résolue</Badge>
+                      <span class="sim2-tag2">résolue</span>
                     );
 
                     const canRedeem =
@@ -351,7 +350,7 @@ export function PolymarketPositions(props: {
                     if (closed || redeemedConditions[p.conditionId]) {
                       action = (
                         <span>
-                          <Badge variant="live">clôturée ✓</Badge>
+                          <span class="sim2-tag2 sim2-tag-ok">clôturée ✓</span>
                           {p.timestamp ? (
                             <span class="muted"> {dateTimeStr(p.timestamp)}</span>
                           ) : null}
@@ -414,9 +413,9 @@ export function PolymarketPositions(props: {
                         <td style={cellStyle}>{p.outcome}</td>
                         <td style={cellStyle}>
                           {kind ? (
-                            <Badge variant={kind}>
+                            <span class="sim2-tag2">
                               {orderType ? `${orderType} - ${kind}` : kind}
-                            </Badge>
+                            </span>
                           ) : (
                             <span class="muted">—</span>
                           )}
@@ -427,7 +426,10 @@ export function PolymarketPositions(props: {
                         <td style={cellStyle}>{fmtUsd(positionCost(p))}</td>
                         <td style={cellStyle}>{fmtPrice(p.curPrice)}</td>
                         <td style={cellStyle}>{fmtUsd(p.currentValue)}</td>
-                        <td class={p.cashPnl >= 0 ? "ok" : "err"} style={cellStyle}>
+                        <td
+                          class={`num ${p.cashPnl >= 0 ? "pnl-pos" : "pnl-neg"}`}
+                          style={cellStyle}
+                        >
                           {fmtUsd(p.cashPnl)} ({p.percentPnl.toFixed(1)}%)
                         </td>
                         <td style={cellStyle}>{status}</td>
@@ -441,7 +443,7 @@ export function PolymarketPositions(props: {
           </div>
         </Show>
       </Show>
-    </Panel>
+    </Sim2Card>
     <Show when={chartPosition()}>
       {(p) => (
         <LazyMarketHistoryModal

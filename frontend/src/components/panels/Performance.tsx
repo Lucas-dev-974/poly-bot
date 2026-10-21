@@ -1,10 +1,10 @@
 import { For, Show, createMemo, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { EmptyState } from "../ui/EmptyState";
-import { Panel } from "../ui/Panel";
 import { globalStats, engineRows, refreshEngineStats } from "../../stores/statsStore";
 import type { EngineStatsRow } from "../../types";
 import { fmtUsd, pct } from "../../utils/format";
+import { Sim2Card } from "../../pages/dashboard/ui";
 
 /**
  * Panneau Performance : vue globale (flux SSE `stats`, tous moteurs
@@ -24,10 +24,11 @@ export function Performance(): JSX.Element {
   void refreshEngineStats();
 
   return (
-    <Panel title="Performance">
-      <div class="perf-filter">
+    <Sim2Card
+      title="Performance"
+      tools={
         <select
-          class="perf-filter__select"
+          class="sim2-mini-select"
           value={selected()}
           onChange={(e) => {
             const value = e.currentTarget.value;
@@ -40,7 +41,8 @@ export function Performance(): JSX.Element {
             {(engine) => <option value={engine}>{engine}</option>}
           </For>
         </select>
-      </div>
+      }
+    >
       <Show
         when={isGlobal()}
         fallback={
@@ -56,7 +58,7 @@ export function Performance(): JSX.Element {
           {(s) => <GlobalTable s={s()} />}
         </Show>
       </Show>
-    </Panel>
+    </Sim2Card>
   );
 }
 
@@ -67,23 +69,23 @@ function EngineTable(props: { row: EngineStatsRow }): JSX.Element {
   const r = () => props.row;
   const resolved = () => r().wins + r().losses;
   return (
-    <table>
+    <table class="sim2-table perf-kv">
       <tbody>
         <tr>
-          <td>P&L réalisé</td>
-          <td class={r().realizedPnl >= 0 ? "ok" : "err"}>{fmtUsd(r().realizedPnl)}</td>
+          <td>P&amp;L réalisé</td>
+          <td class={`num ${r().realizedPnl >= 0 ? "pnl-pos" : "pnl-neg"}`}>{fmtUsd(r().realizedPnl)}</td>
         </tr>
         <tr>
           <td>Exposition ouverte</td>
-          <td>{fmtUsd(r().openExposure)}</td>
+          <td class="num">{fmtUsd(r().openExposure)}</td>
         </tr>
         <tr>
           <td>Positions ouvertes</td>
-          <td>{r().openCount}</td>
+          <td class="num">{r().openCount}</td>
         </tr>
         <tr>
           <td>Win rate</td>
-          <td>
+          <td class="num">
             {pct(resolved() > 0 ? r().wins / resolved() : 0)} ({r().wins}/
             {resolved()})
           </td>
@@ -93,65 +95,65 @@ function EngineTable(props: { row: EngineStatsRow }): JSX.Element {
   );
 }
 
-/** Vue globale : table existante, inchangée. */
+/** Vue globale : table existante, inchangée (habillage sim2). */
 function GlobalTable(props: { s: NonNullable<ReturnType<typeof globalStats>> }): JSX.Element {
   const s = () => props.s;
   return (
-    <table>
+    <table class="sim2-table perf-kv">
       <tbody>
         <tr>
-          <td>P&L réalisé</td>
-          <td class={s().realizedPnl >= 0 ? "ok" : "err"}>
+          <td>P&amp;L réalisé</td>
+          <td class={`num ${s().realizedPnl >= 0 ? "pnl-pos" : "pnl-neg"}`}>
             {fmtUsd(s().realizedPnl)}
           </td>
         </tr>
         <tr>
           <td>— Arbitrage couvert</td>
-          <td class={s().arbRealizedPnl >= 0 ? "ok" : "err"}>
+          <td class={`num ${s().arbRealizedPnl >= 0 ? "pnl-pos" : "pnl-neg"}`}>
             {fmtUsd(s().arbRealizedPnl)}
           </td>
         </tr>
         <tr>
           <td>— Directionnel non couvert</td>
-          <td class={s().directionalRealizedPnl >= 0 ? "ok" : "err"}>
+          <td class={`num ${s().directionalRealizedPnl >= 0 ? "pnl-pos" : "pnl-neg"}`}>
             {fmtUsd(s().directionalRealizedPnl)}
           </td>
         </tr>
         <tr>
           <td>Exposition ouverte</td>
-          <td>{fmtUsd(s().openExposure)}</td>
+          <td class="num">{fmtUsd(s().openExposure)}</td>
         </tr>
         <tr>
           <td>— Couverte</td>
-          <td>{fmtUsd(s().coveredExposure)}</td>
+          <td class="num">{fmtUsd(s().coveredExposure)}</td>
         </tr>
         <tr>
           <td>— Non couverte</td>
-          <td>{fmtUsd(s().uncoveredExposure)}</td>
+          <td class="num">{fmtUsd(s().uncoveredExposure)}</td>
         </tr>
         <tr>
           <td>Positions ouvertes</td>
-          <td>{s().openPositionsCount}</td>
+          <td class="num">{s().openPositionsCount}</td>
         </tr>
         <tr>
           <td>Positions résolues</td>
-          <td>{s().resolvedPositionsCount}</td>
+          <td class="num">{s().resolvedPositionsCount}</td>
         </tr>
         <tr>
           <td>Win rate</td>
-          <td>
+          <td class="num">
             {pct(s().winRate)} ({s().wins}/{s().wins + s().losses})
           </td>
         </tr>
         <tr>
           <td>Fill rate</td>
-          <td>
+          <td class="num">
             {pct(s().fillRate)} ({s().totalFilled}/{s().totalAttempted})
           </td>
         </tr>
         <tr>
           <td>Cover rate</td>
-          <td>
+          <td class="num">
             {pct(s().coverRate)} ({s().coveredCount}/
             {s().coveredCount + s().uncoveredCount})
           </td>

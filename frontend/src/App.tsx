@@ -34,6 +34,7 @@ import { fmtUsd } from "./utils/format";
 import type { SimulatedPosition } from "./types";
 import { Topbar } from "./pages/dashboard/Topbar";
 import { ContextBar } from "./pages/dashboard/ContextBar";
+import { KpiStrip } from "./pages/dashboard/KpiStrip";
 
 export function App(): JSX.Element {
   // Horloge globale partagée (tick 1 s) — countdowns des panneaux.
@@ -185,6 +186,7 @@ export function App(): JSX.Element {
         onOpenRecording={() => setRecordingOpen(true)}
       />
       <ContextBar onConfigure={() => setSettingsOpen(true)} />
+      <KpiStrip />
       <div class="grid">
               <PolymarketPositions onRedeem={handleRedeem} />
               <OpenPositions

@@ -8,6 +8,9 @@ import { startSse } from "./transport/sse";
 import "./styles/variables.css";
 import "./styles/globals.css";
 import "./styles/components.css";
+// Design system « sim2 » (né sur /simulation) : socle partagé avec le
+// dashboard — topbar, contexte, KPI, workspace, cartes, tables, boutons.
+import "./styles/sim2.css";
 
 // Code-splitting : chaque page lourde est un chunk séparé, chargé à la
 // demande. Le dashboard (page par défaut, petit) reste eager pour un

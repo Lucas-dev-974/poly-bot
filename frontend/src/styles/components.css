@@ -413,6 +413,30 @@
   white-space: nowrap;
 }
 
+/* Colonne « Marché » : c'est la colonne FLEXIBLE du tableau — sans plafond
+   elle absorbe toute la largeur restante (479 px sur 1264 px de viewport)
+   et pousse le tableau en scroll horizontal (235 px de débordement), ce
+   qui masque « Statut » et « Action ».
+   Le plafond est calé sur le CONTENU : les titres font 17 à 85 caractères
+   (médiane 51, p95 ≈ 48ch), et 50ch en affiche 99 % en entier. Au-delà
+   (1920 px de viewport) la colonne reprend la largeur libre.
+   Le texte est MIS EN LIGNE (pas d'ellipse) : un titre de marché
+   tronqué (« Bitcoin Up or Down - Octo… ») ne dit plus quel créneau il
+   désigne — c'est la seule information de la ligne. Le `title` porte
+   la valeur complète au survol. */
+.poly-positions-scroll .sim2-table th.poly-col-market,
+.poly-positions-scroll .sim2-table td.poly-col-market {
+  max-width: 50ch;
+  min-width: 30ch;
+  white-space: normal;
+}
+
+.poly-positions-scroll .sim2-table td.poly-col-market a {
+  display: inline-block;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
 .poly-positions-scroll thead th {
   position: sticky;
   top: 0;

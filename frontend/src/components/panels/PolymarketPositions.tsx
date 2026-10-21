@@ -319,7 +319,7 @@ export function PolymarketPositionsBody(props: {
             <table class="sim2-table">
               <thead>
                 <tr>
-                  <th>Marché</th>
+                  <th class="poly-col-market">Marché</th>
                   <th class="poly-col-outcome">Out.</th>
                   <th>Type</th>
                   <th>Moteur</th>
@@ -405,12 +405,13 @@ export function PolymarketPositionsBody(props: {
                       <tr
                         classList={{ "poly-row-market": row.striped }}
                       >
-                        <td style={cellStyle}>
+                        <td class="poly-col-market" style={cellStyle}>
                           <a
                             class="market-link"
                             href={`https://polymarket.com/event/${encodeURIComponent(p.slug)}`}
                             target="_blank"
                             rel="noopener"
+                            title={p.title}
                           >
                             {p.title}
                           </a>

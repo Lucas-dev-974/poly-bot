@@ -188,6 +188,20 @@ export function handleOrders(
   );
 }
 
+/**
+ * POST /api/orders/clear-rejected — purge les ordres rejetés (pré-checks
+ * locaux, jamais passés à la venue) du journal DB. Les GTC en attente
+ * (resting) et les annulés sont intacts. Retourne le nombre de lignes.
+ */
+export function handleClearRejectedOrders(
+  ctx: PositionsHandlerCtx,
+  res: ServerResponse,
+): void {
+  const deleted = ctx.repos?.orders.deleteRejected() ?? 0;
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ ok: true, deleted }));
+}
+
 /** GET /api/stats/by-engine — P&L / wins / losses agrégés par moteur. */
 export function handleStatsByEngine(
   ctx: PositionsHandlerCtx,

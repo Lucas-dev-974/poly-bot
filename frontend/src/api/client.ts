@@ -181,6 +181,10 @@ export const api = {
   openPositions: () => request<PositionsResponse>("/api/open-positions"),
   resolvedPositions: () => request<PositionsResponse>("/api/resolved-positions"),
   orders: () => request<OrdersResponse>("/api/orders"),
+  clearRejectedOrders: () =>
+    request<{ ok: boolean; deleted: number }>("/api/orders/clear-rejected", {
+      method: "POST",
+    }),
   marketHistory: (p: {
     tokenId: string;
     oppositeTokenId?: string;

@@ -81,6 +81,7 @@ import {
 } from "./market-data-handlers.js";
 import {
   handleCloseOpenPosition as handleCloseOpenPositionFn,
+  handleClearRejectedOrders as handleClearRejectedOrdersFn,
   handleManualBuy as handleManualBuyFn,
   handleOpenPositions as handleOpenPositionsFn,
   handleOrders as handleOrdersFn,
@@ -284,6 +285,12 @@ export class DashboardServer {
 
       if (url.pathname === "/api/orders") {
         this.handleOrders(res);
+        return;
+      }
+
+      if (url.pathname === "/api/orders/clear-rejected" && req.method === "POST") {
+        if (!this.isAllowedOrigin(req)) return originForbidden(res);
+        handleClearRejectedOrdersFn(this.positionsCtx(), res);
         return;
       }
 

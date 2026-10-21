@@ -549,6 +549,24 @@ export class OrderRepository {
     );
   }
 
+  /**
+   * Supprime les ordres rejetés (fill jamais passé à la venue : pré-checks
+   * locaux) — correspondance exacte avec le badge « rejeté » du dashboard :
+   * filled = 0, ni resting (GTC en attente) ni cancelled (annulé). Retourne
+   * le nombre de lignes supprimées (comptées avant l'UPDATE, SQLite sync).
+   */
+  deleteRejected(): number {
+    const rejectedSql =
+      "filled = 0 AND (reason IS NULL OR (reason != 'resting' AND reason != 'cancelled'))";
+    const n = this.db.get<{ n: number }>(
+      `SELECT COUNT(*) AS n FROM orders WHERE ${rejectedSql}`,
+    )?.n ?? 0;
+    if (n > 0) {
+      this.db.run(`DELETE FROM orders WHERE ${rejectedSql}`);
+    }
+    return n;
+  }
+
   /** Ordres remplis (fills réels ou simulés) pour un ensemble de tokens, triés par ts. */
   filledByTokenIds(tokenIds: string[]): OrderRow[] {
     const ids = tokenIds.filter((id) => id.length > 0);

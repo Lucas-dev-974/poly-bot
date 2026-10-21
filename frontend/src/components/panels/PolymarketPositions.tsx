@@ -320,7 +320,7 @@ export function PolymarketPositionsBody(props: {
               <thead>
                 <tr>
                   <th>Marché</th>
-                  <th>Outcome</th>
+                  <th class="poly-col-outcome">Out.</th>
                   <th>Type</th>
                   <th>Moteur</th>
                   <th class="num">Fill</th>
@@ -415,7 +415,9 @@ export function PolymarketPositionsBody(props: {
                             {p.title}
                           </a>
                         </td>
-                        <td style={cellStyle}>{p.outcome}</td>
+                        <td class="poly-col-outcome" style={cellStyle} title={p.outcome}>
+                          {p.outcome}
+                        </td>
                         <td style={cellStyle}>
                           {kind ? (
                             <span class="sim2-tag2">

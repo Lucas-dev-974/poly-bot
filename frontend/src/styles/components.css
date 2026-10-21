@@ -383,6 +383,36 @@
   overflow: auto;
 }
 
+/* Colonne « Outcome » bornée à 4 caractères.
+   - Cellules (12px mono) : 4ch = 28.13 px de contenu + 12 px de padding
+     = 40.13 px ; le +1 px de marge évite que « Down » (28.13 px) soit
+     rogné par l'arrondi sub-pixel.
+   - En-tête (10px) : 5ch + 12 px — le libellé court « Out. » (4.48ch)
+     est plus large en proportion que 4 caractères de cellule, il lui
+     faut son propre plancher pour ne jamais être ellipsé.
+   Les valeurs trop longues (équipes, joueurs) sont tronquées en ellipse ;
+   le texte complet reste lisible via l'attribut `title`. */
+.poly-positions-scroll .sim2-table td.poly-col-outcome {
+  width: calc(4ch + 13px);
+  max-width: calc(4ch + 13px);
+  padding-left: 6px;
+  padding-right: 6px;
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.poly-positions-scroll .sim2-table th.poly-col-outcome {
+  width: calc(5ch + 12px);
+  max-width: calc(5ch + 12px);
+  padding-left: 6px;
+  padding-right: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .poly-positions-scroll thead th {
   position: sticky;
   top: 0;

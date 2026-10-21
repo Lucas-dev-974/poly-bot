@@ -32,3 +32,34 @@
 .dash-shell .sim2-main {
   gap: 14px;
 }
+
+/* Carte Historique (onglets Ordres / Positions Polymarket / Positions
+   résolues) : barres d'outils internes au-dessus des tableaux. */
+.dash-shell .dash-hist-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+
+.dash-shell .dash-hist-note {
+  padding-bottom: 10px;
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* La barre de filtres « poly » porte sa propre marge basse : on la ramène
+   au rythme des autres barres d'outils de la carte. */
+.dash-shell .sim2-card-b .poly-filter-bar {
+  margin-bottom: 0;
+  padding-bottom: 10px;
+}
+
+/* Tableaux de l'onglet : hauteur bornée (400px, comme le panneau poly)
+   pour que la carte Historique ne pousse pas le reste de la colonne. */
+.dash-shell .sim2-card-b .orders,
+.dash-shell .sim2-card-b .resolved {
+  max-height: 400px;
+  overflow: auto;
+}

@@ -1,9 +1,14 @@
+/**
+ * Onglet « Positions Polymarket » de la carte Historique du dashboard.
+ * CORPS seul (la carte + les onglets sont portés par
+ * pages/dashboard/HistoryCard) : le résumé chiffré + la barre de filtres +
+ * le tableau + l'action de clôture (redeem) + le graphique de marché.
+ */
 import { For, Show, createMemo, createSignal } from "solid-js";
 import { LazyMarketHistoryModal } from "../modals/LazyMarketHistoryModal";
 import { positionToChartTarget } from "../../utils/chart-target-adapters";
 import type { JSX } from "solid-js";
 import { EmptyState } from "../ui/EmptyState";
-import { Sim2Card } from "../../pages/dashboard/ui";
 import {
   polyPositions,
   redeemedConditions,
@@ -163,7 +168,7 @@ function matchesStatus(
   return isActivePosition(position);
 }
 
-export function PolymarketPositions(props: {
+export function PolymarketPositionsBody(props: {
   onRedeem: (conditionId: string) => void;
 }): JSX.Element {
   const [statusFilter, setStatusFilter] = createSignal<StatusFilter>("all");
@@ -261,11 +266,13 @@ export function PolymarketPositions(props: {
 
   return (
     <>
-      <Sim2Card title="Positions Polymarket" note={title()} flush>
       <Show
         when={polyPositions.length > 0}
         fallback={<EmptyState text="En attente de données…" />}
       >
+        <Show when={title()}>
+          <div class="dash-hist-note">{title()}</div>
+        </Show>
         <div class="poly-filter-bar">
           <div class="poly-filter-group">
             <For each={STATUS_FILTERS}>
@@ -443,15 +450,14 @@ export function PolymarketPositions(props: {
           </div>
         </Show>
       </Show>
-    </Sim2Card>
-    <Show when={chartPosition()}>
-      {(p) => (
-        <LazyMarketHistoryModal
-          target={positionToChartTarget(p())}
-          onClose={() => setChartPosition(null)}
-        />
-      )}
-    </Show>
+      <Show when={chartPosition()}>
+        {(p) => (
+          <LazyMarketHistoryModal
+            target={positionToChartTarget(p())}
+            onClose={() => setChartPosition(null)}
+          />
+        )}
+      </Show>
     </>
   );
 }

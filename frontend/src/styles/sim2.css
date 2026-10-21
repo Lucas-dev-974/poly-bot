@@ -584,6 +584,51 @@
   padding: 10px;
 }
 
+/* ─── Onglets segmentés (socle partagé : page Simulation + dashboard) ── */
+
+.sim2-seg {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2.5px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.sim2-seg button {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  padding: 4.5px 12px;
+  font-size: 11.5px;
+  font-weight: 550;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+}
+
+.sim2-seg button:hover:not(.on) {
+  color: var(--text);
+}
+
+.sim2-seg button.on {
+  background: var(--panel-2, #1a1f2b);
+  background: #1a1f2b;
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.sim2-seg .n {
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-left: 5px;
+}
+
+/* ─── Compteur ──────────────────────────────────────────────────────── */
+
 .sim2-count {
   font-size: 10.5px;
 }
@@ -874,6 +919,11 @@
 
   .sim2-card-h {
     align-items: flex-start;
+  }
+
+  /* Les onglets passent en dernière ligne quand la barre déborde. */
+  .sim2-card-h .sim2-seg {
+    order: 10;
   }
 }
 

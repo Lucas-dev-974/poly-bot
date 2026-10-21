@@ -2,10 +2,7 @@ import { createMemo, createSignal, onMount, Show } from "solid-js";
 import type { JSX } from "solid-js";
 import { OpenPositions } from "./components/panels/OpenPositions";
 import { ActiveMarkets } from "./components/panels/ActiveMarkets";
-import { RecentOrders } from "./components/panels/RecentOrders";
 import { Performance } from "./components/panels/Performance";
-import { ResolvedPositions } from "./components/panels/ResolvedPositions";
-import { PolymarketPositions } from "./components/panels/PolymarketPositions";
 import { Logs } from "./components/panels/Logs";
 import { WhipsawStatus } from "./components/panels/WhipsawStatus";
 import { ConfirmModal } from "./components/modals/ConfirmModal";
@@ -35,6 +32,7 @@ import type { SimulatedPosition } from "./types";
 import { Topbar } from "./pages/dashboard/Topbar";
 import { ContextBar } from "./pages/dashboard/ContextBar";
 import { KpiStrip } from "./pages/dashboard/KpiStrip";
+import { HistoryCard } from "./pages/dashboard/HistoryCard";
 import "./styles/dash.css";
 
 export function App(): JSX.Element {
@@ -190,15 +188,13 @@ export function App(): JSX.Element {
       <KpiStrip />
       <div class="sim2-work">
         <main class="sim2-main">
-          <RecentOrders now={now()} />
           <OpenPositions
             now={clockNow()}
             onClosePosition={handleClosePosition}
             closingId={closingId()}
           />
-          <PolymarketPositions onRedeem={handleRedeem} />
           <ActiveMarkets now={clockNow()} />
-          <ResolvedPositions />
+          <HistoryCard now={now()} onRedeem={handleRedeem} />
           <Performance />
         </main>
         <aside class="sim2-rail">

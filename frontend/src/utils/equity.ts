@@ -35,7 +35,6 @@ export interface EquityStats {
   truncated: boolean;
 }
 
-const HARD_CAP = 200;
 
 export function buildEquitySeries(
   resolved: readonly SimulatedPosition[],
@@ -46,7 +45,7 @@ export function buildEquitySeries(
     .filter((p) => typeof p.pnl === "number" && Number.isFinite(p.pnl))
     .map((p) => ({ t: p.resolvedAt ?? p.windowEnd * 1000, pnl: p.pnl as number }))
     .sort((a, b) => a.t - b.t);
-  const truncated = rows.length >= HARD_CAP;
+  const truncated = false;
 
   const sum = rows.reduce((acc, r) => acc + r.pnl, 0);
   // Ancre recalée : dernier point = capitalInitial + P&L réalisé moteur.

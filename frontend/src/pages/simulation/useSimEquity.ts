@@ -1,8 +1,8 @@
 /**
  * Historique equity de la simulation (courbe de capital) — hook instancié
- * une fois par la page. Fetch indépendant des tables (page 1, plafond
- * backend 200 : les plus récentes), rafraîchi au montage et à chaque
- * résolution (SSE → simResolvedPositions, debounce 400 ms).
+ * une fois par la page. Fetch indépendant des tables (toutes les pages,
+ * 200 résolutions par page — historique complet), rafraîchi au montage et
+ * à chaque résolution (SSE → simResolvedPositions, debounce 400 ms).
  *
  * La série (utils/equity.ts) est ancrée : le DERNIER point vaut exactement
  * capitalInitial + P&L réalisé du moteur, même si l'historique est tronqué
@@ -25,11 +25,24 @@ export interface SimEquity {
 export function useSimEquity(): SimEquity {
   const [equityList, setEquityList] = createSignal<SimulatedPosition[]>([]);
 
-  async function fetchEquity(): Promise<void> {
+async function fetchEquity(): Promise<void> {
     try {
-      const data = await api.simResolvedPaged(1, 200);
+      const pageSize = 200;
+      // Historique complet : on pagine côté client jusqu'à la dernière page
+      // (le backend plafonne une page à 200 résolutions). Avant on ne lisait
+      // que la page 1, ce qui tronquait l'équité au-delà de 200 points.
+      const first = await api.simResolvedPaged(1, pageSize);
+      const chunks: SimulatedPosition[][] = [first.positions];
+      let page = 1;
+      const totalPages = Math.max(1, first.totalPages ?? 1);
+      while (page < totalPages) {
+        page += 1;
+        const next = await api.simResolvedPaged(page, pageSize);
+        if (next.positions.length === 0) break;
+        chunks.push(next.positions);
+      }
+      setEquityList(chunks.flat());
       firstRunSinceMount = false;
-      setEquityList(data.positions);
     } catch {
       /* la dernière liste reste affichée */
     }

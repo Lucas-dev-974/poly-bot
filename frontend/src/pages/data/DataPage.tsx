@@ -16,6 +16,8 @@ import type { JSX } from "solid-js";
 import { api } from "../../api/client";
 import type { DbTableStatRow, DbTablesResponse } from "../../api/client";
 import { Sim2Card, Sim2Tabs } from "../../components/ui/Sim2Card";
+import { Sim2Kpis, type Sim2KpiCard } from "../../components/ui/Sim2Kpi";
+import { TopbarNavLinks } from "../../components/layout/TopbarNav";
 import { navigate } from "../../router";
 import { clockNow, useClock } from "../../stores/clockStore";
 import "../../styles/data.css";
@@ -235,6 +237,7 @@ export function DataPage(): JSX.Element {
           <span class="sim2-topbar-muted">Vue des tables SQLite — lecture seule</span>
         </div>
         <div class="sim2-topbar-actions">
+          <TopbarNavLinks activeHref="/donnees" ariaLabel="Navigation données" />
           <Show when={refreshedAgo() != null}>
             <span class="data-updated">
               <span class="data-live-dot" />
@@ -269,45 +272,44 @@ export function DataPage(): JSX.Element {
             </Show>
           }
         >
-          <section class="sim2-kpis">
-            <div class="sim2-kpi">
-              <span class="sim2-kpi-label">Tables</span>
-              <span class="sim2-kpi-value">{totals().count}</span>
-              <span class="sim2-kpi-sub">{tabs().length - 1} groupes</span>
-            </div>
-            <div class="sim2-kpi">
-              <span class="sim2-kpi-label">Lignes totales</span>
-              <span class="sim2-kpi-value">{fmtCountCompact(totals().rows)}</span>
-              <span class="sim2-kpi-sub">
-                <b>{fmtCount(totals().rows)}</b>
-              </span>
-            </div>
-            <div class="sim2-kpi">
-              <span class="sim2-kpi-label">Taille DB</span>
-              <span class="sim2-kpi-value">{fmtBytes(sizeBytes())}</span>
-              <span class="sim2-kpi-sub">
-                {sizeBytes() != null
-                  ? (data()?.db?.walBytes ?? 0) > 0
-                    ? `fichier + WAL (${fmtBytes(data()?.db?.walBytes)})`
-                    : "fichier seul — aucun WAL"
-                  : "métadonnée absente du backend"}
-              </span>
-            </div>
-            <div class="sim2-kpi data-kpi-warn">
-              <span class="sim2-kpi-label">Part snapshots</span>
-              <span class="sim2-kpi-value">
-                {snapShare() != null
-                  ? `${((snapShare() ?? 0) * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} %`
-                  : "—"}
-              </span>
-              <span class="sim2-kpi-sub">5 tables de scan — grandissent à chaque tour</span>
-            </div>
-            <div class="sim2-kpi">
-              <span class="sim2-kpi-label">Tables vides</span>
-              <span class="sim2-kpi-value">{totals().empty}</span>
-              <span class="sim2-kpi-sub">réservées au runtime, 0 = normal</span>
-            </div>
-          </section>
+          <Sim2Kpis
+            cards={() => [
+              {
+                label: "Tables",
+                value: () => totals().count,
+                sub: () => `${tabs().length - 1} groupes`,
+              },
+              {
+                label: "Lignes totales",
+                value: () => fmtCountCompact(totals().rows),
+                sub: () => <b>{fmtCount(totals().rows)}</b>,
+              },
+              {
+                label: "Taille DB",
+                value: () => fmtBytes(sizeBytes()),
+                sub: () =>
+                  sizeBytes() != null
+                    ? (data()?.db?.walBytes ?? 0) > 0
+                      ? `fichier + WAL (${fmtBytes(data()?.db?.walBytes)})`
+                      : "fichier seul — aucun WAL"
+                    : "métadonnée absente du backend",
+              },
+              {
+                label: "Part snapshots",
+                value: () =>
+                  snapShare() != null
+                    ? `${((snapShare() ?? 0) * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} %`
+                    : "—",
+                sub: () => "5 tables de scan — grandissent à chaque tour",
+                cardClass: "data-kpi-warn",
+              },
+              {
+                label: "Tables vides",
+                value: () => totals().empty,
+                sub: () => "réservées au runtime, 0 = normal",
+              },
+            ]}
+          />
 
           <div class="data-controls">
             <Sim2Tabs

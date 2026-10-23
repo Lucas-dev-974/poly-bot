@@ -69,3 +69,28 @@ export function dateTimeStr(ts: number | undefined): string {
     minute: "2-digit",
   });
 }
+
+/** Décimales françaises (virgule) sans exposant. */
+function fmtDecimal(v: number, digits: number): string {
+  return v.toLocaleString("fr-FR", { maximumFractionDigits: digits });
+}
+
+/** Octets → « 2,77 Go / 14,4 Mo / 100 ko » (base 1024, convention Windows). */
+export function fmtBytes(v: number | null | undefined): string {
+  if (v == null || !Number.isFinite(v) || v <= 0) return "—";
+  if (v >= 1024 ** 3) return `${fmtDecimal(v / 1024 ** 3, 2)} Go`;
+  if (v >= 1024 ** 2) return `${fmtDecimal(v / 1024 ** 2, 1)} Mo`;
+  return `${fmtDecimal(v / 1024, 0)} ko`;
+}
+
+/** Comptage exact groupe par séparateurs fr : « 11 270 577 ». */
+export function fmtCount(v: number | null | undefined): string {
+  return v == null || !Number.isFinite(v) ? "—" : fmtDecimal(Math.round(v), 0);
+}
+
+/** Comptage compact : « 7,42 M » au-dessus du million, exact en dessous. */
+export function fmtCountCompact(v: number | null | undefined): string {
+  if (v == null || !Number.isFinite(v)) return "—";
+  if (v >= 1e6) return `${fmtDecimal(v / 1e6, 2)} M`;
+  return fmtCount(v);
+}

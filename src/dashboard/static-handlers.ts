@@ -147,9 +147,9 @@ export function handleDbTables(
     return;
   }
   try {
-    const tables = repos.db.listTableCounts();
+    const report = repos.db.listDbStats();
     res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ tables }));
+    res.end(JSON.stringify(report));
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     res.writeHead(500, { "Content-Type": "application/json" });

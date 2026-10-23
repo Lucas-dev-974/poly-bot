@@ -69,6 +69,32 @@ export interface SimConfigPatch {
   capital?: number;
 }
 
+/** Stat d'une table SQLite renvoyé par GET /api/db/tables. */
+export interface DbTableStatRow {
+  name: string;
+  count: number;
+  /** Octets (btree table + indexes) — absent/null sur backend démarré avant la màj. */
+  bytes?: number | null;
+  /** Jours civils distincts couverts — UNIQUEMENT pour market_snapshots. */
+  days?: number | null;
+}
+
+/** Tailles sur disque de la base — absent sur backend démarré avant la màj. */
+export interface DbStatsInfo {
+  fileBytes: number;
+  walBytes: number;
+  pageSize: number;
+  pageCount: number;
+  freelistBytes: number;
+  /** Diagnostic de la requête tailles par table (null si complet ou indispo). */
+  sizeQueryError?: string | null;
+}
+
+export interface DbTablesResponse {
+  tables: DbTableStatRow[];
+  db?: DbStatsInfo | null;
+}
+
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
   if (!res.ok) {
@@ -168,8 +194,7 @@ interface StrategyStatusResponse {
 
 export const api = {
   state: () => request<StateResponse>("/api/state"),
-  dbTables: () =>
-    request<{ tables: Array<{ name: string; count: number }> }>("/api/db/tables"),
+  dbTables: () => request<DbTablesResponse>("/api/db/tables"),
   /** Fallback REST positions Polymarket (cache du dernier poll BalanceTracker). */
   polyPositions: () =>
     request<{ positions: import("../types").PolymarketPosition[] }>(

@@ -1,11 +1,65 @@
-import { mkdirSync } from "node:fs";
-import { dirname } from "node:path";
+import { mkdirSync, statSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
+import { readTableMetrics } from "./db-metrics.js";
+
+export interface DbTableStatRow {
+  name: string;
+  count: number;
+  /**
+   * Octets occupés par la table (btree de la table + ses indexes, via dbstat).
+   * null si la build SQLite n'a pas DBSTAT_VTAB ou si le scan est en cours.
+   */
+  bytes: number | null;
+  /**
+   * Jours civils DISTINCTS (UTC) couverts par market_snapshots UNIQUEMENT —
+   * undefined pour toutes les autres tables.
+   */
+  days?: number | null;
+}
+
+export interface DbStatsInfo {
+  /** Taille du fichier .db sur disque. */
+  fileBytes: number;
+  /** Taille du -wal sur disque (0 si absent). */
+  walBytes: number;
+  pageSize: number;
+  pageCount: number;
+  /** Pages libres (freelist) en octets. */
+  freelistBytes: number;
+  /**
+   * Message d'échec de la requête dbstat (tailles par table), pour diagnostic
+   * via l'API — null si les tailles sont disponibles.
+   */
+  sizeQueryError: string | null;
+}
+
+export interface DbStatsReport {
+  tables: DbTableStatRow[];
+  /** null si la persistance est désactivée. */
+  db: DbStatsInfo | null;
+}
+
+/** TTL du cache des tailles par table (scan dbstat worker better-sqlite3). */
+const SIZES_TTL_MS = 180_000;
+
+/** Table unique qui porte la métrique « jours marché enregistrés » (days). */
+const MARKET_SNAPSHOTS_TABLE = "market_snapshots";
 
 export class Database {
   private readonly conn: DatabaseSync | null;
+  /** Chemin du fichier DB (null si persistance désactivée) — pour stat du .db / -wal. */
+  private readonly path: string | null;
+  /** Cache du scan dbstat (worker better-sqlite3 readonly) — TTL SIZES_TTL_MS. */
+  private sizesByTable: Map<string, number> | null = null;
+  /** Nb de jours marché (market_snapshots), ride dans le même scan caché. */
+  private sizesMarketDays: number | null = null;
+  private sizesAt = 0;
+  private sizesError: string | null = null;
+  private sizesPending = false;
 
   constructor(path: string, enabled: boolean) {
+    this.path = enabled ? path : null;
     if (!enabled) {
       this.conn = null;
       return;
@@ -559,19 +613,97 @@ export class Database {
   }
 
 
-  listTableCounts(): Array<{ name: string; count: number }> {
-    if (!this.conn) return [];
+  listDbStats(): DbStatsReport {
+    if (!this.conn) return { tables: [], db: null };
     const tables = this.all<{ name: string }>(
       "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
     );
-    const out: Array<{ name: string; count: number }> = [];
+    const out: DbTableStatRow[] = [];
     for (const t of tables) {
       // Only count real identifiers from sqlite_master (defense in depth).
       if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(t.name)) continue;
       const row = this.get<{ c: number | bigint }>(`SELECT COUNT(*) AS c FROM "${t.name}"`);
-      out.push({ name: t.name, count: Number(row?.c ?? 0) });
+      out.push({ name: t.name, count: Number(row?.c ?? 0), bytes: null });
     }
-    return out;
+    // Tailles par table = btree + indexes via dbstat, exécuté HORS boucle
+    // (worker better-sqlite3 readonly + cache TTL) : le scan peut durer
+    // plusieurs secondes sur une base de plusieurs Go, il ne doit JAMAIS
+    // geler la boucle d'événements du bot. Un cycle peut donc renvoyer des
+    // bytes null — l'UI dégrade la colonne en « — » puis se remplit.
+    const sizeQueryError = this.ensureTableSizes(out);
+    const pageSize = Number(this.get<{ page_size: number }>("PRAGMA page_size")?.page_size ?? 0);
+    const pageCount = Number(this.get<{ page_count: number }>("PRAGMA page_count")?.page_count ?? 0);
+    const freePages = Number(
+      this.get<{ freelist_count: number }>("PRAGMA freelist_count")?.freelist_count ?? 0,
+    );
+    let fileBytes = 0;
+    let walBytes = 0;
+    if (this.path) {
+      try {
+        fileBytes = statSync(this.path).size;
+      } catch {
+        /* fichier introuvable : garde 0 */
+      }
+      try {
+        walBytes = statSync(`${this.path}-wal`).size;
+      } catch {
+        /* pas de -wal : garde 0 */
+      }
+    }
+    return {
+      tables: out,
+      db: {
+        fileBytes,
+        walBytes,
+        pageSize,
+        pageCount,
+        freelistBytes: freePages * pageSize,
+        sizeQueryError,
+      },
+    };
+  }
+
+  /**
+   * Remplit `bytes` de chaque ligne depuis le cache du scan dbstat, et
+   * planifie un scan worker (better-sqlite3 readonly) si le cache est périmé
+   * — jamais dans la boucle du bot.
+   * Retour : null si les tailles sont complètes, sinon le message d'attente
+   * (« scan en cours ») ou l'erreur du dernier scan tenté.
+   */
+  private ensureTableSizes(out: DbTableStatRow[]): string | null {
+    if (this.sizesByTable) {
+      for (const t of out) {
+        const bytes = this.sizesByTable.get(t.name);
+        if (bytes != null) t.bytes = bytes;
+      }
+      const market = out.find((t) => t.name === MARKET_SNAPSHOTS_TABLE);
+      if (market) market.days = this.sizesMarketDays;
+      const complete = !out.some((t) => t.bytes == null);
+      // Une fois le cache complet, une erreur historique du dernier scan
+      // raté n'est plus pertinente.
+      if (complete) this.sizesError = null;
+      return complete ? null : this.sizesError ?? "tailles partielles, nouveau scan attendu";
+    }
+    if (!this.path) return null;
+    if (Date.now() - this.sizesAt > SIZES_TTL_MS && !this.sizesPending) {
+      this.sizesPending = true;
+      const dbPath = resolve(this.path);
+      void readTableMetrics(dbPath)
+        .then((m) => {
+          this.sizesByTable = m.byTable;
+          this.sizesMarketDays = m.marketDays;
+          this.sizesError = null;
+        })
+        .catch((e: unknown) => {
+          this.sizesError = e instanceof Error ? e.message : String(e);
+          console.warn(`[db] métriques par table indisponibles : ${this.sizesError}`);
+        })
+        .finally(() => {
+          this.sizesPending = false;
+          this.sizesAt = Date.now();
+        });
+    }
+    return this.sizesError ?? "scan dbstat (worker) en cours…";
   }
 
   close(): void {

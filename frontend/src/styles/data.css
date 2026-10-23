@@ -1,121 +1,278 @@
+/*
+ * Page Données (/donnees) — feuille propre à la page.
+ *
+ * Le socle vient de styles/sim2.css chargé GLOBALEMENT (topbar, badges,
+ * KPI .sim2-kpi*, cartes .sim2-card, onglets .sim2-seg) : on ne redéfinit
+ * AUCUNE de ces règles ici. Tout ce qui suit est scopé .data-page pour ne
+ * pas fuiter vers le dashboard / la simulation.
+ */
+
 .data-page {
   min-height: 100vh;
-  background: var(--bg);
-  color: var(--text);
 }
 
-.data-header {
+.data-body {
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Badge « maj il y a Ns » dans la topbar (l'horloge vient de clockStore). */
+.data-updated {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
-  background: var(--panel);
-  flex-wrap: wrap;
-}
-
-.data-header__left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.data-header h1 {
-  margin: 0;
-  font-size: 1.35rem;
-  font-weight: 700;
-}
-
-.data-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
-.data-lead {
-  margin: 0 0 20px;
+  gap: 6px;
+  font-size: 11px;
   color: var(--muted);
-  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
 }
 
-.data-muted {
-  color: var(--muted);
+.data-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: data-pulse 2.2s ease-in-out infinite;
 }
 
+@keyframes data-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(46, 204, 113, 0);
+  }
+}
+
+/* Message d'erreur (échec du GET, base indisponible). */
 .data-error {
   padding: 12px 14px;
-  margin-bottom: 16px;
   border-radius: 8px;
   border: 1px solid rgba(255, 80, 80, 0.4);
   background: rgba(255, 80, 80, 0.1);
   color: #ff8a8a;
 }
 
-.data-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px 28px;
-  margin-bottom: 20px;
+.data-muted {
   color: var(--muted);
-  font-size: 0.95rem;
 }
 
-.data-summary strong {
+/* KPI « Part snapshots » : valeur ambre au-delà du seuil (surpoids du scan). */
+.data-page .sim2-kpi.data-kpi-warn .sim2-kpi-value {
+  color: var(--amber);
+}
+
+/* ── Contrôles : onglets de groupes + recherche ────────────────────── */
+
+.data-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.data-search {
+  margin-left: auto;
+  min-width: 220px;
+  height: 30px;
+  padding: 0 10px;
+  font-size: 12px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.data-search::placeholder {
+  color: var(--muted);
+}
+
+.data-search:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
+}
+
+/* ── Lignes de table (une ligne = une table SQLite) ─────────────────── */
+
+.data-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.data-row {
+  display: grid;
+  grid-template-columns: minmax(230px, 1.5fr) 200px minmax(90px, 1fr) 96px 84px;
+  gap: 14px;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--sim2-border-soft);
+}
+
+.data-row:last-child {
+  border-bottom: none;
+}
+
+.data-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Table vide : ligne dimmée — 0 est une valeur normale, pas une alerte. */
+.data-row--empty {
+  opacity: 0.5;
+}
+
+.data-r-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.data-r-label {
+  font-size: 12.5px;
+  font-weight: 600;
   color: var(--text);
 }
 
-.data-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 14px;
+.data-r-def {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--muted);
 }
 
-.data-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 18px;
+/* Métrique « jours marché enregistrés » (market_snapshots uniquement) —
+   à côté du libellé, un seul tag sur toute la page : l'accent reste un signal. */
+.data-r-head {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  transition: border-color 0.15s, transform 0.15s;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
-.data-card:hover {
-  border-color: var(--accent);
+.data-r-days {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  font-weight: 650;
+  color: var(--accent);
+  background: rgba(79, 140, 255, 0.1);
+  border-radius: 999px;
+  padding: 1.5px 8px;
+  font-variant-numeric: tabular-nums;
 }
 
-.data-card__name {
-  font-weight: 700;
-  font-size: 0.98rem;
-}
-
-.data-card__table {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.78rem;
+.data-r-name {
+  font-size: 11.5px;
   color: var(--muted);
   word-break: break-all;
 }
 
-.data-card__def {
-  margin: 8px 0 0;
-  font-size: 0.85rem;
-  line-height: 1.45;
-  color: var(--muted);
-  flex: 1;
+/* Barre : part de la table la plus lourde du groupe (échelle linéaire). */
+.data-r-barcell {
+  min-width: 0;
 }
 
-.data-card__count {
-  margin-top: 12px;
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+.data-r-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--sim2-track);
+  overflow: hidden;
+}
+
+.data-r-fill {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+/* La table la plus lourde du groupe passe au vert (le signal dominant). */
+.data-r-fill.max {
+  background: var(--green);
+}
+
+.data-r-count {
+  text-align: right;
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-variant-numeric: tabular-nums;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.data-r-size {
+  text-align: right;
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* Valeurs dominantes (> 0,1 Go) ressortent en accent — l'accent est rare, */
+/* donc il redevient un signal. */
+.data-r-count.big,
+.data-r-size.big {
   color: var(--accent);
+  font-weight: 700;
 }
 
-.data-card__unit {
-  font-size: 0.8rem;
+.data-pill-ghost {
+  display: inline-block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+/* Note de bas de page (méthodo de lecture). */
+.data-foot {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+  .data-row {
+    grid-template-columns: minmax(180px, 1.5fr) 170px minmax(60px, 1fr) 84px 76px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 860px) {
+  .data-controls {
+    align-items: flex-start;
+  }
+
+  .data-search {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .data-row {
+    grid-template-columns: minmax(0, 1.3fr) minmax(90px, 1fr) 92px 84px;
+    gap: 8px;
+  }
+
+  /* Le nom SQL passe sous la ligne (libellé + rôle restent lisibles). */
+  .data-r-name {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .data-live-dot {
+    animation: none;
+  }
 }

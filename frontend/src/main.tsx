@@ -27,7 +27,7 @@ const StrategyEditorPage = lazy(() =>
   import("./pages/StrategyEditorPage").then((m) => ({ default: m.StrategyEditorPage })),
 );
 const DataPage = lazy(() =>
-  import("./pages/DataPage").then((m) => ({ default: m.DataPage })),
+  import("./pages/data/DataPage").then((m) => ({ default: m.DataPage })),
 );
 const SimulationPage = lazy(() =>
   import("./pages/simulation/SimulationPage").then((m) => ({ default: m.SimulationPage })),

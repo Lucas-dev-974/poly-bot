@@ -55,52 +55,65 @@ type Props = {
   form: Accessor<ConfigFormState | null>;
   hasInlineErrors: Accessor<boolean>;
   onLaunch: () => void;
+  /** Annule le run en cours (endpoint /backtest/run/:id/cancel). */
+  onCancel: () => void;
 };
 
 export function BacktestFilterBar(props: Props): JSX.Element {
+  const running = (): boolean => props.progress()?.status === "running";
   return (
     <div class="bt-toolbar">
-      <label>
-        Date
-        <select value={props.dateKey()} onChange={(e) => props.setDateKey(e.currentTarget.value)}>
-          <option value="all">Toutes</option>
-          <For each={props.dates()}>{(d) => <option value={d}>{d}</option>}</For>
-        </select>
-      </label>
-      <label title="Durée de fenêtre (dérivée des données enregistrées)">
-        Timeframe
-        <select
-          value={props.timeframe()}
-          onChange={(e) => {
-            props.setTimeframe(e.currentTarget.value);
-            props.setPrefix("");
-          }}
-        >
-          <option value="">Tous</option>
-          <For each={props.timeframes()}>{(tf) => <option value={tf}>{tf}</option>}</For>
-        </select>
-      </label>
-      <label>
-        Marché
-        <select value={props.prefix()} onChange={(e) => props.setPrefix(e.currentTarget.value)}>
-          <option value="">Tous</option>
-          <For each={props.prefixesForTimeframe()}>{(p) => <option value={p}>{p}</option>}</For>
-        </select>
-      </label>
-      <label class="bt-check" title="Ne garder que les fenêtres qui passent les règles ci-contre">
-        <input
-          type="checkbox"
-          checked={props.completeOnly()}
-          onChange={(e) => {
-            props.setCompleteOnly(e.currentTarget.checked);
-            props.onReloadWindows();
-          }}
-        />
-        Complets
-      </label>
-      <div class="bt-rules">
+      <div class="bt-tgroup" role="group" aria-label="Filtres de données">
+        <span class="bt-tgroup-l">Données</span>
+        <label>
+          Date
+          <select class="sim2-mini-select" value={props.dateKey()} onChange={(e) => props.setDateKey(e.currentTarget.value)}>
+            <option value="all">Toutes</option>
+            <For each={props.dates()}>{(d) => <option value={d}>{d}</option>}</For>
+          </select>
+        </label>
+        <label title="Durée de fenêtre (dérivée des données enregistrées)">
+          Timeframe
+          <select
+            class="sim2-mini-select"
+            value={props.timeframe()}
+            onChange={(e) => {
+              props.setTimeframe(e.currentTarget.value);
+              props.setPrefix("");
+            }}
+          >
+            <option value="">Tous</option>
+            <For each={props.timeframes()}>{(tf) => <option value={tf}>{tf}</option>}</For>
+          </select>
+        </label>
+        <label>
+          Marché
+          <select
+            class="sim2-mini-select"
+            value={props.prefix()}
+            onChange={(e) => props.setPrefix(e.currentTarget.value)}
+          >
+            <option value="">Tous</option>
+            <For each={props.prefixesForTimeframe()}>{(p) => <option value={p}>{p}</option>}</For>
+          </select>
+        </label>
+      </div>
+
+      <div class="bt-tgroup" role="group" aria-label="Règles de complétude">
+        <span class="bt-tgroup-l">Qualité</span>
+        <label class="bt-check bt-chip-toggle" title="Ne garder que les fenêtres qui passent les règles ci-contre">
+          <input
+            type="checkbox"
+            checked={props.completeOnly()}
+            onChange={(e) => {
+              props.setCompleteOnly(e.currentTarget.checked);
+              props.onReloadWindows();
+            }}
+          />
+          Complets
+        </label>
         <label
-          class={`bt-rule${props.minTicksOn() ? "" : " is-off"}`}
+          class={`bt-rule bt-chip-toggle${props.minTicksOn() ? " is-on" : ""}`}
           title="Minimum de ticks (les deux outcomes) dans la fenêtre"
         >
           <input
@@ -111,7 +124,7 @@ export function BacktestFilterBar(props: Props): JSX.Element {
               props.onReloadWindows();
             }}
           />
-          Ticks
+          Ticks ≥
           <input
             type="number"
             min="1"
@@ -126,7 +139,7 @@ export function BacktestFilterBar(props: Props): JSX.Element {
           />
         </label>
         <label
-          class={`bt-rule${props.maxGapOn() ? "" : " is-off"}`}
+          class={`bt-rule bt-chip-toggle${props.maxGapOn() ? " is-on" : ""}`}
           title="Écart max entre deux ticks successifs"
         >
           <input
@@ -137,7 +150,7 @@ export function BacktestFilterBar(props: Props): JSX.Element {
               props.onReloadWindows();
             }}
           />
-          Trou
+          Trou ≤
           <input
             type="number"
             min="0.5"
@@ -153,7 +166,7 @@ export function BacktestFilterBar(props: Props): JSX.Element {
           s
         </label>
         <label
-          class={`bt-rule${props.edgeOn() ? "" : " is-off"}`}
+          class={`bt-rule bt-chip-toggle${props.edgeOn() ? " is-on" : ""}`}
           title="Premier / dernier tick à moins de N secondes des bords de fenêtre"
         >
           <input
@@ -164,7 +177,7 @@ export function BacktestFilterBar(props: Props): JSX.Element {
               props.onReloadWindows();
             }}
           />
-          Bords
+          Bords ≤
           <input
             type="number"
             min="0.5"
@@ -180,73 +193,106 @@ export function BacktestFilterBar(props: Props): JSX.Element {
           s
         </label>
       </div>
-      <label class="bt-check" title="Couper les courbes sur les trous">
-        <input
-          type="checkbox"
-          checked={props.cutGaps()}
-          onChange={(e) => props.setCutGaps(e.currentTarget.checked)}
-        />
-        Trous
-      </label>
-      <label
-        class="bt-check"
-        title={
-          props.walletConfigured() === false
-            ? "FUNDER_ADDRESS manquant — pas de wallet à interroger"
-            : "Afficher les fills Data API du wallet sur le graphique"
-        }
-      >
-        <input
-          type="checkbox"
-          checked={props.walletOn()}
-          disabled={props.walletConfigured() === false}
-          onChange={(e) => props.setWalletOn(e.currentTarget.checked)}
-        />
-        Wallet
-        <Show when={props.walletOn()}>
-          <span class="bt-wallet-count">{props.walletLoading() ? "…" : props.walletMarksCount()}</span>
+
+      <div class="bt-tgroup" role="group" aria-label="Options d'affichage">
+        <span class="bt-tgroup-l">Aperçu</span>
+        <label class="bt-check" title="Couper les courbes sur les trous de données">
+          <input
+            type="checkbox"
+            checked={props.cutGaps()}
+            onChange={(e) => props.setCutGaps(e.currentTarget.checked)}
+          />
+          Trous de courbe
+        </label>
+        <label
+          class="bt-check"
+          title={
+            props.walletConfigured() === false
+              ? "FUNDER_ADDRESS manquant — pas de wallet à interroger"
+              : "Afficher les fills Data API du wallet sur le graphique"
+          }
+        >
+          <input
+            type="checkbox"
+            checked={props.walletOn()}
+            disabled={props.walletConfigured() === false}
+            onChange={(e) => props.setWalletOn(e.currentTarget.checked)}
+          />
+          Wallet
+          <Show when={props.walletOn()}>
+            <span class="bt-wallet-count">{props.walletLoading() ? "…" : props.walletMarksCount()}</span>
+          </Show>
+        </label>
+      </div>
+
+      <div class="bt-tgroup" role="group" aria-label="Outils d'analyse">
+        <span class="bt-tgroup-l">Outils</span>
+        <button
+          class="btn"
+          type="button"
+          disabled={props.lowerLowsLoading() || props.filteredCount() === 0}
+          onClick={() => props.onAnalyzeLowerLows()}
+          title="Analyser les lower-lows sur les marchés affichés"
+        >
+          {props.lowerLowsLoading() ? "Lower-lows…" : "Analyser lower-lows"}
+        </button>
+      </div>
+
+      <div class="bt-tgroup bt-tgroup-exec" role="group" aria-label="Stratégie et lancement">
+        <span class="bt-tgroup-l">Stratégie</span>
+        <label>
+          Moteur
+          <EngineSelect
+            class="sim2-mini-select"
+            value={props.engine()}
+            onChange={(id) => props.onEngineChange(id)}
+            customEngines={props.customEngines()}
+          />
+        </label>
+        <label>
+          Preset
+          <PresetSelect
+            class="sim2-mini-select"
+            value={props.presetId()}
+            onChange={(id) => props.onPresetChange(id)}
+            presets={props.presets()}
+            emptyLabel="Personnalisé"
+          />
+        </label>
+        <span
+          class={`bt-count-chip${props.completeOnly() && props.filteredCount() === 0 ? " zero" : ""}`}
+          title="Fenêtres correspondant aux filtres et règles actuels"
+        >
+          <b class="num">{props.filteredCount()}</b>
+          fenêtres
+        </span>
+        <Show when={!running()}>
+          <button
+            class="btn btn-primary"
+            type="button"
+            disabled={
+              (props.completeOnly() && props.filteredCount() === 0) ||
+              !props.form() ||
+              props.hasInlineErrors() ||
+              props.filteredCount() === 0
+            }
+            onClick={() => props.onLaunch()}
+            title={props.hasInlineErrors() ? "Corrigez les erreurs de validation avant de lancer" : "Ctrl+Entrée"}
+          >
+            Lancer <span class="bt-kbd">Ctrl+↵</span>
+          </button>
         </Show>
-      </label>
-      <button
-        class="btn"
-        type="button"
-        disabled={props.lowerLowsLoading() || props.filteredCount() === 0}
-        onClick={() => props.onAnalyzeLowerLows()}
-        title="Analyser les lower-lows sur les marchés affichés"
-      >
-        {props.lowerLowsLoading() ? "Lower-lows…" : "Analyser Lower-lows"}
-      </button>
-      <label>
-        Moteur
-        <EngineSelect
-          value={props.engine()}
-          onChange={(id) => props.onEngineChange(id)}
-          customEngines={props.customEngines()}
-        />
-      </label>
-      <label>
-        Preset
-        <PresetSelect
-          value={props.presetId()}
-          onChange={(id) => props.onPresetChange(id)}
-          presets={props.presets()}
-          emptyLabel="Personnalisé"
-        />
-      </label>
-      <button
-        class="btn"
-        type="button"
-        disabled={
-          props.progress()?.status === "running" ||
-          (props.completeOnly() && props.filteredCount() === 0) ||
-          !props.form() ||
-          props.hasInlineErrors()
-        }
-        onClick={() => props.onLaunch()}
-        title={props.hasInlineErrors() ? "Corrigez les erreurs de validation avant de lancer" : "Ctrl+Enter"}
-      >
-        Lancer
-      </button>
+        <Show when={running()}>
+          <button
+            class="btn sim2-danger-ghost"
+            type="button"
+            onClick={() => props.onCancel()}
+            title="Interrompt le run en cours (les fenêtres déjà traitées sont conservées)"
+          >
+            Annuler
+          </button>
+        </Show>
+      </div>
     </div>
   );
 }

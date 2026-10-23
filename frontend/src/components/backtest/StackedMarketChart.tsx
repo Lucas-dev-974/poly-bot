@@ -500,9 +500,9 @@ export function StackedMarketChart(props: {
       <div class="bt-chart-bar">
         <span class="bt-legend">
           <span class="bt-swatch yes" />
-          Yes
+          Up
           <span class="bt-swatch no" />
-          No
+          Down
           <button
             class={`bt-legend-toggle${showMetrics() ? " is-on" : ""}`}
             type="button"

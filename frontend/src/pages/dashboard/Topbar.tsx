@@ -4,20 +4,13 @@
  * liens de navigation, Wallet, Enregistrements, Démarrer/Arrêter le bot
  * (logique BotToggle du Header, conservée à l'identique).
  */
-import { For, Show, createSignal } from "solid-js";
+import { Show, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { api } from "../../api/client";
 import { botEnabled, setBotEnabled } from "../../stores/botStore";
 import { addLog } from "../../stores/logStore";
 import { toMessage } from "../../utils/display";
-
-const NAV_LINKS: Array<{ href: string; label: string }> = [
-  { href: "/guide", label: "Guide" },
-  { href: "/backtest", label: "Backtest" },
-  { href: "/strategy-editor", label: "Éditeur" },
-  { href: "/donnees", label: "Données" },
-  { href: "/simulation", label: "Simulation" },
-];
+import { TopbarNavLinks } from "../../components/layout/TopbarNav";
 
 export function Topbar(props: {
   onOpenWallet?: () => void;
@@ -62,13 +55,7 @@ export function Topbar(props: {
         </span>
       </div>
       <div class="sim2-topbar-actions">
-        <For each={NAV_LINKS}>
-          {(l) => (
-            <a class="btn btn-ghost" href={l.href}>
-              {l.label}
-            </a>
-          )}
-        </For>
+        <TopbarNavLinks activeHref="/" ariaLabel="Navigation dashboard" />
         <Show when={props.onOpenWallet}>
           {(fn) => (
             <button

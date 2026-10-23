@@ -317,6 +317,24 @@
   border-color: var(--sim2-hover);
 }
 
+/* Valeur d'état — le socle .sim2-kpi-value ne pose PAS de couleur : les
+   classes d'état globales (.pos/.neg/.pnl-pos/.pnl-neg) s'y appliquent
+   telles quelles ; `acc` = valeur accentuée (sélecteur composé, jamais
+   écrasé par la retouche d'une page). */
+.sim2-kpi-value.acc {
+  color: var(--accent);
+}
+
+/* Carte mise en avant (ex. « Meilleur run ») — l'accent signale LA donnée
+   clé de la page, jamais la totalité des cartes. Placée après .sim2-kpi:hover
+   pour conserver le trait accent même au survol. */
+.sim2-kpi.hl {
+  border-color: rgba(79, 140, 255, 0.5);
+  background:
+    linear-gradient(180deg, rgba(79, 140, 255, 0.08), rgba(79, 140, 255, 0) 60%),
+    var(--panel);
+}
+
 .sim2-kpi-label {
   display: flex;
   align-items: center;
@@ -906,4 +924,35 @@
     animation: none;
     transition: none;
   }
+}
+
+/* ─── Navigation des en-têtes sim2 (dashboard + pages secondaires) ─────
+   Liste partagée : components/layout/TopbarNav.tsx. Lien actif =
+   pill accent soft + aria-current (aucun état de chargement). */
+
+.sim2-topnav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.sim2-nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 12px;
+  padding: 4.5px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.sim2-nav-link:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sim2-nav-link.on {
+  color: var(--text);
+  background: rgba(79, 140, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(79, 140, 255, 0.45);
 }

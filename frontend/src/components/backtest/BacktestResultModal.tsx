@@ -3,6 +3,7 @@ import type { JSX } from "solid-js";
 import type { BacktestPositionRow, BacktestResult, BacktestRunSummary } from "../../types";
 import { groupedSettings, runCompletenessLabel, runPresetLabel, settingsForRun } from "../../utils/backtest-preset";
 import { dateTimeStr, fmtUsd, pct } from "../../utils/format";
+import { EquityMini } from "../ui/EquityMini";
 
 export function BacktestResultModal(props: {
   open: boolean;
@@ -50,6 +51,23 @@ export function BacktestResultModal(props: {
   );
   const isCustom = createMemo(() => strategyId()?.startsWith("custom:") === true);
 
+  // Courbe d'équité du run : cumul du P&L fenêtre par fenêtre (résolues),
+  // ancré sur capitalStart → capitalEnd. Absente sur les vieux runs
+  // (result.windows vide) et sur les fenêtres non résolues (pnl null).
+  const equityValues = createMemo((): number[] => {
+    const r = props.result;
+    if (!r || !r.windows || r.windows.length < 2) return [];
+    let c = r.capitalStart;
+    const v: number[] = [r.capitalStart];
+    for (const w of r.windows) {
+      if (w.pnl != null) {
+        c += w.pnl;
+        v.push(Math.round(c * 100) / 100);
+      }
+    }
+    return v;
+  });
+
   return (
     <Show when={props.open && props.result}>
       {(result) => (
@@ -82,22 +100,34 @@ export function BacktestResultModal(props: {
                 </span>
               </div>
             </div>
-            <div class="bt-stats">
-              <span>Fenêtres {result().windowsTested}</span>
-              <span>Skip {result().windowsSkippedIncomplete}</span>
-              <span>Unresolved {result().unresolvedWindows}</span>
-              <span>Fills {result().fillCount}</span>
-              <span>Rejects {result().rejectCount}</span>
+            <div class="bt-stats bt-chips">
+              <span class="bt-chip">Fenêtres <b>{result().windowsTested}</b></span>
+              <span class="bt-chip">Skip <b>{result().windowsSkippedIncomplete}</b></span>
+              <span class="bt-chip">Unresolved <b>{result().unresolvedWindows}</b></span>
+              <span class="bt-chip">Fills <b>{result().fillCount}</b></span>
+              <span class="bt-chip">Rejects <b class={result().rejectCount > 0 ? "neg" : ""}>{result().rejectCount}</b></span>
               <Show when={wr()}>
                 {(w) => (
-                  <span title={`Winrate strict des positions résolues (sold incl.) : ${w().wins} gagnées / ${w().losses} perdantes`}>
-                    WR {pct(w().wr)} ({w().wins}W/{w().losses}L)
+                  <span
+                    class="bt-chip"
+                    title={`Winrate strict des positions résolues (sold incl.) : ${w().wins} gagnées / ${w().losses} perdantes`}
+                  >
+                    WR <b>{pct(w().wr)}</b>
+                    <span>
+                      ({w().wins}W/{w().losses}L)
+                    </span>
                   </span>
                 )}
               </Show>
-              <span>Couvert {result().coveredPairs}</span>
-              <span>Découvert {result().uncoveredPairs}</span>
+              <span class="bt-chip">Couvert <b>{result().coveredPairs}</b></span>
+              <span class="bt-chip">Découvert <b>{result().uncoveredPairs}</b></span>
             </div>
+            <Show when={equityValues().length > 1}>
+              <div class="bt-equity">
+                <div class="lbl-equity">P&L cumulé par fenêtre résolue</div>
+                <EquityMini values={equityValues()} />
+              </div>
+            </Show>
             <Show when={isCustom()}>
               <section class="bt-modal-chart-rules">
                 <h4>Zones de la stratégie (diagnostic)</h4>
@@ -185,36 +215,40 @@ export function BacktestResultModal(props: {
               </section>
               <section class="bt-modal-pos">
                 <h4>Positions</h4>
-                <div class="bt-pos-table">
+                <div class="bt-pos-table sim2-table-scroll">
                   <Show
                     when={props.positions.length > 0}
                     fallback={<p class="muted">Aucune position persistée.</p>}
                   >
-                    <table>
+                    <table class="sim2-table">
                       <thead>
                         <tr>
-                          <th>Marché</th>
+                          <th>Fenêtre</th>
                           <th>Side</th>
                           <th>Kind</th>
                           <th>Outcome</th>
-                          <th>Fill</th>
-                          <th>Size</th>
+                          <th class="num">Fill</th>
+                          <th class="num">Size</th>
                           <th>Status</th>
-                          <th>PnL</th>
+                          <th class="num">PnL</th>
                         </tr>
                       </thead>
                       <tbody>
                         <For each={props.positions}>
                           {(p) => (
                             <tr>
-                              <td>{p.eventSlug}</td>
-                              <td class={p.side === "SELL" ? "err" : "ok"}>{p.side}</td>
+                              <td class="bt-cell-evt" title={`${p.eventSlug} — ${p.eventTitle}`}>
+                                <span class="ellip">{p.eventSlug}</span>
+                              </td>
+                              <td class={p.side === "SELL" ? "sim2-side-sell" : "sim2-side-buy"}>{p.side}</td>
                               <td>{p.kind}</td>
                               <td>{p.outcome}</td>
-                              <td>{p.fillPrice.toFixed(3)}</td>
-                              <td>{p.size.toFixed(2)}</td>
+                              <td class="num">{p.fillPrice.toFixed(3)}</td>
+                              <td class="num">{p.size.toFixed(2)}</td>
                               <td>{p.status}</td>
-                              <td>{p.pnl == null ? "—" : fmtUsd(p.pnl)}</td>
+                              <td class={`num ${p.pnl == null ? "" : p.pnl >= 0 ? "pnl-pos" : "pnl-neg"}`}>
+                                {p.pnl == null ? "—" : fmtUsd(p.pnl)}
+                              </td>
                             </tr>
                           )}
                         </For>
@@ -232,12 +266,13 @@ export function BacktestResultModal(props: {
                 <span class="ok">{props.applyMsg}</span>
               </Show>
               <button
-                class="btn btn-primary"
+                class="btn sim2-danger-ghost"
                 type="button"
                 disabled={!props.canApplyPreset || props.applying}
                 onClick={props.onApplyPreset}
+                title="Écrit le preset de ce run dans la config du bot LIVE — confirmation demandée"
               >
-                {props.applying ? "…" : "Appliquer preset"}
+                {props.applying ? "…" : "Appliquer preset au live"}
               </button>
               <button class="btn" type="button" onClick={props.onClose}>
                 Fermer

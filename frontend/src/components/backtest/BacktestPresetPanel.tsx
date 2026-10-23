@@ -3,6 +3,7 @@ import type { JSX } from "solid-js";
 import type { BotConfig } from "../../types";
 import type { ConfigFormState } from "../../utils/configForm";
 import { CustomStrategyEditor } from "./CustomStrategyEditor";
+import { Sim2Card, Sim2Tabs } from "../ui/Sim2Card";
 
 type PresetTab = "cheap" | "hedge" | "edge" | "risk" | "window" | "zones";
 
@@ -28,7 +29,6 @@ export function BacktestPresetPanel(props: {
   onStrategyActivated: (config: BotConfig) => void;
 }): JSX.Element {
   const [tab, setTab] = createSignal<PresetTab>("cheap");
-  const [showDesc, setShowDesc] = createSignal(false);
   // Onglets suivent le select Moteur, pas seulement form.strategyId (peut être en retard / stale).
   const sid = createMemo(() => props.engine || props.form?.strategyId || "arb");
   const isCustom = createMemo(() => sid().startsWith("custom:"));
@@ -127,102 +127,97 @@ export function BacktestPresetPanel(props: {
     return counts;
   });
 
+  // Onglets pour Sim2Tabs : même liste que `tabs`, avec le badge d'erreurs
+  // par section en `count` (0 → pas de badge).
+  const simTabs = createMemo(() =>
+    tabs().map((t) => {
+      const n = tabErrorCount()[t.id];
+      return { id: t.id, label: t.label, count: n > 0 ? n : undefined };
+    }),
+  );
+
   return (
     <section class="bt-preset">
-      <div class="bt-preset-bar">
-        <span class="bt-preset-title">
-          Preset run
-          <Show when={props.isDirty}>
-            <span class="bt-preset-dirty" title="Config modifiée — non sauvegardée dans un preset">●</span>
-          </Show>
-        </span>
-        <div class="bt-preset-tabs">
-          <For each={tabs()}>
-            {(t) => (
-              <button
-                type="button"
-                class={`bt-preset-tab${active() === t.id ? " is-on" : ""}`}
-                onClick={() => setTab(t.id)}
-              >
-                {t.label}
-                <Show when={tabErrorCount()[t.id] > 0}>
-                  <span class="bt-preset-tab-err" title={`${tabErrorCount()[t.id]} erreur(s)`}>
-                    {tabErrorCount()[t.id]}
-                  </span>
-                </Show>
-              </button>
-            )}
-          </For>
-        </div>
-        <div class="bt-preset-actions">
-          <Show when={props.saveErr}>
-            <span class="err">{props.saveErr}</span>
-          </Show>
-          <Show when={props.saveMsg}>
-            <span class="ok">{props.saveMsg}</span>
-          </Show>
-          <Show when={props.presetDescription()}>
-            <button
-              type="button"
-              class="bt-preset-info-btn"
-              title={props.presetDescription() ?? ""}
-              onClick={() => setShowDesc(!showDesc())}
-            >
-              ?
-            </button>
-          </Show>
-          <Show when={props.presetName()}>
-            <button class="btn" type="button" onClick={props.onResetPreset} disabled={!props.isDirty}>
+      <Sim2Card
+        title={
+          <>
+            Configuration du run
+            <Show when={props.isDirty}>
+              <span class="bt-preset-dirty" title="Config modifiée — non sauvegardée dans un preset">●</span>
+            </Show>
+          </>
+        }
+        note={
+          props.presetName() ? (
+            <span class="bt-preset-name" title={props.presetDescription() ?? undefined}>
+              {props.presetName()}
+            </span>
+          ) : undefined
+        }
+        tabs={
+          <Sim2Tabs<PresetTab>
+            tabs={simTabs}
+            active={active()}
+            onSelect={(id) => setTab(id)}
+            ariaLabel="Sections du preset"
+          />
+        }
+        tools={
+          <div class="bt-preset-actions">
+            <Show when={props.saveErr}>
+              <span class="err">{props.saveErr}</span>
+            </Show>
+            <Show when={props.saveMsg}>
+              <span class="ok">{props.saveMsg}</span>
+            </Show>
+            <button class="btn btn-ghost" type="button" onClick={props.onResetPreset} disabled={!props.isDirty}>
               ↺ Reset
             </button>
-          </Show>
-          <button class="btn" type="button" onClick={props.onLoadLive}>
-            Charger live
-          </button>
-          <Show when={isCustom()}>
-            <button
-              class="btn"
-              type="button"
-              onClick={props.onOpenEditor}
-              title="Ouvrir l'éditeur de stratégie complet (graphique, replay, dependencies)"
-            >
-              Éditeur ↗
+            <button class="btn btn-ghost" type="button" onClick={props.onLoadLive}>
+              Charger live
             </button>
-          </Show>
-          <button
-            class="btn"
-            type="button"
-            onClick={props.onSavePreset}
-            disabled={!props.form}
-            title="Sauvegarder comme preset réutilisable (localStorage)"
-          >
-            ⬇ Preset
-          </button>
-          <Show when={props.isUserPreset}>
+            <Show when={isCustom()}>
+              <button
+                class="btn btn-ghost"
+                type="button"
+                onClick={props.onOpenEditor}
+                title="Ouvrir l'éditeur de stratégie complet (graphique, replay, dependencies)"
+              >
+                Éditeur ↗
+              </button>
+            </Show>
             <button
-              class="btn btn-danger"
+              class="btn btn-ghost"
               type="button"
-              onClick={props.onDeletePreset}
-              title="Supprimer ce preset utilisateur"
+              onClick={props.onSavePreset}
+              disabled={!props.form}
+              title="Sauvegarder comme preset réutilisable (localStorage)"
             >
-              🗑
+              ⬇ Preset
             </button>
-          </Show>
-          <button
-            class="btn btn-primary"
-            type="button"
-            disabled={props.saving || !props.form}
-            onClick={props.onSave}
-          >
-            {props.saving ? "…" : "→ Live"}
-          </button>
-        </div>
-      </div>
-
-      <Show when={showDesc() && props.presetDescription()}>
-        <div class="bt-preset-desc">{props.presetDescription()}</div>
-      </Show>
-
+            <Show when={props.isUserPreset}>
+              <button
+                class="btn danger"
+                type="button"
+                onClick={props.onDeletePreset}
+                title="Supprimer ce preset utilisateur"
+              >
+                🗑
+              </button>
+            </Show>
+            <button
+              class="btn sim2-danger-ghost"
+              type="button"
+              disabled={props.saving || !props.form}
+              onClick={props.onSave}
+              title="Écrit le preset dans la config du bot LIVE — confirmation demandée"
+            >
+              → Live
+            </button>
+          </div>
+        }
+        raw
+      >
       <Show when={props.form} fallback={<p class="bt-runs-empty">Config introuvable.</p>}>
         {(form) => (
           <div class="bt-preset-body">
@@ -561,6 +556,7 @@ export function BacktestPresetPanel(props: {
           </div>
         )}
       </Show>
+      </Sim2Card>
     </section>
   );
 }

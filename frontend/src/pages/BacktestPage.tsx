@@ -3,10 +3,13 @@ import type { JSX } from "solid-js";
 import { api } from "../api/client";
 import type { StrategyEngineSummary } from "../api/client";
 import { BacktestFilterBar } from "../components/backtest/BacktestFilterBar";
+import { BacktestKpis } from "../components/backtest/BacktestKpis";
 import { BacktestPresetPanel } from "../components/backtest/BacktestPresetPanel";
 import { BacktestResultModal } from "../components/backtest/BacktestResultModal";
 import { BacktestRunList } from "../components/backtest/BacktestRunList";
 import { StackedMarketChart } from "../components/backtest/StackedMarketChart";
+import { ConfirmModal } from "../components/modals/ConfirmModal";
+import { TopbarNavLinks } from "../components/layout/TopbarNav";
 import {
   allPresetsForStrategy,
   findPresetById,
@@ -107,6 +110,18 @@ export function BacktestPage(): JSX.Element {
   let walletGen = 0;
   let lowerLowsGen = 0;
 
+  // Confirmation avant les écritures de config LIVE (« → Live » du panneau
+  // preset et « Appliquer preset au live » de la modal Résultat).
+  type PendingLive =
+    | {
+        title: string;
+        message: string;
+        confirmLabel?: string;
+        action: () => void | Promise<void>;
+      }
+    | null;
+  const [pending, setPending] = createSignal<PendingLive>(null);
+
   const run = useBacktestRun({
     form,
     dateKey,
@@ -143,6 +158,7 @@ export function BacktestPage(): JSX.Element {
     loadRuns,
     openRun,
     launch,
+    cancel,
     toggleChartRun,
     disposeRun,
   } = run;
@@ -279,6 +295,18 @@ export function BacktestPage(): JSX.Element {
       setSaveMsg(null);
       return;
     }
+    // Écriture de la config du bot LIVE : confirmation explicite avant le POST.
+    setPending({
+      title: "Appliquer au live",
+      message: `Écriture de la configuration courante (${f.strategyId}) dans la config du bot LIVE. Le bot modifie son comportement de trading immédiatement.`,
+      confirmLabel: "Écrire dans le live",
+      action: () => doSavePresetLive(),
+    });
+  }
+
+  async function doSavePresetLive(): Promise<void> {
+    const f = form();
+    if (!f) return;
     setSaving(true);
     setSaveErr(null);
     setSaveMsg(null);
@@ -313,6 +341,16 @@ export function BacktestPage(): JSX.Element {
       setApplyErr("Preset indisponible pour ce run");
       return;
     }
+    // Écriture de la config du bot LIVE : confirmation explicite avant le POST.
+    setPending({
+      title: "Appliquer preset au live",
+      message: `Écriture du preset du run ${selectedRun()?.id.slice(0, 8) ?? ""} (${patch.strategyId ?? "?"}) dans la config du bot LIVE.`,
+      confirmLabel: "Écrire dans le live",
+      action: () => doApplySelectedPreset(patch),
+    });
+  }
+
+  async function doApplySelectedPreset(patch: Partial<BotConfig>): Promise<void> {
     setApplying(true);
     setApplyErr(null);
     setApplyMsg(null);
@@ -454,20 +492,19 @@ export function BacktestPage(): JSX.Element {
 
   return (
     <div class="bt-page">
-      <header class="guide-header">
-        <div class="guide-header__left">
-          <button type="button" class="btn guide-back" onClick={() => navigate("/")}>
+      <header class="sim2-topbar bt-topbar">
+        <div class="sim2-topbar-left">
+          <button type="button" class="btn btn-ghost sim2-back" onClick={() => navigate("/")}>
             ← Dashboard
           </button>
-          <h1>Backtest</h1>
-          <a href="/guide" class="btn guide-nav-link">
-            Guide
-          </a>
-          <a href="/strategy-editor" class="btn guide-nav-link">
-            Éditeur
-          </a>
+          <h1 class="sim2-title">Backtest</h1>
+        </div>
+        <div class="sim2-topbar-actions">
+          <TopbarNavLinks activeHref="/backtest" ariaLabel="Navigation backtest" />
         </div>
       </header>
+
+      <BacktestKpis />
 
       <BacktestFilterBar
         dateKey={dateKey}
@@ -523,6 +560,7 @@ export function BacktestPage(): JSX.Element {
         form={form}
         hasInlineErrors={hasInlineErrors}
         onLaunch={() => void launch()}
+        onCancel={() => void cancel()}
       />
 
       <Show when={!persistence()}>
@@ -533,9 +571,11 @@ export function BacktestPage(): JSX.Element {
       </Show>
       <Show when={progress()?.status === "running"}>
         <div class="bt-progress">
-          <div class="bt-progress-bar" style={{ width: `${progress()?.pct ?? 0}%` }} />
-          <span>
-            {progress()?.current}/{progress()?.total} {progress()?.eventSlug ?? ""}
+          <div class="bt-progress-track">
+            <div class="bt-progress-bar" style={{ width: `${progress()?.pct ?? 0}%` }} />
+          </div>
+          <span class="bt-progress-txt num">
+            {progress()?.current}/{progress()?.total} {progress()?.eventSlug ?? ""} — {progress()?.pct ?? 0} %
           </span>
         </div>
       </Show>
@@ -617,6 +657,19 @@ export function BacktestPage(): JSX.Element {
         applyErr={applyErr()}
         onApplyPreset={() => void applySelectedPreset()}
         onClose={() => setDialogOpen(false)}
+      />
+
+      <ConfirmModal
+        open={pending() != null}
+        title={pending()?.title ?? ""}
+        message={pending()?.message ?? ""}
+        confirmLabel={pending()?.confirmLabel}
+        onConfirm={() => {
+          const p = pending();
+          setPending(null);
+          void p?.action();
+        }}
+        onCancel={() => setPending(null)}
       />
 
       <Show when={showSavePresetDialog()}>

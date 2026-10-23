@@ -1,9 +1,10 @@
-import { For, Show } from "solid-js";
+import { For, Show, createMemo } from "solid-js";
 import type { JSX } from "solid-js";
 import { STRATEGY_PRESETS } from "../../config/strategyPresets";
 import type { BacktestProgress, BacktestRunSummary, StrategyId } from "../../types";
 import { dateTimeStr, fmtUsd, pct } from "../../utils/format";
 import { runEngineId } from "../../utils/backtest-preset";
+import { Sim2Card, Sim2Tabs } from "../ui/Sim2Card";
 
 const ENGINE_SHORT: Partial<Record<string, string>> = {
   arb: "Arb",
@@ -32,92 +33,123 @@ export function BacktestRunList(props: {
   const visible = () =>
     props.engineOnly ? props.runs.filter((run) => runEngineId(run) === props.engine) : props.runs;
 
+  const engineCount = createMemo(
+    () => props.runs.filter((run) => runEngineId(run) === props.engine).length,
+  );
+  const segTabs = createMemo(() => [
+    { id: "all" as const, label: "Tous", count: props.runs.length },
+    { id: "engine" as const, label: engineLabel(props.engine), count: engineCount() },
+  ]);
+
   return (
     <aside class="bt-runs">
-      <div class="bt-runs-head">
-        <span>Historique</span>
-        <div class="bt-runs-seg" role="group" aria-label="Filtre historique">
-          <button
-            type="button"
-            class={`bt-runs-seg-btn${props.engineOnly ? "" : " is-on"}`}
-            onClick={() => props.onEngineOnly(false)}
-          >
-            Tous
-          </button>
-          <button
-            type="button"
-            class={`bt-runs-seg-btn${props.engineOnly ? " is-on" : ""}`}
-            onClick={() => props.onEngineOnly(true)}
-          >
-            {engineLabel(props.engine)}
-          </button>
-        </div>
-      </div>
-      <div class="bt-runs-list">
-        <Show when={visible().length === 0}>
-          <p class="bt-runs-empty">
-            {props.engineOnly
-              ? `Aucun backtest ${engineLabel(props.engine)}.`
-              : "Aucun backtest enregistré."}
-          </p>
-        </Show>
-        <For each={visible()}>
-          {(run) => {
-            const live = () => props.progress?.runId === run.id ? props.progress : null;
-            const status = () => live()?.status ?? run.status;
-            const canOpen = () => status() === "done" || run.result != null;
-            const onChart = () => props.chartRunId === run.id;
-            const pnl = () => run.result?.pnl;
-            return (
-              <div
-                class={`bt-run${status() === "running" ? " is-live" : ""}${onChart() ? " is-chart" : ""}`}
-              >
-                <label
-                  class={`bt-run-check${props.chartLoadingId === run.id ? " is-loading" : ""}`}
-                  title="Afficher entrées (cercles) et sorties (croix : vente mid-marché ou résolution)"
+      <Sim2Card
+        title="Historique"
+        count={`${visible().length}/${props.runs.length}`}
+        tabs={
+          <Sim2Tabs
+            tabs={segTabs}
+            active={props.engineOnly ? "engine" : "all"}
+            onSelect={(id) => props.onEngineOnly(id === "engine")}
+            ariaLabel="Filtre historique"
+          />
+        }
+        raw
+      >
+        <div class="bt-runs-list">
+          <Show when={visible().length === 0}>
+            <p class="bt-runs-empty">
+              {props.engineOnly
+                ? `Aucun backtest ${engineLabel(props.engine)}.`
+                : "Aucun backtest enregistré."}
+            </p>
+          </Show>
+          <For each={visible()}>
+            {(run) => {
+              const live = () => props.progress?.runId === run.id ? props.progress : null;
+              const status = () => live()?.status ?? run.status;
+              const canOpen = () => status() === "done" || run.result != null;
+              const onChart = () => props.chartRunId === run.id;
+              const pnl = () => run.result?.pnl;
+              const wr = () => run.result?.winRate;
+              const dur = () =>
+                run.finishedAt && run.finishedAt > run.startedAt
+                  ? Math.max(1, Math.round((run.finishedAt - run.startedAt) / 1000))
+                  : null;
+              return (
+                <div
+                  class={`bt-run${status() === "running" ? " is-live" : ""}${onChart() ? " is-chart" : ""}`}
                 >
-                  <input
-                    type="checkbox"
-                    checked={onChart()}
-                    disabled={!canOpen()}
-                    aria-label="Afficher entrées et sorties sur le graphique"
-                    onChange={() => props.onToggleChart(run)}
-                  />
-                  <span class="bt-run-check-box" aria-hidden="true" />
-                </label>
-                <div class="bt-run-main">
-                  <div class="bt-run-top">
-                    <span class="bt-run-when">{dateTimeStr(run.startedAt)}</span>
-                    <span class={`bt-run-status is-${status()}`}>
-                      {statusLabel(status(), live()?.pct)}
-                    </span>
-                  </div>
-                  <div class="bt-run-label">{runTitle(run)}</div>
-                  <Show when={status() === "error" && (live()?.error ?? run.error)}>
-                    <div class="bt-run-err">{live()?.error ?? run.error}</div>
-                  </Show>
-                  <Show when={pnl() != null}>
-                    <div class={`bt-run-pnl ${(pnl() ?? 0) >= 0 ? "ok" : "err"}`}>{fmtUsd(pnl())}</div>
-                  </Show>
-                  <Show when={run.result?.winRate != null}>
-                    <div class="bt-run-wr" title={`Winrate strict : ${run.result?.wins ?? 0} gagnées / ${(run.result?.wins ?? 0) + (run.result?.losses ?? 0)} résolues`}>
-                      WR {pct(run.result?.winRate ?? 0)}
+                  <label
+                    class={`bt-run-check${props.chartLoadingId === run.id ? " is-loading" : ""}`}
+                    title="Afficher entrées (cercles) et sorties (croix : vente mid-marché ou résolution)"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={onChart()}
+                      disabled={!canOpen()}
+                      aria-label="Afficher entrées et sorties sur le graphique"
+                      onChange={() => props.onToggleChart(run)}
+                    />
+                    <span class="bt-run-check-box" aria-hidden="true" />
+                  </label>
+                  <div class="bt-run-main">
+                    <div class="bt-run-top">
+                      <span class="bt-run-tag">{runTitle(run)}</span>
+                      <span class={`bt-run-status is-${status()}`}>
+                        {statusLabel(status(), live()?.pct)}
+                      </span>
                     </div>
-                  </Show>
+                    <div class="bt-run-metrics">
+                      <Show when={pnl() != null}>
+                        <span class={`bt-run-pnl ${(pnl() ?? 0) >= 0 ? "pnl-pos" : "pnl-neg"}`}>
+                          {fmtUsd(pnl())}
+                        </span>
+                      </Show>
+                      <Show when={wr() != null}>
+                        <span
+                          class="bt-run-wr"
+                          title={`Winrate strict : ${run.result?.wins ?? 0} gagnées / ${(run.result?.wins ?? 0) + (run.result?.losses ?? 0)} résolues`}
+                        >
+                          WR {pct(wr() ?? 0)}
+                        </span>
+                      </Show>
+                      <Show when={pnl() == null && wr() == null}>
+                        <span class="bt-run-wr">—</span>
+                      </Show>
+                      <span class="bt-run-open">
+                        <button
+                          class="btn btn-ghost"
+                          type="button"
+                          disabled={!canOpen() || props.openingId === run.id}
+                          onClick={() => props.onOpen(run)}
+                        >
+                          {props.openingId === run.id ? "…" : "Détail"}
+                        </button>
+                      </span>
+                    </div>
+                    <div class="bt-run-sub" title={run.error ?? undefined}>
+                      <span>{dateTimeStr(run.startedAt)}</span>
+                      <Show when={run.result?.windowsTested != null}>
+                        <span>{run.result?.windowsTested} fen.</span>
+                      </Show>
+                      <Show when={run.result?.fillCount != null}>
+                        <span>{run.result?.fillCount} fills</span>
+                      </Show>
+                      <Show when={dur() != null}>
+                        <span>{dur()}s</span>
+                      </Show>
+                    </div>
+                    <Show when={status() === "error" && (live()?.error ?? run.error)}>
+                      <div class="bt-run-err">{live()?.error ?? run.error}</div>
+                    </Show>
+                  </div>
                 </div>
-                <button
-                  class="btn"
-                  type="button"
-                  disabled={!canOpen() || props.openingId === run.id}
-                  onClick={() => props.onOpen(run)}
-                >
-                  {props.openingId === run.id ? "…" : "Détail"}
-                </button>
-              </div>
-            );
-          }}
-        </For>
-      </div>
+              );
+            }}
+          </For>
+        </div>
+      </Sim2Card>
     </aside>
   );
 }
@@ -129,8 +161,8 @@ function runTitle(run: BacktestRunSummary): string {
   return preset ? `${sid} · ${preset.name}` : sid;
 }
 
-function statusLabel(status: string, pct?: number): string {
-  if (status === "running") return pct != null ? `${pct}%` : "en cours";
+function statusLabel(status: string, pctVal?: number): string {
+  if (status === "running") return pctVal != null ? `${pctVal}%` : "en cours";
   if (status === "done") return "terminé";
   if (status === "error") return "erreur";
   if (status === "cancelled") return "annulé";

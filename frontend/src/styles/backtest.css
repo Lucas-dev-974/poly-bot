@@ -1,3 +1,14 @@
+/* Page Backtest — refonte 2026-10
+   ──────────────────────────────────────────────────────────────────────────
+   Conventions sim2 (socle global sim2.css, chargé avant) :
+   - la page réutilise sim2-topbar / sim2-kpi / sim2-card / sim2-seg / sim2-table ;
+   - TOUTES les règles de cette feuille sont scopées .bt-page (ou .bt-*) —
+     elles ne fuient jamais sur les autres pages ;
+   - override de layout du desk (plein écran, sans padding body) : body:has().
+   Un seul bloc par décorateur (l'ancien fichier définissait 4× le bloc
+   CustomStrategyEditor et 2× .bt-rules/.bt-rule-table — dernier gagnait).
+*/
+
 body:has(.bt-page) {
   padding: 0;
   overflow: hidden;
@@ -13,84 +24,107 @@ body:has(.bt-page) {
   flex-direction: column;
 }
 
-.bt-page .guide-header {
-  padding: 6px 14px;
-  min-height: 40px;
+/* ─── Topbar (sim2, adaptée au desk plein écran : body padding = 0 ici) ── */
+
+.bt-page .sim2-topbar {
+  margin: 0 0 0;
+  top: 0;
+  padding: 8px 14px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 
-.bt-page .guide-header h1 {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+/* ─── KPI (4 cartes, socle sim2-kpi global) ──────────────────────────── */
+
+.bt-kpis {
+  padding: 10px 14px 0;
 }
 
-.bt-page .guide-back,
-.bt-page .guide-nav-link {
-  font-size: 12px;
-  padding: 4px 8px;
+.bt-page .sim2-kpis.bt-kpis {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
+
+/* États des valeurs (.pos/.neg/.pnl-*) et carte .hl : définis dans le
+   socle global sim2.css (.sim2-kpi-*), comme tout composant partagé. */
+
+/* ─── Toolbar en groupes étiquetés (Données / Qualité / Aperçu / Outils / Stratégie) ── */
 
 .bt-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 12px;
+  gap: 8px 0;
   align-items: center;
-  padding: 6px 14px;
-  border-bottom: 1px solid var(--border);
+  padding: 6px 10px;
+  margin: 10px 14px 0;
   background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
   font-size: 12px;
   flex-shrink: 0;
 }
 
-.bt-toolbar label {
+.bt-tgroup {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+  padding: 2px 12px;
+  border-right: 1px solid var(--sim2-border-soft);
+  min-height: 34px;
+}
+
+.bt-tgroup:last-child,
+.bt-tgroup-exec {
+  border-right: none;
+}
+
+.bt-tgroup-exec {
+  margin-left: auto;
+}
+
+.bt-tgroup-l {
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
   color: var(--muted);
+  flex-shrink: 0;
 }
 
-.bt-toolbar select {
+.bt-toolbar label,
+.bt-toolbar .bt-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+/* Chips d'activation (Complets / règles de complétude) : checked = accent. */
+.bt-chip-toggle {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3.5px 9px;
   background: var(--bg);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.bt-chip-toggle:hover {
+  border-color: var(--sim2-hover);
+}
+
+.bt-chip-toggle.is-on,
+.bt-toolbar .bt-check:has(input:checked) {
+  border-color: rgba(79, 140, 255, 0.5);
+  background: rgba(79, 140, 255, 0.1);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 2px 6px;
-  font-size: 12px;
 }
 
-.bt-toolbar .btn {
-  font-size: 12px;
-  padding: 4px 10px;
-}
-
-.bt-check {
-  color: var(--text) !important;
-  font-size: 12px;
-}
-
-.bt-rules {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 10px;
-  padding: 2px 8px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--bg);
-}
-
-.bt-rule {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--text) !important;
-  font-size: 12px;
-}
-
-.bt-rule.is-off {
-  opacity: 0.45;
+/* Règle désactivée (checkbox off) : atténuée, son input number est verrouillé. */
+.bt-chip-toggle:not(.is-on) {
+  opacity: 0.55;
 }
 
 .bt-rule input[type="number"] {
@@ -98,13 +132,107 @@ body:has(.bt-page) {
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 3px;
+  border-radius: 4px;
   padding: 2px 4px;
   font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  margin-left: 2px;
 }
 
 .bt-rule input[type="number"]:disabled {
   opacity: 0.7;
+}
+
+/* Compteur vivant de fenêtres à côté du CTA. */
+.bt-count-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.bt-count-chip b {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 650;
+}
+
+.bt-count-chip.zero {
+  border-color: rgba(255, 91, 91, 0.45);
+}
+
+.bt-count-chip.zero b {
+  color: var(--red);
+}
+
+.bt-kbd {
+  font-size: 9.5px;
+  opacity: 0.65;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 4px;
+  padding: 1px 4px;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Progression du run (texte visible + Annuler est dans la toolbar) ── */
+
+.bt-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 14px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--sim2-border-soft);
+  flex-shrink: 0;
+}
+
+.bt-progress-track {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--sim2-track);
+  overflow: hidden;
+}
+
+.bt-progress-bar {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+.bt-progress-txt {
+  font-size: 11px;
+  color: var(--muted);
+  max-width: 380px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Bureau : graphique (flex) + panneau preset + rail historique ───── */
+
+.bt-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  margin: 10px 14px 12px;
+  gap: 12px;
+}
+
+.bt-main {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .bt-chart {
@@ -115,249 +243,21 @@ body:has(.bt-page) {
   display: flex;
   flex-direction: column;
   background: #0b0d12;
-}
-
-.bt-main {
-  flex: 1;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.bt-body {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  overflow: hidden;
-}
-
-.bt-runs {
-  width: 280px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid var(--border);
-  background: var(--panel);
-  min-height: 0;
-}
-
-.bt-runs-head {
-  flex-shrink: 0;
-  min-height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 4px 8px 4px 10px;
-  border-bottom: 1px solid var(--border);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-}
-
-.bt-runs-seg {
-  display: flex;
-  text-transform: none;
-  letter-spacing: 0;
   border: 1px solid var(--border);
-  border-radius: 4px;
-  overflow: hidden;
+  border-radius: 10px;
 }
 
-.bt-runs-seg-btn {
-  background: transparent;
-  color: var(--muted);
-  border: 0;
-  font-size: 10px;
-  padding: 3px 7px;
-  cursor: pointer;
-  line-height: 1.2;
-}
-
-.bt-runs-seg-btn.is-on {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text);
-}
-
-.bt-runs-list {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-}
-
-.bt-runs-empty {
-  margin: 0;
-  padding: 16px 10px;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.bt-run {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--border);
-}
-
-.bt-run.is-live {
-  background: rgba(79, 140, 255, 0.08);
-}
-
-.bt-run.is-chart {
-  background: rgba(79, 140, 255, 0.12);
-}
-
-.bt-run-check {
-  flex-shrink: 0;
-  position: relative;
-  width: 18px;
-  height: 18px;
-  margin-top: 1px;
-  cursor: pointer;
-}
-
-.bt-run-check input {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.bt-run-check-box {
-  display: block;
-  position: relative;
-  width: 18px;
-  height: 18px;
-  border: 1.5px solid var(--muted);
-  border-radius: 4px;
-  background: var(--bg);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
-}
-
-.bt-run-check-box::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 6px;
-  width: 5px;
-  height: 9px;
-  border: solid #fff;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-  opacity: 0;
-}
-
-.bt-run-check input:checked + .bt-run-check-box {
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
-.bt-run-check input:checked + .bt-run-check-box::after {
-  opacity: 1;
-}
-
-.bt-run-check input:focus-visible + .bt-run-check-box {
-  box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.45);
-}
-
-.bt-run-check input:disabled {
-  cursor: not-allowed;
-}
-
-.bt-run-check input:disabled + .bt-run-check-box {
-  opacity: 0.35;
-}
-
-.bt-run-check.is-loading .bt-run-check-box {
-  opacity: 0.55;
-}
-
-.bt-run-main {
-  flex: 1;
-  min-width: 0;
-}
-
-.bt-run-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  align-items: baseline;
-}
-
-.bt-run-when {
-  font-size: 11px;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.bt-run-status {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-}
-
-.bt-run-status.is-done {
-  color: var(--green);
-}
-
-.bt-run-status.is-error {
-  color: var(--red);
-}
-
-.bt-run-status.is-running {
-  color: var(--accent);
-}
-
-.bt-run-label {
-  font-size: 12px;
-  margin-top: 2px;
-}
-
-.bt-run-err {
-  font-size: 11px;
-  color: var(--red);
-  margin-top: 2px;
-}
-
-.bt-run-pnl {
-  font-size: 12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-variant-numeric: tabular-nums;
-  margin-top: 2px;
-}
-
-.bt-run-wr {
-  font-size: 11px;
-  color: var(--muted);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-variant-numeric: tabular-nums;
-  margin-top: 1px;
-}
-
-.bt-run .btn {
-  flex-shrink: 0;
-  font-size: 11px;
-  padding: 3px 8px;
-  margin-top: 1px;
-}
+/* ─── Legend du graphique ────────────────────────────────────────────── */
 
 .bt-chart-bar {
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 28px;
+  height: 30px;
   padding: 0 10px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--sim2-border-soft);
   background: var(--panel);
+  border-radius: 10px 10px 0 0;
   font-size: 11px;
   flex-shrink: 0;
   color: var(--muted);
@@ -366,10 +266,12 @@ body:has(.bt-page) {
 .bt-legend {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   color: var(--text);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .bt-swatch {
@@ -438,23 +340,6 @@ body:has(.bt-page) {
   border-color: #ff4444;
 }
 
-.bt-chart-wallet {
-  margin-left: 4px;
-  gap: 5px;
-}
-
-.bt-chart-wallet.is-loading {
-  opacity: 0.7;
-}
-
-.bt-chart-pos.bt-chart-wal::after {
-  content: "";
-}
-
-.bt-tip-wallet {
-  color: var(--muted);
-}
-
 .bt-chart-pos {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 11px;
@@ -472,6 +357,10 @@ body:has(.bt-page) {
   color: var(--text);
   font-size: 10px;
   letter-spacing: 0.02em;
+}
+
+.bt-tip-wallet {
+  color: var(--muted);
 }
 
 .bt-chart-count {
@@ -505,7 +394,7 @@ body:has(.bt-page) {
   background: transparent;
   color: var(--muted);
   border: 1px solid var(--border);
-  border-radius: 3px;
+  border-radius: 5px;
   font-size: 12px;
   cursor: pointer;
   padding: 0;
@@ -568,6 +457,8 @@ body:has(.bt-page) {
 .bt-svg-px.no {
   fill: #ff5b5b;
 }
+
+/* ─── Tooltip de la fenêtre ──────────────────────────────────────────── */
 
 .bt-tip {
   position: absolute;
@@ -658,42 +549,392 @@ body:has(.bt-page) {
   font-weight: 600;
 }
 
-.bt-empty {
-  padding: 24px;
-  color: var(--muted);
-  font-size: 13px;
+/* ─── Panneau Configuration du run (Sim2Card, hauteur bornée) ─────────── */
+
+.bt-preset {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 320px;
 }
 
-.bt-progress {
-  position: relative;
-  height: 3px;
-  margin: 0;
-  background: var(--border);
+.bt-preset .sim2-card {
+  border: 1px solid var(--border);
+  height: 100%;
+  max-height: 320px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* raw variant : le corps est géré par .bt-preset-body (scroll interne). */
+.bt-preset-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px 14px 14px;
+}
+
+.bt-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+
+.bt-preset-name {
+  color: var(--text);
+  font-weight: 550;
+  max-width: 220px;
   overflow: hidden;
-  flex-shrink: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.bt-progress-bar {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: var(--accent);
+/* Dirty state indicator (config modifiée — non sauvegardée). */
+.bt-preset-dirty {
+  color: var(--accent);
+  font-size: 10px;
+  margin-left: 3px;
+  animation: bt-dirty-pulse 2s ease-in-out infinite;
 }
 
-.bt-progress span {
-  display: none;
+@keyframes bt-dirty-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
-.bt-page > .err,
-.bt-page > .bt-empty {
-  margin: 0;
-  padding: 4px 14px;
+/* Bannière de description du preset : supprimée avec son bouton « ? » —
+   la note du titre porte le nom (title = description en tooltip). */
+/* Hint inline (fallbacks stratégie custom). */
+.bt-preset-hint {
+  grid-column: 1 / -1;
+  margin: 0 0 8px;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
+.bt-preset-hint code {
+  background: var(--panel);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+
+/* Champs du formulaire (grille .bt-preset-grid). */
+.bt-pf {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.bt-pf-label {
+  cursor: help;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.28);
+  width: fit-content;
+}
+
+.bt-pf input,
+.bt-pf select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4.5px 7px;
   font-size: 12px;
+}
+
+.bt-pf-wide {
+  grid-column: span 2;
+}
+
+.bt-pf-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  padding-top: 16px;
+}
+
+/* Erreurs inline de validation. */
+.bt-pf-err {
+  font-size: 10px;
+  color: var(--red, #ff5b5b);
+  line-height: 1.2;
+  margin-top: 1px;
+}
+
+.bt-pf input.is-err,
+.bt-pf select.is-err {
+  border-color: var(--red, #ff5b5b);
+}
+
+/* ─── Rail Historique (Sim2Card, lignes de run enrichies) ────────────── */
+
+.bt-runs {
+  width: 332px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.bt-runs .sim2-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bt-runs .sim2-card-h {
+  padding: 8px 10px 8px 12px;
+  flex-wrap: nowrap;
+}
+
+.bt-runs-list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.bt-runs-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bt-runs-list::-webkit-scrollbar-thumb {
+  background: #2a303c;
+  border-radius: 999px;
+}
+
+.bt-runs-empty {
+  margin: 0;
+  padding: 16px 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.bt-run {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 9px 10px 9px 12px;
+  border-bottom: 1px solid var(--sim2-border-soft);
+  border-left: 2px solid transparent;
+}
+
+.bt-run:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.bt-run.is-live {
+  background: rgba(79, 140, 255, 0.08);
+}
+
+.bt-run.is-chart {
+  background: rgba(79, 140, 255, 0.12);
+  border-left-color: var(--accent);
+}
+
+/* Case à cocher "superposer au graphique" (custom, garde le focus visible). */
+.bt-run-check {
+  flex-shrink: 0;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.bt-run-check input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.bt-run-check-box {
+  display: block;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--muted);
+  border-radius: 4px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.bt-run-check-box::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+}
+
+.bt-run-check input:checked + .bt-run-check-box {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.bt-run-check input:checked + .bt-run-check-box::after {
+  opacity: 1;
+}
+
+.bt-run-check input:focus-visible + .bt-run-check-box {
+  box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.45);
+}
+
+.bt-run-check input:disabled {
+  cursor: not-allowed;
+}
+
+.bt-run-check input:disabled + .bt-run-check-box {
+  opacity: 0.35;
+}
+
+.bt-run-check.is-loading .bt-run-check-box {
+  opacity: 0.55;
+}
+
+.bt-run-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.bt-run-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.bt-run-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bt-run-status {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
   flex-shrink: 0;
 }
+
+.bt-run-status.is-done {
+  color: var(--green);
+}
+
+.bt-run-status.is-error {
+  color: var(--red);
+}
+
+.bt-run-status.is-running {
+  color: var(--accent);
+}
+
+.bt-run-metrics {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.bt-run-pnl {
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.bt-run-pnl.pnl-pos {
+  color: var(--green);
+}
+
+.bt-run-pnl.pnl-neg {
+  color: var(--red);
+}
+
+.bt-run-wr {
+  font-size: 10.5px;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.bt-run-open {
+  margin-left: auto;
+}
+
+.bt-run-open .btn {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.bt-run:hover .bt-run-open .btn,
+.bt-run.is-chart .bt-run-open .btn,
+.bt-run .bt-run-open .btn:disabled {
+  opacity: 1;
+}
+
+.bt-run-sub {
+  display: flex;
+  gap: 10px;
+  margin-top: 2px;
+  font-size: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  opacity: 0.85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bt-run-err {
+  font-size: 11px;
+  color: var(--red);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ─── Modal Résultat ─────────────────────────────────────────────────── */
 
 .bt-modal {
   max-width: 1080px;
-  max-height: 86vh;
+  max-height: 88vh;
   overflow: auto;
   width: 92vw;
   display: flex;
@@ -734,6 +975,63 @@ body:has(.bt-page) {
   color: var(--muted);
 }
 
+/* Chips de stats (remplace l'ancienne rangée .bt-statistique plate). */
+.bt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 10px;
+}
+
+.bt-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.bt-chip b {
+  color: var(--text);
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.bt-chip b.neg {
+  color: var(--red);
+}
+
+.bt-chip span {
+  color: var(--muted);
+}
+
+/* Mini-courbe d'équité (result.windows → cumul P&L). */
+.bt-equity {
+  border: 1px solid var(--sim2-border-soft);
+  border-radius: 8px;
+  background: var(--bg);
+  padding: 9px 12px 6px;
+  margin-bottom: 12px;
+}
+
+.lbl-equity {
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.eqmini svg {
+  display: block;
+}
+
 .bt-modal-split {
   display: grid;
   grid-template-columns: minmax(240px, 0.9fr) minmax(0, 1.2fr);
@@ -750,10 +1048,16 @@ body:has(.bt-page) {
 .bt-modal-cfg h4,
 .bt-modal-pos h4 {
   margin: 0 0 8px;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted);
+}
+
+.bt-modal-cfg {
+  max-height: 420px;
+  overflow: auto;
+  padding-right: 6px;
 }
 
 .bt-cfg-group {
@@ -791,81 +1095,29 @@ body:has(.bt-page) {
   text-align: right;
 }
 
-@media (max-width: 800px) {
-  .bt-modal-split {
-    grid-template-columns: 1fr;
-  }
-}
-
-.bt-modal-cfg {
-  max-height: 420px;
-  overflow: auto;
-  padding-right: 6px;
-}
-
-.bt-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 12px 0;
-  font-size: 13px;
-  color: var(--muted);
-}
-
+/* Table des positions : colonnes bornées + sticky head (sim2-table-scroll). */
 .bt-pos-table {
-  max-height: 420px;
+  max-height: 340px;
   overflow: auto;
+  border: 1px solid var(--sim2-border-soft);
+  border-radius: 8px;
 }
 
-.bt-pos-table table {
-  width: 100%;
-  font-size: 12px;
+.bt-cell-evt {
+  max-width: 230px;
+  padding-right: 16px;
 }
 
-.bt-modal-chart-rules {
-  margin: 8px 0 4px;
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--panel);
+.bt-cell-evt .ellip {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.bt-modal-chart-rules h4 {
-  margin: 0 0 6px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-}
-
-.bt-rule-table {
-  width: 100%;
-  font-size: 12px;
-  border-collapse: collapse;
-}
-
-.bt-rule-table td,
-.bt-rule-table th {
-  padding: 3px 8px;
-  border-bottom: 1px solid var(--border);
-  text-align: left;
-}
-
-.bt-modal-chart-rules .err {
-  margin-top: 8px;
-  font-size: 12px;
-}
-
-.bt-modal-chart-rules code {
-  background: var(--bg);
-  padding: 1px 4px;
-  border-radius: 4px;
-}
-
-
+/* Zones de la stratégie custom (diagnostic). */
 .bt-modal-chart-rules {
   margin: 12px 0;
-  padding: 12px;
+  padding: 12px 14px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--panel);
@@ -873,7 +1125,10 @@ body:has(.bt-page) {
 
 .bt-modal-chart-rules h4 {
   margin: 0 0 8px;
-  font-size: 13px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
 }
 
 .bt-rule-table {
@@ -890,227 +1145,24 @@ body:has(.bt-page) {
   text-align: left;
 }
 
-.bt-preset {
-  flex-shrink: 0;
-  height: 300px;
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--border);
-  background: var(--panel);
-  min-height: 0;
-}
-
-.bt-preset-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: 32px;
-  padding: 0 10px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-
-.bt-preset-title {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  flex-shrink: 0;
-}
-
-.bt-preset-tabs {
-  display: flex;
-  gap: 2px;
-}
-
-.bt-preset-tab {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid transparent;
-  border-radius: 3px;
-  font-size: 11px;
-  padding: 3px 8px;
-  cursor: pointer;
-}
-
-.bt-preset-tab.is-on {
-  color: var(--text);
-  border-color: var(--border);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.bt-preset-actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.bt-preset-actions .btn {
-  font-size: 11px;
-  padding: 3px 8px;
-}
-
-.bt-preset-actions .err,
-.bt-preset-actions .ok {
-  font-size: 11px;
-}
-
-.bt-preset-body {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  padding: 10px 12px;
-}
-
-.bt-preset-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px 12px;
-}
-
-.bt-pf-label {
-  cursor: help;
-  border-bottom: 1px dotted rgba(255, 255, 255, 0.28);
-  width: fit-content;
-}
-
-.bt-pf {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.bt-pf input,
-.bt-pf select {
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 4px 6px;
+.bt-modal-chart-rules .err {
+  margin-top: 8px;
   font-size: 12px;
 }
 
-.bt-pf-wide {
-  grid-column: span 2;
-}
-
-.bt-pf-check {
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-  color: var(--text);
-  padding-top: 16px;
-}
-
-/* Dirty state indicator */
-.bt-preset-dirty {
-  color: var(--accent);
-  font-size: 10px;
-  margin-left: 3px;
-  animation: bt-dirty-pulse 2s ease-in-out infinite;
-}
-
-@keyframes bt-dirty-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-/* Error badge on tabs */
-.bt-preset-tab-err {
-  margin-left: 4px;
-  padding: 0 4px;
-  min-width: 14px;
-  height: 14px;
-  line-height: 14px;
-  text-align: center;
-  font-size: 9px;
-  font-weight: 700;
-  background: var(--red, #ff5b5b);
-  color: #fff;
-  border-radius: 7px;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Info button for preset description */
-.bt-preset-info-btn {
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
-}
-
-.bt-preset-info-btn:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-/* Preset description banner */
-.bt-preset-desc {
-  padding: 6px 12px;
-  font-size: 11px;
-  color: var(--muted);
-  border-bottom: 1px solid var(--border);
+.bt-modal-chart-rules code {
   background: var(--bg);
-  line-height: 1.4;
-}
-
-/* Inline hint for custom strategy fallbacks */
-.bt-preset-hint {
-  grid-column: 1 / -1;
-  margin: 0 0 8px;
-  padding: 6px 10px;
-  font-size: 11px;
-  color: var(--muted);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  line-height: 1.4;
-}
-
-.bt-preset-hint code {
-  background: var(--panel);
   padding: 1px 4px;
-  border-radius: 3px;
-  font-size: 10px;
+  border-radius: 4px;
 }
 
-/* Inline field errors */
-.bt-pf-err {
-  font-size: 10px;
-  color: var(--red, #ff5b5b);
-  line-height: 1.2;
-  margin-top: 1px;
+.bt-modal .modal-actions {
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.bt-pf input.is-err,
-.bt-pf select.is-err {
-  border-color: var(--red, #ff5b5b);
-}
+/* ─── Dialog de sauvegarde de preset ─────────────────────────────────── */
 
-/* btn-danger */
-.btn-danger {
-  color: var(--red, #ff5b5b);
-  border-color: var(--red, #ff5b5b);
-}
-
-.btn-danger:hover {
-  background: rgba(255, 91, 91, 0.1);
-}
-
-/* Save preset dialog */
 .bt-save-preset-dialog {
   max-width: 420px;
   width: 90vw;
@@ -1133,326 +1185,12 @@ body:has(.bt-page) {
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 3px;
+  border-radius: 6px;
   padding: 4px 6px;
 }
 
-.bt-modal .modal-actions {
-  align-items: center;
-  flex-wrap: wrap;
-}
+/* ─── Éditeur de stratégie custom (inline dans la carte Configuration) ── */
 
-/* Custom strategy editor (inline in backtest preset panel) */
-.bt-custom-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 11px;
-}
-
-.bt-custom-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.bt-custom-name {
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 300px;
-}
-
-.bt-custom-actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.bt-custom-actions .btn {
-  font-size: 10px;
-  padding: 2px 6px;
-}
-
-.bt-custom-rules {
-  overflow: auto;
-  max-height: 200px;
-}
-
-.bt-custom-table {
-  width: 100%;
-  font-size: 11px;
-  border-collapse: collapse;
-  margin-bottom: 6px;
-}
-
-.bt-custom-table th {
-  text-align: left;
-  padding: 3px 4px;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.bt-custom-table td {
-  padding: 2px 4px;
-  border-bottom: 1px solid var(--border);
-}
-
-.bt-custom-table input[type="number"],
-.bt-custom-table select {
-  width: 100%;
-  min-width: 50px;
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 2px 4px;
-  font-size: 11px;
-}
-
-.bt-custom-table input[type="checkbox"] {
-  margin: 0;
-}
-
-.bt-custom-idx {
-  color: var(--muted);
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
-
-.bt-custom-del {
-  background: transparent;
-  color: var(--red, #ff5b5b);
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-  padding: 0 4px;
-  line-height: 1;
-}
-
-.bt-custom-del:hover {
-  color: #ff8888;
-}
-
-/* Custom strategy editor (zones tab) */
-.bt-custom-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 11px;
-}
-
-.bt-custom-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.bt-custom-name {
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 200px;
-}
-
-.bt-custom-actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.bt-custom-actions .btn {
-  font-size: 11px;
-  padding: 3px 8px;
-}
-
-.bt-custom-rules {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.bt-custom-table {
-  width: 100%;
-  font-size: 11px;
-  border-collapse: collapse;
-}
-
-.bt-custom-table th {
-  text-align: left;
-  padding: 3px 6px;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.bt-custom-table td {
-  padding: 2px 4px;
-  border-bottom: 1px solid var(--border);
-}
-
-.bt-custom-table input[type="number"],
-.bt-custom-table select {
-  width: 100%;
-  min-width: 0;
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 2px 4px;
-  font-size: 11px;
-}
-
-.bt-custom-table input[type="checkbox"] {
-  margin: 0;
-}
-
-.bt-custom-idx {
-  color: var(--muted);
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
-
-.bt-custom-del {
-  background: transparent;
-  color: var(--red, #ff5b5b);
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-  padding: 0 4px;
-  line-height: 1;
-}
-
-.bt-custom-del:hover {
-  color: #ff8888;
-}
-
-/* Custom strategy editor (inline in backtest preset panel) */
-.bt-custom-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.bt-custom-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.bt-custom-name {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 300px;
-}
-
-.bt-custom-actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.bt-custom-actions .btn {
-  font-size: 11px;
-  padding: 3px 8px;
-}
-
-.bt-custom-rules {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.bt-custom-table {
-  width: 100%;
-  font-size: 11px;
-  border-collapse: collapse;
-}
-
-.bt-custom-table th {
-  text-align: left;
-  padding: 4px 6px;
-  border-bottom: 1px solid var(--border);
-  color: var(--muted);
-  font-weight: 600;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-
-.bt-custom-table td {
-  padding: 3px 4px;
-  border-bottom: 1px solid var(--border);
-}
-
-.bt-custom-table input,
-.bt-custom-table select {
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 2px 4px;
-  font-size: 11px;
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.bt-custom-table input[type="checkbox"] {
-  width: auto;
-}
-
-.bt-custom-table input[type="number"] {
-  width: 64px;
-}
-
-.bt-custom-idx {
-  color: var(--muted);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-  width: 20px;
-}
-
-.bt-custom-del {
-  background: transparent;
-  border: none;
-  color: var(--red, #ff5b5b);
-  cursor: pointer;
-  font-size: 13px;
-  padding: 2px 4px;
-  line-height: 1;
-}
-
-.bt-custom-del:hover {
-  background: rgba(255, 91, 91, 0.1);
-  border-radius: 3px;
-}
-
-/* Custom strategy editor (zones tab) */
 .bt-custom-editor {
   display: flex;
   flex-direction: column;
@@ -1537,6 +1275,7 @@ body:has(.bt-page) {
 
 .bt-custom-table input[type="checkbox"] {
   margin: 0;
+  width: auto;
 }
 
 .bt-custom-idx {
@@ -1561,7 +1300,7 @@ body:has(.bt-page) {
   background: rgba(255, 91, 91, 0.1);
 }
 
-/* Lower-lows markers on chart */
+/* Marqueurs lower-lows (graphique). */
 .bt-lower-lows {
   pointer-events: none;
 }
@@ -1569,4 +1308,43 @@ body:has(.bt-page) {
 .bt-lower-lows text {
   pointer-events: none;
   user-select: none;
+}
+
+/* ─── États de page (persistence / erreur) ───────────────────────────── */
+
+.bt-page > .err,
+.bt-page > .bt-empty {
+  margin: 0;
+  padding: 6px 14px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.bt-empty {
+  padding: 24px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ─── Responsive : rail sous le graphique < 1240px ───────────────────── */
+
+@media (max-width: 1240px) {
+  .bt-body {
+    flex-direction: column;
+  }
+
+  .bt-runs {
+    width: auto;
+    max-height: 320px;
+  }
+
+  .bt-tgroup:last-child,
+  .bt-tgroup-exec {
+    border-right: none;
+    padding-left: 0;
+  }
+
+  .bt-page .sim2-kpis.bt-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

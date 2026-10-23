@@ -241,6 +241,18 @@ export function useBacktestRun(deps: UseBacktestRunDeps) {
     }
   }
 
+  async function cancel(): Promise<void> {
+    const p = progress();
+    if (!p || p.status !== "running") return;
+    try {
+      await api.backtestCancel(p.runId);
+      // Le prochain tick de poll voit le statut "cancelled" et clôt le run :
+      // on ne touche pas progress() ici pour rester le seul flux de vérité.
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  }
+
   function disposeRun(): void {
     pollGen += 1;
     chartGen += 1;
@@ -278,6 +290,7 @@ export function useBacktestRun(deps: UseBacktestRunDeps) {
     loadRuns,
     openRun,
     launch,
+    cancel,
     poll,
     toggleChartRun,
     disposeRun,

@@ -232,6 +232,9 @@ export function beginImportUpload(
   maxBytes: number,
 ): { uploadId: string; uploadPath: string; maxBytes: number } {
   assertNoActiveJob();
+  if (!dbPath) {
+    throw new Error("dbPath is null or undefined — persistence may be disabled or config not loaded");
+  }
   const dbAbs = path.resolve(dbPath);
   const dir = path.join(path.dirname(dbAbs), "imports");
   mkdirSync(dir, { recursive: true });
@@ -380,7 +383,7 @@ export async function snapshotExportOptions(
   const cacheKey = `${table}:${mainPath}`;
   const hit = optionsCache.get(cacheKey);
   if (hit && Date.now() - hit.at < OPTIONS_TTL_MS) return hit.rows;
-  if (!existsSync(mainPath)) {
+  if (!mainPath || !existsSync(mainPath)) {
     throw serviceError(503, "Base principale absente — persistance inactive ou démarrage en cours.");
   }
   const rows = await runWorker<SnapshotExportOptionRow[]>({ mode: "options", mainPath, table });
@@ -400,6 +403,9 @@ export async function exportSnapshotsToSqlite(
   mainPath: string,
   args: SqliteExportArgs,
 ): Promise<{ outPath: string; rows: Record<string, number>; elapsedMs: number }> {
+  if (!mainPath) {
+    throw serviceError(503, "dbPath is null or undefined — persistence may be disabled or config not loaded");
+  }
   const dir = path.join(path.dirname(mainPath), "imports");
   mkdirSync(dir, { recursive: true });
   const outPath = path.join(dir, `export-${args.table}-${Date.now()}-${randomUUID().slice(0, 8)}.db`);

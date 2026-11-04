@@ -93,6 +93,122 @@ export interface DbStatsInfo {
 export interface DbTablesResponse {
   tables: DbTableStatRow[];
   db?: DbStatsInfo | null;
+  /** Persistance active côté backend (absent sur backend d'avant la màj → true implicitement). */
+  persistence?: boolean;
+}
+
+/* ── Snapshot I/O (page Données) : export / import des données marché ── */
+
+export interface SnapshotExportOptionRow {
+  eventSlug: string;
+  title: string | null;
+  rowCount: number;
+  firstTs: number;
+  lastTs: number;
+}
+
+export interface SnapshotExportOptionsResponse {
+  table: string;
+  markets: SnapshotExportOptionRow[];
+}
+
+export interface SnapshotExportRequest {
+  table: "book_snapshots" | "market_snapshots";
+  slug: string | null;
+  fromMs: number | null;
+  toMs: number | null;
+  format: "csv" | "ndjson" | "sqlite";
+  includeResolutions: boolean;
+}
+
+export interface SnapshotImportTableSummary {
+  name: string;
+  rowsTotal: number;
+  invalid: number;
+  examples: string[];
+  distinctKeys: number;
+  alreadyPresent: number;
+  newRows: number;
+  dedupInFile: number;
+  minTs: number | null;
+  maxTs: number | null;
+  slugCount: number;
+  error?: string;
+}
+
+export interface SnapshotAnalyzeResult {
+  format: "ndjson" | "csv" | "sqlite";
+  extras: number;
+  tables: SnapshotImportTableSummary[];
+  elapsedMs?: number;
+  warnings?: string[];
+}
+
+export interface SnapshotCommitResult {
+  inserted: number;
+  skipped: number;
+  dedupInFile: number;
+  deleted: number;
+  elapsedMs: number;
+  perTable: Record<
+    string,
+    { staged: number; inserted: number; skipped: number; dedupInFile: number; deleted: number; ms?: number }
+  >;
+  timings?: Record<string, number>;
+}
+
+export interface SnapshotImportStatus {
+  state: "idle" | "uploading" | "uploaded" | "analyzing" | "analyzed" | "committing" | "done" | "error" | "cancelled";
+  uploadId: string | null;
+  bytes: number | null;
+  format: "ndjson" | "csv" | "sqlite" | null;
+  summary: SnapshotAnalyzeResult | null;
+  result: SnapshotCommitResult | null;
+  progress: {
+    table?: string;
+    staged?: number;
+    invalid?: number;
+    merged?: number;
+    skipped?: number;
+    deleted?: number;
+  } | null;
+  error: string | null;
+  startedAt: number | null;
+  finishedAt: number | null;
+  persistence: boolean;
+}
+
+/** URL GET directe du download (le navigateur gère la réception du stream). */
+export function snapshotExportUrl(p: SnapshotExportRequest): string {
+  const params = new URLSearchParams({ table: p.table, format: p.format });
+  if (p.slug) params.set("slug", p.slug);
+  if (p.fromMs != null) params.set("from", String(p.fromMs));
+  if (p.toMs != null) params.set("to", String(p.toMs));
+  if (p.includeResolutions) params.set("includeResolutions", "1");
+  return `/api/db/snapshots/export?${params.toString()}`;
+}
+
+/** Upload XHR (seul mode donnant la progression d'envoi) — POST raw binaire. */
+export function uploadSnapshotImport(
+  file: File,
+  onProgress: (done: number, total: number) => void,
+): Promise<{ uploadId: string; bytes: number }> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/db/snapshots/import/upload");
+    xhr.responseType = "json";
+    xhr.upload.onprogress = (e) => onProgress(e.loaded, e.total);
+    xhr.onload = () => {
+      const body = (xhr.response ?? {}) as { uploadId?: string; bytes?: number; error?: string };
+      if (xhr.status !== 200 || !body.uploadId) {
+        reject(new Error(body.error ?? `HTTP ${xhr.status}`));
+      } else {
+        resolve({ uploadId: body.uploadId, bytes: body.bytes ?? file.size });
+      }
+    };
+    xhr.onerror = () => reject(new Error("Réseau indisponible pendant l'upload."));
+    xhr.send(file);
+  });
 }
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
@@ -195,6 +311,26 @@ interface StrategyStatusResponse {
 export const api = {
   state: () => request<StateResponse>("/api/state"),
   dbTables: () => request<DbTablesResponse>("/api/db/tables"),
+  snapshotsExportOptions: (table: string) =>
+    request<SnapshotExportOptionsResponse>(
+      `/api/db/snapshots/export/options?table=${encodeURIComponent(table)}`,
+    ),
+  snapshotsImportAnalyze: (uploadId: string) =>
+    request<SnapshotAnalyzeResult>("/api/db/snapshots/import/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ uploadId }),
+    }),
+  snapshotsImportCommit: (uploadId: string, policy: "merge" | "replace") =>
+    request<SnapshotCommitResult>("/api/db/snapshots/import/commit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ uploadId, policy }),
+    }),
+  snapshotsImportStatus: () =>
+    request<SnapshotImportStatus>("/api/db/snapshots/import/status"),
+  snapshotsImportCancel: () =>
+    request<{ ok: boolean }>("/api/db/snapshots/import/status", { method: "DELETE" }),
   /** Fallback REST positions Polymarket (cache du dernier poll BalanceTracker). */
   polyPositions: () =>
     request<{ positions: import("../types").PolymarketPosition[] }>(

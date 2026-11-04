@@ -18,6 +18,8 @@ import type { DbTableStatRow, DbTablesResponse } from "../../api/client";
 import { Sim2Card, Sim2Tabs } from "../../components/ui/Sim2Card";
 import { Sim2Kpis, type Sim2KpiCard } from "../../components/ui/Sim2Kpi";
 import { TopbarNavLinks } from "../../components/layout/TopbarNav";
+import { ExportDialog } from "./ExportDialog";
+import { ImportDialog } from "./ImportDialog";
 import { navigate } from "../../router";
 import { clockNow, useClock } from "../../stores/clockStore";
 import "../../styles/data.css";
@@ -66,6 +68,8 @@ export function DataPage(): JSX.Element {
   const [loadedAt, setLoadedAt] = createSignal<number | null>(null);
   const [group, setGroup] = createSignal("all");
   const [query, setQuery] = createSignal("");
+  const [showExport, setShowExport] = createSignal(false);
+  const [showImport, setShowImport] = createSignal(false);
 
   /**
    * `manual` (bouton Actualiser) : état « Actualisation… » visible.
@@ -234,10 +238,30 @@ export function DataPage(): JSX.Element {
             ← Dashboard
           </button>
           <h1 class="sim2-title">Données</h1>
-          <span class="sim2-topbar-muted">Vue des tables SQLite — lecture seule</span>
+          <span class="sim2-topbar-muted">Tables SQLite — lecture, export & import snapshots</span>
         </div>
         <div class="sim2-topbar-actions">
           <TopbarNavLinks activeHref="/donnees" ariaLabel="Navigation données" />
+          <Show when={data()?.persistence !== false}>
+            <button
+              type="button"
+              class="btn"
+              disabled={loading() || refreshing()}
+              title="Exporter les snapshots (ticks + profondeur de carnet)"
+              onClick={() => setShowExport(true)}
+            >
+              ⭳ Exporter
+            </button>
+            <button
+              type="button"
+              class="btn"
+              disabled={loading() || refreshing()}
+              title="Importer des données — merge idempotent avec la base existante"
+              onClick={() => setShowImport(true)}
+            >
+              ⭱ Importer
+            </button>
+          </Show>
           <Show when={refreshedAgo() != null}>
             <span class="data-updated">
               <span class="data-live-dot" />
@@ -400,10 +424,17 @@ export function DataPage(): JSX.Element {
           <p class="data-foot">
             Taille par table = btree + indexes (dbstat SQLite). La somme des tables est inférieure
             à la taille du fichier : pages internes du schéma. Barre : part de la table la plus
-            lourde du groupe. Source GET /api/db/tables — écriture impossible.
+            lourde du groupe. Source GET /api/db/tables — écritures limitées à l'import/export
+            des snapshots.
           </p>
         </Show>
       </div>
+      <ExportDialog open={showExport()} onClose={() => setShowExport(false)} />
+      <ImportDialog
+        open={showImport()}
+        onClose={() => setShowImport(false)}
+        onImported={() => void load(true)}
+      />
     </div>
   );
 }

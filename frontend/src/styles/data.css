@@ -276,3 +276,187 @@
     animation: none;
   }
 }
+
+/* ── Dialogs Export / Import (réutilisent le socle .modal-overlay/.modal) ── */
+
+.data-page .dat-dialog {
+  min-width: min(560px, 92vw);
+  max-width: min(660px, 96vw);
+}
+
+.data-page .dat-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 12px 0 6px;
+}
+
+.data-page .dat-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.data-page .dat-field > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.data-page .dat-note {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.data-page .dat-row2 {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.data-page .dat-select,
+.data-page .dat-input {
+  height: 30px;
+  padding: 0 8px;
+  font-size: 12px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.data-page .dat-file {
+  height: auto;
+  padding-top: 4px;
+}
+
+.data-page .dat-input:focus,
+.data-page .dat-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.data-page .dat-preset {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+.data-page .dat-est,
+.data-page .dat-policy {
+  font-size: 12px;
+}
+
+.data-page .dat-policy {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.data-page .dat-primary {
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: #fff;
+}
+
+.data-page .dat-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.data-page .dat-danger {
+  background: var(--red);
+  border-color: var(--red);
+}
+
+.data-page .dat-bar {
+  height: 7px;
+  border-radius: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.data-page .dat-bar > i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+.data-page .dat-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0 4px;
+}
+
+.data-page .dat-tbl {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--sim2-border-soft);
+}
+
+.data-page .dat-tbl:last-of-type {
+  border-bottom: none;
+}
+
+.data-page .dat-tbl-name {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.data-page .dat-chips,
+.data-page .dat-tbl-line {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.data-page .dat-chip {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.data-page .dat-ok {
+  border-color: rgba(46, 204, 113, 0.5);
+  color: var(--green);
+}
+
+.data-page .dat-bad {
+  border-color: rgba(255, 80, 80, 0.5);
+  color: #ff8a8a;
+}
+
+.data-page .dat-ex {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: ui-monospace, monospace;
+}
+
+.data-page .dat-err {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 80, 80, 0.4);
+  background: rgba(255, 80, 80, 0.1);
+  color: #ff8a8a;
+  font-size: 12px;
+}
+
+.data-page .dat-warn {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 176, 32, 0.4);
+  background: rgba(255, 176, 32, 0.08);
+  color: var(--amber);
+  font-size: 12px;
+}

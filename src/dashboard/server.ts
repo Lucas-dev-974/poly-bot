@@ -70,6 +70,16 @@ import {
   type ConfigControlHandlerCtx,
 } from "./config-control-handlers.js";
 import {
+  handleSnapshotsExport as handleSnapshotsExportFn,
+  handleSnapshotsExportOptions as handleSnapshotsExportOptionsFn,
+  handleSnapshotsImportAnalyze as handleSnapshotsImportAnalyzeFn,
+  handleSnapshotsImportCancel as handleSnapshotsImportCancelFn,
+  handleSnapshotsImportCommit as handleSnapshotsImportCommitFn,
+  handleSnapshotsImportStatus as handleSnapshotsImportStatusFn,
+  handleSnapshotsImportUpload as handleSnapshotsImportUploadFn,
+  type SnapshotIoHandlerCtx,
+} from "./snapshot-io-handlers.js";
+import {
   handleBotFills as handleBotFillsFn,
   handleBookSnapshots as handleBookSnapshotsFn,
   handleMarketHistory as handleMarketHistoryFn,
@@ -235,6 +245,45 @@ export class DashboardServer {
 
       if (url.pathname === "/api/db/tables" && req.method === "GET") {
         this.handleDbTables(res);
+        return;
+      }
+
+      if (url.pathname === "/api/db/snapshots/export/options" && req.method === "GET") {
+        void handleSnapshotsExportOptionsFn(this.snapshotIoCtx(), url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/db/snapshots/export" && req.method === "GET") {
+        void handleSnapshotsExportFn(this.snapshotIoCtx(), url, res);
+        return;
+      }
+
+      if (url.pathname === "/api/db/snapshots/import/upload" && req.method === "POST") {
+        if (!this.isAllowedOrigin(req)) return originForbidden(res);
+        void handleSnapshotsImportUploadFn(this.snapshotIoCtx(), req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/db/snapshots/import/analyze" && req.method === "POST") {
+        if (!this.isAllowedOrigin(req)) return originForbidden(res);
+        void handleSnapshotsImportAnalyzeFn(this.snapshotIoCtx(), req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/db/snapshots/import/commit" && req.method === "POST") {
+        if (!this.isAllowedOrigin(req)) return originForbidden(res);
+        void handleSnapshotsImportCommitFn(this.snapshotIoCtx(), req, res);
+        return;
+      }
+
+      if (url.pathname === "/api/db/snapshots/import/status" && req.method === "GET") {
+        handleSnapshotsImportStatusFn(this.snapshotIoCtx(), res);
+        return;
+      }
+
+      if (url.pathname === "/api/db/snapshots/import/status" && req.method === "DELETE") {
+        if (!this.isAllowedOrigin(req)) return originForbidden(res);
+        void handleSnapshotsImportCancelFn(this.snapshotIoCtx(), res);
         return;
       }
 
@@ -629,6 +678,10 @@ export class DashboardServer {
       assertCanHotSwapStrategy: (id) => this.assertCanHotSwapStrategy(id),
       configHandler: this.configHandler,
     };
+  }
+
+  private snapshotIoCtx(): SnapshotIoHandlerCtx {
+    return { config: this.config, repos: this.repos };
   }
 
   private backtestCtx(): BacktestHandlerCtx {

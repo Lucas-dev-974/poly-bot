@@ -63,6 +63,58 @@ export class MarketSnapshotRepository {
     );
   }
 
+  /**
+   * Page d'export (streaming) : batch suivant trié par id — mémoire bornée
+   * quel que soit le volume total (chaque batch ~10k lignes, indexé PK).
+   */
+  pageAfter(
+    afterId: number,
+    limit: number,
+    filters: { eventSlug?: string | null; fromTs?: number | null; toTs?: number | null } = {},
+  ): Array<MarketSnapshotRow & { id: number }> {
+    const where = ["id > ?"];
+    const params: Array<string | number> = [afterId];
+    if (filters.eventSlug) {
+      where.push("eventSlug = ?");
+      params.push(filters.eventSlug);
+    }
+    if (filters.fromTs != null) {
+      where.push("ts >= ?");
+      params.push(filters.fromTs);
+    }
+    if (filters.toTs != null) {
+      where.push("ts <= ?");
+      params.push(filters.toTs);
+    }
+    return this.db.all<MarketSnapshotRow & { id: number }>(
+      `SELECT id, ${MARKET_SNAPSHOT_COLUMNS} FROM market_snapshots WHERE ${where.join(" AND ")} ORDER BY id LIMIT ?`,
+      [...params, limit],
+    );
+  }
+
+  /** Marchés présents + volumes — alimente /api/db/snapshots/export/options. */
+  exportOptions(): Array<{
+    eventSlug: string;
+    title: string;
+    rowCount: number;
+    firstTs: number;
+    lastTs: number;
+  }> {
+    return this.db.all<{
+      eventSlug: string;
+      title: string;
+      rowCount: number;
+      firstTs: number;
+      lastTs: number;
+    }>(
+      `SELECT eventSlug, MAX(eventTitle) AS title, COUNT(*) AS rowCount,
+              MIN(ts) AS firstTs, MAX(ts) AS lastTs
+       FROM market_snapshots
+       GROUP BY eventSlug
+       ORDER BY eventSlug`,
+    );
+  }
+
   titlesBySlug(): Array<{
     eventSlug: string;
     eventTitle: string;
@@ -153,6 +205,52 @@ export class BookSnapshotRepository {
 
   prune(beforeTs: number): void {
     this.db.run("DELETE FROM book_snapshots WHERE ts < ?", [beforeTs]);
+  }
+
+  /** Page d'export (streaming) — cf. MarketSnapshotRepository.pageAfter. */
+  pageAfter(
+    afterId: number,
+    limit: number,
+    filters: { eventSlug?: string | null; fromTs?: number | null; toTs?: number | null } = {},
+  ): Array<BookSnapshotRow & { id: number }> {
+    const where = ["id > ?"];
+    const params: Array<string | number> = [afterId];
+    if (filters.eventSlug) {
+      where.push("eventSlug = ?");
+      params.push(filters.eventSlug);
+    }
+    if (filters.fromTs != null) {
+      where.push("ts >= ?");
+      params.push(filters.fromTs);
+    }
+    if (filters.toTs != null) {
+      where.push("ts <= ?");
+      params.push(filters.toTs);
+    }
+    return this.db.all<BookSnapshotRow & { id: number }>(
+      `SELECT id, ${BOOK_SNAPSHOT_COLUMNS} FROM book_snapshots WHERE ${where.join(" AND ")} ORDER BY id LIMIT ?`,
+      [...params, limit],
+    );
+  }
+
+  /** Marchés présents + volumes (pas de titre dans book — cf. market). */
+  exportOptions(): Array<{
+    eventSlug: string;
+    rowCount: number;
+    firstTs: number;
+    lastTs: number;
+  }> {
+    return this.db.all<{
+      eventSlug: string;
+      rowCount: number;
+      firstTs: number;
+      lastTs: number;
+    }>(
+      `SELECT eventSlug, COUNT(*) AS rowCount, MIN(ts) AS firstTs, MAX(ts) AS lastTs
+       FROM book_snapshots
+       GROUP BY eventSlug
+       ORDER BY eventSlug`,
+    );
   }
 
   byTokenAndRange(tokenId: string, startTs: number, endTs: number): BookSnapshotRow[] {
@@ -285,6 +383,13 @@ export class MarketResolutionRepository {
       `INSERT OR REPLACE INTO market_resolutions (eventSlug, winnerOutcomeIndex, source, ts)
        VALUES (?, ?, ?, ?)`,
       [row.eventSlug, row.winnerOutcomeIndex, row.source, row.ts],
+    );
+  }
+
+  /** Export ndjson — table minuscule (une ligne par marché résolu). */
+  all(): MarketResolutionRow[] {
+    return this.db.all<MarketResolutionRow>(
+      "SELECT eventSlug, winnerOutcomeIndex, source, ts FROM market_resolutions ORDER BY eventSlug",
     );
   }
 }

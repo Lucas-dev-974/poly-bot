@@ -50,6 +50,11 @@ export class Database {
   private readonly conn: DatabaseSync | null;
   /** Chemin du fichier DB (null si persistance désactivée) — pour stat du .db / -wal. */
   private readonly path: string | null;
+
+  /** Persistance réellement active (connexion ouverte) — exposé par /api/db/tables. */
+  get active(): boolean {
+    return this.conn != null;
+  }
   /** Cache du scan dbstat (worker better-sqlite3 readonly) — TTL SIZES_TTL_MS. */
   private sizesByTable: Map<string, number> | null = null;
   /** Nb de jours marché (market_snapshots), ride dans le même scan caché. */

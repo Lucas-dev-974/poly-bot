@@ -149,7 +149,7 @@ export function handleDbTables(
   try {
     const report = repos.db.listDbStats();
     res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(report));
+    res.end(JSON.stringify({ ...report, persistence: repos.db.active }));
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     res.writeHead(500, { "Content-Type": "application/json" });

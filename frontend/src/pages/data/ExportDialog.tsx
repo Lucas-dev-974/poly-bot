@@ -25,12 +25,23 @@ function toLocalInput(ms: number): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-export function ExportDialog(props: { open: boolean; onClose(): void }): JSX.Element {
-  const [table, setTable] = createSignal<"book_snapshots" | "market_snapshots">("book_snapshots");
+export function ExportDialog(props: {
+  open: boolean;
+  onClose(): void;
+  /** Pré-remplir le dialog (optionnel, pour l'icône par ligne). */
+  initialTable?: "book_snapshots" | "market_snapshots";
+  initialSlug?: string;
+  initialFormat?: "ndjson" | "csv" | "sqlite";
+}): JSX.Element {
+  const [table, setTable] = createSignal<"book_snapshots" | "market_snapshots">(
+    props.initialTable ?? "book_snapshots",
+  );
   const [markets, setMarkets] = createSignal<SnapshotExportOptionRow[] | null>(null);
   const [optionsError, setOptionsError] = createSignal<string | null>(null);
-  const [slug, setSlug] = createSignal("");
-  const [format, setFormat] = createSignal<"ndjson" | "csv" | "sqlite">("ndjson");
+  const [slug, setSlug] = createSignal(props.initialSlug ?? "");
+  const [format, setFormat] = createSignal<"ndjson" | "csv" | "sqlite">(
+    props.initialFormat ?? "ndjson",
+  );
   const [withRes, setWithRes] = createSignal(true);
   const [fromVal, setFromVal] = createSignal("");
   const [toVal, setToVal] = createSignal("");

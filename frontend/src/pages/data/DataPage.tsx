@@ -69,6 +69,7 @@ export function DataPage(): JSX.Element {
   const [group, setGroup] = createSignal("all");
   const [query, setQuery] = createSignal("");
   const [showExport, setShowExport] = createSignal(false);
+  const [exportTable, setExportTable] = createSignal<"book_snapshots" | "market_snapshots" | null>(null);
   const [showImport, setShowImport] = createSignal(false);
 
   /**
@@ -413,6 +414,23 @@ export function DataPage(): JSX.Element {
                             </span>
                           </Show>
                         </div>
+                        <Show
+                          when={r.name === "book_snapshots" || r.name === "market_snapshots"}
+                        >
+                          <div class="data-r-action">
+                            <button
+                              type="button"
+                              class="btn btn-ghost dat-export-btn"
+                              title={`Exporter ${labelFor(r.name)}`}
+                              onClick={() => {
+                                setExportTable(r.name as "book_snapshots" | "market_snapshots");
+                                setShowExport(true);
+                              }}
+                            >
+                              ⭳
+                            </button>
+                          </div>
+                        </Show>
                       </div>
                     )}
                   </For>
@@ -429,7 +447,14 @@ export function DataPage(): JSX.Element {
           </p>
         </Show>
       </div>
-      <ExportDialog open={showExport()} onClose={() => setShowExport(false)} />
+      <ExportDialog
+        open={showExport()}
+        onClose={() => {
+          setShowExport(false);
+          setExportTable(null);
+        }}
+        initialTable={exportTable() ?? undefined}
+      />
       <ImportDialog
         open={showImport()}
         onClose={() => setShowImport(false)}

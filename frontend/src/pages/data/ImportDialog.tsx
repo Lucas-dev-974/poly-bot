@@ -18,7 +18,7 @@ import {
   type SnapshotCommitResult,
   type SnapshotImportStatus,
 } from "../../api/client";
-import { fmtCount } from "../../utils/format";
+import { fmtBytes, fmtCount } from "../../utils/format";
 import { toMessage } from "../../utils/display";
 
 type Phase = "idle" | "uploading" | "analyzing" | "summary" | "running" | "done" | "error";
@@ -70,11 +70,6 @@ export function ImportDialog(props: {
   const pickFile = (f: File | null): void => {
     reset();
     setFile(f);
-  };
-
-  const sizeGo = (): string => {
-    const f = file();
-    return f == null ? "" : `${(f.size / 1024 ** 3).toFixed(2)} Go`;
   };
 
   const start = async (): Promise<void> => {
@@ -152,7 +147,7 @@ export function ImportDialog(props: {
             </p>
             <div class="dat-form">
               <label class="dat-field">
-                <span>Fichier {sizeGo() ? `— ${sizeGo()}` : ""}</span>
+                <span>Fichier {file() ? `— ${fmtBytes(file()!.size)}` : ""}</span>
                 <input
                   type="file"
                   class="dat-input dat-file"
@@ -172,7 +167,7 @@ export function ImportDialog(props: {
           </Show>
 
           <Show when={phase() === "uploading"}>
-            <p class="dat-note">Transfert de {sizeGo()}…</p>
+            <p class="dat-note">Transfert de {fmtBytes(file()?.size ?? 0)}…</p>
             <div class="dat-bar">
               <i style={{ width: `${uploadPct()}%` }} />
             </div>

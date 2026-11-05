@@ -311,8 +311,12 @@ export async function analyzeCurrentUpload(uploadId: string | null): Promise<Sna
     };
     return summary;
   } catch (e) {
-    job = { ...job, state: "error", error: toMessage(e), finishedAt: Date.now() };
-    cleanupImportFiles();
+    // Cancel concurrent (DELETE status → job réinitialisé) : ne PAS réécrire
+    // un état erreur fantôme sur le job vide.
+    if (job.uploadId != null) {
+      job = { ...job, state: "error", error: toMessage(e), finishedAt: Date.now() };
+      cleanupImportFiles();
+    }
     throw e;
   }
 }
@@ -349,8 +353,12 @@ export async function commitCurrentUpload(
     cleanupImportFiles();
     return res;
   } catch (e) {
-    job = { ...job, state: "error", error: toMessage(e), finishedAt: Date.now() };
-    cleanupImportFiles();
+    // Cancel concurrent (DELETE status → job réinitialisé) : ne PAS réécrire
+    // un état erreur fantôme sur le job vide.
+    if (job.uploadId != null) {
+      job = { ...job, state: "error", error: toMessage(e), finishedAt: Date.now() };
+      cleanupImportFiles();
+    }
     throw e;
   }
 }

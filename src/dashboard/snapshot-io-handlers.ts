@@ -278,11 +278,10 @@ async function streamFlat(
 
   // Annexe market_resolutions : uniquement en NDJSON (discriminant _t).
   if (params.format === "ndjson" && params.includeResolutions) {
-    const resolutions = repos.marketResolutions.all();
-    const filtered = params.slugFilter
-      ? resolutions.filter((x) => x.eventSlug === params.slugFilter)
-      : resolutions;
-    for (const r of filtered) {
+    const resolutions = params.slugFilter
+      ? repos.marketResolutions.bySlug(params.slugFilter)
+      : repos.marketResolutions.all();
+    for (const r of resolutions) {
       res.write(
         ndjsonLine(
           "market_resolutions",
@@ -291,7 +290,7 @@ async function streamFlat(
         ),
       );
     }
-    count += filtered.length;
+    count += resolutions.length;
   }
 
   res.end();

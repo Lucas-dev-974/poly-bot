@@ -387,9 +387,17 @@ export class MarketResolutionRepository {
   }
 
   /** Export ndjson — table minuscule (une ligne par marché résolu). */
-  all(): MarketResolutionRow[] {
-    return this.db.all<MarketResolutionRow>(
-      "SELECT eventSlug, winnerOutcomeIndex, source, ts FROM market_resolutions ORDER BY eventSlug",
-    );
+    all(): MarketResolutionRow[] {
+      return this.db.all<MarketResolutionRow>(
+        "SELECT eventSlug, winnerOutcomeIndex, source, ts FROM market_resolutions ORDER BY eventSlug",
+      );
+    }
+
+    /** Export ndjson filtré par eventSlug (évite de charger toute la table en RAM). */
+    bySlug(eventSlug: string): MarketResolutionRow[] {
+      return this.db.all<MarketResolutionRow>(
+        "SELECT eventSlug, winnerOutcomeIndex, source, ts FROM market_resolutions WHERE eventSlug = ? ORDER BY eventSlug",
+        [eventSlug],
+      );
+    }
   }
-}

@@ -345,6 +345,8 @@ async function stageRowsFromFlatFile(args, stage) {
     });
   } else {
     // CSV : le header (ligne 1) choisit la table ; les lignes suivantes la remplissent.
+    // ⚠ LIMITATION : un fichier CSV ne peut contenir qu'UNE seule table (pas de discriminateur _t comme NDJSON).
+    // Si le fichier mélange book_snapshots + market_snapshots, seule la 1re table reconnue est traitée.
     let csvSpec = null;
     let csvHeader = null;
     await iterCsvFile(

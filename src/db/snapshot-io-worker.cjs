@@ -505,14 +505,15 @@ async function analyzeUpload(args) {
 function deleteScopeSql(stage, spec) {
   if (spec.replaceScope === "key") {
     return {
-      sql: `DELETE FROM main.${spec.name} WHERE ${spec.dedupeKey[0]} IN (SELECT DISTINCT ${spec.dedupeKey[0]} FROM ${spec.name})`,
-      rows: stage.prepare(`SELECT COUNT(DISTINCT ${spec.dedupeKey[0]}) AS n FROM ${spec.name}`).get().n,
+      sql: `DELETE FROM main.${spec.name} WHERE ${spec.dedupeKey[0]} IN (SELECT DISTINCT ${spec.dedupeKey[0]} FROM stageread.${spec.name})`,
     };
   }
   const bounds = stage.prepare(`SELECT MIN(ts) AS lo, MAX(ts) AS hi FROM ${spec.name}`).get();
   return {
-    sql: `DELETE FROM main.${spec.name} WHERE ts BETWEEN ${bounds.lo ?? 0} AND ${bounds.hi ?? 0} AND eventSlug IN (SELECT DISTINCT eventSlug FROM ${spec.name})`,
-    rows: bounds.lo == null ? 0 : 1,
+    // Sous-requête qualifiée stageread : sans elle, `FROM <table>` non qualifié
+    // résout vers MAIN et replace effacerait les lignes d'AUTRES marchés
+    // présents dans la base sur la même plage (perte de données).
+    sql: `DELETE FROM main.${spec.name} WHERE ts BETWEEN ${bounds.lo ?? 0} AND ${bounds.hi ?? 0} AND eventSlug IN (SELECT DISTINCT eventSlug FROM stageread.${spec.name})`,
   };
 }
 
@@ -543,7 +544,7 @@ function commitStaging(args) {
         .get();
       if (anyNew) {
         const i0 = Date.now();
-        db.exec("CREATE INDEX IF NOT EXISTS idx_book_snapshots_token_ts ON book_snapshots(tokenId, ts)");
+        db.exec("CREATE INDEX IF NOT EXISTS main.idx_book_snapshots_token_ts ON book_snapshots(tokenId, ts)");
         timings.indexBookTokenTsMs = Date.now() - i0;
       }
     }

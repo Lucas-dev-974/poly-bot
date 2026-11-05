@@ -54,6 +54,10 @@ export interface SnapshotAnalyzeResult {
   format: "ndjson" | "csv" | "sqlite";
   extras: number;
   tables: SnapshotTableSummary[];
+  /** Lignes NDJSON sans clé _t valide (non attribuables à une table). */
+  orphanLines?: number;
+  /** Exemples de lignes orphelines (max 5). */
+  orphanExamples?: string[];
   /** Avertissements calculés par le handler (config du bot connue seulement là). */
   warnings?: string[];
   elapsedMs?: number;

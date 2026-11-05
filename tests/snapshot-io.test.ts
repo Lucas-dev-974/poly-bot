@@ -167,8 +167,11 @@ describe("snapshot-io", () => {
     assert.equal(book.dedupInFile, 1);
     assert.equal(book.alreadyPresent, 2); // tokA + tokB au ts S
     assert.equal(book.newRows, 2);
-    assert.equal(book.invalid, 3);
-    assert.equal(book.examples.length, 3);
+    // 2 invalides (ts=0 et ts manquant), 1 orpheline (pas de _t)
+    assert.equal(book.invalid, 2);
+    assert.equal(book.examples.length, 2);
+    assert.equal(summary.orphanLines, 1);
+    assert.equal(summary.orphanExamples?.length, 1);
     assert.equal(summary.extras, 0);
 
     // commit merge → uniquement les nouvelles lignes

@@ -295,6 +295,8 @@ async function stageRowsFromFlatFile(args, stage) {
   const insertStmts = new Map();
   let txPending = 0;
   let extras = 0;
+  let orphanLines = 0; // lignes NDJSON sans _t valide
+  const orphanExamples = [];
 
   const insertRow = (spec, row) => {
     let stmt = insertStmts.get(spec.name);
@@ -335,9 +337,8 @@ async function stageRowsFromFlatFile(args, stage) {
       lineno++;
       const target = typeof obj._t === "string" ? specs.find((s) => s.name === obj._t) : null;
       if (!target) {
-        const c = counts.get("book_snapshots");
-        c.invalid++;
-        if (c.examples.length < 5) c.examples.push(`ligne ${lineno} : clé _t absente ou inconnue — table ambiguë`);
+        orphanLines++;
+        if (orphanExamples.length < 5) orphanExamples.push(`ligne ${lineno} : clé _t absente ou inconnue — table ambiguë`);
         return;
       }
       handleRaw(target, obj, "json", lineno);
@@ -374,7 +375,7 @@ async function stageRowsFromFlatFile(args, stage) {
   }
 
   if (txPending > 0) stage.exec("COMMIT");
-  return { counts, extras };
+  return { counts, extras, orphanLines, orphanExamples };
 }
 
 function post(message) {
@@ -486,12 +487,12 @@ async function analyzeUpload(args) {
   const stage = new Better(stagePath);
   try {
     for (const spec of specs) stage.exec(createTableSql(spec));
-    const { counts, extras } = await stageRowsFromFlatFile({ ...args, format }, stage);
+    const { counts, extras, orphanLines, orphanExamples } = await stageRowsFromFlatFile({ ...args, format }, stage);
     const tables = [];
     for (const spec of specs) {
       tables.push(summarizeTable(stage, mainPath, spec, counts.get(spec.name)));
     }
-    return { format, extras, tables };
+    return { format, extras, tables, orphanLines, orphanExamples };
   } finally {
     stage.close();
   }

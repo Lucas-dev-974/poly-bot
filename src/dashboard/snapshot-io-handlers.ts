@@ -48,6 +48,24 @@ const DEFAULT_MAX_UPLOAD_BYTES = 10 * 1024 ** 3;
 const EXPORT_BATCH_ROWS = 10_000;
 const JSON_BODY_LIMIT = 64 * 1024;
 
+/** Exports GET actifs (A15) — un 2ᵉ export simultané répond 409 : le scan
+ * paginé en boucle + le worker sqlite ne doivent pas s'additionner sous le
+ * bot (lectures WAL non bornées). Les imports restent un job unique. */
+let activeExports = 0;
+
+function beginExportOr409(res: ServerResponse): boolean {
+  if (activeExports > 0) {
+    fail(res, 409, "Un export est déjà en cours — réessayez une fois terminé.");
+    return false;
+  }
+  activeExports++;
+  return true;
+}
+
+function endExport(): void {
+  activeExports = Math.max(0, activeExports - 1);
+}
+
 function toMessage(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
 }
@@ -208,6 +226,7 @@ export async function handleSnapshotsExport(
   if (!persistenceActive(ctx)) return fail(res, 409, "Persistance désactivée — export impossible.");
   const params = parseExportParams(url);
   if (typeof params === "string") return fail(res, 400, params);
+  if (!beginExportOr409(res)) return;
   try {
     if (params.format === "csv" || params.format === "ndjson") {
       await streamFlat(ctx, params, res);
@@ -220,6 +239,8 @@ export async function handleSnapshotsExport(
       return;
     }
     fail(res, 500, toMessage(e));
+  } finally {
+    endExport();
   }
 }
 

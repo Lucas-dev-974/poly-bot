@@ -228,6 +228,13 @@ function assertNoActiveJob(): void {
     resetJob();
     return;
   }
+  // UX : si job en 'analyzed' (résumé affiché, pas encore commit), on l'annule
+  // automatiquement pour permettre un nouvel upload sans action manuelle.
+  if (job.state === "analyzed") {
+    cleanupImportFiles();
+    resetJob();
+    return;
+  }
   throw serviceError(409, `Un import est déjà en cours (état « ${job.state} ») — attendez ou annulez-le.`);
 }
 

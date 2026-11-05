@@ -252,10 +252,13 @@ export function beginImportUpload(
   sweepImports(dir);
   const uploadId = randomUUID();
   const uploadPath = path.join(dir, `${uploadId}.tmp`);
+  // uploadPath DOIT vivre dans le job : analyze/commit/cleanup le retrouvent
+  // via job.uploadPath (le handler ne connaît que le retour de cette fn).
   job = {
     ...EMPTY_STATUS,
     state: "uploading",
     uploadId,
+    uploadPath,
     mainDbPath: dbAbs,
     startedAt: Date.now(),
   };

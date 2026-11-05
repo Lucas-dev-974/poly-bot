@@ -60,6 +60,14 @@ export function ExportDialog(props: {
       .catch((e) => setOptionsError(toMessage(e)));
   });
 
+  // L'icône ⭳ par ligne pré-remplit la table : la signal `table` ci-dessus
+  // n'est initialisée qu'AU PREMIER MOUNT (avant tout initialTable) — sans
+  // cet effet, toutes les ouvertures suivantes resteraient sur la table d'avant.
+  createEffect(() => {
+    const initial = props.initialTable;
+    if (props.open && initial != null) setTable(initial);
+  });
+
   const range = (): { fromMs: number | null; toMs: number | null } => ({
     fromMs: fromVal() ? new Date(fromVal()).getTime() : null,
     toMs: toVal() ? new Date(toVal()).getTime() : null,

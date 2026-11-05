@@ -140,6 +140,10 @@ export interface SnapshotAnalyzeResult {
   format: "ndjson" | "csv" | "sqlite";
   extras: number;
   tables: SnapshotImportTableSummary[];
+  /** Lignes NDJSON sans clé _t valide — rejetées à l'import (jamais insérées). */
+  orphanLines?: number;
+  /** 5 premiers exemples de lignes orphelines. */
+  orphanExamples?: string[];
   elapsedMs?: number;
   warnings?: string[];
 }

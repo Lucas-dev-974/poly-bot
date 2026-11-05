@@ -208,6 +208,15 @@ export function ImportDialog(props: {
                   </div>
                 )}
               </For>
+              <Show when={(summary()?.orphanLines ?? 0) > 0}>
+                <div class="dat-warn">
+                  {fmtCount(summary()?.orphanLines ?? 0)} ligne(s) sans table reconnue
+                  (clé _t absente ou inconnue) — elles seront IGNORÉES à l'import.
+                </div>
+                <div class="dat-ex">
+                  <For each={summary()?.orphanExamples ?? []}>{(x) => <div>{x}</div>}</For>
+                </div>
+              </Show>
               <For each={summary()?.warnings ?? []}>
                 {(w) => <div class="dat-warn">{w}</div>}
               </For>

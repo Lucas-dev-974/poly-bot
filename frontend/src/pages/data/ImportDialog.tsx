@@ -119,15 +119,20 @@ export function ImportDialog(props: {
   };
 
   const abort = async (): Promise<void> => {
-    if (phase() === "running") {
+    // Fermer = stop complet : annule aussi le job côté serveur (le DELETE
+    // purge .tmp + stage.db via cleanupImportFiles) — data/imports/ doit
+    // être vide après Fermer (critère R3). Best-effort : un job déjà clos
+    // (done/error) ne bloque pas la fermeture.
+    if (uploadId() != null && phase() !== "idle") {
       try {
         await api.snapshotsImportCancel();
       } catch {
         /* annulation best-effort */
       }
-      props.onImported();
     }
+    if (phase() === "running") props.onImported();
     reset();
+    props.onClose();
   };
 
   const totalRows = (): number =>
@@ -135,7 +140,7 @@ export function ImportDialog(props: {
 
   return (
     <Show when={props.open}>
-      <div class="modal-overlay" onClick={() => (phase() === "running" ? undefined : reset())}>
+      <div class="modal-overlay" onClick={() => (phase() === "running" ? undefined : void abort())}>
         <div class="modal dat-dialog" onClick={(e) => e.stopPropagation()}>
           <h3>⭱ Importer des données marché</h3>
 

@@ -530,6 +530,21 @@ function commitStaging(args) {
   const out = { inserted: 0, skipped: 0, dedupInFile: 0, deleted: 0, elapsedMs: 0, perTable };
   const timings = {};
   try {
+    // Créer l'index helper AVANT toute opération DELETE/INSERT pour préserver l'atomicité.
+    // L'index est construit SEULEMENT s'il existe au moins une ligne nouvelle dans book_snapshots.
+    const bookSpec = specs.find((s) => s.name === "book_snapshots");
+    if (bookSpec && tableExists(stage, "main", bookSpec.name)) {
+      const keyEqs = bookSpec.dedupeKey.map((k) => `m.${k} = s.${k}`).join(" AND ");
+      const anyNew = db
+        .prepare(`SELECT 1 FROM stageread.${bookSpec.name} s WHERE NOT EXISTS (SELECT 1 FROM main.${bookSpec.name} m WHERE ${keyEqs}) LIMIT 1`)
+        .get();
+      if (anyNew) {
+        const i0 = Date.now();
+        db.exec("CREATE INDEX IF NOT EXISTS idx_book_snapshots_token_ts ON book_snapshots(tokenId, ts)");
+        timings.indexBookTokenTsMs = Date.now() - i0;
+      }
+    }
+
     for (const spec of specs) {
       if (!tableExists(stage, "main", spec.name)) continue;
       const staged = stage.prepare(`SELECT COUNT(*) AS n FROM ${spec.name}`).get().n;
@@ -544,20 +559,6 @@ function commitStaging(args) {
         const info = db.prepare(scope.sql).run(); // { changes } — DELETE unique, pas de transaction implicite
         t.deleted = info.changes;
         out.deleted += t.deleted;
-      }
-      if (spec.name === "book_snapshots") {
-        // Un seul index helper — construit SEULEMENT s'il existe au moins une
-        // ligne nouvelle : un commit 100 % doublons sur une base de plusieurs
-        // Go ne doit pas déclencher un build d'index de plusieurs minutes.
-        const keyEqs = spec.dedupeKey.map((k) => `m.${k} = s.${k}`).join(" AND ");
-        const anyNew = db
-          .prepare(`SELECT 1 FROM stageread.${spec.name} s WHERE NOT EXISTS (SELECT 1 FROM main.${spec.name} m WHERE ${keyEqs}) LIMIT 1`)
-          .get();
-        if (anyNew) {
-          const i0 = Date.now();
-          db.exec("CREATE INDEX IF NOT EXISTS idx_book_snapshots_token_ts ON book_snapshots(tokenId, ts)");
-          timings.indexBookTokenTsMs = Date.now() - i0;
-        }
       }
       const present = new Set(stage.prepare(`PRAGMA main.table_info(${spec.name})`).all().map((c) => c.name));
       const selectCols = `rowid AS __rid, ${projectionFor(spec, present)}`;

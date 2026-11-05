@@ -15,6 +15,13 @@ import {
   SNAPSHOT_TABLE_SPECS,
   type SnapshotTableSpec,
 } from "../src/db/snapshot-io-schema.js";
+import {
+  analyzeCurrentUpload,
+  beginImportUpload,
+  cancelCurrentImport,
+  commitCurrentUpload,
+  finishUpload,
+} from "../src/db/snapshot-io.js";
 
 const require = createRequire(import.meta.url);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -337,5 +344,78 @@ describe("snapshot-io", () => {
     assert.equal(marketOpts[0].title, "BTC Up/Down");
     assert.equal(marketOpts[0].rowCount, 1);
     main.db.close();
+  });
+
+  it("replace : les slugs absents du fichier mais présents dans main (même plage) survivent", async () => {
+    // Régression A-DELETE-SCOPE : la sous-requête de deleteScopeSql doit viser
+    // le STAGING (stageread) et non main — un `FROM <table>` non qualifié
+    // résout vers main et effaçait les lignes des AUTRES marchés sur la plage.
+    const dir = mkdtempSync(join(tmpdir(), "snapio-"));
+    const main = makeMainDb(dir);
+    const S = 2_200_000_000_000;
+    insertBook(main.db, { ts: S, eventSlug: "btc-15m-1", tokenId: "tokA", outcome: "Up", outcomeIndex: 0, bestBid: 0.4 });
+    insertBook(main.db, { ts: S, eventSlug: "eth-15m-2", tokenId: "tokZ", outcome: "Up", outcomeIndex: 0, bestBid: 0.5 });
+    const upload = join(dir, "in.ndjson");
+    writeFileSync(
+      upload,
+      JSON.stringify({ _t: "book_snapshots", ts: S, eventSlug: "btc-15m-1", tokenId: "tokA", outcome: "Up", outcomeIndex: 0, bestBid: 0.42 }) + "\n",
+      // le fichier n'expédie QUE btc-15m-1 — ts identiques pour les 2 slugs de main
+    );
+    await worker.analyzeUpload({ uploadPath: upload, stagePath: join(dir, "stage.db"), mainPath: main.path, specs: SPECS });
+    const c = worker.commitStaging({ mainPath: main.path, stagePath: join(dir, "stage.db"), specs: SPECS, policy: "replace", batchRows: 10 });
+    assert.equal(c.deleted, 1); // la seule ligne btc-15m-1 remplacée
+    assert.equal(one<{ n: number }>(main.db, "SELECT COUNT(*) AS n FROM book_snapshots WHERE eventSlug='eth-15m-2'").n, 1);
+    assert.equal(one<{ n: number }>(main.db, "SELECT COUNT(*) AS n FROM book_snapshots").n, 2);
+    main.db.close();
+  });
+
+  it("replace market_resolutions : n'efface que les eventSlug du fichier", async () => {
+    // deleteScopeSql scope « key » : le DELETE doit limiter aux eventSlug du
+    // STAGING — non qualifié, il effaçait TOUTES les résolutions de main.
+    const dir = mkdtempSync(join(tmpdir(), "snapio-"));
+    const main = makeMainDb(dir);
+    const S = 2_300_000_000_000;
+    main.db
+      .prepare("INSERT INTO market_resolutions (eventSlug, winnerOutcomeIndex, source, ts) VALUES ('btc-15m-1', 0, 'test', ?)")
+      .run(S);
+    main.db
+      .prepare("INSERT INTO market_resolutions (eventSlug, winnerOutcomeIndex, source, ts) VALUES ('eth-15m-2', 1, 'test', ?)")
+      .run(S);
+    const upload = join(dir, "in.ndjson");
+    writeFileSync(
+      upload,
+      JSON.stringify({ _t: "market_resolutions", eventSlug: "btc-15m-1", winnerOutcomeIndex: 1, source: "replay", ts: S }) + "\n",
+    );
+    await worker.analyzeUpload({ uploadPath: upload, stagePath: join(dir, "stage.db"), mainPath: main.path, specs: SPECS });
+    const c = worker.commitStaging({ mainPath: main.path, stagePath: join(dir, "stage.db"), specs: SPECS, policy: "replace", batchRows: 10 });
+    assert.equal(c.deleted, 1); // btc-15m-1 seulement — eth-15m-2 doit survivre
+    assert.equal(one<{ n: number }>(main.db, "SELECT COUNT(*) AS n FROM market_resolutions WHERE eventSlug='eth-15m-2'").n, 1);
+    assert.equal(one<{ w: number }>(main.db, "SELECT winnerOutcomeIndex AS w FROM market_resolutions WHERE eventSlug='btc-15m-1'").w, 1);
+    main.db.close();
+  });
+
+  it("flux service : upload → analyze → commit retrouve le fichier (uploadPath stocké dans le job)", async () => {
+    // Régression R1-RÉEL : beginImportUpload doit enregistrer uploadPath dans
+    // le job — sinon analyzeCurrentUpload envoie null au worker
+    // (« The "path" argument … Received null ») et l'import est mort de bout en bout.
+    const dir = mkdtempSync(join(tmpdir(), "snapio-"));
+    const main = makeMainDb(dir, "svc-main.db");
+    const S = 1_700_000_000_000;
+    const handle = beginImportUpload(main.path, 1024 ** 3);
+    const line = { _t: "book_snapshots", ts: S, eventSlug: "svc-1", tokenId: "tokS", outcome: "Up", outcomeIndex: 0, bestBid: 0.5 };
+    writeFileSync(handle.uploadPath, JSON.stringify(line) + "\n");
+    finishUpload(120);
+    try {
+      const summary = await analyzeCurrentUpload(handle.uploadId);
+      assert.equal(summary.format, "ndjson");
+      const book = summary.tables.find((t: TableSummary) => t.name === "book_snapshots") as TableSummary;
+      assert.equal(book.rowsTotal, 1);
+      const res = await commitCurrentUpload(handle.uploadId, "merge");
+      assert.equal(res.inserted, 1);
+      assert.equal(one<{ n: number }>(main.db, "SELECT COUNT(*) AS n FROM book_snapshots").n, 1);
+    } finally {
+      cancelCurrentImport();
+      main.db.close();
+    }
   });
 });

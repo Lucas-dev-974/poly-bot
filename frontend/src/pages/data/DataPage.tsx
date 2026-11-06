@@ -20,6 +20,7 @@ import { Sim2Kpis, type Sim2KpiCard } from "../../components/ui/Sim2Kpi";
 import { TopbarNavLinks } from "../../components/layout/TopbarNav";
 import { ExportDialog } from "./ExportDialog";
 import { ImportDialog } from "./ImportDialog";
+import { CalendarView } from "./CalendarView";
 import { navigate } from "../../router";
 import { clockNow, useClock } from "../../stores/clockStore";
 import "../../styles/data.css";
@@ -68,6 +69,11 @@ export function DataPage(): JSX.Element {
   const [loadedAt, setLoadedAt] = createSignal<number | null>(null);
   const [group, setGroup] = createSignal("all");
   const [query, setQuery] = createSignal("");
+  /** Incrémenté UNIQUEMENT par le bouton Actualiser — l'onglet Calendrier
+      se recharge à ce signal (le cycle auto 5 s ne touche pas au scan). */
+  const [calToken, setCalToken] = createSignal(0);
+  /** Onglet actif = vue Calendrier (les autres ids filtrent les tables). */
+  const isCal = () => group() === "calendrier";
   const [showExport, setShowExport] = createSignal(false);
   const [exportTable, setExportTable] = createSignal<"book_snapshots" | "market_snapshots" | null>(null);
   const [showImport, setShowImport] = createSignal(false);
@@ -78,8 +84,10 @@ export function DataPage(): JSX.Element {
    * toutes les 5 s ferait clignoter le bouton.
    */
   async function load(manual = false): Promise<void> {
-    if (manual) setRefreshing(true);
-    else if (data() == null) setLoading(true);
+    if (manual) {
+      setRefreshing(true);
+      setCalToken((v) => v + 1);
+    } else if (data() == null) setLoading(true);
     setError(null);
     try {
       setData(await api.dbTables());
@@ -125,6 +133,10 @@ export function DataPage(): JSX.Element {
       const n = g.names.filter((x) => names.includes(x)).length;
       if (n > 0) out.push({ id: g.id, label: g.label, count: n });
     }
+    // Onglet de VUE (pas un filtre de tables) — dernier, visuellement séparé
+    // par l'emoji ; quand il est actif, la recherche et les cartes de groupes
+    // laissent la place au calendrier.
+    out.push({ id: "calendrier", label: "🗓 Calendrier" });
     return out;
   });
 
@@ -343,15 +355,18 @@ export function DataPage(): JSX.Element {
               onSelect={setGroup}
               ariaLabel="Filtrer les tables par groupe"
             />
-            <input
-              class="data-search"
-              type="text"
-              placeholder="Rechercher une table…"
-              value={query()}
-              onInput={(e) => setQuery(e.currentTarget.value)}
-            />
+            <Show when={!isCal()}>
+              <input
+                class="data-search"
+                type="text"
+                placeholder="Rechercher une table…"
+                value={query()}
+                onInput={(e) => setQuery(e.currentTarget.value)}
+              />
+            </Show>
           </div>
 
+          <Show when={!isCal()} fallback={<CalendarView reloadToken={calToken} />}>
           <For each={visibleGroups()}>
             {(g) => (
               <Sim2Card
@@ -445,6 +460,7 @@ export function DataPage(): JSX.Element {
             lourde du groupe. Source GET /api/db/tables — écritures limitées à l'import/export
             des snapshots.
           </p>
+          </Show>
         </Show>
       </div>
       <ExportDialog

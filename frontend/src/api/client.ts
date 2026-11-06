@@ -97,6 +97,47 @@ export interface DbTablesResponse {
   persistence?: boolean;
 }
 
+/* ── Calendrier des snapshots (page Données, onglet Calendrier) ──────── */
+
+/** Agrégat d'un jour civil UTC de snapshots. */
+export interface DbCalendarDay {
+  /** ts / 86 400 000 (epoch_days UTC). */
+  day: number;
+  /** Lignes market_snapshots écrites ce jour. */
+  mktRows: number;
+  /** Marchés DISTINCTS (eventSlug) vus ce jour. */
+  markets: number;
+  /** Lignes book_snapshots ce jour. */
+  bookRows: number;
+  /** [MIN(ts), MAX(ts)] des captures marché du jour (ms) — null sans market. */
+  coverage: [number, number] | null;
+}
+
+export interface DbCalendarResponse {
+  rangeStart: number | null;
+  rangeEnd: number | null;
+  days: DbCalendarDay[];
+  /** Erreur du dernier scan calendrier — diagnostic via l'API. */
+  calendarError?: string | null;
+  persistence?: boolean;
+}
+
+/** Fenêtre marché enregistrée dans une journée (détail du jour). */
+export interface DbCalendarWindow {
+  slug: string;
+  /** Lignes market_snapshots pour ce slug ce jour. */
+  n: number;
+  /** windowStart / windowEnd (epoch s). */
+  ws: number;
+  we: number;
+}
+
+export interface DbCalendarDayDetail {
+  day?: number;
+  windows: DbCalendarWindow[];
+  persistence?: boolean;
+}
+
 /* ── Snapshot I/O (page Données) : export / import des données marché ── */
 
 export interface SnapshotExportOptionRow {
@@ -315,6 +356,9 @@ interface StrategyStatusResponse {
 export const api = {
   state: () => request<StateResponse>("/api/state"),
   dbTables: () => request<DbTablesResponse>("/api/db/tables"),
+  dbCalendar: () => request<DbCalendarResponse>("/api/db/calendar"),
+  dbCalendarDay: (day: number) =>
+    request<DbCalendarDayDetail>(`/api/db/calendar/day?day=${day}`),
   snapshotsExportOptions: (table: string) =>
     request<SnapshotExportOptionsResponse>(
       `/api/db/snapshots/export/options?table=${encodeURIComponent(table)}`,

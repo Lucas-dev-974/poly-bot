@@ -460,3 +460,425 @@
   color: var(--amber);
   font-size: 12px;
 }
+
+/* ── Onglet Calendrier — grille mensuelle des jours de snapshots ─────── */
+
+/* La racine .data-cal remplace les cartes de groupes quand l'onglet est actif. */
+.data-cal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Chips résumé (jours avec/sans données, fenêtres, lignes marché). */
+.data-cal-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.data-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.data-stat .l {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.data-stat .v {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.data-stat .v small {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Deux colonnes : grille du mois + panneau détail collé (rail). */
+.data-cal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 344px;
+  gap: 10px;
+  align-items: start;
+}
+
+.data-cal-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 2px 10px;
+}
+
+.data-cal-mlabel {
+  min-width: 150px;
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.data-cal-navbtn {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.data-cal-navbtn:hover:not(:disabled) {
+  border-color: var(--sim2-hover);
+}
+
+.data-cal-navbtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.data-cal-spacer {
+  flex: 1;
+}
+
+.data-cal-legend {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+.data-cal-legend .sw {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  margin-right: 4px;
+  vertical-align: -1px;
+}
+
+.data-cal-legend .sw.s0 {
+  background: var(--bg);
+  border-style: dashed;
+}
+
+.data-cal-legend .sw.s1 {
+  background: rgba(79, 140, 255, 0.16);
+}
+
+.data-cal-legend .sw.s2 {
+  background: rgba(79, 140, 255, 0.34);
+}
+
+.data-cal-legend .sw.s3 {
+  background: rgba(79, 140, 255, 0.6);
+}
+
+.data-cal-dowrow,
+.data-cal-weeks {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+  padding: 0 2px 2px;
+}
+
+.data-cal-dowrow {
+  margin-bottom: 5px;
+}
+
+.data-cal-dowrow .dow {
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.data-cal-cell {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-height: 74px;
+  padding: 6px 7px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+
+.data-cal-cell:hover {
+  border-color: var(--accent);
+}
+
+.data-cal-dn {
+  font-size: 11px;
+  font-weight: 550;
+  color: var(--muted);
+}
+
+.data-cal-cnt {
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-variant-numeric: tabular-nums;
+  font-size: 12.5px;
+  font-weight: 650;
+  text-align: right;
+  color: var(--text);
+}
+
+.data-cal-cnt small {
+  font-size: 9.5px;
+  color: rgba(230, 232, 238, 0.55);
+  font-weight: 400;
+}
+
+/* Paliers d'intensité bleue = nombre de marchés distincts du jour. */
+.data-cal-cell.t0 {
+  border-style: dashed;
+  background: transparent;
+}
+
+.data-cal-cell.t0 .data-cal-dn,
+.data-cal-cell.t0 .data-cal-cnt {
+  color: #3a4150;
+}
+
+.data-cal-cell.t0:hover {
+  border-color: var(--sim2-hover);
+}
+
+.data-cal-cell.t1 {
+  background: rgba(79, 140, 255, 0.16);
+}
+
+.data-cal-cell.t2 {
+  background: rgba(79, 140, 255, 0.34);
+}
+
+.data-cal-cell.t3 {
+  background: rgba(79, 140, 255, 0.6);
+}
+
+/* Jours des mois voisins : atténués mais lisibles et cliquables. */
+.data-cal-cell.adj .data-cal-dn,
+.data-cal-cell.adj .data-cal-cnt {
+  opacity: 0.38;
+}
+
+.data-cal-cell.adj.t1,
+.data-cal-cell.adj.t2,
+.data-cal-cell.adj.t3 {
+  opacity: 0.55;
+}
+
+/* Jours futurs : inertes. */
+.data-cal-cell.off {
+  opacity: 0.28;
+  cursor: default;
+}
+
+.data-cal-cell.off:hover {
+  border-color: var(--border);
+}
+
+.data-cal-cell.today {
+  border-color: var(--accent);
+}
+
+.data-cal-cell.today .data-cal-dn {
+  color: var(--accent);
+}
+
+.data-cal-cell.sel {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* ── Panneau détail de la journée ──────────────────────────────────────── */
+
+.data-cal-detail {
+  padding: 0;
+}
+
+.data-cal-date {
+  font-size: 15px;
+  font-weight: 650;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.data-cal-date .utc,
+.data-cal-chips .utc,
+.data-cal-empty .mono {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.data-cal-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 11px;
+}
+
+.data-cal-chips .chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3.5px 10px;
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.data-cal-chips .chip b {
+  color: var(--text);
+  font-weight: 650;
+}
+
+/* Un bloc par asset : fenêtres, lignes, répartition par timeframe. */
+.data-cal-asset {
+  border-top: 1px solid var(--sim2-border-soft);
+  padding-top: 9px;
+  margin: 3px 0 4px;
+}
+
+.data-cal-asset .head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 5px;
+}
+
+.data-cal-asset .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.data-cal-asset .an {
+  font-weight: 650;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.data-cal-asset .aws {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.data-cal-asset .aws.right {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-cal-tfmap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 7px;
+}
+
+.data-cal-tfmap .tf {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 10.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.data-cal-tfmap .tf b {
+  color: var(--text);
+  font-weight: 650;
+}
+
+/* Liste des fenêtres du jour — bornée en hauteur (758 fenêtres le pire cas). */
+.data-cal-winlist {
+  max-height: 296px;
+  overflow: auto;
+  border-top: 1px solid var(--sim2-border-soft);
+}
+
+.data-cal-winlist .winrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 2px;
+  border-bottom: 1px solid var(--sim2-border-soft);
+  font-size: 11px;
+}
+
+.data-cal-winlist .winrow:last-child {
+  border-bottom: none;
+}
+
+.data-cal-winlist .wt {
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.data-cal-winlist .wa {
+  color: var(--muted);
+  width: 26px;
+}
+
+.data-cal-winlist .ws {
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.data-cal-winlist .wn {
+  margin-left: auto;
+  font-family: var(--mono, ui-monospace, "Cascadia Code", Consolas, monospace);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+/* Etat vide d'un jour (bot à l'arrêt / jour futur). */
+.data-cal-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 18px 4px 8px;
+}
+
+.data-cal-empty .big {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.data-cal-empty.small {
+  padding: 10px 4px;
+  font-size: 11px;
+}
+
+@media (max-width: 1240px) {
+  .data-cal-layout {
+    grid-template-columns: 1fr;
+  }
+}

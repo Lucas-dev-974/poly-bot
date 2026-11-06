@@ -50,6 +50,9 @@ const toYm = (idx: number): { y: number; m: number } => ({
 const hhmm = (v: number, seconds = false): string =>
   new Date(seconds ? v * 1000 : v).toISOString().slice(11, 16);
 
+/** Date UTC d'un jour civil (epoch_days). */
+const dayDate = (day: number): Date => new Date(day * MS_DAY);
+
 /** `btc-updown-15m-1793943000` → ["btc", "15m"]. */
 function parseSlug(slug: string): [string, string] {
   const i = slug.indexOf("-updown-");
@@ -77,6 +80,15 @@ interface AssetGroup {
   rows: number;
   tfs: Array<[string, number]>;
   wins: Array<{ slug: string; n: number; ws: number; we: number; tf: string }>;
+}
+
+/** Bornes de navigation de l'agrégat : jours civils + index de mois. */
+interface Bounds { lo: number; hi: number; loM: number; hiM: number }
+
+/** null si l'agrégat n'a aucune journée (ou pas de plage complète). */
+function monthsOf(d: DbCalendarResponse | null): Bounds | null {
+  if (!d || d.days.length === 0 || d.rangeStart == null || d.rangeEnd == null) return null;
+  return { lo: d.rangeStart, hi: d.rangeEnd, loM: monthIdx(d.rangeStart), hiM: monthIdx(d.rangeEnd) };
 }
 
 export function CalendarView(props: { reloadToken: () => number }): JSX.Element {
@@ -127,11 +139,6 @@ export function CalendarView(props: { reloadToken: () => number }): JSX.Element 
     return map;
   });
 
-  interface Bounds { loM: number; hiM: number; lo: number; hi: number }
-  function monthsOf(d: DbCalendarResponse | null): Bounds | null {
-    if (!d || d.days.length === 0 || d.rangeStart == null || d.rangeEnd == null) return null;
-    return { loM: monthIdx(d.rangeStart), hiM: monthIdx(d.rangeEnd), lo: d.rangeStart, hi: d.rangeEnd };
-  }
   const bounds = createMemo(() => monthsOf(cal()));
 
   /** Grille du mois courant : cellules construites hors JSX (valeurs pures). */
@@ -143,14 +150,14 @@ export function CalendarView(props: { reloadToken: () => number }): JSX.Element 
     if (cur == null) return null;
     const { y, m } = toYm(cur);
     const first = Math.floor(Date.UTC(y, m, 1) / MS_DAY);
-    const idxLead = (new Date(first * MS_DAY).getUTCDay() + 6) % 7;
+    const lead = (dayDate(first).getUTCDay() + 6) % 7;
     const dim = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
-    const nCells = Math.ceil((idxLead + dim) / 7) * 7;
+    const nCells = Math.ceil((lead + dim) / 7) * 7;
     const byDay = dayIndex();
     const today = Math.floor(Date.now() / MS_DAY);
     const cells: Cell[] = [];
     for (let k = 0; k < nCells; k++) {
-      const day = first - idxLead + k;
+      const day = first - lead + k;
       const inMonth = day >= first && day < first + dim;
       const off = day > today;
       const row = byDay.get(day);
@@ -162,12 +169,13 @@ export function CalendarView(props: { reloadToken: () => number }): JSX.Element 
           : row.markets >= MEDIUM_MARKETS
             ? 2
             : 1;
+      const num = dayDate(day).getUTCDate();
       const tip = row
-        ? `${MOIS[m]} ${new Date(day * MS_DAY).getUTCDate()} — ${fmtCount(row.markets)} marchés · ${fmtCount(row.mktRows)} lignes marché · ${fmtCount(row.bookRows)} lignes carnet`
-        : `${MOIS[m]} ${new Date(day * MS_DAY).getUTCDate()} — aucune donnée dans market_snapshots`;
+        ? `${MOIS[m]} ${num} — ${fmtCount(row.markets)} marchés · ${fmtCount(row.mktRows)} lignes marché · ${fmtCount(row.bookRows)} lignes carnet`
+        : `${MOIS[m]} ${num} — aucune donnée dans market_snapshots`;
       cells.push({
         day,
-        num: new Date(day * MS_DAY).getUTCDate(),
+        num,
         inMonth,
         off,
         today: day === today,
@@ -484,7 +492,7 @@ export function CalendarView(props: { reloadToken: () => number }): JSX.Element 
                       {(w) => (
                         <div class="winrow" title={w.slug}>
                           <span class="wt">
-                            {hhmm(w.ws, true)}–{w.we != null && w.we > w.ws ? hhmm(w.we, true) : hhmm(w.ws, true)}
+                            {hhmm(w.ws, true)}–{w.we > w.ws ? hhmm(w.we, true) : hhmm(w.ws, true)}
                           </span>
                           <span class="wa">{parseSlug(w.slug)[0]}</span>
                           <span class="ws">{w.tf}</span>

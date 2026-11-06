@@ -126,17 +126,17 @@ export function DataPage(): JSX.Element {
 
   const tabs = createMemo(() => {
     const names = (data()?.tables ?? []).map((t) => t.name);
-    const out: Array<{ id: string; label: string; count?: number }> = [
+    const out: Array<{ id: string; label: string; count?: number; sep?: boolean }> = [
       { id: "all", label: "Tout", count: names.length },
     ];
     for (const g of groupsWithNames()) {
       const n = g.names.filter((x) => names.includes(x)).length;
       if (n > 0) out.push({ id: g.id, label: g.label, count: n });
     }
-    // Onglet de VUE (pas un filtre de tables) — dernier, visuellement séparé
-    // par l'emoji ; quand il est actif, la recherche et les cartes de groupes
-    // laissent la place au calendrier.
-    out.push({ id: "calendrier", label: "🗓 Calendrier" });
+    // Onglet de VUE (pas un filtre de tables) — dernier, séparé par le
+    // .sim2-sep du composant partagé ; quand il est actif, la recherche et
+    // les cartes de groupes laissent la place au calendrier.
+    out.push({ id: "calendrier", label: "🗓 Calendrier", sep: true });
     return out;
   });
 

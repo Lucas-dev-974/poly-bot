@@ -1,10 +1,10 @@
 /**
- * Métriques hors-boucle via la table virtuelle dbstat — exécutées dans un
- * worker thread afin de NE JAMAIS bloquer la boucle d'événements du bot
- * pendant les scans (plusieurs secondes sur une base de plusieurs Go).
+ * Métriques hors-boucle (scans SQLite multi-secondes sur une base de
+ * plusieurs Go) — exécutées dans un worker thread afin de NE JAMAIS bloquer
+ * la boucle d'événements du bot.
  *
  * Contexte : node:sqlite est compilé SANS DBSTAT_VTAB (établi en runtime —
- * « no such table: dbstat ») ; better-sqlite3, déjà présent dans les
+ * « no such table : dbstat ») ; better-sqlite3, déjà présent dans les
  * dependencies, l'a. Le worker ouvre la base en READONLY : zéro écriture,
  * zéro checkpoint, aucune interférence avec le writer node:sqlite du bot.
  * Spawné à la demande, puis terminé — pas de thread résident.
@@ -12,8 +12,21 @@
 
 import { Worker } from "node:worker_threads";
 
-/** Fonction générique : lance un worker CJS eval et attend son message ok. */
-function runCjsWorker<T>(code: string, workerData: Record<string, unknown>, onOk: (m: { ok: boolean; error?: string }) => T): Promise<T> {
+/** Timeout des scans worker (une base de plusieurs Go peut durer ~1 min). */
+const WORKER_TIMEOUT_MS = 90_000;
+
+/** Message générique des workers (le payload utile est casté par l'appelant). */
+interface WorkerMsg {
+  ok: boolean;
+  error?: string;
+}
+
+/** Lance un worker CJS (eval) unique et attend son message ok. */
+function runCjsWorker<T>(
+  code: string,
+  workerData: Record<string, unknown>,
+  build: (m: WorkerMsg) => T,
+): Promise<T> {
   return new Promise((resolve, reject) => {
     let worker: Worker;
     try {
@@ -24,13 +37,13 @@ function runCjsWorker<T>(code: string, workerData: Record<string, unknown>, onOk
     }
     const timer = setTimeout(() => {
       void worker.terminate();
-      reject(new Error(`dbstat : timeout après ${WORKER_TIMEOUT_MS} ms`));
+      reject(new Error(`scan db : timeout après ${WORKER_TIMEOUT_MS} ms`));
     }, WORKER_TIMEOUT_MS);
-    worker.on("message", (m: { ok: boolean; error?: string }) => {
+    worker.on("message", (m: WorkerMsg) => {
       clearTimeout(timer);
       void worker.terminate();
       try {
-        resolve(onOk(m));
+        resolve(build(m));
       } catch (e) {
         reject(e instanceof Error ? e : new Error(String(e)));
       }
@@ -80,50 +93,18 @@ export interface TableMetricsResult {
   marketDays: number | null;
 }
 
-const WORKER_TIMEOUT_MS = 90_000;
-
-interface WorkerMsgOk {
-  ok: true;
-  rows: Array<{ tbl: string; b: number | bigint }>;
-  marketDays: number | null;
-}
-
-function runWorker(path: string): Promise<WorkerMsgOk> {
-  return new Promise((resolve, reject) => {
-    let worker: Worker;
-    try {
-      worker = new Worker(WORKER_CODE, { eval: true, workerData: { path } });
-    } catch (e) {
-      reject(e instanceof Error ? e : new Error(String(e)));
-      return;
-    }
-    const timer = setTimeout(() => {
-      void worker.terminate();
-      reject(new Error(`dbstat : timeout après ${WORKER_TIMEOUT_MS} ms`));
-    }, WORKER_TIMEOUT_MS);
-    worker.on("message", (m: { ok: boolean; rows?: Array<{ tbl: string; b: number | bigint }>; marketDays?: number | null; error?: string }) => {
-      clearTimeout(timer);
-      void worker.terminate();
-      if (m.ok && m.rows) {
-        resolve({ ok: true, rows: m.rows, marketDays: m.marketDays ?? null });
-      } else {
-        reject(new Error(m.error ?? "dbstat : réponse invalide"));
-      }
-    });
-    worker.on("error", (e) => {
-      clearTimeout(timer);
-      reject(e instanceof Error ? e : new Error(String(e)));
-    });
-  });
-}
-
 /**
  * Lit la taille (btree de la table + ses indexes) de chaque table de la base
  * située à `path`, PLUS le nombre de jours marché couverts par
  * market_snapshots, le tout dans un worker thread.
  */
 export async function readTableMetrics(path: string): Promise<TableMetricsResult> {
-  const m = await runWorker(path);
+  const m = await runCjsWorker(WORKER_CODE, { path }, (msg) => {
+    if (!msg.ok) throw new Error(msg.error ?? "dbstat : réponse invalide");
+    const rows = (msg as { rows?: Array<{ tbl: string; b: number | bigint }> }).rows;
+    if (!rows) throw new Error("dbstat : réponse invalide");
+    return { rows, marketDays: (msg as { marketDays?: number | null }).marketDays ?? null };
+  });
   return {
     byTable: new Map(m.rows.map((r) => [r.tbl, Number(r.b)])),
     marketDays: m.marketDays,
@@ -229,11 +210,9 @@ const CALENDAR_DAY_WORKER_CODE = `
  * une base de plusieurs Go ; il est mis en cache TTL par l'appelant).
  */
 export async function readCalendarMetrics(path: string): Promise<CalendarMetricsResult> {
-  const days = await runCjsWorker<
-    Array<{ day: number; mktRows: number; markets: number; bookRows: number; coverage: [number, number] | null }>
-  >(CALENDAR_WORKER_CODE, { path }, (m) => {
-    if (!m.ok) throw new Error(m.error ?? "scan calendrier : réponse invalide");
-    return (m as { days?: CalendarMetricsResult["days"] }).days ?? [];
+  const days = await runCjsWorker<DbCalendarDayRow[]>(CALENDAR_WORKER_CODE, { path }, (msg) => {
+    if (!msg.ok) throw new Error(msg.error ?? "scan calendrier : réponse invalide");
+    return (msg as { days?: DbCalendarDayRow[] }).days ?? [];
   });
   return {
     days,
@@ -248,8 +227,8 @@ export async function readCalendarDayMetrics(
   startMs: number,
   endMs: number,
 ): Promise<CalendarDayDetailRow[]> {
-  return runCjsWorker(CALENDAR_DAY_WORKER_CODE, { path, startMs, endMs }, (m) => {
-    if (!m.ok) throw new Error(m.error ?? "détail journée : réponse invalide");
-    return (m as { windows?: CalendarDayDetailRow[] }).windows ?? [];
+  return runCjsWorker<CalendarDayDetailRow[]>(CALENDAR_DAY_WORKER_CODE, { path, startMs, endMs }, (msg) => {
+    if (!msg.ok) throw new Error(msg.error ?? "détail journée : réponse invalide");
+    return (msg as { windows?: CalendarDayDetailRow[] }).windows ?? [];
   });
 }

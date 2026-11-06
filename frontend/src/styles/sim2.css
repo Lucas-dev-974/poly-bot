@@ -645,6 +645,13 @@
   margin-left: 5px;
 }
 
+/* Séparateur vertical avant un onglet de VUE (ex. Calendrier sur /donnees). */
+.sim2-sep {
+  width: 1px;
+  background: var(--border);
+  margin: 3px 4px;
+  align-self: stretch;
+}
 /* ─── Compteur ──────────────────────────────────────────────────────── */
 
 .sim2-count {

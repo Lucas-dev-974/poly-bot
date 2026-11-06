@@ -59,7 +59,9 @@ export function Sim2Card(props: {
 
 /**
  * Groupe d'onglets segmentés (`.sim2-seg`) — un bouton par onglet, compteur
- * de l'onglet affiché à côté du libellé.
+ * de l'onglet affiché à côté du libellé. Un onglet peut porter
+ * `sep: true` pour préfixer un séparateur vertical (distinction visuelle
+ * d'un onglet de VUE au milieu des onglets de FILTRE, ex. Calendrier /donnees).
  *
  * `tabs` est un ACCESSEUR : la liste est relue au rendu, pas capturée à la
  * création du JSX (piège Solid : un tableau figé ne se rafraîchit pas).
@@ -67,7 +69,7 @@ export function Sim2Card(props: {
  * ne gère pas d'état.
  */
 export function Sim2Tabs<T extends string>(props: {
-  tabs: Accessor<ReadonlyArray<{ id: T; label: string; count?: number | string }>>;
+  tabs: Accessor<ReadonlyArray<{ id: T; label: string; count?: number | string; sep?: boolean }>>;
   active: T;
   onSelect: (id: T) => void;
   ariaLabel?: string;
@@ -76,15 +78,20 @@ export function Sim2Tabs<T extends string>(props: {
     <div class="sim2-seg" role="tablist" aria-label={props.ariaLabel}>
       <For each={props.tabs()}>
         {(t) => (
-          <button
-            role="tab"
-            aria-selected={props.active === t.id}
-            classList={{ on: props.active === t.id }}
-            onClick={() => props.onSelect(t.id)}
-          >
-            {t.label}
-            {t.count != null && <span class="n">{t.count}</span>}
-          </button>
+          <>
+            <Show when={t.sep === true}>
+              <span class="sim2-sep" />
+            </Show>
+            <button
+              role="tab"
+              aria-selected={props.active === t.id}
+              classList={{ on: props.active === t.id }}
+              onClick={() => props.onSelect(t.id)}
+            >
+              {t.label}
+              {t.count != null && <span class="n">{t.count}</span>}
+            </button>
+          </>
         )}
       </For>
     </div>

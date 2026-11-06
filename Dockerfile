@@ -15,6 +15,9 @@ RUN apk add --no-cache python3 make g++ && npm ci
 COPY tsconfig.json ./
 COPY src ./src
 COPY config ./config
+# scripts/post-build.cjs : npm run build copie les workers .cjs vers dist/db
+# (tsc ne copie pas les assets non-ts) — sans ce dossier le build échoue.
+COPY scripts ./scripts
 
 RUN npm run build && npm prune --omit=dev
 

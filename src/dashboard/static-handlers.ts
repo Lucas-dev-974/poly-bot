@@ -161,3 +161,73 @@ export function handleRelayerQuota(res: ServerResponse): void {
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ quota: getRelayerQuota() }));
 }
+
+/**
+ * GET /api/db/calendar — agrégats par jour civil UTC des snapshots marché
+ * (onglet « Calendrier »). Le premier GET attend le scan worker (quelques
+ * secondes) ; ensuite le cache TTL du backend sert l'agrégat.
+ */
+export function handleDbCalendar(
+  repos: Repositories | undefined,
+  res: ServerResponse,
+): void {
+  if (!repos) {
+    res.writeHead(503, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Base de données indisponible" }));
+    return;
+  }
+  if (!repos.db.active) {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ rangeStart: null, rangeEnd: null, days: [], calendarError: null, persistence: false }));
+    return;
+  }
+  repos.db
+    .listCalendar()
+    .then((report) => {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ...report, persistence: true }));
+    })
+    .catch((error: unknown) => {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: message }));
+    });
+}
+
+/**
+ * GET /api/db/calendar/day?day=<epoch_days> — détail d'une journée : fenêtres
+ * marché (slug, nb de captures, bornes de fenêtre) écrites ce jour civil UTC.
+ */
+export function handleDbCalendarDay(
+  repos: Repositories | undefined,
+  dayRaw: string | null,
+  res: ServerResponse,
+): void {
+  const day = Number(dayRaw);
+  if (dayRaw == null || !Number.isSafeInteger(day) || day < 0) {
+    res.writeHead(400, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Paramètre day invalide (epoch_days attendu)" }));
+    return;
+  }
+  if (!repos) {
+    res.writeHead(503, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Base de données indisponible" }));
+    return;
+  }
+  if (!repos.db.active) {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ day, windows: [], persistence: false }));
+    return;
+  }
+  repos.db
+    .listCalendarDay(day)
+    .then((windows) => {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ day, windows, persistence: true }));
+    })
+    .catch((error: unknown) => {
+      const message = error instanceof Error ? error.message : String(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: message }));
+    });
+}

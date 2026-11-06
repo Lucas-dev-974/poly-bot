@@ -1,7 +1,13 @@
 import { mkdirSync, statSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
-import { readTableMetrics } from "./db-metrics.js";
+import {
+  readCalendarDayMetrics,
+  readCalendarMetrics,
+  readTableMetrics,
+  type CalendarDayDetailRow,
+  type DbCalendarDayRow,
+} from "./db-metrics.js";
 
 export interface DbTableStatRow {
   name: string;
@@ -46,6 +52,19 @@ const SIZES_TTL_MS = 180_000;
 /** Table unique qui porte la métrique « jours marché enregistrés » (days). */
 const MARKET_SNAPSHOTS_TABLE = "market_snapshots";
 
+/** Rapport du calendrier des snapshots (onglet Calendrier de la page Données). */
+export interface DbCalendarReport {
+  /** Premier/dernier jours civils UTC enregistrés (epoch_days) — null sans données. */
+  rangeStart: number | null;
+  rangeEnd: number | null;
+  days: DbCalendarDayRow[];
+  /** Erreur du dernier scan calendrier tenté — null si le scan a réussi. */
+  calendarError: string | null;
+}
+
+/** Plafond du cache de détails par jour (les entrées les plus vieilles tombent). */
+const CALENDAR_DETAIL_MAX_CACHE = 60;
+
 export class Database {
   private readonly conn: DatabaseSync | null;
   /** Chemin du fichier DB (null si persistance désactivée) — pour stat du .db / -wal. */
@@ -62,6 +81,16 @@ export class Database {
   private sizesAt = 0;
   private sizesError: string | null = null;
   private sizesPending = false;
+
+  /** Cache du scan calendrier — même schéma que le cache des tailles. */
+  private calDays: DbCalendarDayRow[] | null = null;
+  private calError: string | null = null;
+  private calAt = 0;
+  /** Scan en cours (single-flight GET) — null sinon. */
+  private calJob: Promise<void> | null = null;
+  /** Détail par jour civil : ligne(s) par fenêtre marché, cache TTL par jour. */
+  private calDetailCache = new Map<number, { rows: CalendarDayDetailRow[]; at: number }>();
+  private calDetailJobs = new Map<number, Promise<CalendarDayDetailRow[]>>();
 
   constructor(path: string, enabled: boolean) {
     this.path = enabled ? path : null;
@@ -709,6 +738,94 @@ export class Database {
         });
     }
     return this.sizesError ?? "scan dbstat (worker) en cours…";
+  }
+
+  /* ── Calendrier des snapshots (onglet « Calendrier ») ───────────────── */
+
+  private calendarReport(): DbCalendarReport {
+    const days = this.calDays ?? [];
+    return {
+      rangeStart: days.length > 0 ? days[0].day : null,
+      rangeEnd: days.length > 0 ? days[days.length - 1].day : null,
+      days,
+      calendarError: this.calError,
+    };
+  }
+
+  /**
+   * Lance au besoin le scan calendrier worker (better-sqlite3 readonly) et
+   * attend son résultat : single-flight (les GET concurrents partagent le
+   * même scan), cache TTL identique aux tailles par table.
+   */
+  private async ensureCalendar(): Promise<void> {
+    if (Date.now() - this.calAt <= SIZES_TTL_MS && this.calDays != null) return;
+    if (this.calJob) return this.calJob;
+    if (!this.conn || !this.path) {
+      this.calAt = Date.now();
+      this.calError = null;
+      return;
+    }
+    const dbPath = resolve(this.path);
+    const job: Promise<void> = (async () => {
+      try {
+        const m = await readCalendarMetrics(dbPath);
+        this.calDays = m.days;
+        this.calError = null;
+      } catch (e: unknown) {
+        this.calError = e instanceof Error ? e.message : String(e);
+        console.warn(`[db] calendrier indisponible : ${this.calError}`);
+      }
+      this.calAt = Date.now();
+    })();
+    this.calJob = job;
+    // Libère le slot même si un awaiter arrive pendant le finally.
+    void job.finally(() => {
+      this.calJob = null;
+    });
+    return job;
+  }
+
+  /**
+   * Agrégats par jour civil UTC pour l'onglet Calendrier. Le premier appel
+   * attend le scan worker (quelques secondes sur une base de plusieurs Go) ;
+   * les suivants sont servis par le cache TTL.
+   */
+  async listCalendar(): Promise<DbCalendarReport> {
+    if (!this.conn) {
+      return { rangeStart: null, rangeEnd: null, days: [], calendarError: null };
+    }
+    await this.ensureCalendar();
+    return this.calendarReport();
+  }
+
+  /**
+   * Détail d'UNE journée : les fenêtres marché (slug, nb de captures, bornes
+   * de fenêtre) écrites ce jour civil UTC. Requête bornée par l'index ts —
+   * quelques secondes au pire ; cache TTL par jour + single-flight par jour.
+   */
+  async listCalendarDay(day: number): Promise<CalendarDayDetailRow[]> {
+    if (!Number.isSafeInteger(day) || day < 0) throw new Error("Jour civil invalide");
+    if (!this.conn || !this.path) return [];
+    const cached = this.calDetailCache.get(day);
+    if (cached && Date.now() - cached.at <= SIZES_TTL_MS) return cached.rows;
+    const pending = this.calDetailJobs.get(day);
+    if (pending) return pending;
+    const startMs = day * 86_400_000;
+    const job = readCalendarDayMetrics(resolve(this.path), startMs, startMs + 86_400_000)
+      .then((rows) => {
+        // Éviction FIFO : les plannings ne consultent qu'une poignée de jours.
+        if (this.calDetailCache.size >= CALENDAR_DETAIL_MAX_CACHE) {
+          const oldest = this.calDetailCache.keys().next().value;
+          if (oldest !== undefined) this.calDetailCache.delete(oldest);
+        }
+        this.calDetailCache.set(day, { rows, at: Date.now() });
+        return rows;
+      })
+      .finally(() => {
+        this.calDetailJobs.delete(day);
+      });
+    this.calDetailJobs.set(day, job);
+    return job;
   }
 
   close(): void {

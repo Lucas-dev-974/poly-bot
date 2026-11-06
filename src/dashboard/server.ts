@@ -101,6 +101,8 @@ import {
   type PositionsHandlerCtx,
 } from "./positions-handlers.js";
 import {
+  handleDbCalendar as handleDbCalendarFn,
+  handleDbCalendarDay as handleDbCalendarDayFn,
   handleDbTables as handleDbTablesFn,
   handleEvents as handleEventsFn,
   handleRelayerQuota as handleRelayerQuotaFn,
@@ -245,6 +247,16 @@ export class DashboardServer {
 
       if (url.pathname === "/api/db/tables" && req.method === "GET") {
         this.handleDbTables(res);
+        return;
+      }
+
+      if (url.pathname === "/api/db/calendar" && req.method === "GET") {
+        void handleDbCalendarFn(this.repos, res);
+        return;
+      }
+
+      if (url.pathname === "/api/db/calendar/day" && req.method === "GET") {
+        void handleDbCalendarDayFn(this.repos, url.searchParams.get("day"), res);
         return;
       }
 

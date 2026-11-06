@@ -12,6 +12,36 @@
 
 import { Worker } from "node:worker_threads";
 
+/** Fonction générique : lance un worker CJS eval et attend son message ok. */
+function runCjsWorker<T>(code: string, workerData: Record<string, unknown>, onOk: (m: { ok: boolean; error?: string }) => T): Promise<T> {
+  return new Promise((resolve, reject) => {
+    let worker: Worker;
+    try {
+      worker = new Worker(code, { eval: true, workerData });
+    } catch (e) {
+      reject(e instanceof Error ? e : new Error(String(e)));
+      return;
+    }
+    const timer = setTimeout(() => {
+      void worker.terminate();
+      reject(new Error(`dbstat : timeout après ${WORKER_TIMEOUT_MS} ms`));
+    }, WORKER_TIMEOUT_MS);
+    worker.on("message", (m: { ok: boolean; error?: string }) => {
+      clearTimeout(timer);
+      void worker.terminate();
+      try {
+        resolve(onOk(m));
+      } catch (e) {
+        reject(e instanceof Error ? e : new Error(String(e)));
+      }
+    });
+    worker.on("error", (e) => {
+      clearTimeout(timer);
+      reject(e instanceof Error ? e : new Error(String(e)));
+    });
+  });
+}
+
 /** Code du worker (CJS via eval — require disponible) : scans dbstat uniques. */
 const WORKER_CODE = `
   const { parentPort, workerData } = require('node:worker_threads');
@@ -98,4 +128,128 @@ export async function readTableMetrics(path: string): Promise<TableMetricsResult
     byTable: new Map(m.rows.map((r) => [r.tbl, Number(r.b)])),
     marketDays: m.marketDays,
   };
+}
+
+/* ── Calendrier des snapshots (onglet « Calendrier » de la page Données) ── */
+
+export interface DbCalendarDayRow {
+  /** Jour civil UTC = ts / 86 400 000 (epoch_days). */
+  day: number;
+  /** Lignes market_snapshots écrites ce jour. */
+  mktRows: number;
+  /** Marchés DISTINCTS (eventSlug) vus ce jour. */
+  markets: number;
+  /** Lignes book_snapshots ce jour (0 si la table est absente). */
+  bookRows: number;
+  /** [MIN(ts), MAX(ts)] des captures marché du jour (ms) — null sans market. */
+  coverage: [number, number] | null;
+}
+
+export interface CalendarMetricsResult {
+  days: DbCalendarDayRow[];
+  /** Premier/dernier jours civils enregistrés (epoch_days) — null sans données. */
+  rangeStart: number | null;
+  rangeEnd: number | null;
+}
+
+/** Ligne de détail d'une journée : une fenêtre marché et son volume de captures. */
+export interface CalendarDayDetailRow {
+  slug: string;
+  /** Lignes market_snapshots pour ce slug ce jour. */
+  n: number;
+  /** windowStart / windowEnd (epoch s) — MAX du jour pour les fenêtres qui span. */
+  ws: number;
+  we: number;
+}
+
+/* Agrégats par jour civil UTC : index ts pilotant un scan ordonné (pas de tri). */
+const CALENDAR_WORKER_CODE = `
+  const { parentPort, workerData } = require('node:worker_threads');
+  const Better = require('better-sqlite3');
+  try {
+    const db = new Better(workerData.path, { readonly: true });
+    const days = [];
+    try {
+      const mkt = db.prepare(
+        "SELECT CAST(ts / 86400000 AS INTEGER) AS d, COUNT(*) AS r, " +
+        "COUNT(DISTINCT eventSlug) AS m, MIN(ts) AS mn, MAX(ts) AS mx " +
+        "FROM market_snapshots GROUP BY CAST(ts / 86400000 AS INTEGER) ORDER BY d"
+      ).all();
+      const book = db.prepare(
+        "SELECT CAST(ts / 86400000 AS INTEGER) AS d, COUNT(*) AS b " +
+        "FROM book_snapshots GROUP BY CAST(ts / 86400000 AS INTEGER)"
+      ).all();
+      const bookByDay = new Map(book.map((r) => [r.d, Number(r.b)]));
+      for (const r of mkt) {
+        days.push({
+          day: r.d,
+          mktRows: Number(r.r),
+          markets: Number(r.m),
+          bookRows: bookByDay.get(r.d) ?? 0,
+          coverage: r.mn != null ? [Number(r.mn), Number(r.mx)] : null,
+        });
+      }
+    } catch (e) {
+      /* market_snapshots absente (schéma ancien) : calendrier vide */
+    }
+    db.close();
+    parentPort.postMessage({ ok: true, days });
+  } catch (e) {
+    parentPort.postMessage({ ok: false, error: (e && e.message) ? e.message : String(e) });
+  }
+`;
+
+const CALENDAR_DAY_WORKER_CODE = `
+  const { parentPort, workerData } = require('node:worker_threads');
+  const Better = require('better-sqlite3');
+  try {
+    const db = new Better(workerData.path, { readonly: true });
+    const windows = [];
+    try {
+      const rows = db.prepare(
+        "SELECT eventSlug AS slug, COUNT(*) AS n, MAX(windowStart) AS ws, MAX(windowEnd) AS we " +
+        "FROM market_snapshots WHERE ts >= ? AND ts < ? GROUP BY eventSlug ORDER BY MAX(windowStart)"
+      ).all(workerData.startMs, workerData.endMs);
+      for (const r of rows) {
+        windows.push({ slug: r.slug, n: Number(r.n), ws: Number(r.ws), we: Number(r.we) });
+      }
+    } catch (e) {
+      /* market_snapshots absente : détail vide */
+    }
+    db.close();
+    parentPort.postMessage({ ok: true, windows });
+  } catch (e) {
+    parentPort.postMessage({ ok: false, error: (e && e.message) ? e.message : String(e) });
+  }
+`;
+
+/**
+ * Agrégats par jour civil UTC de market/book snapshots — worker readonly, ne
+ * touche JAMAIS à la boucle du bot (le scan peut durer quelques secondes sur
+ * une base de plusieurs Go ; il est mis en cache TTL par l'appelant).
+ */
+export async function readCalendarMetrics(path: string): Promise<CalendarMetricsResult> {
+  const days = await runCjsWorker<
+    Array<{ day: number; mktRows: number; markets: number; bookRows: number; coverage: [number, number] | null }>
+  >(CALENDAR_WORKER_CODE, { path }, (m) => {
+    if (!m.ok) throw new Error(m.error ?? "scan calendrier : réponse invalide");
+    return (m as { days?: CalendarMetricsResult["days"] }).days ?? [];
+  });
+  return {
+    days,
+    rangeStart: days.length > 0 ? days[0].day : null,
+    rangeEnd: days.length > 0 ? days[days.length - 1].day : null,
+  };
+}
+
+/** Détail d'UNE journée (fenêtres marché du jour) — requête bornée par l'index ts. */
+export async function readCalendarDayMetrics(
+  path: string,
+  startMs: number,
+  endMs: number,
+): Promise<CalendarDayDetailRow[]> {
+  return runCjsWorker(CALENDAR_DAY_WORKER_CODE, { path, startMs, endMs }, (m) => {
+    if (!m.ok) throw new Error(m.error ?? "détail journée : réponse invalide");
+    return (m as { windows?: CalendarDayDetailRow[] }).windows ?? [];
+  });
 }

@@ -179,18 +179,24 @@ export function CalendarView(props: { reloadToken: () => number }): JSX.Element 
     return { label: `${MOIS[m]} ${y}`, cells };
   });
 
-  /* Déteil de la journée sélectionnée : fetch à la demande, cache par jour.
+  /* Détail de la journée sélectionnée : fetch à la demande, cache par jour.
      L'effet trace selDay ET dayIndex (les deux peuvent évoluer indépendamment :
-     données arrivant pendant qu'un jour est déjà sélectionné). */
+     données arrivant pendant qu'un jour est déjà sélectionné). Les sorties
+     précoces (jour vide, cache touché) rabaissent detailBusy : le finally d'un
+     fetch précédent ne le fait PAS (son garde requestedDay ne correspond plus). */
   createEffect(() => {
     const day = selDay();
     const idx = dayIndex();
     setDetail(null);
     requestedDay = -1;
-    if (idx.size === 0 || !idx.has(day)) return; // jour vide : état vide, sans fetch
+    if (idx.size === 0 || !idx.has(day)) {
+      setDetailBusy(false); // jour vide : état vide, sans fetch
+      return;
+    }
     const cached = detailCache.get(day);
     if (cached) {
       setDetail(cached);
+      setDetailBusy(false);
       return;
     }
     requestedDay = day;
@@ -267,6 +273,13 @@ export function CalendarView(props: { reloadToken: () => number }): JSX.Element 
 
       <Show when={error()}>
         <div class="data-error">{error()}</div>
+      </Show>
+
+      {/* Diagnostic du scan backend : données potentiellement périmées/partielles. */}
+      <Show when={cal()?.calendarError}>
+        <div class="dat-warn">
+          Scan calendrier en échec — données possiblement périmées ({cal()?.calendarError})
+        </div>
       </Show>
 
       <Show when={loading()}>

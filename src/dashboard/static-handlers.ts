@@ -203,8 +203,9 @@ export function handleDbCalendarDay(
   dayRaw: string | null,
   res: ServerResponse,
 ): void {
-  const day = Number(dayRaw);
-  if (dayRaw == null || !Number.isSafeInteger(day) || day < 0) {
+  const dayRawValue = dayRaw == null ? null : dayRaw.trim();
+  const day = dayRawValue == null ? NaN : Number(dayRawValue);
+  if (dayRawValue == null || dayRawValue === "" || !Number.isSafeInteger(day) || day < 0) {
     res.writeHead(400, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Paramètre day invalide (epoch_days attendu)" }));
     return;

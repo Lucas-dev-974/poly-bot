@@ -10,6 +10,7 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "node:test";
+import { Worker } from "node:worker_threads";
 import Better from "better-sqlite3";
 import {
   SNAPSHOT_TABLE_SPECS,
@@ -415,6 +416,108 @@ describe("snapshot-io", () => {
       assert.equal(one<{ n: number }>(main.db, "SELECT COUNT(*) AS n FROM book_snapshots").n, 1);
     } finally {
       cancelCurrentImport();
+      main.db.close();
+    }
+  });
+
+  it("analyze : 2e table non vide — ATTACH mainro réutilisé sans « already in use »", async () => {
+    // Régression MAINRO : summarizeTable attachait mainro SANS jamais DETACH —
+    // la 2e table non vide (market_resolutions) héritait de
+    // « database mainro is already in use » et d'un compte newRows erroné
+    // (tout le fichier compté comme nouveau, alreadyPresent=0).
+    const dir = mkdtempSync(join(tmpdir(), "snapio-"));
+    const main = makeMainDb(dir);
+    const S = 2_400_000_000_000;
+    insertBook(main.db, { ts: S + 100, eventSlug: "btc-15m-1", tokenId: "tokA", outcome: "Up", outcomeIndex: 0 });
+    main.db
+      .prepare("INSERT INTO market_resolutions (eventSlug, winnerOutcomeIndex, source, ts) VALUES ('btc-15m-1', 0, 'test', ?)")
+      .run(S);
+    const upload = join(dir, "in.ndjson");
+    writeFileSync(
+      upload,
+      [
+        { _t: "book_snapshots", ts: S + 100, eventSlug: "btc-15m-1", tokenId: "tokA", outcome: "Up", outcomeIndex: 0, bestBid: 0.41 },
+        { _t: "market_resolutions", eventSlug: "btc-15m-1", winnerOutcomeIndex: 0, source: "replay", ts: S },
+        { _t: "market_resolutions", eventSlug: "eth-15m-2", winnerOutcomeIndex: 1, source: "replay", ts: S },
+      ].map((r) => JSON.stringify(r)).join("\n") + "\n",
+    );
+    const summary = (await worker.analyzeUpload({
+      uploadPath: upload,
+      stagePath: join(dir, "stage.db"),
+      mainPath: main.path,
+      specs: SPECS,
+    })) as { tables: Array<TableSummary & { error?: string }> };
+    const res = summary.tables.find((t) => t.name === "market_resolutions");
+    assert.ok(res);
+    assert.equal(res.error, undefined); // AVANT le fix : « database mainro is already in use »
+    assert.equal(res.alreadyPresent, 1); // btc-15m-1 déjà résolue dans main
+    assert.equal(res.newRows, 1); // eth-15m-2 seulement — AVANT le fix : 2 (faux positif)
+    const book = summary.tables.find((t) => t.name === "book_snapshots");
+    assert.ok(book);
+    assert.equal(book.error, undefined);
+    assert.equal(book.alreadyPresent, 1);
+    assert.equal(book.newRows, 0);
+    main.db.close();
+  });
+
+  it("commit : écrivain concurrent (tick du bot) — pas de SQLITE_BUSY_SNAPSHOT", async () => {
+    // Régression BUSY-SNAPSHOT : les batches du commit ouvrent une transaction
+    // DEFERRED, lisent main (probe) PUIS écrivent — si un commit concurrent
+    // (tick du bot) avance le WAL entre les deux, l'upgrade lecture→écriture
+    // lève SQLITE_BUSY_SNAPSHOT (« database is locked »), NON-retryé par
+    // busy_timeout → l'import mourait en plein batch. BEGIN IMMEDIATE acquiert
+    // le write lock d'entrée (attente réglée par busy_timeout de BEGIN) et les
+    // lectures du batch partent de notre propre snapshot de writer.
+    const dir = mkdtempSync(join(tmpdir(), "snapio-"));
+    const main = makeMainDb(dir, "conc-main.db");
+    main.db.pragma("journal_mode = WAL");
+    const S = 10_000_000_000_000;
+    const ROWS = 8000;
+    const lines: string[] = [];
+    for (let i = 0; i < ROWS; i++) {
+      lines.push(
+        JSON.stringify({ _t: "book_snapshots", ts: S + i * 100, eventSlug: "gen-1", tokenId: `tok${i}`, outcome: "Up", outcomeIndex: 0, bestBid: 0.5 }),
+      );
+    }
+    const upload = join(dir, "in.ndjson");
+    writeFileSync(upload, lines.join("\n") + "\n");
+    await worker.analyzeUpload({ uploadPath: upload, stagePath: join(dir, "stage.db"), mainPath: main.path, specs: SPECS });
+
+    // Simulateur du tick du bot : INSERT commité toutes les ~2 ms sur main.db.
+    // (Arrêt via terminate() — un stop gracieux peut être affamé par l'interval
+    // 2 ms ; le décompte des écritures concurrentes se lit en SQL, tokenId `w*`.)
+    const betterPath = require.resolve("better-sqlite3");
+    const mainPathJs = JSON.stringify(main.path);
+    const w = new Worker(
+      `const Better = require(${JSON.stringify(betterPath)});
+       const db = new Better(${mainPathJs});
+       db.pragma("journal_mode = WAL"); db.pragma("busy_timeout = 5000");
+       const ins = db.prepare("INSERT INTO book_snapshots (ts, eventSlug, tokenId, outcome, outcomeIndex) VALUES (?, 'gen', ?, 'Up', 0)");
+       let ts = ${S - 1_000_000};
+       const t = setInterval(() => { ts += 7; try { ins.run(ts, "w" + ts); } catch {} }, 2);`,
+      { eval: true },
+    );
+    // Amorce : quelques inserts non concurrencés AVANT le commit (writerN > 0 garanti).
+    await new Promise((r) => setTimeout(r, 50));
+    let writerInserts = 0;
+    try {
+      const c = worker.commitStaging({ mainPath: main.path, stagePath: join(dir, "stage.db"), specs: SPECS, policy: "merge", batchRows: 2000 });
+      assert.equal(c.inserted, ROWS); // AVANT le fix : échec « database is locked » en plein batch
+      assert.equal(c.skipped, 0);
+      // idempotence : re-commit du même staging → tout skip
+      const c2 = worker.commitStaging({ mainPath: main.path, stagePath: join(dir, "stage.db"), specs: SPECS, policy: "merge", batchRows: 2000 });
+      assert.equal(c2.inserted, 0);
+      assert.equal(c2.skipped, ROWS);
+      await w.terminate();
+      writerInserts = one<{ n: number }>(
+        main.db,
+        "SELECT COUNT(*) AS n FROM book_snapshots WHERE tokenId LIKE 'w%'",
+      ).n as number;
+      assert.ok(writerInserts > 0, "l'écrivain concurrent a réussi des commits");
+      const total = one<{ n: number }>(main.db, "SELECT COUNT(*) AS n FROM book_snapshots").n;
+      assert.equal(total, ROWS + writerInserts, "main contient exactement staged + écritures concurrentes");
+    } finally {
+      await w.terminate().catch(() => {});
       main.db.close();
     }
   });

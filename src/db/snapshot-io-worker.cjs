@@ -414,14 +414,19 @@ function summarizeTable(stage, mainPath, spec, counters) {
     .prepare(`SELECT COUNT(DISTINCT eventSlug) AS n FROM ${spec.name}`)
     .get().n;
   if (mainPath != null) {
-    let mainAvailable = true;
+    let mainAttached = false;
     try {
+      // DEFENSIF : un attach précédent sur cette connexion (2e table du même
+      // analyze, sqlite-source) laisse `mainro` en place → « database mainro
+      // is already in use » au 2e ATTACH. On repart d'un état propre, puis on
+      // DETACH systématiquement en fin de fonction.
+      try { stage.exec("DETACH DATABASE mainro"); } catch { /* pas attaché */ }
       stage.exec(`ATTACH DATABASE '${escSqlPath(mainPath)}' AS mainro`);
+      mainAttached = true;
     } catch (e) {
-      mainAvailable = false;
       out.error = `Base principale non attachable : ${e instanceof Error ? e.message : String(e)}`;
     }
-    if (mainAvailable) {
+    if (mainAttached) {
       if (tableExists(stage, "mainro", spec.name)) {
         out.newRows = stage
           .prepare(
@@ -432,10 +437,13 @@ function summarizeTable(stage, mainPath, spec, counters) {
         out.newRows = out.distinctKeys;
       }
     } else {
-      // Base principale absente : tout le contenu du fichier compte comme nouveau.
+      // Base principale non attachable : tout le contenu du fichier compte comme nouveau.
       out.newRows = out.distinctKeys;
     }
     out.alreadyPresent = out.distinctKeys - out.newRows;
+    if (mainAttached) {
+      try { stage.exec("DETACH DATABASE mainro"); } catch { /* déjà détaché */ }
+    }
   }
   return out;
 }
@@ -576,7 +584,14 @@ function commitStaging(args) {
         const rows = fetchBatch.all(lastRowId);
         if (rows.length === 0) break;
         lastRowId = rows[rows.length - 1].__rid;
-        db.exec("BEGIN");
+        // BEGIN IMMEDIATE (pas BEGIN) : le write lock est acquis EN DÉBUT de
+        // batch (busy_timeout réessaie), et les lectures (probe) partent de
+        // NOTRE snapshot de writer. En deferred, l'upgrade lecture→écriture
+        // d'un batch échoue en SQLITE_BUSY_SNAPSHOT (« database is locked »,
+        // non-retryé par busy_timeout) dès qu'un commit concurrent (tick du
+        // bot, toutes les 5 s) avance le WAL entre notre probe et notre
+        // premier INSERT — reproducible ~1 fois toutes les ~10-20 batches.
+        db.exec("BEGIN IMMEDIATE");
         const batchKeys = new Set();
         for (const r of rows) {
           const k = keyOf(spec, r);

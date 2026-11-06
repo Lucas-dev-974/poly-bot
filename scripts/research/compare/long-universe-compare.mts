@@ -99,6 +99,15 @@ const specs: Spec[] = [
 ];
 
 const presets = listStrategyPresets();
+
+// Capital uniforme pour tous les specs : simulatedCapital ne fait que provisionner
+// le ledger (solvabilité via canAfford), les budgets (orderUsdc/maxExposureUsdc)
+// restent des montants absolus qui ne passent pas à l'échelle. Sans cette
+// normalisation, pnlPct divise par des capitalStart hétérogènes (50-1000) avec
+// des budgets inchangés → classement faussé. 1000 = valeur maximale des
+// presets, aucune stratégie ne perd de la marge de solvabilité vs son preset.
+const UNIFIED_CAPITAL = 1000;
+
 const srcDb = join("data", "bot-live.db");
 const workDb = join("data", `_long-compare-${Date.now()}.db`);
 {
@@ -146,6 +155,8 @@ for (const spec of specs) {
   }
   config.dryRun = true;
   config.strategyId = spec.strategyId;
+  // Après preset/overrides pour garantir l'application : capital uniforme.
+  config.simulatedCapital = UNIFIED_CAPITAL;
 
   const leadsWithEdge = leadsWithEdgeFor(config.strategyId, repos);
   validateConfigCoherence(config, { leadsWithEdge });
